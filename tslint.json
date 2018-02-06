@@ -1,0 +1,27 @@
+{
+  "extends": "tslint:latest",
+  "defaultSeverity": "error",
+  "rules": {
+    "semicolon": [
+      false
+    ],
+    "object-literal-sort-keys": false,
+    "max-classes-per-file": [
+      true,
+      5
+    ],
+    "trailing-comma": [
+      false
+    ],
+    "no-string-literal": false,
+    "max-line-length": [
+      true,
+      200
+    ],
+    "arrow-parens": false,
+    "no-implicit-dependencies": [
+      true,
+      "dev"
+    ]
+  }
+}

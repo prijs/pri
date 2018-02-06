@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "strict": true,
+    "jsx": "react",
+    "target": "es5",
+    "rootDir": "src",
+    "lib": [
+      "dom",
+      "es5",
+      "es6",
+      "scripthost"
+    ],
+    "outDir": "built",
+    "sourceMap": true
+  },
+  "exclude": [
+    "node_modules",
+    "built"
+  ]
+}
