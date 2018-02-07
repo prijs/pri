@@ -4,7 +4,7 @@
   "types": "src/index.ts",
   "main": "built/index.js",
   "scripts": {
-    "build": "rm -rf built && tsc",
+    "build": "rm -rf built && rm -rf .cache && tsc",
     "prepublish": "npm run build"
   },
   "bin": {
