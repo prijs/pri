@@ -1,5 +1,5 @@
 import { execSync } from "child_process"
-import * as fs from "fs"
+import * as fs from "fs-extra"
 import * as open from "opn";
 import * as path from "path"
 import * as portfinder from "portfinder";
@@ -16,17 +16,48 @@ export const CommandDev = async () => {
     ensureFiles(projectRootPath)
   })
 
-  await spinner("Analyse project", async () => {
+  const entryPath = await spinner("Analyse project", async () => {
     const info = await analyseProject(projectRootPath)
-    await createEntry(info, projectRootPath)
+    return createEntry(info, projectRootPath)
   })
+
+  const htmlEntryPath = createEntryHtmlFile(entryPath)
 
   const validatePort = await portfinder.getPortPromise()
   open(`http://localhost:${validatePort}`);
 
   // Run parcel
-  execSync(`${findNearestNodemodules()}/.bin/parcel --port ${validatePort} ${path.join(__dirname, "../../../dev.html")}`, {
+  execSync(`${findNearestNodemodules()}/.bin/parcel --port ${validatePort} ${htmlEntryPath}`, {
     stdio: "inherit",
     cwd: __dirname
   });
+}
+
+function createEntryHtmlFile(entryPath: string) {
+  const htmlPath = path.join(projectRootPath, ".temp/dev.html")
+
+  fs.outputFileSync(htmlPath, `
+    <html>
+
+    <head>
+      <title>Pri dev</title>
+
+      <style>
+        html,
+        body {
+          margin: 0;
+          padding: 0;
+        }
+      </style>
+    </head>
+
+    <body>
+      <div id="root"></div>
+      <script src="${entryPath}"></script>
+    </body>
+
+    </html>
+  `)
+
+  return htmlPath
 }

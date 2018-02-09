@@ -5,6 +5,7 @@ import * as path from "path"
 export const ensureFiles = (projectRootPath: string) => {
   ensureGitignore(projectRootPath)
   ensureTsconfig(projectRootPath)
+  ensureBabelrc(projectRootPath)
 }
 
 function ensureGitignore(projectRootPath: string) {
@@ -12,7 +13,9 @@ function ensureGitignore(projectRootPath: string) {
   const ensureContents = [
     "node_modules",
     "dist",
-    ".vscode"
+    ".cache",
+    ".vscode",
+    ".temp"
   ]
 
   const exitFileContent = fs.existsSync(filePath) ? (fs.readFileSync(filePath).toString() || "") : ""
@@ -31,7 +34,8 @@ function ensureTsconfig(projectRootPath: string) {
   const filePath = path.join(projectRootPath, "tsconfig.json")
   const ensureContent = {
     compilerOptions: {
-      module: "commonjs",
+      module: "esnext",
+      moduleResolution: "node",
       strict: true,
       jsx: "react",
       target: "es5",
@@ -60,4 +64,13 @@ function ensureTsconfig(projectRootPath: string) {
   }
 
   fs.writeFileSync(filePath, JSON.stringify(exitFileContent, null, 2))
+}
+
+function ensureBabelrc(projectRootPath: string) {
+  const filePath = path.join(projectRootPath, ".babelrc")
+  const ensureContents = {
+    presets: ["env"]
+  }
+
+  fs.writeFileSync(filePath, JSON.stringify(ensureContents, null, 2))
 }
