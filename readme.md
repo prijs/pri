@@ -1,6 +1,6 @@
 # Pri
 
-# Features
+## Features
 
 - Pages are routes.
 - Tree Shake.
@@ -12,7 +12,7 @@ TODO:
 - Auto create npm scripts, `.gitignore` `tsconfig.json` and so on.
 - TSlint support.
 
-# Usage
+## Usage
 
 or in an empty folder:
 
