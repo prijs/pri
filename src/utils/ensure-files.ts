@@ -6,6 +6,8 @@ export const ensureFiles = (projectRootPath: string) => {
   ensureGitignore(projectRootPath)
   ensureTsconfig(projectRootPath)
   ensureBabelrc(projectRootPath)
+  ensureTslint(projectRootPath)
+  ensurePackageJson(projectRootPath)
 }
 
 function ensureGitignore(projectRootPath: string) {
@@ -73,4 +75,61 @@ function ensureBabelrc(projectRootPath: string) {
   }
 
   fs.writeFileSync(filePath, JSON.stringify(ensureContents, null, 2))
+}
+
+function ensureTslint(projectRootPath: string) {
+  const filePath = path.join(projectRootPath, "tslint.json")
+  const ensureContents = {
+    extends: "tslint:latest",
+    defaultSeverity: "error",
+    rules: {
+      "semicolon": [
+        false
+      ],
+      "object-literal-sort-keys": false,
+      "max-classes-per-file": [
+        true,
+        5
+      ],
+      "trailing-comma": [
+        false
+      ],
+      "no-string-literal": false,
+      "max-line-length": [
+        true,
+        200
+      ],
+      "arrow-parens": false,
+      "no-implicit-dependencies": [
+        true,
+        "dev"
+      ]
+    }
+  }
+
+  fs.writeFileSync(filePath, JSON.stringify(ensureContents, null, 2))
+}
+
+function ensurePackageJson(projectRootPath: string) {
+  const filePath = path.join(projectRootPath, "package.json")
+  const ensureScripts = {
+    start: "pri dev",
+    build: "pri build",
+    preview: "pri preview"
+  }
+
+  let exitFileContent: any = {}
+
+  try {
+    exitFileContent = JSON.parse(fs.readFileSync(filePath).toString()) || {}
+    if (!exitFileContent.scripts) {
+      exitFileContent.scripts = {}
+    }
+  } catch (error) {
+    //
+  }
+
+  _.merge(exitFileContent.scripts || {}, ensureScripts)
+
+  fs.writeFileSync(filePath, JSON.stringify(exitFileContent, null, 2))
 }

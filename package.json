@@ -1,12 +1,13 @@
 {
   "name": "pri",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "types": "src/index.ts",
   "main": "built/index.js",
   "scripts": {
     "start": "tsc -w",
     "build": "rm -rf built && rm -rf .cache && tsc",
-    "prepublish": "npm run build"
+    "prepublishOnly": "npm run build",
+    "install": ""
   },
   "bin": {
     "pri": "built/bin.js"
