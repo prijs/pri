@@ -6,6 +6,25 @@ import { md5 } from "./md5"
 interface IEntryInfo {
   pageImporter: string
   pageRoutes: string
+  layoutImporter: string
+}
+
+const layoutContent = (entryInfo: IEntryInfo) => {
+  if (entryInfo.layoutImporter) {
+    return `
+      <LayoutComponent>
+        <Switch>
+          ${entryInfo.pageRoutes}
+        </Switch>
+      </LayoutComponent>
+    `
+  } else {
+    return `
+      <Switch>
+        ${entryInfo.pageRoutes}
+      </Switch>
+    `
+  }
 }
 
 // Entry file content
@@ -15,15 +34,14 @@ const entryFileContent = (entryInfo: IEntryInfo) => `
   import Loadable from "react-loadable"
   import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom"
 
+  ${entryInfo.layoutImporter}
   ${entryInfo.pageImporter}
 
   class Root extends React.PureComponent<any, any> {
     public render() {
       return (
         <BrowserRouter>
-          <Switch>
-            ${entryInfo.pageRoutes}
-          </Switch>
+          ${layoutContent(entryInfo)}
         </BrowserRouter>
       )
     }
@@ -38,11 +56,16 @@ const entryFileContent = (entryInfo: IEntryInfo) => `
 export async function createEntry(info: Info, projectRootPath: string) {
   const entryInfo: IEntryInfo = {
     pageImporter: "",
-    pageRoutes: ""
+    pageRoutes: "",
+    layoutImporter: ""
   }
 
+  // Set routes
   info.routes.forEach(route => {
-    const componentName = "Page" + md5(route.filePath)
+    const filePath = path.parse(route.filePath)
+    const relativePageFilePath = path.relative(projectRootPath, filePath.dir + "/" + filePath.name)
+    const componentName = relativePageFilePath.split("/").join("_")
+
     const pathInfo = path.parse(route.filePath)
     entryInfo.pageImporter += `
       const ${componentName} = Loadable({
@@ -52,6 +75,12 @@ export async function createEntry(info: Info, projectRootPath: string) {
     `
     entryInfo.pageRoutes += `<Route exact path="/${route.path}" component={${componentName}} />\n`
   })
+
+  // Set layout
+  if (info.layout) {
+    const layoutPath = path.parse(info.layout.filePath)
+    entryInfo.layoutImporter = `import LayoutComponent from "${path.join(layoutPath.dir, layoutPath.name)}"`
+  }
 
   // Create entry tsx file
   const entryPath = path.join(projectRootPath, ".temp/entry.tsx")

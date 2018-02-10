@@ -1,5 +1,5 @@
 import { execSync } from "child_process"
-import * as fs from "fs"
+import * as fs from "fs-extra"
 import * as path from "path"
 import { analyseProject } from "../../utils/analyse-project"
 import { createEntry } from "../../utils/create-entry"
@@ -24,4 +24,35 @@ export const CommandBuild = async () => {
     stdio: "inherit",
     cwd: __dirname
   });
+
+  createEntryHtmlFile("/entry.js")
+}
+
+function createEntryHtmlFile(entryPath: string) {
+  const htmlPath = path.join(projectRootPath, "dist/index.html")
+
+  fs.outputFileSync(htmlPath, `
+    <html>
+
+    <head>
+      <title>Pri dev</title>
+
+      <style>
+        html,
+        body {
+          margin: 0;
+          padding: 0;
+        }
+      </style>
+    </head>
+
+    <body>
+      <div id="root"></div>
+      <script src="${entryPath}"></script>
+    </body>
+
+    </html>
+  `)
+
+  return htmlPath
 }

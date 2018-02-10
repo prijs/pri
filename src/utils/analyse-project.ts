@@ -20,6 +20,9 @@ export class Info {
     filePath: string
     isIndex: boolean
   }> = []
+  public layout: {
+    filePath: string
+  } | null = null
 }
 
 function walkProject(projectRootPath: string): Promise<Info> {
@@ -41,9 +44,9 @@ function walkProject(projectRootPath: string): Promise<Info> {
       }
 
       const layoutInfo = judgeLayoutFile(projectRootPath, root, fileStats)
-      // if (layoutInfo) {
-
-      // }
+      if (layoutInfo) {
+        info.layout = layoutInfo
+      }
 
       next()
     });
@@ -85,5 +88,14 @@ function judgeLayoutFile(projectRootPath: string, dir: string, fileStats: WalkSt
     return null
   }
 
-  const prefix = path.relative(LAYTOU_ROOT, relativePath)
+  const pathInfo = path.parse(fileStats.name)
+
+  // Use index file
+  if (relativePath === LAYTOU_ROOT && pathInfo.name === "index") {
+    return {
+      filePath: path.join(dir, fileStats.name)
+    }
+  }
+
+  return null
 }

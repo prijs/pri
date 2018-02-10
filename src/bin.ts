@@ -7,6 +7,7 @@ import * as pkg from "../package.json"
 
 import { CommandBuild } from "./commands/build"
 import { CommandDev } from "./commands/dev"
+import { CommandPreview } from "./commands/preview"
 
 /**
  * -V --version
@@ -18,16 +19,23 @@ commander.version(pkg.version, "-v, --version");
  */
 const DEV = "dev"
 commander.command(DEV)
-  .description("Develop your project")
-  .action(async (cardName: string) => {
+  .description("Develop your project.")
+  .action(async () => {
     await CommandDev()
   });
 
 const BUILD = "build"
 commander.command(BUILD)
-  .description("Pack your project")
-  .action(async (cardName: string) => {
+  .description("Pack your project.")
+  .action(async () => {
     await CommandBuild()
+  });
+
+const PREVIEW = "preview"
+commander.command(PREVIEW)
+  .description("Preview your project in production mode.")
+  .action(async () => {
+    await CommandPreview()
   });
 
 /**

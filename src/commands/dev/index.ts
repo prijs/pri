@@ -1,4 +1,4 @@
-import { execSync } from "child_process"
+import { execSync, fork } from "child_process"
 import * as fs from "fs-extra"
 import * as open from "opn";
 import * as path from "path"
@@ -24,10 +24,13 @@ export const CommandDev = async () => {
   const htmlEntryPath = createEntryHtmlFile(entryPath)
 
   const validatePort = await portfinder.getPortPromise()
-  open(`http://localhost:${validatePort}`);
+
+  open(`https://localhost:${validatePort}`);
+
+  fork(path.join(__dirname, "re-create-entry.js"))
 
   // Run parcel
-  execSync(`${findNearestNodemodules()}/.bin/parcel --port ${validatePort} ${htmlEntryPath}`, {
+  execSync(`${findNearestNodemodules()}/.bin/parcel serve --https --port ${validatePort} ${htmlEntryPath}`, {
     stdio: "inherit",
     cwd: __dirname
   });

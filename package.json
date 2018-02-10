@@ -30,6 +30,7 @@
     "@types/update-notifier": "^2.0.0",
     "@types/yargs": "^10.0.1",
     "babel-preset-env": "^1.6.1",
+    "chokidar": "^2.0.1",
     "colors": "^1.1.2",
     "commander": "^2.13.0",
     "fs-extra": "^5.0.0",
@@ -48,6 +49,7 @@
     "typescript": "^2.7.1",
     "update-notifier": "^2.3.0",
     "walk": "^2.3.9",
-    "yargs": "^11.0.0"
+    "yargs": "^11.0.0",
+    "@types/chokidar": "^1.7.4"
   }
 }
