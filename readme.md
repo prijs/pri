@@ -66,7 +66,7 @@ The project from development to release, you may only need one package: `pri`.
   
   <p>
 
-  After install `pri`, tslint has been installed, and after run `pri init`, `tslint.json` will be automatic created.
+  After the `pri` is installed, the tslint will take effect automatically.
 
   </p>
 
@@ -74,7 +74,37 @@ The project from development to release, you may only need one package: `pri`.
 
 <details>
   <summary>Ensure project files.</summary>
-  TODO
+  
+  <p>
+  
+  After any of this three commands are executed: `npm start|build|preview`, will create following files automatically:
+
+  **.gitignore**
+
+  Ensure that `.gitignore` has some basic rules: `node_modules` `dist` and so on.
+
+  **tsconfig.json**
+
+  Ensure that typescript working.
+
+  **tslint.json**
+
+  Ensure uniform code inspection rules.
+
+  **.babelrc**
+
+  Everyone likes `babel`.
+
+  **package.json**
+
+  Ensure `package.json` has these npm scripts: `npm start|build|preview`.
+
+  **.vscode**
+
+  Ensure that developers have a unified editor experience.
+  
+  </p>
+
 </details>
 
 <details>
