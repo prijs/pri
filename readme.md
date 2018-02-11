@@ -144,7 +144,7 @@ The project from development to release, you may only need one package: `pri`.
 
 </details>
 
-TODO:
+## TODO
 
 - Static file serving.
 - PWA support.
