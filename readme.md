@@ -1,8 +1,6 @@
 # Pri
 
-The project from development to on-line, you map only need one npm dependency, it not only the cli, but also providing many package exports.
-
-You can both use `pri` with cli - `pri build`, and npm package - `import { React } from "pri"`
+The project from development to release, you may only need one package: `pri`.
 
 ## Features
 
