@@ -22,17 +22,22 @@ A project from development to release, you may only need one package: `pri`.
 </details>
 
 <details>
-  <summary>Layouts.</summary>
+  <summary>Support layouts.</summary>
 
   <p>
   
-  Populate `.src/pages/index.tsx` inside your project:
+  Populate `.src/layouts/index.tsx` inside your project:
 
   ```typescript
-  export default () => <div>Hello pri!</div>
+  export default (props: React.Props<any>) => (
+    <div>
+      <p>Layout header</p>
+      {props.children}
+    </div>
+  )
   ```
 
-  Then, just run `npm start`, this page will be seen in the automatically opened window.
+  This file will automatically become the layout file, and `props.children` are the content of the files in `./src/pages`
   
   </p>
 
