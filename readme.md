@@ -22,7 +22,7 @@ npx pri init
 
 <details>
   <summary>
-  No `npx`?
+  No <code>npx</code>?
   </summary>
 
   <p>
