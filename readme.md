@@ -11,9 +11,10 @@ The project from development to release, you may only need one package: `pri`.
 
 <details>
   <summary>Automatic code splitting.</summary>
-  As long as there are two or more files under `pages`, the code splitting function will be automatically opened.
+  
+  > As long as there are two or more files under `pages`, the code splitting function will be automatically opened.
 
-  We will automatically generate the following routing:
+  > We will automatically generate the following routing:
 
   ```typescript
   const srcPagesIndex = Loadable({
