@@ -75,6 +75,39 @@ A project from development to release, you may only need one package: `pri`.
 </details>
 
 <details>
+  <summary>Dynamic import.</summary>
+  
+  <p>
+
+  **Dynamic package**
+
+  ```typescript
+  async function mergeObject(source: object, target: object) {
+    const _ = await import("lodash")
+    return _.mergeDeep(source, target)
+  }
+  ```
+
+  **Dynamic component**
+
+  ```typescript
+  import { Loadable } from "pri"
+
+  function renderDynamicPage() {
+    const page = Loadable({
+      loader: () => import("../components/some-page"),
+      loading: () => <div>loading..</div>
+    })
+  }
+  ```
+
+  See more in [react-loadable](https://github.com/thejameskyle/react-loadable).
+
+  </p>
+
+</details>
+
+<details>
   <summary>Automatic HMR and watching files.</summary>
   
   <p>
@@ -190,6 +223,7 @@ A project from development to release, you may only need one package: `pri`.
 - PWA support.
 - Tree Shaking.
 - Scope Hoist.
+- Prefetch router.
 
 ## Usage
 
