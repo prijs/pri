@@ -21,9 +21,13 @@ npx pri init
 ```
 
 <details>
-  <summary>If you haven't `npx` cli, you can copy following npm scripts into `package.json`.</summary>
+  <summary>
+  I haven't `npx`?
+  </summary>
 
   <p>
+
+  If you haven't `npx` cli, you can copy following npm scripts into `package.json`:
   
   ```json
   "scripts": {
@@ -32,6 +36,8 @@ npx pri init
     "preview": "pri preview"
   }
   ```
+
+  Or, upgrade your `npm`!
   
   </p>
 
