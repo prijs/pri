@@ -8,13 +8,13 @@ The project from development to release, you may only need one package: `pri`.
   <p>
   <summary>Pages are routes.</summary>
   
-  > Populate `.src/pages/index.tsx` inside your project:
+  Populate `.src/pages/index.tsx` inside your project:
 
   ```typescript
   export default () => <div>Hello pri!</div>
   ```
 
-  > Then, just run `npm start`, this page will be seen in  the automatically opened window.
+  Then, just run `npm start`, this page will be seen in  the automatically opened window.
   </p>
 
 </details>
@@ -22,9 +22,10 @@ The project from development to release, you may only need one package: `pri`.
 <details>
   <summary>Automatic code splitting.</summary>
   
+  <p>
   > As long as there are two or more files under `pages`, the code splitting function will be automatically opened.
-  >
-  > We will automatically generate the following routing:
+  
+  We will automatically generate the following routing:
 
   ```typescript
   const srcPagesIndex = Loadable({
@@ -37,25 +38,30 @@ The project from development to release, you may only need one package: `pri`.
     loading: () => null
   })
   ```
+  </p>
 
 </details>
 
 <details>
   <summary>Typescript first.</summary>
   
-  > `Pri` is written by typescript, so it's easy to use in typescript:
+  <p>
+  `Pri` is written by typescript, so it's easy to use in typescript:
 
   ```typescript
   // pages/index.tsx
   import { React } from "pri"
   ```
+  </p>
 
 </details>
 
 <details>
   <summary>TSlint support.</summary>
   
-  > After install `pri`, tslint has been installed, and after run `pri init`, `tslint.json` will be automatic created.
+  <p>
+  After install `pri`, tslint has been installed, and after run `pri init`, `tslint.json` will be automatic created.
+  </p>
 
 </details>
 
