@@ -13,6 +13,7 @@ The project from development to release, you may only need one package: `pri`.
   <summary>Automatic code splitting.</summary>
   
   > As long as there are two or more files under `pages`, the code splitting function will be automatically opened.
+  >
   > We will automatically generate the following routing:
 
   ```typescript
@@ -26,7 +27,7 @@ The project from development to release, you may only need one package: `pri`.
     loading: () => null
   })
   ```
-  
+
 </details>
 
 <details>
