@@ -14,7 +14,7 @@ The project from development to release, you may only need one package: `pri`.
   export default () => <div>Hello pri!</div>
   ```
 
-  Then, just run `npm start`, this page will be seen in  the automatically opened window.
+  Then, just run `npm start`, this page will be seen in the automatically opened window.
   </p>
 
 </details>
@@ -23,10 +23,10 @@ The project from development to release, you may only need one package: `pri`.
   <summary>Automatic code splitting.</summary>
   
   <p>
+
+  > As long as there are two or more files under `pages`, will automatically use code splitting.
   
-  > As long as there are two or more files under `pages`, the code splitting function will be automatically opened.
-  
-  We will automatically generate the following routing:
+  We will automatically generate the following routing in `.temp` folder:
 
   ```typescript
   const srcPagesIndex = Loadable({
