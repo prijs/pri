@@ -2,7 +2,49 @@
 
 A project from development to release, you may only need one package: `pri`.
 
-## Features
+## How to use
+
+### Setup
+
+First, create an empty folder:
+
+```shell
+mkdir test; cd test
+npm init
+npm i pri --save
+```
+
+Then, init the pri project:
+
+```shell
+npx pri init
+```
+
+If you haven't `npx` cli, you can copy following npm scripts into `package.json`:
+
+```json
+"scripts": {
+  "start": "pri",
+  "build": "pri build",
+  "preview": "pri preview"
+}
+```
+
+All the preparations have been completed!
+
+#### npm start
+
+Run dev server in development mode with files watching and HMR.
+
+#### npm run preview
+
+Preview in production mode, won't watch files change.
+
+#### npm run build
+
+Production deployment. By default the dist folder is `./dist`.
+
+### Usage
 
 <details>
   <summary>Pages are routes.</summary>
@@ -46,6 +88,8 @@ A project from development to release, you may only need one package: `pri`.
   </p>
 
 </details>
+
+## Features
 
 <details>
   <summary>Typescript first.</summary>
@@ -93,11 +137,13 @@ A project from development to release, you may only need one package: `pri`.
   ```typescript
   import { Loadable } from "pri"
 
+  const SomePage = Loadable({
+    loader: () => import("../components/some-page"),
+    loading: () => <div>loading..</div>
+  })
+
   function renderDynamicPage() {
-    const page = Loadable({
-      loader: () => import("../components/some-page"),
-      loading: () => <div>loading..</div>
-    })
+    return <SomePage />
   }
   ```
 
@@ -224,43 +270,3 @@ A project from development to release, you may only need one package: `pri`.
 - Tree Shaking.
 - Scope Hoist.
 - Prefetch router.
-
-## Usage
-
-First, create an empty folder:
-
-```shell
-mkdir test; cd test
-npm init
-npm i pri --save
-```
-
-Then, init the pri project:
-
-```shell
-npx pri init
-```
-
-If you haven't `npx` cli, you can copy following npm scripts into `package.json`:
-
-```json
-"scripts": {
-  "start": "pri",
-  "build": "pri build",
-  "preview": "pri preview"
-}
-```
-
-All the preparations have been completed!
-
-### npm start
-
-Run dev server in development mode with files watching and HMR.
-
-### npm run preview
-
-Preview in production mode, won't watch files change.
-
-### npm run build
-
-Production deployment. By default the dist folder is `./dist`.
