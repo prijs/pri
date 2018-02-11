@@ -11,7 +11,7 @@ import { findNearestNodemodules } from "../../utils/npm-finder"
 
 const projectRootPath = process.cwd();
 
-export const CommandUpdateDirStructure = async () => {
+export const CommandInit = async () => {
   await spinner("Ensure project files", async () => {
     ensureFiles(projectRootPath)
   })

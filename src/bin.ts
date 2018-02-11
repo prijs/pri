@@ -7,8 +7,8 @@ import * as pkg from "../package.json"
 
 import { CommandBuild } from "./commands/build"
 import { CommandDev } from "./commands/dev"
+import { CommandInit } from "./commands/init"
 import { CommandPreview } from "./commands/preview"
-import { CommandUpdateDirStructure } from "./commands/update-dir-structure"
 
 /**
  * -V --version
@@ -39,10 +39,10 @@ commander.command(PREVIEW)
     await CommandPreview()
   });
 
-const UPDATE_DIR_STRUCTURE = "update-dir-structure"
-commander.command(UPDATE_DIR_STRUCTURE)
+const INIT = "init"
+commander.command(INIT)
   .action(async () => {
-    await CommandUpdateDirStructure()
+    await CommandInit()
   });
 
 /**

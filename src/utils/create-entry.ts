@@ -29,10 +29,7 @@ const layoutContent = (entryInfo: IEntryInfo) => {
 
 // Entry file content
 const entryFileContent = (entryInfo: IEntryInfo) => `
-  import * as React from "react"
-  import * as ReactDOM from "react-dom"
-  import Loadable from "react-loadable"
-  import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom"
+  import { BrowserRouter, Loadable, React, ReactDOM, Redirect, Route, Switch } from "pri"
 
   ${entryInfo.layoutImporter}
   ${entryInfo.pageImporter}
