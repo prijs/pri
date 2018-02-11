@@ -15,6 +15,7 @@ The project from development to release, you may only need one package: `pri`.
   ```
 
   Then, just run `npm start`, this page will be seen in the automatically opened window.
+  
   </p>
 
 </details>
@@ -39,6 +40,7 @@ The project from development to release, you may only need one package: `pri`.
     loading: () => null
   })
   ```
+
   </p>
 
 </details>
@@ -47,12 +49,14 @@ The project from development to release, you may only need one package: `pri`.
   <summary>Typescript first.</summary>
   
   <p>
+
   `Pri` is written by typescript, so it's easy to use in typescript:
 
   ```typescript
   // pages/index.tsx
   import { React } from "pri"
   ```
+
   </p>
 
 </details>
@@ -61,7 +65,9 @@ The project from development to release, you may only need one package: `pri`.
   <summary>TSlint support.</summary>
   
   <p>
+
   After install `pri`, tslint has been installed, and after run `pri init`, `tslint.json` will be automatic created.
+
   </p>
 
 </details>
