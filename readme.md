@@ -1,12 +1,13 @@
 # Pri
 
-The project from development to release, you may only need one package: `pri`.
+A project from development to release, you may only need one package: `pri`.
 
 ## Features
 
 <details>
-  <p>
   <summary>Pages are routes.</summary>
+
+  <p>
   
   Populate `.src/pages/index.tsx` inside your project:
 
@@ -21,26 +22,18 @@ The project from development to release, you may only need one package: `pri`.
 </details>
 
 <details>
-  <summary>Automatic code splitting.</summary>
-  
-  <p>
+  <summary>Layouts.</summary>
 
-  > As long as there are two or more files under `pages`, will automatically use code splitting.
+  <p>
   
-  We will automatically generate the following routing in `.temp` folder:
+  Populate `.src/pages/index.tsx` inside your project:
 
   ```typescript
-  const srcPagesIndex = Loadable({
-    loader: () => import("..."),
-    loading: () => null
-  })
-
-  const srcPagesOther = Loadable({
-    loader: () => import("..."),
-    loading: () => null
-  })
+  export default () => <div>Hello pri!</div>
   ```
 
+  Then, just run `npm start`, this page will be seen in the automatically opened window.
+  
   </p>
 
 </details>
@@ -73,7 +66,45 @@ The project from development to release, you may only need one package: `pri`.
 </details>
 
 <details>
-  <summary>Ensure project files.</summary>
+  <summary>Automatic HMR and watching files.</summary>
+  
+  <p>
+
+  After run `npm start`, the develop server support HMR.
+
+  And when you add or delete any files in `src/pages` or `src/layouts`, new routes will automatically create, you don't need to restart the command.
+
+  </p>
+
+</details>
+
+<details>
+  <summary>Automatic code splitting.</summary>
+  
+  <p>
+
+  > As long as there are two or more files under `pages`, will automatically use code splitting.
+  
+  We will automatically generate the following routing in `.temp` folder:
+
+  ```typescript
+  const srcPagesIndex = Loadable({
+    loader: () => import("..."),
+    loading: () => null
+  })
+
+  const srcPagesOther = Loadable({
+    loader: () => import("..."),
+    loading: () => null
+  })
+  ```
+
+  </p>
+
+</details>
+
+<details>
+  <summary>Automatic Ensure project files.</summary>
   
   <p>
   
