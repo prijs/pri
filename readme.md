@@ -15,7 +15,11 @@ A project from development to release, you may only need one package: `pri`.
   export default () => <div>Hello pri!</div>
   ```
 
-  Then, just run `npm start`, this page will be seen in the automatically opened window.
+  Then, just run `npm start`, this home page will route to `/`.
+
+  **Routes**
+
+  Routes will be automatically created by the file's path in `./src/pages`. For example, file `./src/pages/user/about.tsx` will be found in route `/user/about`.
   
   </p>
 
