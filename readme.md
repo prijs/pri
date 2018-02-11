@@ -5,8 +5,18 @@ The project from development to release, you may only need one package: `pri`.
 ## Features
 
 <details>
+  <p>
   <summary>Pages are routes.</summary>
-  TODO
+  
+  > Populate `.src/pages/index.tsx` inside your project:
+
+  ```typescript
+  export default () => <div>Hello pri!</div>
+  ```
+
+  > Then, just run `npm start`, this page will be seen in  the automatically opened window.
+  </p>
+
 </details>
 
 <details>
@@ -33,7 +43,7 @@ The project from development to release, you may only need one package: `pri`.
 <details>
   <summary>Typescript first.</summary>
   
-  > Pri is written by typescript, so it's easy to use in typescript:
+  > `Pri` is written by typescript, so it's easy to use in typescript:
 
   ```typescript
   // pages/index.tsx
@@ -44,7 +54,9 @@ The project from development to release, you may only need one package: `pri`.
 
 <details>
   <summary>TSlint support.</summary>
-  TODO
+  
+  > After install `pri`, tslint has been installed, and after run `pri init`, `tslint.json` will be automatic created.
+
 </details>
 
 <details>
@@ -53,8 +65,8 @@ The project from development to release, you may only need one package: `pri`.
 </details>
 
 <details>
-  <summary>Source Map.</summary>
-  You can see output like this: `index.tsx:3`.
+  <summary>Automatic pick shared module.</summary>
+  TODO
 </details>
 
 TODO:
@@ -62,6 +74,7 @@ TODO:
 - Static file serving.
 - PWA support.
 - Tree Shaking.
+- Scope Hoist.
 
 ## Usage
 
