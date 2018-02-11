@@ -4,6 +4,7 @@ import * as walk from "walk"
 
 const PAGE_ROOT = "src/pages"
 const LAYTOU_ROOT = "src/layouts"
+const NOTFOUND_PATH = "src/404"
 
 export const analyseProject = async (projectRootPath: string) => {
   const info = await walkProject(projectRootPath)
@@ -21,6 +22,9 @@ export class Info {
     isIndex: boolean
   }> = []
   public layout: {
+    filePath: string
+  } | null = null
+  public notFound: {
     filePath: string
   } | null = null
 }
@@ -46,6 +50,11 @@ function walkProject(projectRootPath: string): Promise<Info> {
       const layoutInfo = judgeLayoutFile(projectRootPath, root, fileStats)
       if (layoutInfo) {
         info.layout = layoutInfo
+      }
+
+      const notFoundInfo = judgeNotFoundFile(projectRootPath, root, fileStats)
+      if (notFoundInfo) {
+        info.notFound = notFoundInfo
       }
 
       next()
@@ -92,6 +101,19 @@ function judgeLayoutFile(projectRootPath: string, dir: string, fileStats: WalkSt
 
   // Use index file
   if (relativePath === LAYTOU_ROOT && pathInfo.name === "index") {
+    return {
+      filePath: path.join(dir, fileStats.name)
+    }
+  }
+
+  return null
+}
+
+function judgeNotFoundFile(projectRootPath: string, dir: string, fileStats: WalkStats) {
+  const relativePath = path.relative(projectRootPath, dir)
+  const pathInfo = path.parse(fileStats.name)
+
+  if (path.join(relativePath, pathInfo.dir, pathInfo.name) === NOTFOUND_PATH) {
     return {
       filePath: path.join(dir, fileStats.name)
     }

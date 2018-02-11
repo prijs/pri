@@ -7,24 +7,8 @@ interface IEntryInfo {
   pageImporter: string
   pageRoutes: string
   layoutImporter: string
-}
-
-const layoutContent = (entryInfo: IEntryInfo) => {
-  if (entryInfo.layoutImporter) {
-    return `
-      <LayoutComponent>
-        <Switch>
-          ${entryInfo.pageRoutes}
-        </Switch>
-      </LayoutComponent>
-    `
-  } else {
-    return `
-      <Switch>
-        ${entryInfo.pageRoutes}
-      </Switch>
-    `
-  }
+  notFoundImporter: string
+  notFoundRoute: string
 }
 
 // Entry file content
@@ -32,13 +16,17 @@ const entryFileContent = (entryInfo: IEntryInfo) => `
   import { BrowserRouter, Loadable, React, ReactDOM, Redirect, Route, Switch } from "pri"
 
   ${entryInfo.layoutImporter}
+  ${entryInfo.notFoundImporter}
   ${entryInfo.pageImporter}
 
   class Root extends React.PureComponent<any, any> {
     public render() {
       return (
         <BrowserRouter>
-          ${layoutContent(entryInfo)}
+          <Switch>
+            ${entryInfo.pageRoutes}
+            ${entryInfo.notFoundRoute}
+          </Switch>
         </BrowserRouter>
       )
     }
@@ -54,7 +42,9 @@ export async function createEntry(info: Info, projectRootPath: string) {
   const entryInfo: IEntryInfo = {
     pageImporter: "",
     pageRoutes: "",
-    layoutImporter: ""
+    layoutImporter: "",
+    notFoundImporter: "",
+    notFoundRoute: ""
   }
 
   // Set routes
@@ -79,13 +69,36 @@ export async function createEntry(info: Info, projectRootPath: string) {
       `
     }
 
-    entryInfo.pageRoutes += `<Route exact path="/${route.path}" component={${componentName}} />\n`
+    const routeComponent = info.layout ? "LayoutRoute" : "Route"
+
+    entryInfo.pageRoutes += `<${routeComponent} exact path="/${route.path}" component={${componentName}} />\n`
   })
 
   // Set layout
   if (info.layout) {
     const layoutPath = path.parse(info.layout.filePath)
-    entryInfo.layoutImporter = `import LayoutComponent from "${path.join(layoutPath.dir, layoutPath.name)}"`
+    entryInfo.layoutImporter = `
+      import LayoutComponent from "${path.join(layoutPath.dir, layoutPath.name)}"
+
+      const LayoutRoute = ({ component: Component, ...rest }) => {
+        return (
+          <Route {...rest} render={matchProps => (
+            <LayoutComponent>
+              <Component {...matchProps} />
+            </LayoutComponent>
+          )} />
+        )
+      };\n
+    `
+  }
+
+  // Set not found
+  if (info.notFound) {
+    const notFoundPath = path.parse(info.notFound.filePath)
+    entryInfo.notFoundImporter = `import NotFoundComponent from "${path.join(notFoundPath.dir, notFoundPath.name)}"`
+    entryInfo.notFoundRoute = `
+      <Route component={NotFoundComponent} />
+    `
   }
 
   // Create entry tsx file

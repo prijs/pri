@@ -65,6 +65,7 @@ Production deployment. By default the dist folder is `./dist`.
   Populate `.src/pages/index.tsx` inside your project:
 
   ```typescript
+  import { React } from "pri"
   export default () => <div>Hello pri!</div>
   ```
 
@@ -86,6 +87,8 @@ Production deployment. By default the dist folder is `./dist`.
   Populate `.src/layouts/index.tsx` inside your project:
 
   ```typescript
+  import { React } from "pri"
+
   export default (props: React.Props<any>) => (
     <div>
       <p>Layout header</p>
@@ -99,6 +102,32 @@ Production deployment. By default the dist folder is `./dist`.
   </p>
 
 </details>
+
+<details>
+  <summary>Page not found.</summary>
+  
+  <p>
+
+  Populate `.src/404.tsx` inside your project:
+
+  ```typescript
+  import { React } from "pri"
+
+  export default () => (
+    <div>
+      Page not found!
+    </div>
+  )
+  ```
+
+  </p>
+
+</details>
+
+#### TODO
+
+- Static file serving.
+- Testing.
 
 ## Features
 
@@ -276,7 +305,6 @@ Production deployment. By default the dist folder is `./dist`.
 
 ### TODO
 
-- Static file serving.
 - PWA support.
 - Tree Shaking.
 - Scope Hoist.
