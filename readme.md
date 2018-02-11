@@ -274,7 +274,7 @@ Production deployment. By default the dist folder is `./dist`.
 
 </details>
 
-## TODO
+### TODO
 
 - Static file serving.
 - PWA support.
