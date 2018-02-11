@@ -171,7 +171,7 @@ If you haven't `npx` cli, you can copy following npm scripts into `package.json`
 
 ```json
 "scripts": {
-  "start": "pri dev",
+  "start": "pri",
   "build": "pri build",
   "preview": "pri preview"
 }
@@ -181,12 +181,12 @@ All the preparations have been completed!
 
 ### npm start
 
-TODO
+Run dev server in development mode with files watching and HMR.
 
 ### npm run preview
 
-TODO
+Preview in production mode, won't watch files change.
 
 ### npm run build
 
-TODO
+Production deployment. By default the dist folder is `./dist`.

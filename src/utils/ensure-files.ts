@@ -114,7 +114,7 @@ function ensureTslint(projectRootPath: string) {
 function ensurePackageJson(projectRootPath: string) {
   const filePath = path.join(projectRootPath, "package.json")
   const ensureScripts = {
-    start: "pri dev",
+    start: "pri",
     build: "pri build",
     preview: "pri preview"
   }
