@@ -10,13 +10,22 @@ The project from development to release, you may only need one package: `pri`.
 </details>
 
 <details>
-  <summary>Tree Shake.</summary>
-  TODO
-</details>
-
-<details>
   <summary>Automatic code splitting.</summary>
-  TODO
+  As long as there are two or more files under `pages`, the code splitting function will be automatically opened.
+
+  We will automatically generate the following routing:
+
+  ```typescript
+  const srcPagesIndex = Loadable({
+    loader: () => import("..."),
+    loading: () => null
+  })
+
+  const srcPagesOther = Loadable({
+    loader: () => import("..."),
+    loading: () => null
+  })
+  ```
 </details>
 
 <details>
@@ -34,10 +43,16 @@ The project from development to release, you may only need one package: `pri`.
   TODO
 </details>
 
+<details>
+  <summary>Source Map.</summary>
+  You can see output like this: `index.tsx:3`.
+</details>
+
 TODO:
 
 - Static file serving.
 - PWA support.
+- Tree Shaking.
 
 ## Usage
 

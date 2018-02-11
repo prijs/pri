@@ -64,12 +64,21 @@ export async function createEntry(info: Info, projectRootPath: string) {
     const componentName = relativePageFilePath.split("/").join("_")
 
     const pathInfo = path.parse(route.filePath)
-    entryInfo.pageImporter += `
-      const ${componentName} = Loadable({
-        loader: () => import("${path.join(pathInfo.dir, pathInfo.name)}"),
-        loading: () => null
-      })\n
-    `
+
+    if (info.routes.length < 2) {
+      // If only one page, don't need code splitting.
+      entryInfo.pageImporter += `
+        import ${componentName} from "${path.join(pathInfo.dir, pathInfo.name)}"
+      `
+    } else {
+      entryInfo.pageImporter += `
+        const ${componentName} = Loadable({
+          loader: () => import("${path.join(pathInfo.dir, pathInfo.name)}"),
+          loading: () => null
+        })\n
+      `
+    }
+
     entryInfo.pageRoutes += `<Route exact path="/${route.path}" component={${componentName}} />\n`
   })
 

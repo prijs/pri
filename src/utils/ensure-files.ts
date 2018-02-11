@@ -1,4 +1,4 @@
-import * as fs from "fs"
+import * as fs from "fs-extra"
 import * as _ from "lodash"
 import * as path from "path"
 
@@ -8,6 +8,7 @@ export const ensureFiles = (projectRootPath: string) => {
   ensureBabelrc(projectRootPath)
   ensureTslint(projectRootPath)
   ensurePackageJson(projectRootPath)
+  ensureVscode(projectRootPath)
 }
 
 function ensureGitignore(projectRootPath: string) {
@@ -40,7 +41,7 @@ function ensureTsconfig(projectRootPath: string) {
       moduleResolution: "node",
       strict: true,
       jsx: "react",
-      target: "es5",
+      target: "es6",
       lib: [
         "dom",
         "es5",
@@ -132,4 +133,22 @@ function ensurePackageJson(projectRootPath: string) {
   _.merge(exitFileContent.scripts || {}, ensureScripts)
 
   fs.writeFileSync(filePath, JSON.stringify(exitFileContent, null, 2))
+}
+
+function ensureVscode(projectRootPath: string) {
+  const filePath = path.join(projectRootPath, ".vscode/settings.json")
+  const ensureContent = {
+    "editor.formatOnPaste": true,
+    "editor.formatOnType": true,
+    "editor.formatOnSave": true,
+    "files.autoSave": "onFocusChange",
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "editor.tabSize": 2,
+    "beautify.tabSize": 2,
+    "tslint.autoFixOnSave": true,
+    "tslint.ignoreDefinitionFiles": false,
+    "tslint.exclude": "**/node_modules/**/*"
+  }
+
+  fs.outputFileSync(filePath, JSON.stringify(ensureContent, null, 2))
 }
