@@ -20,17 +20,22 @@ Then, init the pri project:
 npx pri init
 ```
 
-If you haven't `npx` cli, you can copy following npm scripts into `package.json`:
+<details>
+  <summary>If you haven't `npx` cli, you can copy following npm scripts into `package.json`.</summary>
 
-```json
-"scripts": {
-  "start": "pri",
-  "build": "pri build",
-  "preview": "pri preview"
-}
-```
+  <p>
+  
+  ```json
+  "scripts": {
+    "start": "pri",
+    "build": "pri build",
+    "preview": "pri preview"
+  }
+  ```
+  
+  </p>
 
-All the preparations have been completed!
+</details>
 
 #### npm start
 
