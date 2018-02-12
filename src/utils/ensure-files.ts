@@ -1,7 +1,7 @@
 import * as fs from "fs-extra"
 import * as _ from "lodash"
 import * as path from "path"
-import { IConfig } from "./project-config"
+import { IConfig } from "./project-config-interface"
 
 export const ensureFiles = (projectRootPath: string, config: IConfig) => {
   ensureGitignore(projectRootPath, config)

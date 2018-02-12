@@ -11,7 +11,8 @@ import { getConfig } from "../../utils/project-config"
 const projectRootPath = process.cwd();
 
 export const CommandBuild = async () => {
-  const config = getConfig(projectRootPath, "prod")
+  const env = "prod"
+  const config = getConfig(projectRootPath, env)
 
   await spinner("Ensure project files", async () => {
     ensureFiles(projectRootPath, config)
@@ -19,7 +20,7 @@ export const CommandBuild = async () => {
 
   const entryPath = await spinner("Analyse project", async () => {
     const info = await analyseProject(projectRootPath)
-    return createEntry(info, projectRootPath)
+    return createEntry(info, projectRootPath, env, config)
   })
 
   let publicUrl = ""

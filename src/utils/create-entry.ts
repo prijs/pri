@@ -2,6 +2,7 @@ import * as fs from "fs-extra"
 import * as path from "path"
 import { Info } from "./analyse-project"
 import { md5 } from "./md5"
+import { IConfig } from "./project-config-interface"
 
 interface IEntryInfo {
   pageImporter: string
@@ -9,15 +10,20 @@ interface IEntryInfo {
   layoutImporter: string
   notFoundImporter: string
   notFoundRoute: string
+  setEnv: string
+  setCustomEnv: string
 }
 
 // Entry file content
 const entryFileContent = (entryInfo: IEntryInfo) => `
-  import { BrowserRouter, Loadable, React, ReactDOM, Redirect, Route, Switch } from "pri"
+  import { BrowserRouter, Loadable, React, ReactDOM, Redirect, Route, Switch, setEnvLocal, setEnvProd, setCustomEnv } from "pri"
 
   ${entryInfo.layoutImporter}
   ${entryInfo.notFoundImporter}
   ${entryInfo.pageImporter}
+
+  ${entryInfo.setEnv}
+  ${entryInfo.setCustomEnv}
 
   class Root extends React.PureComponent<any, any> {
     public render() {
@@ -38,13 +44,31 @@ const entryFileContent = (entryInfo: IEntryInfo) => `
   )
 `
 
-export async function createEntry(info: Info, projectRootPath: string) {
+export async function createEntry(info: Info, projectRootPath: string, env: string, config: IConfig) {
   const entryInfo: IEntryInfo = {
     pageImporter: "",
     pageRoutes: "",
     layoutImporter: "",
     notFoundImporter: "",
-    notFoundRoute: ""
+    notFoundRoute: "",
+    setEnv: "",
+    setCustomEnv: ""
+  }
+
+  // Set env
+  switch (env) {
+    case "local":
+      entryInfo.setEnv = `setEnvLocal()`
+      break
+    case "prod":
+      entryInfo.setEnv = `setEnvProd()`
+      break
+    default:
+  }
+
+  // Set custom env
+  if (config.env) {
+    entryInfo.setCustomEnv = `setCustomEnv(JSON.parse(${JSON.stringify(config.env)})`
   }
 
   // Set routes

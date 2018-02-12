@@ -13,7 +13,8 @@ import { getConfig } from "../../utils/project-config"
 const projectRootPath = process.cwd();
 
 export const CommandDev = async () => {
-  const config = getConfig(projectRootPath, "local")
+  const env = "local"
+  const config = getConfig(projectRootPath, env)
 
   await spinner("Ensure project files", async () => {
     ensureFiles(projectRootPath, config)
@@ -21,7 +22,7 @@ export const CommandDev = async () => {
 
   const entryPath = await spinner("Analyse project", async () => {
     const info = await analyseProject(projectRootPath)
-    return createEntry(info, projectRootPath)
+    return createEntry(info, projectRootPath, env, config)
   })
 
   const htmlEntryPath = createEntryHtmlFile(entryPath)
@@ -30,7 +31,7 @@ export const CommandDev = async () => {
 
   open(`https://localhost:${validatePort}`);
 
-  fork(path.join(__dirname, "re-create-entry.js"))
+  fork(path.join(__dirname, "re-create-entry.js"), ["--env", env])
 
   // Run parcel
   execSync(`${findNearestNodemodules()}/.bin/parcel serve --https --port ${validatePort} ${htmlEntryPath}`, {

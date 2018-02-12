@@ -4,23 +4,7 @@ import * as path from "path"
 import * as ts from "typescript"
 import { exec } from "./exec"
 import { findNearestNodemodules } from "./npm-finder"
-
-export class IConfig {
-  /**
-   * Dist dir path when running: npm run build | pri build
-   */
-  public distDir?: string = "dist"
-  /**
-   * Public url path when running: npm run build | pri build
-   */
-  public publicPath?: string | null = null
-  /**
-   * Custom env
-   */
-  public env?: {
-    [key: string]: any
-  }
-}
+import { IConfig } from "./project-config-interface"
 
 export const getConfig = (projectRootPath: string, env: "local" | "prod" | null) => {
   const defaultConfig = new IConfig()
