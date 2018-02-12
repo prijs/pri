@@ -196,7 +196,7 @@ Production deployment. By default the dist folder is `./dist`.
   console.log("Custom env", env.get("theme"))
   ```
 
-  `Pri` has some built in env, like `isLocal` and `isProd`, and you can set your own custom env variable in config files, and get them by using `env.get()`.
+  `Pri` has some built-in env, like `isLocal` and `isProd`, and you can set your own custom env variable in config files, and get them by using `env.get()`.
 
   ```typescript
   // ./src/config/config.default.ts
@@ -210,8 +210,8 @@ Production deployment. By default the dist folder is `./dist`.
   } as ProjectConfig
   ```
 
-  - `npm start`, `env.get()` will get from the map merged by `config.local.ts` and `config.default.ts`
-  - `npm run build`, `env.get()` will get from the map merged by `config.prod.ts` and `config.default.ts`
+  - After running `npm start`, `env.get()` will get from the map merged by `config.local.ts` and `config.default.ts`
+  - After running `npm run build`, `env.get()` will get from the map merged by `config.prod.ts` and `config.default.ts`
 
   </p>
 
