@@ -68,7 +68,7 @@ export async function createEntry(info: Info, projectRootPath: string, env: stri
 
   // Set custom env
   if (config.env) {
-    entryInfo.setCustomEnv = `setCustomEnv(JSON.parse(${JSON.stringify(config.env)})`
+    entryInfo.setCustomEnv = `setCustomEnv(${JSON.stringify(config.env)})`
   }
 
   // Set routes
