@@ -28,7 +28,7 @@ export const CommandBuild = async () => {
   }
 
   // Run parcel
-  execSync(`${findNearestNodemodules()}/.bin/parcel build ${entryPath} --out-dir ${path.join(projectRootPath, config.distDir)} ${publicUrl} --no-cache`, {
+  execSync(`${findNearestNodemodules()}/.bin/parcel build ${entryPath} --out-dir ${path.join(projectRootPath, config.distDir || "dist")} ${publicUrl} --no-cache`, {
     stdio: "inherit",
     cwd: __dirname
   });

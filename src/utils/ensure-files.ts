@@ -16,7 +16,7 @@ function ensureGitignore(projectRootPath: string, config: IConfig) {
   const filePath = path.join(projectRootPath, ".gitignore")
   const ensureContents = [
     "node_modules",
-    config.distDir,
+    config.distDir || "dist",
     ".cache",
     ".vscode",
     ".temp"

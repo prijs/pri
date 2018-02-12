@@ -129,16 +129,18 @@ Production deployment. By default the dist folder is `./dist`.
   
   <p>
 
-  You can create these files to config pri:
+  You can create these files to config `pri`:
   - `./src/config/config.default.ts`.
-  - `./src/config/config.local.ts`. Enable when exec `npm start`.
-  - `./src/config/config.prod.ts`. Enable when exec `npm run build`.
+  - `./src/config/config.local.ts`, enable when exec `npm start`.
+  - `./src/config/config.prod.ts`, enable when exec `npm run build`.
 
   `config.local.ts` and `config.prod.ts` have a higher priority than `config.default.ts`
 
   **Example**
 
   ```typescript
+  // ./src/config/config.default.ts
+
   import { ProjectConfig } from "pri"
 
   export default {
@@ -158,6 +160,12 @@ Production deployment. By default the dist folder is `./dist`.
      * Public url path when running: npm run build | pri build
      */
     public publicPath?: string | null = null
+    /**
+     * Custom env
+     */
+    public env?: {
+      [key: string]: any
+    }
   }
   ```
 
@@ -165,9 +173,52 @@ Production deployment. By default the dist folder is `./dist`.
 
 </details>
 
+<details>
+  <summary>Environment variable.</summary>
+  
+  <p>
+
+  You can use environment variable from `pri`:
+
+  ```typescript
+  // ./src/pages/index.tsx
+
+  import { env } from "pri"
+
+  if (env.isLocal) {
+    console.log("I'm running in local now!")
+  }
+
+  if (env.isProd) {
+    console.log("I'm running in production now!")
+  }
+
+  console.log("Custom env", env.get("theme"))
+  ```
+
+  `Pri` has some built in env, like `isLocal` and `isProd`, and you can set your own custom env variable in config files, and get them by using `env.get()`.
+
+  ```typescript
+  // ./src/config/config.default.ts
+
+  import { ProjectConfig } from "pri"
+
+  export default {
+    env: {
+      theme: "One Dark"
+    }
+  } as ProjectConfig
+  ```
+
+  - `npm start`, `env.get()` will get from the map merged by `config.local.ts` and `config.default.ts`
+  - `npm run build`, `env.get()` will get from the map merged by `config.prod.ts` and `config.default.ts`
+
+  </p>
+
+</details>
+
 #### TODO
 
-- Custom config. exp: public path.
 - Static file serving.
 - Testing.
 

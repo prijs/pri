@@ -14,6 +14,12 @@ export class IConfig {
    * Public url path when running: npm run build | pri build
    */
   public publicPath?: string | null = null
+  /**
+   * Custom env
+   */
+  public env?: {
+    [key: string]: any
+  }
 }
 
 export const getConfig = (projectRootPath: string, env: "local" | "prod" | null) => {
