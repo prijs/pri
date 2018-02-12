@@ -1,9 +1,10 @@
 import * as fs from "fs-extra"
 import * as _ from "lodash"
 import * as path from "path"
+import { IConfig } from "./project-config"
 
-export const ensureFiles = (projectRootPath: string) => {
-  ensureGitignore(projectRootPath)
+export const ensureFiles = (projectRootPath: string, config: IConfig) => {
+  ensureGitignore(projectRootPath, config)
   ensureTsconfig(projectRootPath)
   ensureBabelrc(projectRootPath)
   ensureTslint(projectRootPath)
@@ -11,11 +12,11 @@ export const ensureFiles = (projectRootPath: string) => {
   ensureVscode(projectRootPath)
 }
 
-function ensureGitignore(projectRootPath: string) {
+function ensureGitignore(projectRootPath: string, config: IConfig) {
   const filePath = path.join(projectRootPath, ".gitignore")
   const ensureContents = [
     "node_modules",
-    "dist",
+    config.distDir,
     ".cache",
     ".vscode",
     ".temp"
@@ -104,7 +105,8 @@ function ensureTslint(projectRootPath: string) {
       "no-implicit-dependencies": [
         true,
         "dev"
-      ]
+      ],
+      "no-object-literal-type-assertion": false
     }
   }
 

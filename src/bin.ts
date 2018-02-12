@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import * as colors from "colors"
 import * as commander from "commander";
 import * as updateNotifier from "update-notifier"
 
@@ -9,6 +10,8 @@ import { CommandBuild } from "./commands/build"
 import { CommandDev } from "./commands/dev"
 import { CommandInit } from "./commands/init"
 import { CommandPreview } from "./commands/preview"
+
+import { log } from "./utils/log"
 
 /**
  * -V --version
@@ -61,3 +64,8 @@ if (!commander.args.length) {
  * update notify
  */
 updateNotifier({ pkg }).notify()
+
+// 捕获异常
+process.on("unhandledRejection", error => {
+  log(colors.red(error.toString()));
+});

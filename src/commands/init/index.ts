@@ -8,11 +8,14 @@ import { createEntry } from "../../utils/create-entry"
 import { ensureFiles } from "../../utils/ensure-files"
 import { spinner } from "../../utils/log"
 import { findNearestNodemodules } from "../../utils/npm-finder"
+import { getConfig } from "../../utils/project-config"
 
 const projectRootPath = process.cwd();
 
 export const CommandInit = async () => {
+  const config = getConfig(projectRootPath, null)
+
   await spinner("Ensure project files", async () => {
-    ensureFiles(projectRootPath)
+    ensureFiles(projectRootPath, config)
   })
 }

@@ -1,6 +1,6 @@
 {
   "name": "pri",
-  "version": "0.0.25",
+  "version": "0.0.26",
   "types": "src/index.ts",
   "main": "built/index.js",
   "scripts": {
@@ -18,6 +18,7 @@
     "@babel/core": "^7.0.0-beta.39",
     "@babel/preset-env": "^7.0.0-beta.39",
     "@babel/preset-react": "^7.0.0-beta.39",
+    "@types/chokidar": "^1.7.4",
     "@types/commander": "^2.12.2",
     "@types/fs-extra": "^5.0.0",
     "@types/lodash": "^4.14.100",
@@ -49,7 +50,6 @@
     "typescript": "^2.7.1",
     "update-notifier": "^2.3.0",
     "walk": "^2.3.9",
-    "yargs": "^11.0.0",
-    "@types/chokidar": "^1.7.4"
+    "yargs": "^11.0.0"
   }
 }

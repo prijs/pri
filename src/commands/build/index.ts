@@ -6,12 +6,15 @@ import { createEntry } from "../../utils/create-entry"
 import { ensureFiles } from "../../utils/ensure-files"
 import { spinner } from "../../utils/log"
 import { findNearestNodemodules } from "../../utils/npm-finder"
+import { getConfig } from "../../utils/project-config"
 
 const projectRootPath = process.cwd();
 
 export const CommandBuild = async () => {
+  const config = getConfig(projectRootPath, "prod")
+
   await spinner("Ensure project files", async () => {
-    ensureFiles(projectRootPath)
+    ensureFiles(projectRootPath, config)
   })
 
   const entryPath = await spinner("Analyse project", async () => {
@@ -19,8 +22,13 @@ export const CommandBuild = async () => {
     return createEntry(info, projectRootPath)
   })
 
+  let publicUrl = ""
+  if (config.publicPath) {
+    publicUrl = `--public-url ${config.publicPath}`
+  }
+
   // Run parcel
-  execSync(`${findNearestNodemodules()}/.bin/parcel build ${entryPath} --out-dir ${path.join(projectRootPath, "dist")} --no-cache`, {
+  execSync(`${findNearestNodemodules()}/.bin/parcel build ${entryPath} --out-dir ${path.join(projectRootPath, config.distDir)} ${publicUrl} --no-cache`, {
     stdio: "inherit",
     cwd: __dirname
   });

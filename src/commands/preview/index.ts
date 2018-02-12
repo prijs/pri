@@ -5,11 +5,14 @@ import * as path from "path"
 import * as portfinder from "portfinder";
 import * as url from "url"
 import * as zlib from "zlib"
+import { getConfig } from "../../utils/project-config"
 import { CommandBuild } from "../build"
 
 const projectRootPath = process.cwd();
 
 export const CommandPreview = async () => {
+  const config = getConfig(projectRootPath, "prod")
+
   const validatePort = await portfinder.getPortPromise()
 
   await CommandBuild()

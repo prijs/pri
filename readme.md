@@ -124,8 +124,50 @@ Production deployment. By default the dist folder is `./dist`.
 
 </details>
 
+<details>
+  <summary>Custom config.</summary>
+  
+  <p>
+
+  You can create these files to config pri:
+  - `./src/config/config.default.ts`.
+  - `./src/config/config.local.ts`. Enable when exec `npm start`.
+  - `./src/config/config.prod.ts`. Enable when exec `npm run build`.
+
+  `config.local.ts` and `config.prod.ts` have a higher priority than `config.default.ts`
+
+  **Example**
+
+  ```typescript
+  import { ProjectConfig } from "pri"
+
+  export default {
+    distDir: "output"
+  } as ProjectConfig
+  ```
+
+  **`ProjectConfig` Details**
+
+  ```typescript
+  class IConfig {
+    /**
+     * Dist dir path when running: npm run build | pri build
+     */
+    public distDir?: string = "dist"
+    /**
+     * Public url path when running: npm run build | pri build
+     */
+    public publicPath?: string | null = null
+  }
+  ```
+
+  </p>
+
+</details>
+
 #### TODO
 
+- Custom config. exp: public path.
 - Static file serving.
 - Testing.
 
@@ -236,7 +278,7 @@ Production deployment. By default the dist folder is `./dist`.
   
   <p>
   
-  After any of this three commands are executed: `npm start|build|preview`, will create following files automatically:
+  After any of this three commands are executed: `npm start|build|preview` or `npx pri init`, will create following files automatically:
 
   **.gitignore**
 
