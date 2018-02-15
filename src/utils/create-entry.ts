@@ -82,6 +82,8 @@ const getHelperContent = (entryInfo: IEntryInfo, info: IProjectInfo, env: string
    ${entryInfo.storesHelper}
 `
 
+const safeName = (str: string) => _.upperFirst(_.camelCase(str))
+
 export async function createEntry(info: IProjectInfo, projectRootPath: string, env: string, config: IConfig) {
   const entryInfo: IEntryInfo = {
     pageImporter: "",
@@ -115,7 +117,7 @@ export async function createEntry(info: IProjectInfo, projectRootPath: string, e
   info.routes.forEach(route => {
     const filePath = path.parse(route.filePath)
     const relativePageFilePath = path.relative(projectRootPath, filePath.dir + "/" + filePath.name)
-    const componentName = relativePageFilePath.split("/").join("_")
+    const componentName = safeName(relativePageFilePath) + md5(relativePageFilePath).slice(0, 5)
 
     const pathInfo = path.parse(route.filePath)
 
@@ -152,7 +154,6 @@ export async function createEntry(info: IProjectInfo, projectRootPath: string, e
   })
 
   // Set stores
-  const safeName = (str: string) => _.upperFirst(_.camelCase(str))
   if (info.stores.length > 0) {
     entryInfo.storesImporter += `import { useStrict } from "dob"\n`
     entryInfo.storesImporter += `import { Connect, Provider } from "dob-react"\n`
