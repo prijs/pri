@@ -7,6 +7,7 @@ import { ensureFiles } from "../../utils/ensure-files"
 import { spinner } from "../../utils/log"
 import { findNearestNodemodules } from "../../utils/npm-finder"
 import { getConfig } from "../../utils/project-config"
+import { IConfig } from "../../utils/project-config-interface"
 
 const projectRootPath = process.cwd();
 
@@ -29,22 +30,22 @@ export const CommandBuild = async () => {
   }
 
   // Run parcel
-  execSync(`${findNearestNodemodules()}/.bin/parcel build ${entryPath} --out-dir ${path.join(projectRootPath, config.distDir || "dist")} ${publicUrl} --no-cache`, {
+  execSync(`${findNearestNodemodules()}/.bin/parcel build ${entryPath} --out-dir ${path.join(projectRootPath, config.distDir || "dist")} ${publicUrl}`, {
     stdio: "inherit",
     cwd: __dirname
   });
 
-  createEntryHtmlFile("/entry.js")
+  createEntryHtmlFile("/entry.js", config)
 }
 
-function createEntryHtmlFile(entryPath: string) {
+function createEntryHtmlFile(entryPath: string, config: IConfig) {
   const htmlPath = path.join(projectRootPath, "dist/index.html")
 
   fs.outputFileSync(htmlPath, `
     <html>
 
     <head>
-      <title>Pri dev</title>
+      <title>${config.title}</title>
 
       <style>
         html,

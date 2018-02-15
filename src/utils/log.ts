@@ -11,7 +11,7 @@ export async function spinner<T>(message: string, fn: (spinner: any) => T): Prom
 
   try {
     const result = await fn(oraSpinner);
-    oraSpinner.succeed(colors.gray.dim(message));
+    oraSpinner.succeed(colors.green.dim(message));
     return result
   } catch (error) {
     oraSpinner.fail(colors.red(error.toString()));

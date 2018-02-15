@@ -3,9 +3,12 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "strict": true,
+    "strictNullChecks": false,
     "jsx": "react",
     "target": "es5",
     "rootDir": "src",
+    "experimentalDecorators": true,
+    "skipLibCheck": true,
     "lib": [
       "dom",
       "es5",

@@ -1,6 +1,7 @@
 import * as fs from "fs"
 import * as path from "path"
 import * as walk from "walk"
+import { IProjectInfo } from './analyse-project-interface'
 
 const PAGE_ROOT = "src/pages"
 const LAYTOU_ROOT = "src/layouts"
@@ -8,29 +9,42 @@ const NOTFOUND_PATH = "src/404"
 
 export const analyseProject = async (projectRootPath: string) => {
   const info = await walkProject(projectRootPath)
+
+  if (
+    hasFileWithoutExt(path.join(projectRootPath, 'src/config/config.default')) ||
+    hasFileWithoutExt(path.join(projectRootPath, 'src/config/config.local')) ||
+    hasFileWithoutExt(path.join(projectRootPath, 'src/config/config.prod'))
+  ) {
+    info.hasConfigFile = true
+  }
+
+  if (hasFileWithoutExt(path.join(projectRootPath, 'src/layouts/index'))) {
+    info.hasLayoutFile = true
+  }
+
+  if (hasFileWithoutExt(path.join(projectRootPath, 'src/404'))) {
+    info.has404File = true
+  }
+
   return info
+}
+
+function hasFileWithoutExt(pathName: string) {
+  const exts = ['.js', '.jsx', '.ts', '.tsx']
+  for (let ext of exts) {
+    if (fs.existsSync(pathName + ext)) {
+      return true
+    }
+  }
+  return false
 }
 
 type WalkStats = fs.Stats & {
   name: string
 }
 
-export class Info {
-  public routes: Array<{
-    path: string
-    filePath: string
-    isIndex: boolean
-  }> = []
-  public layout: {
-    filePath: string
-  } | null = null
-  public notFound: {
-    filePath: string
-  } | null = null
-}
-
-function walkProject(projectRootPath: string): Promise<Info> {
-  const info = new Info()
+function walkProject(projectRootPath: string): Promise<IProjectInfo> {
+  const info = new IProjectInfo()
 
   return new Promise((resolve, reject) => {
     const walker = walk.walk(projectRootPath, {
@@ -81,7 +95,7 @@ function judgePageFile(projectRootPath: string, dir: string, fileStats: WalkStat
     return null
   }
 
-  const prefix = path.relative(PAGE_ROOT, relativePath)
+  const prefix = '/' + path.relative(PAGE_ROOT, relativePath)
 
   return {
     path: prefix,

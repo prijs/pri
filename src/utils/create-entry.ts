@@ -1,6 +1,7 @@
 import * as fs from "fs-extra"
 import * as path from "path"
-import { Info } from "./analyse-project"
+import * as prettier from "prettier"
+import { IProjectInfo } from "./analyse-project-interface"
 import { md5 } from "./md5"
 import { IConfig } from "./project-config-interface"
 
@@ -18,12 +19,12 @@ interface IEntryInfo {
 const entryFileContent = (entryInfo: IEntryInfo) => `
   import { BrowserRouter, Loadable, React, ReactDOM, Redirect, Route, Switch, setEnvLocal, setEnvProd, setCustomEnv } from "pri"
 
+  ${entryInfo.setEnv}
+  ${entryInfo.setCustomEnv}
+
   ${entryInfo.layoutImporter}
   ${entryInfo.notFoundImporter}
   ${entryInfo.pageImporter}
-
-  ${entryInfo.setEnv}
-  ${entryInfo.setCustomEnv}
 
   class Root extends React.PureComponent<any, any> {
     public render() {
@@ -44,7 +45,7 @@ const entryFileContent = (entryInfo: IEntryInfo) => `
   )
 `
 
-export async function createEntry(info: Info, projectRootPath: string, env: string, config: IConfig) {
+export async function createEntry(info: IProjectInfo, projectRootPath: string, env: string, config: IConfig) {
   const entryInfo: IEntryInfo = {
     pageImporter: "",
     pageRoutes: "",
@@ -95,7 +96,7 @@ export async function createEntry(info: Info, projectRootPath: string, env: stri
 
     const routeComponent = info.layout ? "LayoutRoute" : "Route"
 
-    entryInfo.pageRoutes += `<${routeComponent} exact path="/${route.path}" component={${componentName}} />\n`
+    entryInfo.pageRoutes += `<${routeComponent} exact path="${route.path}" component={${componentName}} />\n`
   })
 
   // Set layout
@@ -127,7 +128,10 @@ export async function createEntry(info: Info, projectRootPath: string, env: stri
 
   // Create entry tsx file
   const entryPath = path.join(projectRootPath, ".temp/entry.tsx")
-  fs.outputFileSync(entryPath, entryFileContent(entryInfo))
+  fs.outputFileSync(entryPath, prettier.format(entryFileContent(entryInfo), {
+    semi: false,
+    parser: "typescript"
+  }))
 
   return entryPath
 }

@@ -1,6 +1,7 @@
 import * as fs from "fs-extra"
 import * as _ from "lodash"
 import * as path from "path"
+import * as prettier from "prettier"
 import { IConfig } from "./project-config-interface"
 
 export const ensureFiles = (projectRootPath: string, config: IConfig) => {
@@ -10,6 +11,7 @@ export const ensureFiles = (projectRootPath: string, config: IConfig) => {
   ensureTslint(projectRootPath)
   ensurePackageJson(projectRootPath)
   ensureVscode(projectRootPath)
+  ensureHomePage(projectRootPath)
 }
 
 function ensureGitignore(projectRootPath: string, config: IConfig) {
@@ -43,6 +45,8 @@ function ensureTsconfig(projectRootPath: string) {
       strict: true,
       jsx: "react",
       target: "es6",
+      experimentalDecorators: false,
+      skipLibCheck: true,
       lib: [
         "dom",
         "es5",
@@ -153,4 +157,36 @@ function ensureVscode(projectRootPath: string) {
   }
 
   fs.outputFileSync(filePath, JSON.stringify(ensureContent, null, 2))
+}
+
+function ensureHomePage(projectRootPath: string) {
+  const filePath = path.join(projectRootPath, "src/pages/index.tsx")
+
+  if (fs.existsSync(filePath)) {
+    return
+  }
+
+  const ensureContent = `
+    import * as React from "react"
+    import { env } from "pri"
+
+    export default () => (
+      <div>
+        <h1>
+          Welcome to pri!
+        </h1>
+        <h2>
+          Current env: {env.isLocal && "local"}{env.isProd && "prod"}
+        </h2>
+        <h2>
+          <a target="_blank" href="https://github.com/ascoders/pri">Read Docs.</a>
+        </h2>
+      </div>
+    )
+  `
+
+  fs.outputFileSync(filePath, prettier.format(ensureContent, {
+    semi: false,
+    parser: "typescript"
+  }))
 }

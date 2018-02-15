@@ -1,74 +1,72 @@
 import * as fs from "fs"
-import * as http from "http"
+import * as https from "https"
+import * as Koa from "koa"
+import * as koaCompress from "koa-compress"
+import * as koaMount from "koa-mount"
+import * as koaStatic from "koa-static"
 import * as open from "opn";
 import * as path from "path"
 import * as portfinder from "portfinder";
 import * as url from "url"
 import * as zlib from "zlib"
+import { generateCertificate } from "../../utils/generate-certificate"
+import { spinner } from "../../utils/log"
 import { getConfig } from "../../utils/project-config"
 import { CommandBuild } from "../build"
+
+const app = new Koa();
 
 const projectRootPath = process.cwd();
 
 export const CommandPreview = async () => {
   const config = getConfig(projectRootPath, "prod")
 
-  const validatePort = await portfinder.getPortPromise()
+  const freePort = await portfinder.getPortPromise()
 
   await CommandBuild()
 
-  await http.createServer((req, res) => {
-    const parsedUrl = url.parse(req.url || "")
-    let pathname = path.join(projectRootPath, "dist", parsedUrl.pathname || "")
-    let ext = path.parse(pathname).ext
+  app.use(koaCompress({
+    flush: zlib.Z_SYNC_FLUSH
+  }))
 
-    // Root is index.html
-    if (parsedUrl.pathname === "/" && ext === "") {
-      ext = ".html"
-    }
+  app.use(
+    koaMount("/static",
+      koaStatic(path.join(projectRootPath, "dist"), {
+        gzip: true
+      })
+    )
+  )
 
-    // maps file extention to MIME typere
-    const map = new Map<string, string>()
-    map.set(".ico", "image/x-icon")
-    map.set(".html", "text/html")
-    map.set(".js", "application/javascript")
-    map.set(".json", "application/json")
-    map.set(".css", "text/css")
-    map.set(".png", "image/png")
-    map.set(".jpg", "image/jpeg")
-    map.set(".wav", "audio/wav")
-    map.set(".mp3", "audio/mpeg")
-    map.set(".svg", "image/svg+xml")
-    map.set(".pdf", "application/pdf")
-    map.set(".doc", "application/msword")
+  app.use(async (ctx, next) => {
+    await next()
+    ctx.response.type = "html"
+    ctx.response.body = `
+      <html>
 
-    if (!fs.existsSync(pathname)) {
-      res.statusCode = 404;
-      res.end(`File ${pathname} not found!`);
-      return
-    }
+      <head>
+        <title>pri</title>
 
-    // If is a directory search for index file matching the extention
-    if (fs.statSync(pathname).isDirectory()) {
-      pathname = path.join(pathname, "/index" + ext)
-    }
+        <style>
+          html,
+          body {
+            margin: 0;
+            padding: 0;
+          }
+        </style>
+      </head>
 
-    // Read file from file system
-    fs.readFile(pathname, (err, data) => {
-      if (err) {
-        res.statusCode = 500;
-        res.end(`Error getting the file: ${err}.`);
-      } else {
-        // If the file is found, set Content-type and send data
-        res.setHeader("Content-type", map.get(ext) || "text/plain");
-        res.setHeader("Content-Encoding", "gzip")
+      <body>
+        <div id="root"></div>
+        <script src="/static/entry.js"></script>
+      </body>
 
-        zlib.gzip(data, (_, result) => {
-          res.end(result);
-        });
-      }
-    });
-  }).listen(validatePort)
+      </html>
+    `
+  });
 
-  open(`http://localhost:${validatePort}`)
+  await spinner("Create https server", async () =>
+    https.createServer(generateCertificate(path.join(projectRootPath, '.temp/preview')), app.callback()).listen(freePort)
+  )
+
+  open(`https://localhost:${freePort}`)
 }

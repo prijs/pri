@@ -153,6 +153,10 @@ Production deployment. By default the dist folder is `./dist`.
   ```typescript
   class IConfig {
     /**
+     * Title for html <title>
+     */
+    public title?: string = "pri"
+    /**
      * Dist dir path when running: npm run build | pri build
      */
     public distDir?: string = "dist"
@@ -401,4 +405,4 @@ Production deployment. By default the dist folder is `./dist`.
 - PWA support.
 - Tree Shaking.
 - Scope Hoist.
-- Prefetch router.
+- Prefetching.
