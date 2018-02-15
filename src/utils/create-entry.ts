@@ -128,7 +128,7 @@ export async function createEntry(info: IProjectInfo, projectRootPath: string, e
       } else {
         entryInfo.pageImporter += `
           import ${componentName}Temp from "${path.join(pathInfo.dir, pathInfo.name)}"
-          ${componentName} = Connect()(${componentName}Temp)
+          const ${componentName} = Connect()(${componentName}Temp)
         `
       }
     } else {

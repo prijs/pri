@@ -1,12 +1,22 @@
-let customEnv: any = {}
-
-const env = {
-  isLocal: false,
-  isProd: false,
-  get: (name: string) => {
-    return customEnv[name]
+class GlobalEnv {
+  public isLocal = false
+  public isProd = false
+  public get = (name: string) => {
+    return this.customEnv[name]
   }
+  public customEnv: any = {}
 }
+
+let env = new GlobalEnv()
+
+const tag = "priEnv"
+if ((window as any)[tag]) {
+  env = (window as any)[tag]
+} else {
+  (window as any)[tag] = env
+}
+
+export { env }
 
 export function setEnvLocal() {
   env.isLocal = true
@@ -17,7 +27,5 @@ export function setEnvProd() {
 }
 
 export function setCustomEnv(info: any) {
-  customEnv = info
+  env.customEnv = info
 }
-
-export { env }
