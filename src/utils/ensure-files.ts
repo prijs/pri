@@ -173,15 +173,12 @@ function ensureHomePage(projectRootPath: string) {
 
     export default () => (
       <div>
-        <h1>
+        <h1 style={{ display: "flex", alignItems: "center", justifyContent: "center"}}>
           Welcome to pri!
         </h1>
-        <h2>
+        <p style={{ padding: "10 50px" }}>
           Current env: {env.isLocal && "local"}{env.isProd && "prod"}
-        </h2>
-        <h2>
-          <a target="_blank" href="https://github.com/ascoders/pri">Read Docs.</a>
-        </h2>
+        </p>
       </div>
     )
   `
