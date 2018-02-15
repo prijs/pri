@@ -3,14 +3,14 @@ import * as React from "react"
 import { Props, State } from './struct.type'
 import * as S from './struct.style'
 import { PureComponent } from '../../utils/react-helper'
-import { Tree, Input, Icon } from 'antd'
+import { Tree, Input, Icon, Tooltip } from 'antd'
 import { pipeEvent } from '../../../../../../utils/functional'
 
 interface ITreeNode {
   children?: ITreeNode[]
   key: string
   title: string
-  icon?: string
+  icon?: React.ReactElement<any>
   disabled?: boolean
 }
 
@@ -31,6 +31,20 @@ const getParentKey = (key: string, tree: ITreeNode[]): string => {
   }
   return parentKey
 }
+
+const TreeIcon = (props: any) => (
+  <Icon style={{ marginRight: 5 }} {...props} />
+)
+
+const PlusIcon = (props: any) => (
+  <S.PlusIconContainer>
+    <Icon style={{
+      color: '#369',
+      cursor: 'pointer',
+      fontWeight: 'bold'
+    }} type="plus" {...props} />
+  </S.PlusIconContainer>
+)
 
 @Connect
 export class StructComponent extends PureComponent<Props, State> {
@@ -58,6 +72,8 @@ export class StructComponent extends PureComponent<Props, State> {
             onExpand={this.onExpand}
             expandedKeys={this.state.expandedKeys}
             autoExpandParent={this.state.autoExpandParent}
+            onSelect={this.handleSelectTreeNode}
+            selectedKeys={[this.props.ApplciationStore.selectedTreeKey]}
           >
             {this.loop(treeData)}
           </Tree>
@@ -70,7 +86,7 @@ export class StructComponent extends PureComponent<Props, State> {
     const treeData: ITreeNode[] = [{
       title: 'Project',
       key: 'project-root',
-      icon: 'chrome',
+      icon: <TreeIcon type="chrome" />,
       children: []
     }]
 
@@ -79,7 +95,7 @@ export class StructComponent extends PureComponent<Props, State> {
       treeData[0].children.push({
         key: 'routes',
         title: `Routes (${this.props.ApplciationStore.status.info.routes.length})`,
-        icon: 'share-alt',
+        icon: <TreeIcon type="share-alt" />,
         disabled: this.props.ApplciationStore.status.info.routes.length === 0
       })
     }
@@ -88,9 +104,9 @@ export class StructComponent extends PureComponent<Props, State> {
     if (this.props.ApplciationStore.status.info.routes) {
       treeData[0].children.push({
         key: 'stores',
-        title: `Stores`,
-        icon: 'database',
-        disabled: true
+        title: `Stores (${this.props.ApplciationStore.status.info.stores.length})`,
+        icon: <TreeIcon type="database" />,
+        disabled: this.props.ApplciationStore.status.info.stores.length === 0
       })
     }
 
@@ -99,7 +115,7 @@ export class StructComponent extends PureComponent<Props, State> {
       treeData[0].children.push({
         key: 'components',
         title: `Components`,
-        icon: 'appstore-o',
+        icon: <TreeIcon type="appstore-o" />,
         disabled: true
       })
     }
@@ -108,7 +124,13 @@ export class StructComponent extends PureComponent<Props, State> {
     treeData[0].children.push({
       key: 'layout',
       title: `Layout`,
-      icon: 'layout',
+      icon: this.props.ApplciationStore.status.info.hasLayoutFile ? (
+        <TreeIcon type="layout" />
+      ) : (
+          <Tooltip title="Auto create layout files." placement="right">
+            <PlusIcon onClick={this.props.ApplicationAction.createLayout} />
+          </Tooltip>
+        ),
       disabled: !this.props.ApplciationStore.status.info.hasLayoutFile
     })
 
@@ -116,7 +138,13 @@ export class StructComponent extends PureComponent<Props, State> {
     treeData[0].children.push({
       key: '404',
       title: `404`,
-      icon: 'file-unknown',
+      icon: this.props.ApplciationStore.status.info.has404File ? (
+        <TreeIcon type="file-unknown" />
+      ) : (
+          <Tooltip title="Auto create 404 page." placement="right">
+            <PlusIcon onClick={this.props.ApplicationAction.create404} />
+          </Tooltip>
+        ),
       disabled: !this.props.ApplciationStore.status.info.has404File
     })
 
@@ -124,7 +152,13 @@ export class StructComponent extends PureComponent<Props, State> {
     treeData[0].children.push({
       key: 'config',
       title: `Config`,
-      icon: 'setting',
+      icon: this.props.ApplciationStore.status.info.hasConfigFile ? (
+        <TreeIcon type="setting" />
+      ) : (
+          <Tooltip title="Auto create config files." placement="right">
+            <PlusIcon onClick={this.props.ApplicationAction.createConfig} />
+          </Tooltip>
+        ),
       disabled: !this.props.ApplciationStore.status.info.hasConfigFile
     })
 
@@ -180,17 +214,16 @@ export class StructComponent extends PureComponent<Props, State> {
     const index = item.title.indexOf(this.state.searchValue)
     const beforeStr = item.title.substr(0, index)
     const afterStr = item.title.substr(index + this.state.searchValue.length)
-    const icon = item.icon && <Icon style={{ marginRight: 5 }} type={item.icon} />
 
     const title = index > -1 ? (
       <span>
-        {icon}
+        {item.icon}
         {beforeStr}
         <span style={{ color: '#f50' }}>{this.state.searchValue}</span>
         {afterStr}
       </span>
     ) : (
-        <span>{icon}{item.title}</span>
+        <span>{item.icon}{item.title}</span>
       )
 
     const treeProps = {
@@ -214,4 +247,9 @@ export class StructComponent extends PureComponent<Props, State> {
       />
     )
   })
+
+  private handleSelectTreeNode = (selectedKeys: string[]) => {
+    const selectKey = selectedKeys[0]
+    this.props.ApplicationAction.setSelectedTreeKey(selectKey)
+  }
 }

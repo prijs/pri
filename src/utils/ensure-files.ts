@@ -43,9 +43,10 @@ function ensureTsconfig(projectRootPath: string) {
       module: "esnext",
       moduleResolution: "node",
       strict: true,
+      strictNullChecks: false,
       jsx: "react",
       target: "es6",
-      experimentalDecorators: false,
+      experimentalDecorators: true,
       skipLibCheck: true,
       lib: [
         "dom",

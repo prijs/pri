@@ -13,4 +13,7 @@ export class IProjectInfo {
   public hasConfigFile = false
   public hasLayoutFile = false
   public has404File = false
+  public stores: Array<{
+    path: string
+  }> = []
 }

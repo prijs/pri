@@ -65,7 +65,7 @@ Production deployment. By default the dist folder is `./dist`.
   Populate `.src/pages/index.tsx` inside your project:
 
   ```typescript
-  import { React } from "pri"
+  import * as React from "react"
   export default () => <div>Hello pri!</div>
   ```
 
@@ -87,7 +87,7 @@ Production deployment. By default the dist folder is `./dist`.
   Populate `.src/layouts/index.tsx` inside your project:
 
   ```typescript
-  import { React } from "pri"
+  import * as React from "react"
 
   export default (props: React.Props<any>) => (
     <div>
@@ -111,7 +111,7 @@ Production deployment. By default the dist folder is `./dist`.
   Populate `.src/404.tsx` inside your project:
 
   ```typescript
-  import { React } from "pri"
+  import * as React from "react"
 
   export default () => (
     <div>
@@ -233,12 +233,7 @@ Production deployment. By default the dist folder is `./dist`.
   
   <p>
 
-  `Pri` is written by typescript, so it's easy to use in typescript:
-
-  ```typescript
-  // pages/index.tsx
-  import { React } from "pri"
-  ```
+  `Pri` is written by typescript, so it's easy to use in typescript.
 
   </p>
 

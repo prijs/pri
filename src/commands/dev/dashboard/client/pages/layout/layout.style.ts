@@ -2,6 +2,7 @@ import styled, { injectGlobal } from 'styled-components'
 
 injectGlobal`
   * {
+    font-size: 12px;
     &::-webkit-scrollbar {
       width: 1px;
       height: 1px;

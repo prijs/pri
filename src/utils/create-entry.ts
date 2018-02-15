@@ -16,8 +16,15 @@ interface IEntryInfo {
 }
 
 // Entry file content
-const entryFileContent = (entryInfo: IEntryInfo) => `
-  import { BrowserRouter, Loadable, React, ReactDOM, Redirect, Route, Switch, setEnvLocal, setEnvProd, setCustomEnv } from "pri"
+const entryFileContent = (entryInfo: IEntryInfo, env: string) => `
+  import { setEnvLocal, setEnvProd, setCustomEnv } from "pri"
+  import * as React from "react"
+  import * as ReactDOM from "react-dom"
+  import Loadable from "react-loadable"
+  import { Redirect, Route, Switch, Router } from "react-router-dom"
+  import createBrowserHistory from 'history/createBrowserHistory'
+
+  const customHistory = createBrowserHistory()
 
   ${entryInfo.setEnv}
   ${entryInfo.setCustomEnv}
@@ -27,14 +34,28 @@ const entryFileContent = (entryInfo: IEntryInfo) => `
   ${entryInfo.pageImporter}
 
   class Root extends React.PureComponent<any, any> {
+    public componentWillMount() {
+      ${env === "local" ? `
+        window.addEventListener("message", event => {
+          const data = event.data
+          switch(data.type) {
+            case "changeRoute":
+              customHistory.push(data.path) 
+              break
+            default:
+          }
+        }, false)
+      `: ''}
+    }
+
     public render() {
       return (
-        <BrowserRouter>
+        <Router history={customHistory}>
           <Switch>
             ${entryInfo.pageRoutes}
             ${entryInfo.notFoundRoute}
           </Switch>
-        </BrowserRouter>
+        </Router>
       )
     }
   }
@@ -128,7 +149,7 @@ export async function createEntry(info: IProjectInfo, projectRootPath: string, e
 
   // Create entry tsx file
   const entryPath = path.join(projectRootPath, ".temp/entry.tsx")
-  fs.outputFileSync(entryPath, prettier.format(entryFileContent(entryInfo), {
+  fs.outputFileSync(entryPath, prettier.format(entryFileContent(entryInfo, env), {
     semi: false,
     parser: "typescript"
   }))

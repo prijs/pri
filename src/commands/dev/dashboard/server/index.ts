@@ -82,6 +82,33 @@ io.on('connection', async (socket) => {
       reject(error)
     }
   })
+
+  socketListen('createLayout', async (data, resolve, reject) => {
+    try {
+      await projectManage.createLayout(projectRootPath)
+      resolve()
+    } catch (error) {
+      reject(error)
+    }
+  })
+
+  socketListen('create404', async (data, resolve, reject) => {
+    try {
+      await projectManage.create404(projectRootPath)
+      resolve()
+    } catch (error) {
+      reject(error)
+    }
+  })
+
+  socketListen('createConfig', async (data, resolve, reject) => {
+    try {
+      await projectManage.createConfig(projectRootPath)
+      resolve()
+    } catch (error) {
+      reject(error)
+    }
+  })
 })
 
 // Watch project file's change

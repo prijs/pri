@@ -6,6 +6,7 @@ import { IProjectInfo } from './analyse-project-interface'
 const PAGE_ROOT = "src/pages"
 const LAYTOU_ROOT = "src/layouts"
 const NOTFOUND_PATH = "src/404"
+const STORE_ROOT = 'src/stores'
 
 export const analyseProject = async (projectRootPath: string) => {
   const info = await walkProject(projectRootPath)
@@ -71,6 +72,11 @@ function walkProject(projectRootPath: string): Promise<IProjectInfo> {
         info.notFound = notFoundInfo
       }
 
+      const storeInfo = judgeStoreFile(projectRootPath, root, fileStats)
+      if (storeInfo) {
+        info.stores.push(storeInfo)
+      }
+
       next()
     });
 
@@ -134,4 +140,20 @@ function judgeNotFoundFile(projectRootPath: string, dir: string, fileStats: Walk
   }
 
   return null
+}
+
+function judgeStoreFile(projectRootPath: string, dir: string, fileStats: WalkStats) {
+  const fileInfo = path.parse(fileStats.name)
+
+  const relativePath = path.relative(projectRootPath, path.join(dir, fileInfo.name))
+
+  if (!relativePath.startsWith(STORE_ROOT)) {
+    return null
+  }
+
+  const prefix = '/' + path.relative(STORE_ROOT, relativePath)
+
+  return {
+    path: prefix
+  }
 }

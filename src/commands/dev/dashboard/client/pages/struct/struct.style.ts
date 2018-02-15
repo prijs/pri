@@ -15,3 +15,11 @@ export const SearchContainer = styled.div`
 export const TreeContainer = styled.div`
   overflow-y: auto;
 `
+
+export const PlusIconContainer = styled.span`
+  transition: all .2s;
+  margin-right: 5px;
+  &:hover{
+    background-color: whitesmoke;
+  }
+`

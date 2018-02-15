@@ -6,6 +6,7 @@ import { StructComponent } from '../struct/struct.component'
 import { PureComponent } from '../../utils/react-helper'
 
 import { NewPageComponent } from './new-page/new-page.component'
+import { NewStoreComponent } from './new-store/new-store.component'
 
 @Connect
 export class MenuComponent extends PureComponent<Props, State> {
@@ -20,6 +21,7 @@ export class MenuComponent extends PureComponent<Props, State> {
     return (
       <S.Container>
         <NewPageComponent />
+        <NewStoreComponent />
       </S.Container>
     )
   }
