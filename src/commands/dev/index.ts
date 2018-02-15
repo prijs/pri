@@ -42,7 +42,9 @@ export const CommandDev = async () => {
     "--serverPort",
     dashboardServerPort.toString(),
     "--projectRootPath",
-    projectRootPath
+    projectRootPath,
+    "--env",
+    env
   ])
 
   if (hasDashboardBundle) {
