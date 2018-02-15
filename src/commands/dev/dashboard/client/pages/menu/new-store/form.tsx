@@ -3,7 +3,7 @@ import * as React from "react"
 import { Props, State } from './new-store.type'
 import * as S from '../menu.style'
 import { PureComponent } from '../../../utils/react-helper'
-import { Form, Button, Input } from 'antd'
+import { Form, Button, Input, Switch } from 'antd'
 
 const FormItem = Form.Item
 
@@ -45,17 +45,29 @@ class FormComponent extends PureComponent<Props, State> {
       <Form onSubmit={this.handleSubmit}>
         <FormItem
           {...formItemLayout}
-          label="Path"
+          label="Name"
         >
-          {this.props.form.getFieldDecorator('path', {
-            initialValue: 'about',
+          {this.props.form.getFieldDecorator('name', {
+            initialValue: 'application',
             rules: [{
-              type: 'string', message: 'Path must be string!',
+              type: 'string', message: 'Name must be string!',
             }, {
-              required: true, message: 'Path is required!',
+              required: true, message: 'Name is required!',
             }],
           })(
             <Input />
+          )}
+        </FormItem>
+
+        <FormItem
+          {...formItemLayout}
+          label="With demo"
+        >
+          {this.props.form.getFieldDecorator('withDemo', {
+            initialValue: true,
+            valuePropName: "checked"
+          })(
+            <Switch />
           )}
         </FormItem>
 
@@ -72,7 +84,7 @@ class FormComponent extends PureComponent<Props, State> {
 
   private handleSubmit = async (e: any) => {
     e.preventDefault();
-    await this.props.ApplicationAction.addPage(this.props.form.getFieldsValue())
+    await this.props.ApplicationAction.addStore(this.props.form.getFieldsValue())
     this.props.onSuccess()
   }
 }

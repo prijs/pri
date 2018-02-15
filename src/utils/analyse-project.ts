@@ -151,9 +151,8 @@ function judgeStoreFile(projectRootPath: string, dir: string, fileStats: WalkSta
     return null
   }
 
-  const prefix = '/' + path.relative(STORE_ROOT, relativePath)
-
   return {
-    path: prefix
+    filePath: path.join(dir, fileStats.name),
+    name: fileInfo.name
   }
 }

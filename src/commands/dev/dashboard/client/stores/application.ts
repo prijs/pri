@@ -54,6 +54,13 @@ export class ApplicationAction {
     await this.fetch<typeof options>('addPage', options)
   }
 
+  @Action public async addStore(options: {
+    name: string
+    withDemo: boolean
+  }) {
+    await this.fetch<typeof options>('addStore', options)
+  }
+
   @Action public async createConfig() {
     await this.fetch('createConfig')
   }

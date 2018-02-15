@@ -83,6 +83,15 @@ io.on('connection', async (socket) => {
     }
   })
 
+  socketListen('addStore', async (data, resolve, reject) => {
+    try {
+      await projectManage.addStore(projectRootPath, data)
+      resolve()
+    } catch (error) {
+      reject(error)
+    }
+  })
+
   socketListen('createLayout', async (data, resolve, reject) => {
     try {
       await projectManage.createLayout(projectRootPath)

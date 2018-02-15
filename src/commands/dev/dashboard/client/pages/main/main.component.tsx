@@ -9,6 +9,7 @@ import { RoutesComponent } from './routes/routes.component'
 import { LayoutComponent } from './layout/layout.component'
 import { NotFoundComponent } from './not-found/not-found.component'
 import { ConfigComponent } from './config/config.component'
+import { StoresComponent } from './stores/stores.component'
 
 @Connect
 export class MainComponent extends PureComponent<Props, State> {
@@ -27,6 +28,8 @@ export class MainComponent extends PureComponent<Props, State> {
         return <NotFoundComponent />
       case 'config':
         return <ConfigComponent />
+      case 'stores':
+        return <StoresComponent />
       default:
         return null
     }

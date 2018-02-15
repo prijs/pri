@@ -106,7 +106,14 @@ export class StructComponent extends PureComponent<Props, State> {
         key: 'stores',
         title: `Stores (${this.props.ApplciationStore.status.info.stores.length})`,
         icon: <TreeIcon type="database" />,
-        disabled: this.props.ApplciationStore.status.info.stores.length === 0
+        disabled: this.props.ApplciationStore.status.info.stores.length === 0,
+        children: this.props.ApplciationStore.status.info.stores.map(store => {
+          return {
+            key: 'store-' + store.filePath,
+            title: store.name,
+            icon: <TreeIcon type="database" />
+          }
+        })
       })
     }
 

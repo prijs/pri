@@ -14,6 +14,7 @@ export class IProjectInfo {
   public hasLayoutFile = false
   public has404File = false
   public stores: Array<{
-    path: string
+    filePath: string
+    name: string
   }> = []
 }
