@@ -188,7 +188,7 @@ export async function addStore(projectRootPath: string, options: {
       @inject(${camelUpperFirstName}Store) ${camelName}Store: ${camelUpperFirstName}Store
 
       ${options.withDemo ? `
-        @Action public async test() {
+        @Action public test() {
           this.${camelName}Store.testValue++
         }
       ` : ''}
