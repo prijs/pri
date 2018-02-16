@@ -2,9 +2,7 @@
 
 Pri is a toolkit for building web applications with React. **Helps you deal with everything other than business logic.**
 
-## How to use
-
-### Setup
+## Setup
 
 First, create an empty folder:
 
@@ -43,19 +41,19 @@ npx pri init
 
 </details>
 
-#### npm start
+### npm start
 
 Run dev server in development mode with files watching and HMR.
 
-#### npm run preview
+### npm run preview
 
 Preview in production mode, won't watch files change.
 
-#### npm run build
+### npm run build
 
 Production deployment. By default the dist folder is `./dist`.
 
-### Usage
+## Usage
 
 <details>
   <summary>Pages are routes.</summary>
