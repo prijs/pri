@@ -212,7 +212,7 @@ Production deployment. By default the dist folder is `./dist`.
   }
   ```
 
-  Then, all pages are automatically injected into all store, and automatically create type helper file in `./src/helper.ts`.
+  Then, **all pages are automatically injected into all store**, and automatically create type helper file in `./src/helper.ts`.
 
   All you should do is call or use this store on pages:
 
