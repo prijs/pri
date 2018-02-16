@@ -262,7 +262,11 @@ Production deployment. By default the dist folder is `./dist`.
   console.log("Custom env", env.get("theme"))
   ```
 
-  `Pri` has some built-in env, like `isLocal` and `isProd`, and you can set your own custom env variable in config files, and get them by using `env.get()`.
+  `Pri` has some built-in env, like `isLocal` and `isProd`.
+
+  When execute `npm start`, `env.isLocal === true`, when execute `npm run build` or `npm run preview`, `env.isProd === true`.
+  
+  You can also set your own custom env variable in config files, and get them by using `env.get()`.
 
   ```typescript
   // ./src/config/config.default.ts
