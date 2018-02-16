@@ -1,3 +1,4 @@
+import { execSync } from "child_process"
 import * as fs from "fs-extra"
 import * as _ from "lodash"
 import * as path from "path"
@@ -12,6 +13,7 @@ export const ensureFiles = (projectRootPath: string, config: IConfig) => {
   ensurePackageJson(projectRootPath)
   ensureVscode(projectRootPath)
   ensureHomePage(projectRootPath)
+  ensureChmod(projectRootPath)
 }
 
 function ensureGitignore(projectRootPath: string, config: IConfig) {
@@ -121,7 +123,7 @@ function ensurePackageJson(projectRootPath: string) {
     start: "pri",
     build: "pri build",
     preview: "pri preview",
-    lint: "tslint --fix './src/**/*.?(ts|tsx)'"
+    lint: "echo 'Pre-commit checks...' && tslint --fix './src/**/*.?(ts|tsx)'"
   }
 
   let exitFileContent: any = {}
@@ -136,6 +138,10 @@ function ensurePackageJson(projectRootPath: string) {
   }
 
   _.merge(exitFileContent.scripts || {}, ensureScripts)
+
+  exitFileContent["pre-commit"] = [
+    "lint"
+  ]
 
   fs.writeFileSync(filePath, JSON.stringify(exitFileContent, null, 2))
 }
@@ -185,4 +191,12 @@ function ensureHomePage(projectRootPath: string) {
     semi: false,
     parser: "typescript"
   }))
+}
+
+function ensureChmod(projectRootPath: string) {
+  try {
+    execSync(`chmod 777 ./node_modules/pre-commit/hook`)
+  } catch (error) {
+    //
+  }
 }
