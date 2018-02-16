@@ -58,9 +58,9 @@ Production deployment. By default the dist folder is `./dist`.
 <details>
   <summary>Pages are routes.</summary>
 
-  > You can also create pages by project dashboard easily!
-
   <p>
+
+  > You can also create pages by project dashboard easily!
   
   Populate `./src/pages/index.tsx` inside your project:
 
@@ -82,9 +82,9 @@ Production deployment. By default the dist folder is `./dist`.
 <details>
   <summary>Support layouts.</summary>
 
-  > You can also create layout by project dashboard easily!
-
   <p>
+
+  > You can also create layout by project dashboard easily!
   
   Populate `./src/layouts/index.tsx` inside your project:
 
@@ -107,10 +107,10 @@ Production deployment. By default the dist folder is `./dist`.
 
 <details>
   <summary>Page not found.</summary>
-
-  > You can also create 404 page by project dashboard easily!
   
   <p>
+
+  > You can also create 404 page by project dashboard easily!
 
   Populate `.src/404.tsx` inside your project:
 
@@ -185,10 +185,10 @@ Production deployment. By default the dist folder is `./dist`.
 
 <details>
   <summary>Built-in MVVM data stream.</summary>
-
-  > You can also create stores by project dashboard easily!
   
   <p>
+
+  > You can also create stores by project dashboard easily!
 
   Populate `./src/stores/[storeName].ts` inside your project, for example `user`:
 
