@@ -58,11 +58,13 @@ Production deployment. By default the dist folder is `./dist`.
 <details>
   <summary>Pages are routes.</summary>
 
+  > You can also create pages by project dashboard easily!
+
   <p>
   
-  Populate `.src/pages/index.tsx` inside your project:
+  Populate `./src/pages/index.tsx` inside your project:
 
-  ```typescript
+  ```tsx
   import * as React from "react"
   export default () => <div>Hello pri!</div>
   ```
@@ -80,11 +82,13 @@ Production deployment. By default the dist folder is `./dist`.
 <details>
   <summary>Support layouts.</summary>
 
+  > You can also create layout by project dashboard easily!
+
   <p>
   
-  Populate `.src/layouts/index.tsx` inside your project:
+  Populate `./src/layouts/index.tsx` inside your project:
 
-  ```typescript
+  ```tsx
   import * as React from "react"
 
   export default (props: React.Props<any>) => (
@@ -103,6 +107,8 @@ Production deployment. By default the dist folder is `./dist`.
 
 <details>
   <summary>Page not found.</summary>
+
+  > You can also create 404 page by project dashboard easily!
   
   <p>
 
@@ -126,6 +132,8 @@ Production deployment. By default the dist folder is `./dist`.
   <summary>Custom config.</summary>
   
   <p>
+
+  > You can also create config files by project dashboard easily!
 
   You can create these files to config `pri`:
   - `./src/config/config.default.ts`.
@@ -167,6 +175,62 @@ Production deployment. By default the dist folder is `./dist`.
      */
     public env?: {
       [key: string]: any
+    }
+  }
+  ```
+
+  </p>
+
+</details>
+
+<details>
+  <summary>Built-in MVVM data stream.</summary>
+
+  > You can also create stores by project dashboard easily!
+  
+  <p>
+
+  Populate `./src/stores/[storeName].ts` inside your project, for example `user`:
+
+  ```typescript
+  // ./src/stores/user.ts
+
+  import { observable, inject, Action } from "dob"
+
+  @observable
+  export class UserStore {
+    public testValue = 1
+  }
+
+  export class UserAction {
+    @inject(UserStore) userStore: UserStore
+
+    @Action
+    public async test() {
+      this.userStore.testValue++
+    }
+  }
+  ```
+
+  Then, all pages are automatically injected into all store, and automatically create type helper file in `./src/helper.ts`.
+
+  All you should do is call or use this store on pages:
+
+  ```tsx
+  // ./src/pages/index.tsx
+
+  // Only for type support. If you use js, can delete the next line.
+  import { stores } from "../helper"
+
+  import * as React from "react"
+
+  export default class Page extends React.PureComponent<typeof stores, any> {
+    public render() {
+      return (
+        <div onClick={this.props.UserAction.test}>
+          {this.props.UserStore.testValue}
+        </div>
+      )
     }
   }
   ```
@@ -244,7 +308,7 @@ Production deployment. By default the dist folder is `./dist`.
 </details>
 
 <details>
-  <summary>Typescript first.</summary>
+  <summary>Typescript support.</summary>
   
   <p>
 
