@@ -1,6 +1,6 @@
 # Pri &middot;  [![npm version](https://img.shields.io/npm/v/pri.svg?style=flat-square)](https://www.npmjs.com/package/pri)
 
-Pri is a toolkit for building web applications with React. **Helps you deal with everything other than business logic.**
+Pri is a toolkit for building web applications with React. **Helps you deal with everything, and you can focus on business logic.**
 
 ## Setup
 
