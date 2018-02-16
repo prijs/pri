@@ -172,8 +172,8 @@ function ensureHomePage(projectRootPath: string) {
   }
 
   const ensureContent = `
-    import * as React from "react"
     import { env } from "pri"
+    import * as React from "react"
 
     export default () => (
       <div>
