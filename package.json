@@ -1,6 +1,6 @@
 {
   "name": "pri",
-  "version": "0.0.39",
+  "version": "0.0.40",
   "types": "src/index.ts",
   "main": "built/index.js",
   "scripts": {
@@ -62,7 +62,6 @@
     "ora": "^1.4.0",
     "parcel-bundler": "^1.5.1",
     "portfinder": "^1.0.13",
-    "pre-commit": "^1.2.2",
     "prettier": "^1.10.2",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
@@ -77,6 +76,7 @@
     "typescript": "^2.7.1",
     "update-notifier": "^2.3.0",
     "walk": "^2.3.9",
-    "yargs": "^11.0.0"
+    "yargs": "^11.0.0",
+    "pre-commit": "^1.2.2"
   }
 }

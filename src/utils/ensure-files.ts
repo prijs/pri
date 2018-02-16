@@ -13,7 +13,6 @@ export const ensureFiles = (projectRootPath: string, config: IConfig) => {
   ensurePackageJson(projectRootPath)
   ensureVscode(projectRootPath)
   ensureHomePage(projectRootPath)
-  ensureChmod(projectRootPath)
 }
 
 function ensureGitignore(projectRootPath: string, config: IConfig) {
@@ -139,10 +138,6 @@ function ensurePackageJson(projectRootPath: string) {
 
   _.merge(exitFileContent.scripts || {}, ensureScripts)
 
-  exitFileContent["pre-commit"] = [
-    "lint"
-  ]
-
   fs.writeFileSync(filePath, JSON.stringify(exitFileContent, null, 2))
 }
 
@@ -191,12 +186,4 @@ function ensureHomePage(projectRootPath: string) {
     semi: false,
     parser: "typescript"
   }))
-}
-
-function ensureChmod(projectRootPath: string) {
-  try {
-    execSync(`chmod 777 ./node_modules/pre-commit/hook`)
-  } catch (error) {
-    //
-  }
 }

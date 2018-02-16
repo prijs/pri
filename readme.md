@@ -329,7 +329,7 @@ Production deployment. By default the dist folder is `./dist`.
 
   After the `pri` is installed, the tslint will take effect automatically.
 
-  We automatically create `pre-commit` hook.
+  **We enforce tslint check when execute `npm run build`**, and you can't skip it!
 
   </p>
 

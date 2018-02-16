@@ -1,9 +1,9 @@
 import * as colors from "colors";
 import * as ora from "ora";
 
-export function log(message?: string) {
+export function log(...message: string[]) {
   // tslint:disable-next-line:no-console
-  console.log(message);
+  console.log.apply(null, message);
 }
 
 export async function spinner<T>(message: string, fn: (spinner: any) => T): Promise<T> {
