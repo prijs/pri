@@ -1,4 +1,4 @@
-import { execSync, fork, exec } from "child_process"
+import { exec, execSync, fork } from "child_process"
 import * as fs from "fs-extra"
 import * as open from "opn";
 import * as path from "path"
@@ -6,7 +6,7 @@ import * as portfinder from "portfinder";
 import { analyseProject } from "../../utils/analyse-project"
 import { createEntry } from "../../utils/create-entry"
 import { ensureFiles } from "../../utils/ensure-files"
-import { spinner, log } from "../../utils/log"
+import { log, spinner } from "../../utils/log"
 import { findNearestNodemodules } from "../../utils/npm-finder"
 import { getConfig } from "../../utils/project-config"
 import { IConfig } from "../../utils/project-config-interface"
@@ -34,8 +34,8 @@ export const CommandDev = async () => {
 
   // If has dashboard bundle, run project with dashboard prod in iframe.
   // If has't dashboard bundle, run dashboard dev server only.
-  const dashboardBundleRootPath = path.join(__dirname, '../../bundle')
-  const hasDashboardBundle = fs.existsSync(path.join(dashboardBundleRootPath, 'index.js'))
+  const dashboardBundleRootPath = path.join(__dirname, "../../bundle")
+  const hasDashboardBundle = fs.existsSync(path.join(dashboardBundleRootPath, "index.js"))
 
   // Start dashboard server
   fork(path.join(__dirname, "dashboard/server/index.js"), [

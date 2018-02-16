@@ -3,8 +3,8 @@ import * as forge from "node-forge"
 import * as path from "path"
 
 export function generateCertificate(cacheDir: string) {
-  const privateKeyPath = path.join(cacheDir, 'private.pem');
-  const certPath = path.join(cacheDir, 'primary.crt');
+  const privateKeyPath = path.join(cacheDir, "private.pem");
+  const certPath = path.join(cacheDir, "primary.crt");
   const cachedKey =
     fs.existsSync(privateKeyPath) && fs.readFileSync(privateKeyPath);
   const cachedCert = fs.existsSync(certPath) && fs.readFileSync(certPath);
@@ -27,12 +27,12 @@ export function generateCertificate(cacheDir: string) {
 
   const attrs = [
     {
-      name: 'commonName',
-      value: 'prijs.org'
+      name: "commonName",
+      value: "prijs.org"
     },
     {
-      name: 'countryName',
-      value: 'China'
+      name: "countryName",
+      value: "China"
     },
     {
       shortName: "ST",

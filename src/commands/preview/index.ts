@@ -65,7 +65,7 @@ export const CommandPreview = async () => {
   });
 
   await spinner("Create https server", async () =>
-    https.createServer(generateCertificate(path.join(projectRootPath, '.temp/preview')), app.callback()).listen(freePort)
+    https.createServer(generateCertificate(path.join(projectRootPath, ".temp/preview")), app.callback()).listen(freePort)
   )
 
   open(`https://localhost:${freePort}`)

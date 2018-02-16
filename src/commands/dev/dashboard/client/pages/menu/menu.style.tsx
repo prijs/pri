@@ -1,6 +1,6 @@
-import styled from 'styled-components'
-import * as React from 'react'
-import { Icon } from 'antd'
+import { Icon } from "antd"
+import * as React from "react"
+import styled from "styled-components"
 
 export const MenuIcon = (props: any) => (
   <Icon style={{ fontSize: 15, marginRight: 10 }} {...props} />

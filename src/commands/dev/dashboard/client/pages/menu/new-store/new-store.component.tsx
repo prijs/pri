@@ -1,16 +1,16 @@
+import { Modal } from "antd"
 import { Connect } from "dob-react"
 import * as React from "react"
-import { Props, State } from './new-store.type'
-import * as S from '../menu.style'
-import { PureComponent } from '../../../utils/react-helper'
-import { Modal } from 'antd'
+import { PureComponent } from "../../../utils/react-helper"
+import * as S from "../menu.style"
+import { Props, State } from "./new-store.type"
 
-import FormComponent from './form'
+import FormComponent from "./form"
 
 @Connect
 export class NewStoreComponent extends PureComponent<Props, State> {
-  static defaultProps = new Props()
-  state = new State()
+  public static defaultProps = new Props()
+  public state = new State()
 
   public render() {
     return (

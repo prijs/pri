@@ -1,5 +1,6 @@
-import styled, { injectGlobal } from 'styled-components'
+import styled, { injectGlobal } from "styled-components"
 
+// tslint:disable-next-line:no-unused-expression
 injectGlobal`
   * {
     font-size: 12px;

@@ -1,9 +1,9 @@
+import { Button, Form, Input, Switch } from "antd"
 import { Connect } from "dob-react"
 import * as React from "react"
-import { Props, State } from './new-store.type'
-import * as S from '../menu.style'
-import { PureComponent } from '../../../utils/react-helper'
-import { Form, Button, Input, Switch } from 'antd'
+import { PureComponent } from "../../../utils/react-helper"
+import * as S from "../menu.style"
+import { Props, State } from "./new-store.type"
 
 const FormItem = Form.Item
 
@@ -37,8 +37,8 @@ function hasErrors(fieldsError: any) {
 
 @Connect
 class FormComponent extends PureComponent<Props, State> {
-  static defaultProps = new Props()
-  state = new State()
+  public static defaultProps = new Props()
+  public state = new State()
 
   public render() {
     return (
@@ -47,12 +47,12 @@ class FormComponent extends PureComponent<Props, State> {
           {...formItemLayout}
           label="Name"
         >
-          {this.props.form.getFieldDecorator('name', {
-            initialValue: 'application',
+          {this.props.form.getFieldDecorator("name", {
+            initialValue: "application",
             rules: [{
-              type: 'string', message: 'Name must be string!',
+              type: "string", message: "Name must be string!",
             }, {
-              required: true, message: 'Name is required!',
+              required: true, message: "Name is required!",
             }],
           })(
             <Input />
@@ -63,7 +63,7 @@ class FormComponent extends PureComponent<Props, State> {
           {...formItemLayout}
           label="With demo"
         >
-          {this.props.form.getFieldDecorator('withDemo', {
+          {this.props.form.getFieldDecorator("withDemo", {
             initialValue: true,
             valuePropName: "checked"
           })(

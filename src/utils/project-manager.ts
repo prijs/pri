@@ -1,14 +1,14 @@
-import * as fs from 'fs-extra'
-import * as path from 'path'
+import * as fs from "fs-extra"
+import * as _ from "lodash"
+import * as path from "path"
 import * as prettier from "prettier"
-import { analyseProject } from './analyse-project'
-import * as _ from 'lodash'
+import { analyseProject } from "./analyse-project"
 
 export async function addPage(projectRootPath: string, options: {
   path: string
 }) {
   const projectInfo = await analyseProject(projectRootPath)
-  const fileFullPath = path.join(projectRootPath, 'src/pages', options.path) + '.tsx'
+  const fileFullPath = path.join(projectRootPath, "src/pages", options.path) + ".tsx"
 
   if (fs.existsSync(fileFullPath)) {
     throw Error(`${options.path} already exist!`)
@@ -43,7 +43,7 @@ export async function addPage(projectRootPath: string, options: {
         parser: "typescript"
       }))
   } else {
-    const helperAbsolutePath = path.join(projectRootPath, 'src/helper')
+    const helperAbsolutePath = path.join(projectRootPath, "src/helper")
     const fileAbsoluteDirPath = path.parse(fileFullPath).dir
     const relativeToHelperPath = path.relative(fileAbsoluteDirPath, helperAbsolutePath)
     fs.outputFileSync(fileFullPath, prettier.format(`
@@ -78,7 +78,7 @@ export async function addPage(projectRootPath: string, options: {
 }
 
 export async function createLayout(projectRootPath: string) {
-  const pathFullPath = path.join(projectRootPath, 'src/layouts/index.tsx')
+  const pathFullPath = path.join(projectRootPath, "src/layouts/index.tsx")
 
   if (fs.existsSync(pathFullPath)) {
     throw Error(`layout already exist!`)
@@ -114,7 +114,7 @@ export async function createLayout(projectRootPath: string) {
 }
 
 export async function create404(projectRootPath: string) {
-  const pathFullPath = path.join(projectRootPath, 'src/404.tsx')
+  const pathFullPath = path.join(projectRootPath, "src/404.tsx")
 
   if (fs.existsSync(pathFullPath)) {
     throw Error(`404 page already exist!`)
@@ -139,9 +139,9 @@ export async function create404(projectRootPath: string) {
 }
 
 export async function createConfig(projectRootPath: string) {
-  const defaultFullPath = path.join(projectRootPath, 'src/config/config.default.ts')
-  const localFullPath = path.join(projectRootPath, 'src/config/config.local.ts')
-  const prodFullPath = path.join(projectRootPath, 'src/config/config.prod.ts')
+  const defaultFullPath = path.join(projectRootPath, "src/config/config.default.ts")
+  const localFullPath = path.join(projectRootPath, "src/config/config.local.ts")
+  const prodFullPath = path.join(projectRootPath, "src/config/config.prod.ts")
 
   if (fs.existsSync(defaultFullPath)) {
     throw Error(`layout already exist!`)
@@ -151,7 +151,7 @@ export async function createConfig(projectRootPath: string) {
     import { ProjectConfig } from "pri"
 
     export default {
-      
+
     } as ProjectConfig
   `, {
       semi: false,
@@ -170,7 +170,7 @@ export async function addStore(projectRootPath: string, options: {
   const camelName = _.camelCase(options.name)
   const camelUpperFirstName = _.upperFirst(camelName)
   const kebabName = _.kebabCase(options.name)
-  const fileFullPath = path.join(projectRootPath, 'src/stores', kebabName) + '.tsx'
+  const fileFullPath = path.join(projectRootPath, "src/stores", kebabName) + ".tsx"
 
   if (fs.existsSync(fileFullPath)) {
     throw Error(`${kebabName} already exist!`)
@@ -181,17 +181,17 @@ export async function addStore(projectRootPath: string, options: {
 
     @observable
     export class ${camelUpperFirstName}Store {
-      ${options.withDemo ? `public testValue = 1` : ''}
+      ${options.withDemo ? `public testValue = 1` : ""}
     }
 
     export class ${camelUpperFirstName}Action {
-      @inject(${camelUpperFirstName}Store) ${camelName}Store: ${camelUpperFirstName}Store
+      @inject(${camelUpperFirstName}Store) public ${camelName}Store: ${camelUpperFirstName}Store
 
       ${options.withDemo ? `
         @Action public test() {
           this.${camelName}Store.testValue++
         }
-      ` : ''}
+      ` : ""}
     }
   `, {
       semi: false,

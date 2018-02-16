@@ -1,10 +1,10 @@
+import { Icon, Input, Tooltip, Tree } from "antd"
 import { Connect } from "dob-react"
 import * as React from "react"
-import { Props, State } from './struct.type'
-import * as S from './struct.style'
-import { PureComponent } from '../../utils/react-helper'
-import { Tree, Input, Icon, Tooltip } from 'antd'
-import { pipeEvent } from '../../../../../../utils/functional'
+import { pipeEvent } from "../../../../../../utils/functional"
+import { PureComponent } from "../../utils/react-helper"
+import * as S from "./struct.style"
+import { Props, State } from "./struct.type"
 
 interface ITreeNode {
   children?: ITreeNode[]
@@ -19,6 +19,7 @@ const Search = Input.Search
 
 const getParentKey = (key: string, tree: ITreeNode[]): string => {
   let parentKey: string
+  // tslint:disable-next-line:prefer-for-of
   for (let i = 0; i < tree.length; i++) {
     const node = tree[i]
     if (node.children) {
@@ -39,17 +40,17 @@ const TreeIcon = (props: any) => (
 const PlusIcon = (props: any) => (
   <S.PlusIconContainer>
     <Icon style={{
-      color: '#369',
-      cursor: 'pointer',
-      fontWeight: 'bold'
+      color: "#369",
+      cursor: "pointer",
+      fontWeight: "bold"
     }} type="plus" {...props} />
   </S.PlusIconContainer>
 )
 
 @Connect
 export class StructComponent extends PureComponent<Props, State> {
-  static defaultProps = new Props()
-  state = new State()
+  public static defaultProps = new Props()
+  public state = new State()
 
   public render() {
     if (this.props.ApplciationStore.status === null) {
@@ -84,8 +85,8 @@ export class StructComponent extends PureComponent<Props, State> {
 
   private getTreeData = () => {
     const treeData: ITreeNode[] = [{
-      title: 'Project',
-      key: 'project-root',
+      title: "Project",
+      key: "project-root",
       icon: <TreeIcon type="chrome" />,
       children: []
     }]
@@ -93,7 +94,7 @@ export class StructComponent extends PureComponent<Props, State> {
     // Pages
     if (this.props.ApplciationStore.status.info.routes) {
       treeData[0].children.push({
-        key: 'routes',
+        key: "routes",
         title: `Routes (${this.props.ApplciationStore.status.info.routes.length})`,
         icon: <TreeIcon type="share-alt" />,
         disabled: this.props.ApplciationStore.status.info.routes.length === 0
@@ -103,13 +104,13 @@ export class StructComponent extends PureComponent<Props, State> {
     // Stores
     if (this.props.ApplciationStore.status.info.routes) {
       treeData[0].children.push({
-        key: 'stores',
+        key: "stores",
         title: `Stores (${this.props.ApplciationStore.status.info.stores.length})`,
         icon: <TreeIcon type="database" />,
         disabled: this.props.ApplciationStore.status.info.stores.length === 0,
         children: this.props.ApplciationStore.status.info.stores.map(store => {
           return {
-            key: 'store-' + store.filePath,
+            key: "store-" + store.filePath,
             title: store.name,
             icon: <TreeIcon type="database" />
           }
@@ -120,7 +121,7 @@ export class StructComponent extends PureComponent<Props, State> {
     // Components
     if (this.props.ApplciationStore.status.info.routes) {
       treeData[0].children.push({
-        key: 'components',
+        key: "components",
         title: `Components`,
         icon: <TreeIcon type="appstore-o" />,
         disabled: true
@@ -129,7 +130,7 @@ export class StructComponent extends PureComponent<Props, State> {
 
     // Layout
     treeData[0].children.push({
-      key: 'layout',
+      key: "layout",
       title: `Layout`,
       icon: this.props.ApplciationStore.status.info.hasLayoutFile ? (
         <TreeIcon type="layout" />
@@ -143,7 +144,7 @@ export class StructComponent extends PureComponent<Props, State> {
 
     // 404
     treeData[0].children.push({
-      key: '404',
+      key: "404",
       title: `404`,
       icon: this.props.ApplciationStore.status.info.has404File ? (
         <TreeIcon type="file-unknown" />
@@ -157,7 +158,7 @@ export class StructComponent extends PureComponent<Props, State> {
 
     // Config
     treeData[0].children.push({
-      key: 'config',
+      key: "config",
       title: `Config`,
       icon: this.props.ApplciationStore.status.info.hasConfigFile ? (
         <TreeIcon type="setting" />
@@ -217,7 +218,7 @@ export class StructComponent extends PureComponent<Props, State> {
     })
   }
 
-  private loop = (data: ITreeNode[]): React.ReactElement<any>[] => data.map(item => {
+  private loop = (data: ITreeNode[]): Array<React.ReactElement<any>> => data.map(item => {
     const index = item.title.indexOf(this.state.searchValue)
     const beforeStr = item.title.substr(0, index)
     const afterStr = item.title.substr(index + this.state.searchValue.length)
@@ -226,7 +227,7 @@ export class StructComponent extends PureComponent<Props, State> {
       <span>
         {item.icon}
         {beforeStr}
-        <span style={{ color: '#f50' }}>{this.state.searchValue}</span>
+        <span style={{ color: "#f50" }}>{this.state.searchValue}</span>
         {afterStr}
       </span>
     ) : (

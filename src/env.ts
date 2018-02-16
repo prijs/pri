@@ -1,10 +1,10 @@
 class GlobalEnv {
   public isLocal = false
   public isProd = false
+  public customEnv: any = {}
   public get = (name: string) => {
     return this.customEnv[name]
   }
-  public customEnv: any = {}
 }
 
 let env = new GlobalEnv()

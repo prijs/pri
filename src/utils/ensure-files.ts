@@ -107,10 +107,7 @@ function ensureTslint(projectRootPath: string) {
         200
       ],
       "arrow-parens": false,
-      "no-implicit-dependencies": [
-        true,
-        "dev"
-      ],
+      "no-implicit-dependencies": false,
       "no-object-literal-type-assertion": false
     }
   }
@@ -123,7 +120,8 @@ function ensurePackageJson(projectRootPath: string) {
   const ensureScripts = {
     start: "pri",
     build: "pri build",
-    preview: "pri preview"
+    preview: "pri preview",
+    lint: "tslint --fix './src/**/*.?(ts|tsx)'"
   }
 
   let exitFileContent: any = {}

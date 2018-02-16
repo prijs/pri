@@ -1,29 +1,29 @@
 import * as fs from "fs"
 import * as path from "path"
 import * as walk from "walk"
-import { IProjectInfo } from './analyse-project-interface'
+import { IProjectInfo } from "./analyse-project-interface"
 
 const PAGE_ROOT = "src/pages"
 const LAYTOU_ROOT = "src/layouts"
 const NOTFOUND_PATH = "src/404"
-const STORE_ROOT = 'src/stores'
+const STORE_ROOT = "src/stores"
 
 export const analyseProject = async (projectRootPath: string) => {
   const info = await walkProject(projectRootPath)
 
   if (
-    hasFileWithoutExt(path.join(projectRootPath, 'src/config/config.default')) ||
-    hasFileWithoutExt(path.join(projectRootPath, 'src/config/config.local')) ||
-    hasFileWithoutExt(path.join(projectRootPath, 'src/config/config.prod'))
+    hasFileWithoutExt(path.join(projectRootPath, "src/config/config.default")) ||
+    hasFileWithoutExt(path.join(projectRootPath, "src/config/config.local")) ||
+    hasFileWithoutExt(path.join(projectRootPath, "src/config/config.prod"))
   ) {
     info.hasConfigFile = true
   }
 
-  if (hasFileWithoutExt(path.join(projectRootPath, 'src/layouts/index'))) {
+  if (hasFileWithoutExt(path.join(projectRootPath, "src/layouts/index"))) {
     info.hasLayoutFile = true
   }
 
-  if (hasFileWithoutExt(path.join(projectRootPath, 'src/404'))) {
+  if (hasFileWithoutExt(path.join(projectRootPath, "src/404"))) {
     info.has404File = true
   }
 
@@ -31,8 +31,8 @@ export const analyseProject = async (projectRootPath: string) => {
 }
 
 function hasFileWithoutExt(pathName: string) {
-  const exts = ['.js', '.jsx', '.ts', '.tsx']
-  for (let ext of exts) {
+  const exts = [".js", ".jsx", ".ts", ".tsx"]
+  for (const ext of exts) {
     if (fs.existsSync(pathName + ext)) {
       return true
     }
@@ -101,7 +101,7 @@ function judgePageFile(projectRootPath: string, dir: string, fileStats: WalkStat
     return null
   }
 
-  const prefix = '/' + path.relative(PAGE_ROOT, relativePath)
+  const prefix = "/" + path.relative(PAGE_ROOT, relativePath)
 
   return {
     path: prefix,

@@ -1,9 +1,9 @@
+import { Button, Form, Input } from "antd"
 import { Connect } from "dob-react"
 import * as React from "react"
-import { Props, State } from './new-page.type'
-import * as S from '../menu.style'
-import { PureComponent } from '../../../utils/react-helper'
-import { Form, Button, Input } from 'antd'
+import { PureComponent } from "../../../utils/react-helper"
+import * as S from "../menu.style"
+import { Props, State } from "./new-page.type"
 
 const FormItem = Form.Item
 
@@ -37,8 +37,8 @@ function hasErrors(fieldsError: any) {
 
 @Connect
 class FormComponent extends PureComponent<Props, State> {
-  static defaultProps = new Props()
-  state = new State()
+  public static defaultProps = new Props()
+  public state = new State()
 
   public render() {
     return (
@@ -47,12 +47,12 @@ class FormComponent extends PureComponent<Props, State> {
           {...formItemLayout}
           label="Path"
         >
-          {this.props.form.getFieldDecorator('path', {
-            initialValue: 'about',
+          {this.props.form.getFieldDecorator("path", {
+            initialValue: "about",
             rules: [{
-              type: 'string', message: 'Path must be string!',
+              type: "string", message: "Path must be string!",
             }, {
-              required: true, message: 'Path is required!',
+              required: true, message: "Path is required!",
             }],
           })(
             <Input />

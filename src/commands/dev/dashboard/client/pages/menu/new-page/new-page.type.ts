@@ -1,8 +1,10 @@
 export class Props {
-  form?: any
-  onSuccess?: () => void = () => { }
+  public form?: any
+  public onSuccess?: () => void = () => {
+    //
+  }
 }
 
 export class State {
-  visible = false
+  public visible = false
 }

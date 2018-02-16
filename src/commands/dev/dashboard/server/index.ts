@@ -1,25 +1,25 @@
+import * as koaCors from "@koa/cors"
 import { execSync } from "child_process"
+import * as chokidar from "chokidar"
+import * as fs from "fs"
 import * as https from "https"
 import * as Koa from "koa"
-import * as fs from 'fs'
 import * as koaCompress from "koa-compress"
 import * as koaMount from "koa-mount"
 import * as koaRoute from "koa-route"
 import * as koaStatic from "koa-static"
-import * as koaCors from '@koa/cors'
 import * as path from "path"
+import * as socketIo from "socket.io"
 import * as yargs from "yargs"
 import * as zlib from "zlib"
 import { analyseProject } from "../../../../utils/analyse-project"
+import { createEntry } from "../../../../utils/create-entry"
 import { generateCertificate } from "../../../../utils/generate-certificate"
 import { log } from "../../../../utils/log"
 import { md5 } from "../../../../utils/md5"
 import { findNearestNodemodules } from "../../../../utils/npm-finder"
-import * as socketIo from 'socket.io'
-import * as chokidar from "chokidar"
-import { createEntry } from "../../../../utils/create-entry"
 import { getConfig } from "../../../../utils/project-config"
-import * as projectManage from '../../../../utils/project-manager'
+import * as projectManage from "../../../../utils/project-manager"
 
 const app = new Koa();
 
@@ -47,23 +47,23 @@ app.use(
 //   ctx.body = info
 // }))
 
-const server = https.createServer(generateCertificate(path.join(projectRootPath, '.temp/dashboard-server')), app.callback())
+const server = https.createServer(generateCertificate(path.join(projectRootPath, ".temp/dashboard-server")), app.callback())
 
 const io = socketIo(server)
 
-io.on('connection', async (socket) => {
+io.on("connection", async (socket) => {
   const projectStatus = await getProjectStatus()
-  socket.emit('freshProjectStatus', projectStatus)
+  socket.emit("freshProjectStatus", projectStatus)
 
   function socketListen(
     name: string,
     fn: (data: any, resolve: (data?: any) => void, reject: (error?: Error) => void) => void
   ) {
     socket.on(name, async (data, callback) => {
-      fn(data, data => {
+      fn(data, resData => {
         callback({
           success: true,
-          data
+          data: resData
         })
       }, error => {
         callback({
@@ -74,7 +74,7 @@ io.on('connection', async (socket) => {
     })
   }
 
-  socketListen('addPage', async (data, resolve, reject) => {
+  socketListen("addPage", async (data, resolve, reject) => {
     try {
       await projectManage.addPage(projectRootPath, data)
       resolve()
@@ -83,7 +83,7 @@ io.on('connection', async (socket) => {
     }
   })
 
-  socketListen('addStore', async (data, resolve, reject) => {
+  socketListen("addStore", async (data, resolve, reject) => {
     try {
       await projectManage.addStore(projectRootPath, data)
       resolve()
@@ -92,7 +92,7 @@ io.on('connection', async (socket) => {
     }
   })
 
-  socketListen('createLayout', async (data, resolve, reject) => {
+  socketListen("createLayout", async (data, resolve, reject) => {
     try {
       await projectManage.createLayout(projectRootPath)
       resolve()
@@ -101,7 +101,7 @@ io.on('connection', async (socket) => {
     }
   })
 
-  socketListen('create404', async (data, resolve, reject) => {
+  socketListen("create404", async (data, resolve, reject) => {
     try {
       await projectManage.create404(projectRootPath)
       resolve()
@@ -110,7 +110,7 @@ io.on('connection', async (socket) => {
     }
   })
 
-  socketListen('createConfig', async (data, resolve, reject) => {
+  socketListen("createConfig", async (data, resolve, reject) => {
     try {
       await projectManage.createConfig(projectRootPath)
       resolve()
@@ -139,12 +139,12 @@ chokidar.watch(path.join(projectRootPath, "/**"), {
     const relativePath = path.relative(projectRootPath, filePath)
 
     try {
-      io.emit('changeFile', {
+      io.emit("changeFile", {
         path: filePath,
         fileContent: fs.readFileSync(filePath).toString()
       })
     } catch (error) {
-      // 
+      //
     }
 
     if (relativePath.startsWith("src/config")) {
@@ -155,7 +155,7 @@ chokidar.watch(path.join(projectRootPath, "/**"), {
 async function fresh() {
   const projectStatus = await getProjectStatus()
   await createEntry(projectStatus.info, projectRootPath, yargs.argv.env, projectStatus.config)
-  io.emit('freshProjectStatus', projectStatus);
+  io.emit("freshProjectStatus", projectStatus);
 }
 
 async function getProjectStatus() {

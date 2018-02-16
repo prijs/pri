@@ -1,7 +1,7 @@
+import { message } from "antd"
 import { Action, inject, observable } from "dob"
-import * as io from 'socket.io-client'
-import { IProjectStatus } from '../../server/project-status-interface'
-import { message } from 'antd'
+import * as io from "socket.io-client"
+import { IProjectStatus } from "../../server/project-status-interface"
 
 @observable
 export class ApplciationStore {
@@ -12,30 +12,30 @@ export class ApplciationStore {
   /**
    * Selected key in left tree
    */
-  public selectedTreeKey: string = 'project-root'
+  public selectedTreeKey: string = "project-root"
 }
 
 export class ApplicationAction {
   @inject(ApplciationStore) public applicationStore: ApplciationStore = null as any
 
-  private socket = io('https://localhost:8001')
+  private socket = io("https://localhost:8001")
 
   @Action public initSocket() {
-    this.socket.on('freshProjectStatus', (data: IProjectStatus) => {
+    this.socket.on("freshProjectStatus", (data: IProjectStatus) => {
       Action(() => {
         this.applicationStore.status = data
       })
     })
 
-    this.socket.on('changeFile', (data: {
+    this.socket.on("changeFile", (data: {
       path: string
       fileContent: string
     }) => {
-
+      //
     })
   }
 
-  @Action public fetch<T={}>(name: string, data?: T) {
+  @Action public fetch<T= {}>(name: string, data?: T) {
     return new Promise((resolve, reject) => {
       this.socket.emit(name, data, (res: any) => {
         if (res.success) {
@@ -51,26 +51,26 @@ export class ApplicationAction {
   @Action public async addPage(options: {
     path: string
   }) {
-    await this.fetch<typeof options>('addPage', options)
+    await this.fetch<typeof options>("addPage", options)
   }
 
   @Action public async addStore(options: {
     name: string
     withDemo: boolean
   }) {
-    await this.fetch<typeof options>('addStore', options)
+    await this.fetch<typeof options>("addStore", options)
   }
 
   @Action public async createConfig() {
-    await this.fetch('createConfig')
+    await this.fetch("createConfig")
   }
 
   @Action public async create404() {
-    await this.fetch('create404')
+    await this.fetch("create404")
   }
 
   @Action public async createLayout() {
-    await this.fetch('createLayout')
+    await this.fetch("createLayout")
   }
 
   @Action public setSelectedTreeKey(key: string) {

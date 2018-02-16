@@ -1,15 +1,15 @@
 import { Connect } from "dob-react"
 import * as React from "react"
-import { Props, State } from './store.type'
-import * as S from './store.style'
-import { PureComponent } from '../../../utils/react-helper'
+import { PureComponent } from "../../../utils/react-helper"
+import * as S from "./store.style"
+import { Props, State } from "./store.type"
 
 @Connect
 export class StoreComponent extends PureComponent<Props, State> {
-  static defaultProps = new Props()
-  state = new State()
+  public static defaultProps = new Props()
+  public state = new State()
 
-  render() {
+  public render() {
     return (
       <S.Container>
         Stores TODO

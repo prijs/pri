@@ -1,24 +1,24 @@
 import { Connect } from "dob-react"
 import * as React from "react"
-import { Props, State } from './layout.type'
-import * as S from './layout.style'
+import * as S from "./layout.style"
+import { Props, State } from "./layout.type"
 
-import { StructComponent } from '../struct/struct.component'
-import { MenuComponent } from '../menu/menu.component'
-import { NavComponent } from '../nav/nav.component'
-import { MainComponent } from '../main/main.component'
-import { PureComponent } from '../../utils/react-helper'
+import { PureComponent } from "../../utils/react-helper"
+import { MainComponent } from "../main/main.component"
+import { MenuComponent } from "../menu/menu.component"
+import { NavComponent } from "../nav/nav.component"
+import { StructComponent } from "../struct/struct.component"
 
 @Connect
 export class LayoutComponent extends PureComponent<Props, State> {
-  static defaultProps = new Props()
-  state = new State()
+  public static defaultProps = new Props()
+  public state = new State()
 
   public componentDidMount() {
     this.props.ApplicationAction.initSocket()
   }
 
-  render() {
+  public render() {
     return (
       <S.Container>
         <S.ContainerLeft>

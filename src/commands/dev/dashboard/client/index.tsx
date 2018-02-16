@@ -1,11 +1,12 @@
+import { useStrict } from "dob"
 import { Provider } from "dob-react"
-import { useStrict } from 'dob'
 import * as React from "react"
 import * as ReactDOM from "react-dom"
+import { LayoutComponent } from "./pages/layout/layout.component"
 import stores from "./stores"
-import { LayoutComponent } from './pages/layout/layout.component'
 
-import 'antd/dist/antd.css';
+// tslint:disable-next-line:no-submodule-imports
+import "antd/dist/antd.css";
 
 useStrict()
 

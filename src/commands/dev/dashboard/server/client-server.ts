@@ -1,17 +1,17 @@
+import * as koaCors from "@koa/cors"
+import * as chokidar from "chokidar"
+import * as fs from "fs"
 import * as https from "https"
 import * as Koa from "koa"
-import * as fs from 'fs'
 import * as koaCompress from "koa-compress"
 import * as koaMount from "koa-mount"
 import * as koaStatic from "koa-static"
-import * as koaCors from '@koa/cors'
 import * as path from "path"
+import * as socketIo from "socket.io"
 import * as yargs from "yargs"
 import * as zlib from "zlib"
 import { generateCertificate } from "../../../../utils/generate-certificate"
 import { log } from "../../../../utils/log"
-import * as socketIo from 'socket.io'
-import * as chokidar from "chokidar"
 
 const app = new Koa();
 
@@ -35,7 +35,7 @@ app.use(
 )
 
 app.use(async ctx => {
-  ctx.set('Content-Type', 'text/html; charset=utf-8')
+  ctx.set("Content-Type", "text/html; charset=utf-8")
 
   ctx.body = `
     <html>
@@ -61,6 +61,6 @@ app.use(async ctx => {
   `
 })
 
-const server = https.createServer(generateCertificate(path.join(projectRootPath, '.temp/dashboard-client-server')), app.callback())
+const server = https.createServer(generateCertificate(path.join(projectRootPath, ".temp/dashboard-client-server")), app.callback())
 
 server.listen(clientPort)

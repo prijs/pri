@@ -1,38 +1,38 @@
+import { Table } from "antd"
 import { Connect } from "dob-react"
 import * as React from "react"
-import { Props, State } from './routes.type'
-import * as S from './routes.style'
-import { PureComponent } from '../../../utils/react-helper'
-import { Table } from 'antd'
+import { PureComponent } from "../../../utils/react-helper"
+import * as S from "./routes.style"
+import { Props, State } from "./routes.type"
 
 const handleJumpPage = (pathStr: string) => {
   window.parent.postMessage({
-    type: 'changeRoute',
+    type: "changeRoute",
     path: pathStr
   }, "*")
 }
 
 const columns: any = [{
-  title: 'Path',
-  dataIndex: 'path',
-  key: 'path',
+  title: "Path",
+  dataIndex: "path",
+  key: "path",
   render: (pathStr: string) => {
     return (
       <S.PathLink onClick={handleJumpPage.bind(null, pathStr)}>{pathStr}</S.PathLink>
     )
   }
 }, {
-  title: 'IsIndex',
-  dataIndex: 'isIndex',
-  key: 'isIndex',
+  title: "IsIndex",
+  dataIndex: "isIndex",
+  key: "isIndex",
 }]
 
 @Connect
 export class RoutesComponent extends PureComponent<Props, State> {
-  static defaultProps = new Props()
-  state = new State()
+  public static defaultProps = new Props()
+  public state = new State()
 
-  render() {
+  public render() {
     if (this.props.ApplciationStore.status === null) {
       return null
     }

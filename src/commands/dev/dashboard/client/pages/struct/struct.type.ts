@@ -3,9 +3,9 @@ export class Props {
 }
 
 export class State {
-  expandedKeys: string[] = [
-    'project-root'
+  public expandedKeys: string[] = [
+    "project-root"
   ]
-  searchValue = ''
-  autoExpandParent = true
+  public searchValue = ""
+  public autoExpandParent = true
 }
