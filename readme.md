@@ -231,7 +231,7 @@ Production deployment. By default the dist folder is `./dist`.
   
   <p>
 
-  <img src="https://img.alicdn.com/tfs/TB19jNdaDtYBeNjy1XdXXXXyVXa-1437-802.png" width=400 />
+  <img src="https://img.alicdn.com/tfs/TB19jNdaDtYBeNjy1XdXXXXyVXa-1437-802.png" width=600 />
 
   As you see, when execute `npm start`, a dashboard appears on the right by iframe.
 
