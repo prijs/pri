@@ -219,7 +219,7 @@ Production deployment. By default the dist folder is `./dist`.
   ```tsx
   // ./src/pages/index.tsx
 
-  // Only for type support. If you use js, can delete the next line.
+  // Only for type support. You can delete next line, if you are using js.
   import { stores } from "../helper"
 
   import * as React from "react"
