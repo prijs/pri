@@ -1,6 +1,6 @@
-# Pri
+# Pri &middot;  [![npm version](https://img.shields.io/npm/v/pri.svg?style=flat-square)](https://www.npmjs.com/package/pri)
 
-A project from development to release, you may only need one package: `pri`.
+Pri is a toolkit for building web applications with React. **Helps you deal with everything other than business logic.**
 
 ## How to use
 
@@ -229,6 +229,23 @@ Production deployment. By default the dist folder is `./dist`.
 ## Features
 
 <details>
+  <summary>Project Dashboard.</summary>
+  
+  <p>
+
+  ![](https://img.alicdn.com/tfs/TB19jNdaDtYBeNjy1XdXXXXyVXa-1437-802.png)
+
+  As you see, when execute `npm start`, a dashboard appears on the right by iframe.
+
+  It can manage and analyze your project code. You can use it to view all the routes of the current project, jumping page, create new pages or stores.
+
+  > More still in continuous development!
+
+  </p>
+
+</details>
+
+<details>
   <summary>Typescript first.</summary>
   
   <p>
@@ -401,3 +418,9 @@ Production deployment. By default the dist folder is `./dist`.
 - Tree Shaking.
 - Scope Hoist.
 - Prefetching.
+
+## Inspired
+
+- [next.js](https://github.com/zeit/next.js)
+- [umi](https://github.com/umijs/umi)
+- [rekit](https://github.com/supnate/rekit)
