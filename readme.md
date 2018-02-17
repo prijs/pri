@@ -45,6 +45,8 @@ npx pri init
 
 Run dev server in development mode with files watching and HMR.
 
+> You should set `chrome://flags/#allow-insecure-localhost`, to trust local certificate
+
 ### npm run preview
 
 Preview in production mode, won't watch files change.

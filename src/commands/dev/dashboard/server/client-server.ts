@@ -54,6 +54,9 @@ app.use(async ctx => {
 
     <body>
       <div id="root"></div>
+      <script>
+        window.serverPort = ${serverPort}
+      </script>
       <script src="/static/index.js"></script>
     </body>
 

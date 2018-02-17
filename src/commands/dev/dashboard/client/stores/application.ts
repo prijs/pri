@@ -3,6 +3,8 @@ import { Action, inject, observable } from "dob"
 import * as io from "socket.io-client"
 import { IProjectStatus } from "../../server/project-status-interface"
 
+const serverPort = (window as any)["serverPort"]
+
 @observable
 export class ApplciationStore {
   /**
@@ -18,7 +20,7 @@ export class ApplciationStore {
 export class ApplicationAction {
   @inject(ApplciationStore) public applicationStore: ApplciationStore = null as any
 
-  private socket = io("https://localhost:8001")
+  private socket = io(`https://localhost:${serverPort}`)
 
   @Action public initSocket() {
     this.socket.on("freshProjectStatus", (data: IProjectStatus) => {

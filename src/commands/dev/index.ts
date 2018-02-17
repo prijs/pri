@@ -48,7 +48,7 @@ export const CommandDev = async () => {
   ])
 
   if (hasDashboardBundle) {
-    log(`Maybe you can set chrome://flags/#allow-insecure-localhost, to avoid local https alert.`)
+    log(`you should set chrome://flags/#allow-insecure-localhost, to trust local certificate.`)
 
     // Start dashboard client production server
     fork(path.join(__dirname, "dashboard/server/client-server.js"), [
@@ -62,18 +62,14 @@ export const CommandDev = async () => {
       dashboardBundleRootPath
     ])
 
-    open(`https://localhost:${freePort}`);
-
     // Serve project
-    execSync(`${findNearestNodemodules()}/.bin/parcel serve --https --port ${freePort} ${htmlEntryPath}`, {
+    execSync(`${findNearestNodemodules()}/.bin/parcel serve --https --port ${freePort} --open ${htmlEntryPath}`, {
       stdio: "inherit",
       cwd: __dirname
     });
   } else {
-    open(`https://localhost:${dashboardClientPort}`);
-
     // Start dashboard client dev server
-    execSync(`${findNearestNodemodules()}/.bin/parcel serve --https --port ${dashboardClientPort} ${path.join(__dirname, "../../../dev-dashboard-entry.html")}`, {
+    execSync(`${findNearestNodemodules()}/.bin/parcel serve --https --port ${dashboardClientPort}  --open ${path.join(__dirname, "../../../dev-dashboard-entry.html")}`, {
       stdio: "inherit",
       cwd: projectRootPath
     })
