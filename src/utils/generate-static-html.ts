@@ -25,7 +25,7 @@ export function generateHtmlByRouterPath(routerPath: string, projectRootPath: st
       <title>${projectConfig.title}</title>
 
       ${hasCssOutput ? `
-        <link rel="stylesheet" type="text/css" href="${cssPath}"/>
+        <link rel="stylesheet" type="text/css" href="${getEntryPath(projectConfig, "entry.css")}"/>
       ` : ""}
 
       <style>

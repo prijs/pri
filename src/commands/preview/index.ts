@@ -74,7 +74,7 @@ export const CommandPreview = async () => {
         <title>pri</title>
 
         ${hasCssOutput ? `
-          <link rel="stylesheet" type="text/css" href="${cssPath}"/>
+          <link rel="stylesheet" type="text/css" href="/static/entry.css"/>
         ` : ""}
 
         <style>
