@@ -330,7 +330,7 @@ Production deployment. By default the dist folder is `./dist`.
   Then, execute `npm i gh-pages --save-dev`, and add npm scripts:
 
   ```json
-  "deploy": "pri build && && gh-pages -d dist"
+  "deploy": "pri build && gh-pages -d dist"
   ```
 
   Finally, execute `npm run deploy`!
