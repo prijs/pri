@@ -488,6 +488,8 @@ Production deployment. By default the dist folder is `./dist`.
 - Tree Shaking.
 - Scope Hoist.
 - Prefetching.
+- Code coverage.
+- Static html.
 
 ## Inspired
 
