@@ -31,7 +31,7 @@ const getEntryContent = (entryText: IEntryText, projectInfo: IProjectInfo, proje
     ${entryText.storesImporter}
 
     const customHistory = createBrowserHistory({
-      basename: "${projectConfig.baseHref}"
+      basename: "${env === "local" ? "/" : projectConfig.baseHref}"
     })
 
     ${entryText.setEnv}
