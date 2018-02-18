@@ -16,7 +16,7 @@ import { log } from "./utils/log"
 /**
  * -V --version
  */
-commander.version(pkg.version, "-v, --version");
+commander.version(pkg.version, "-v, --version")
 
 /**
  * Regist commander.
@@ -26,32 +26,35 @@ commander.command(DEV)
   .description("Develop your project.")
   .action(async () => {
     await CommandDev()
-  });
+  })
 
 const BUILD = "build"
 commander.command(BUILD)
   .description("Pack your project.")
-  .action(async () => {
-    await CommandBuild()
-  });
+  .option("-s, --static")
+  .action(async (options) => {
+    await CommandBuild({
+      static: options.static
+    })
+  })
 
 const PREVIEW = "preview"
 commander.command(PREVIEW)
   .description("Preview your project in production mode.")
   .action(async () => {
     await CommandPreview()
-  });
+  })
 
 const INIT = "init"
 commander.command(INIT)
   .action(async () => {
     await CommandInit()
-  });
+  })
 
 /**
  * Parse argv.
  */
-commander.parse(process.argv);
+commander.parse(process.argv)
 
 /**
  * When no args given, use dev command
@@ -67,5 +70,5 @@ updateNotifier({ pkg }).notify()
 
 // 捕获异常
 process.on("unhandledRejection", error => {
-  log(colors.red(error.toString()));
-});
+  log(colors.red(error.toString()))
+})

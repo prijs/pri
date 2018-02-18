@@ -159,19 +159,38 @@ Production deployment. By default the dist folder is `./dist`.
   **`ProjectConfig` Details**
 
   ```typescript
-  class IConfig {
+    export class IProjectConfig {
     /**
      * Title for html <title>
      */
     public title?: string = "pri"
     /**
-     * Dist dir path when running: npm run build | pri build
+     * Dist dir path
+     * Only take effect on npm run build | pri build
      */
     public distDir?: string = "dist"
     /**
-     * Public url path when running: npm run build | pri build
+     * Assets public path. eg: some.com, some.com/somePath, /somePath
+     * If not set, result: /<distPath>
+     * If set /somePath for example, result: /somePath/<distPath>
+     * If set some.com for example, result: //some.com/<distPath>
+     * If set some.com/somePath for example, result: //some.com/somePath/<distPath>
+     * Only take effect on npm run build | pri build
      */
     public publicPath?: string | null = null
+    /**
+     * Base href for all pages.
+     * For example, /admin is the root path after deploy, you should set baseHref to /admin.
+     * There is no need to modify the code, routing / can automatically maps to /admin.
+     * Only take effect on npm run build | pri build
+     */
+    public baseHref?: string = "/"
+    /**
+     * Generate static index file for each route, when building.
+     * Usefal for static service who don't serve fallback html, like github-pages.
+     * Only take effect on npm run build | pri build
+     */
+    public staticBuild = false
     /**
      * Custom env
      */
@@ -284,6 +303,41 @@ Production deployment. By default the dist folder is `./dist`.
 
   - After running `npm start`, `env.get()` will get from the map merged by `config.local.ts` and `config.default.ts`
   - After running `npm run build`, `env.get()` will get from the map merged by `config.prod.ts` and `config.default.ts`
+
+  </p>
+
+</details>
+
+<details>
+  <summary>Deploy to github pages.</summary>
+  
+  <p>
+
+  Set up `publicPath`, `baseHref` and `staticBuild` in the **Custom config**.
+
+  ```typescript
+  // src/config/config.default.ts
+
+  import { ProjectConfig } from "pri"
+
+  export default {
+    staticBuild: true,
+    publicPath: "/<your-repo-name>",
+    baseHref: "/<your-repo-name>"
+  } as ProjectConfig
+  ```
+
+  Then, execute `npm i gh-pages --save-dev`, and add npm scripts:
+
+  ```json
+  "deploy": "pri build && && gh-pages -d dist"
+  ```
+
+  Finally, execute `npm run deploy`!
+
+  > This is because js files will be served from `/<your-repo-name>` and the root path changed to `/<your-repo-name>` on github-pages.
+
+  > `staticBuild` will generate static index file for each route.
 
   </p>
 
@@ -489,7 +543,6 @@ Production deployment. By default the dist folder is `./dist`.
 - Scope Hoist.
 - Prefetching.
 - Code coverage.
-- Static html.
 
 ## Inspired
 

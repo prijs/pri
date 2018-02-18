@@ -3,9 +3,9 @@ import * as fs from "fs-extra"
 import * as _ from "lodash"
 import * as path from "path"
 import * as prettier from "prettier"
-import { IConfig } from "./project-config-interface"
+import { IProjectConfig } from "./project-config-interface"
 
-export const ensureFiles = (projectRootPath: string, config: IConfig) => {
+export const ensureFiles = (projectRootPath: string, config: IProjectConfig) => {
   ensureGitignore(projectRootPath, config)
   ensureTsconfig(projectRootPath)
   ensureBabelrc(projectRootPath)
@@ -15,7 +15,7 @@ export const ensureFiles = (projectRootPath: string, config: IConfig) => {
   ensureHomePage(projectRootPath)
 }
 
-function ensureGitignore(projectRootPath: string, config: IConfig) {
+function ensureGitignore(projectRootPath: string, config: IProjectConfig) {
   const filePath = path.join(projectRootPath, ".gitignore")
   const ensureContents = [
     "node_modules",
@@ -121,8 +121,7 @@ function ensurePackageJson(projectRootPath: string) {
   const ensureScripts = {
     start: "pri",
     build: "pri build",
-    preview: "pri preview",
-    lint: "echo 'Pre-commit checks...' && tslint --fix './src/**/*.?(ts|tsx)'"
+    preview: "pri preview"
   }
 
   let exitFileContent: any = {}

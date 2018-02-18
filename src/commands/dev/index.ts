@@ -9,7 +9,7 @@ import { ensureFiles } from "../../utils/ensure-files"
 import { log, spinner } from "../../utils/log"
 import { findNearestNodemodules } from "../../utils/npm-finder"
 import { getConfig } from "../../utils/project-config"
-import { IConfig } from "../../utils/project-config-interface"
+import { IProjectConfig } from "../../utils/project-config-interface"
 
 const projectRootPath = process.cwd();
 
@@ -76,7 +76,7 @@ export const CommandDev = async () => {
   }
 }
 
-function createEntryHtmlFile(entryPath: string, config: IConfig, dashboardServerPort: number) {
+function createEntryHtmlFile(entryPath: string, config: IProjectConfig, dashboardServerPort: number) {
   const htmlPath = path.join(projectRootPath, ".temp/dev.html")
 
   fs.outputFileSync(htmlPath, `

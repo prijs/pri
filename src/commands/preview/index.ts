@@ -1,3 +1,4 @@
+import { execSync } from "child_process"
 import * as fs from "fs"
 import * as https from "https"
 import * as Koa from "koa"
@@ -6,24 +7,45 @@ import * as koaMount from "koa-mount"
 import * as koaStatic from "koa-static"
 import * as open from "opn";
 import * as path from "path"
-import * as portfinder from "portfinder";
+import * as portfinder from "portfinder"
 import * as url from "url"
 import * as zlib from "zlib"
+import { analyseProject } from "../../utils/analyse-project"
+import { createEntry } from "../../utils/create-entry"
+import { ensureFiles } from "../../utils/ensure-files"
 import { generateCertificate } from "../../utils/generate-certificate"
 import { spinner } from "../../utils/log"
+import { findNearestNodemodules } from "../../utils/npm-finder"
 import { getConfig } from "../../utils/project-config"
-import { CommandBuild } from "../build"
+import { lint } from "../../utils/tslint"
 
 const app = new Koa();
 
 const projectRootPath = process.cwd();
 
 export const CommandPreview = async () => {
-  const config = getConfig(projectRootPath, "prod")
+  const env = "prod"
+  const config = getConfig(projectRootPath, env)
+
+  // tslint check
+  lint(projectRootPath)
+
+  await spinner("Ensure project files", async () => {
+    ensureFiles(projectRootPath, config)
+  })
+
+  const entryPath = await spinner("Analyse project", async () => {
+    const info = await analyseProject(projectRootPath)
+    return createEntry(info, projectRootPath, env, config)
+  })
+
+  // Run parcel
+  execSync(`${findNearestNodemodules()}/.bin/parcel build ${entryPath} --out-dir ${path.join(projectRootPath, ".temp/preview")}`, {
+    stdio: "inherit",
+    cwd: __dirname
+  })
 
   const freePort = await portfinder.getPortPromise()
-
-  await CommandBuild()
 
   app.use(koaCompress({
     flush: zlib.Z_SYNC_FLUSH
@@ -31,7 +53,7 @@ export const CommandPreview = async () => {
 
   app.use(
     koaMount("/static",
-      koaStatic(path.join(projectRootPath, "dist"), {
+      koaStatic(path.join(projectRootPath, ".temp/preview"), {
         gzip: true
       })
     )

@@ -4,10 +4,10 @@ import * as path from "path"
 import * as ts from "typescript"
 import { exec } from "./exec"
 import { findNearestNodemodules } from "./npm-finder"
-import { IConfig } from "./project-config-interface"
+import { IProjectConfig } from "./project-config-interface"
 
 export const getConfig = (projectRootPath: string, env: "local" | "prod" | null) => {
-  const defaultConfig = new IConfig()
+  const defaultConfig = new IProjectConfig()
 
   const projectDefaultConfig = execTsByPath(path.join(projectRootPath, "src/config/config.default"))
   let projectEnvConfig = null
@@ -22,7 +22,7 @@ export const getConfig = (projectRootPath: string, env: "local" | "prod" | null)
     default:
   }
 
-  const finalConfig: IConfig = { ...defaultConfig, ...projectDefaultConfig, ...projectEnvConfig }
+  const finalConfig: IProjectConfig = { ...defaultConfig, ...projectDefaultConfig, ...projectEnvConfig }
 
   return finalConfig
 }
