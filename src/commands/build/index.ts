@@ -41,18 +41,18 @@ export const CommandBuild = async (options: {
     }
   })
 
+  // Run parcel
+  execSync(`${findNearestNodemodules()}/.bin/parcel build ${result.entryPath} --out-dir ${path.join(projectRootPath, projectConfig.distDir || "dist")}`, {
+    stdio: "inherit",
+    cwd: __dirname
+  })
+
   // If using staticBuild, generate index pages for all router.
   if (projectConfig.staticBuild) {
     await spinner("Generate static files.", async () => {
       await generateStaticHtml(projectRootPath, projectConfig, result.projectInfo)
     })
   }
-
-  // Run parcel
-  execSync(`${findNearestNodemodules()}/.bin/parcel build ${result.entryPath} --out-dir ${path.join(projectRootPath, projectConfig.distDir || "dist")}`, {
-    stdio: "inherit",
-    cwd: __dirname
-  })
 
   generateHtmlByRouterPath("/", projectRootPath, projectConfig)
 }

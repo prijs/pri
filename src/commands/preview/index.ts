@@ -51,13 +51,18 @@ export const CommandPreview = async () => {
     flush: zlib.Z_SYNC_FLUSH
   }))
 
+  const previewDistPath = path.join(projectRootPath, ".temp/preview")
+
   app.use(
     koaMount("/static",
-      koaStatic(path.join(projectRootPath, ".temp/preview"), {
+      koaStatic(previewDistPath, {
         gzip: true
       })
     )
   )
+
+  const cssPath = path.join(previewDistPath, "entry.css")
+  const hasCssOutput = fs.existsSync(cssPath)
 
   app.use(async (ctx, next) => {
     await next()
@@ -67,6 +72,10 @@ export const CommandPreview = async () => {
 
       <head>
         <title>pri</title>
+
+        ${hasCssOutput ? `
+          <link rel="stylesheet" type="text/css" href="${cssPath}"/>
+        ` : ""}
 
         <style>
           html,

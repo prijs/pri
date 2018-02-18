@@ -15,11 +15,18 @@ export function generateHtmlByRouterPath(routerPath: string, projectRootPath: st
   const relativePathWithSuffix = path.join(routerPath, "index.html")
   const htmlPath = path.join(projectRootPath, projectConfig.distDir, relativePathWithSuffix)
 
+  const cssPath = path.join(projectRootPath, projectConfig.distDir, "entry.css")
+  const hasCssOutput = fs.existsSync(cssPath)
+
   fs.outputFileSync(htmlPath, `
     <html>
 
     <head>
       <title>${projectConfig.title}</title>
+
+      ${hasCssOutput ? `
+        <link rel="stylesheet" type="text/css" href="${cssPath}"/>
+      ` : ""}
 
       <style>
         html,
@@ -32,16 +39,14 @@ export function generateHtmlByRouterPath(routerPath: string, projectRootPath: st
 
     <body>
       <div id="root"></div>
-      <script src="${getEntryPath(projectConfig)}"></script>
+      <script src="${getEntryPath(projectConfig, "entry.js")}"></script>
     </body>
 
     </html>
   `)
 }
 
-function getEntryPath(projectConfig: IProjectConfig) {
-  const entryFileName = "entry.js"
-
+function getEntryPath(projectConfig: IProjectConfig, entryFileName: string) {
   let entryPath = "/" + entryFileName
 
   if (projectConfig.publicPath) {
