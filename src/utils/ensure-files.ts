@@ -109,7 +109,8 @@ function ensureTslint(projectRootPath: string) {
       ],
       "arrow-parens": false,
       "no-implicit-dependencies": false,
-      "no-object-literal-type-assertion": false
+      "no-object-literal-type-assertion": false,
+      "no-submodule-imports": false
     }
   }
 
