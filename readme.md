@@ -553,9 +553,8 @@ Production deployment. By default the dist folder is `./dist`.
 - [dob@2.5.8](https://www.npmjs.com/package/dob)
 - [dob-react@2.4.10](https://www.npmjs.com/package/dob-react)
 - [react-loadable@5.3.1](https://www.npmjs.com/package/react-loadable)
-
-- [typescript@2.7.1](https://github.com/Microsoft/TypeScript)
 - [antd@3.2.1](https://www.npmjs.com/package/antd)
+- [typescript@2.7.1](https://github.com/Microsoft/TypeScript)
 
 ## Inspired
 
