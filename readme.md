@@ -544,6 +544,16 @@ Production deployment. By default the dist folder is `./dist`.
 - Prefetching.
 - Code coverage.
 
+## Built-in packages in 0.x version
+
+- [react@16.2.0](https://www.npmjs.com/package/react)
+- [react-dom@16.2.0](https://www.npmjs.com/package/react-dom)
+- [react-router-dom@4.2.2](https://www.npmjs.com/package/react-router-dom)
+- [parcel-bundler@1.6.2](https://www.npmjs.com/package/parcel-bundler)
+- [dob@2.5.8](https://www.npmjs.com/package/dob)
+- [dob-react@2.4.10](https://www.npmjs.com/package/dob-react)
+- [react-loadable@5.3.1](https://www.npmjs.com/package/react-loadable)
+
 ## Inspired
 
 - [next.js](https://github.com/zeit/next.js)
