@@ -5,19 +5,20 @@ import * as ts from "typescript"
 import { exec } from "./exec"
 import { findNearestNodemodules } from "./npm-finder"
 import { IProjectConfig } from "./project-config-interface"
+import { configPaths } from "./structor-config"
 
 export const getConfig = (projectRootPath: string, env: "local" | "prod" | null) => {
   const defaultConfig = new IProjectConfig()
 
-  const projectDefaultConfig = execTsByPath(path.join(projectRootPath, "src/config/config.default"))
+  const projectDefaultConfig = execTsByPath(path.join(projectRootPath, path.format(configPaths.default)))
   let projectEnvConfig = null
 
   switch (env) {
     case "local":
-      projectEnvConfig = execTsByPath(path.join(projectRootPath, "src/config/config.local"))
+      projectEnvConfig = execTsByPath(path.join(projectRootPath, path.format(configPaths.local)))
       break
     case "prod":
-      projectEnvConfig = execTsByPath(path.join(projectRootPath, "src/config/config.prod"))
+      projectEnvConfig = execTsByPath(path.join(projectRootPath, path.format(configPaths.prod)))
       break
     default:
   }

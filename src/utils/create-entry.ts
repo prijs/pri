@@ -5,6 +5,7 @@ import * as prettier from "prettier"
 import { IProjectInfo } from "./analyse-project-interface"
 import { md5 } from "./md5"
 import { IProjectConfig } from "./project-config-interface"
+import { helperPath, notFoundPath, tempJsEntryPath } from "./structor-config"
 
 interface IEntryText {
   pageImporter: string
@@ -159,17 +160,18 @@ export async function createEntry(info: IProjectInfo, projectRootPath: string, e
 
   // Set stores
   if (info.stores.length > 0) {
+    const entryRelativeToHelper = path.relative(path.join(tempJsEntryPath.dir), path.join(helperPath.dir, helperPath.name))
     entryText.storesImporter += `import { useStrict } from "dob"\n`
     entryText.storesImporter += `import { Connect, Provider } from "dob-react"\n`
     entryText.storesImporter += `useStrict()\n`
-    entryText.storesImporter += `import { stores } from "../src/helper"\n`
+    entryText.storesImporter += `import { stores } from "${entryRelativeToHelper}"\n`
     entryText.storesHelper += `import { combineStores } from "dob"\n`
     entryText.storesHelper += info.stores
       .map(eachStore => {
         const filePath = path.parse(eachStore.filePath)
         const importAbsolutePath = path.join(filePath.dir, filePath.name)
-        const importRelativePath = path.relative(path.join(projectRootPath, "src"), importAbsolutePath)
-        return `import { ${safeName(eachStore.name)}Action, ${safeName(eachStore.name)}Store } from "./${importRelativePath}"`
+        const importRelativePath = path.relative(path.join(projectRootPath, helperPath.dir), importAbsolutePath)
+        return `import { ${safeName(eachStore.name)}Action, ${safeName(eachStore.name)}Store } from "${importRelativePath}"`
       })
       .join("\n")
     entryText.storesHelper += `
@@ -211,30 +213,29 @@ export async function createEntry(info: IProjectInfo, projectRootPath: string, e
   }
 
   // Set not found
-  if (info.notFound) {
-    const notFoundPath = path.parse(info.notFound.filePath)
-    entryText.notFoundImporter = `import NotFoundComponent from "${path.join(notFoundPath.dir, notFoundPath.name)}"`
+  if (info.has404File) {
+    entryText.notFoundImporter = `import NotFoundComponent from "${path.join(projectRootPath, path.format(notFoundPath))}"`
     entryText.notFoundRoute = `
       <Route component={NotFoundComponent} />
     `
   }
 
   // Create entry tsx file
-  const entryPath = path.join(projectRootPath, ".temp/entry.tsx")
+  const entryPath = path.join(projectRootPath, path.format(tempJsEntryPath))
   fs.outputFileSync(entryPath, prettier.format(getEntryContent(entryText, info, projectConfig, env), {
     semi: false,
     parser: "typescript"
   }))
 
   // If has stores, create helper.ts
-  const helperPath = path.join(projectRootPath, "src/helper.ts")
+  const helperAbsolutePath = path.join(projectRootPath, path.format(helperPath))
   if (info.stores.length > 0) {
-    fs.outputFileSync(helperPath, prettier.format(getHelperContent(entryText, info, env), {
+    fs.outputFileSync(helperAbsolutePath, prettier.format(getHelperContent(entryText, info, env), {
       semi: false,
       parser: "typescript"
     }))
   } else {
-    fs.removeSync(helperPath)
+    fs.removeSync(helperAbsolutePath)
   }
 
   return entryPath

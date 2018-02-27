@@ -3,12 +3,13 @@ import * as _ from "lodash"
 import * as path from "path"
 import * as prettier from "prettier"
 import { analyseProject } from "./analyse-project"
+import { configPaths, helperPath, layoutsPath, notFoundPath, pagesPath, storesPath } from "./structor-config"
 
 export async function addPage(projectRootPath: string, options: {
   path: string
 }) {
   const projectInfo = await analyseProject(projectRootPath)
-  const fileFullPath = path.join(projectRootPath, "src/pages", options.path) + ".tsx"
+  const fileFullPath = path.join(projectRootPath, pagesPath.dir, options.path) + ".tsx"
 
   if (fs.existsSync(fileFullPath)) {
     throw Error(`${options.path} already exist!`)
@@ -43,7 +44,7 @@ export async function addPage(projectRootPath: string, options: {
         parser: "typescript"
       }))
   } else {
-    const helperAbsolutePath = path.join(projectRootPath, "src/helper")
+    const helperAbsolutePath = path.join(projectRootPath, helperPath.dir, helperPath.name)
     const fileAbsoluteDirPath = path.parse(fileFullPath).dir
     const relativeToHelperPath = path.relative(fileAbsoluteDirPath, helperAbsolutePath)
     fs.outputFileSync(fileFullPath, prettier.format(`
@@ -78,7 +79,7 @@ export async function addPage(projectRootPath: string, options: {
 }
 
 export async function createLayout(projectRootPath: string) {
-  const pathFullPath = path.join(projectRootPath, "src/layouts/index.tsx")
+  const pathFullPath = path.join(projectRootPath, path.format(layoutsPath))
 
   if (fs.existsSync(pathFullPath)) {
     throw Error(`layout already exist!`)
@@ -114,7 +115,7 @@ export async function createLayout(projectRootPath: string) {
 }
 
 export async function create404(projectRootPath: string) {
-  const pathFullPath = path.join(projectRootPath, "src/404.tsx")
+  const pathFullPath = path.join(projectRootPath, path.format(notFoundPath))
 
   if (fs.existsSync(pathFullPath)) {
     throw Error(`404 page already exist!`)
@@ -123,7 +124,18 @@ export async function create404(projectRootPath: string) {
   fs.outputFileSync(pathFullPath, prettier.format(`
     import * as React from "react"
 
-    export default class Page extends React.PureComponent<any, any> {
+    class Props {
+
+    }
+
+    class State {
+
+    }
+
+    export default class Page extends React.PureComponent<Props, State> {
+      public static defaultProps = new Props()
+      public state = new State()
+
       public render() {
         return (
           <div>
@@ -139,9 +151,9 @@ export async function create404(projectRootPath: string) {
 }
 
 export async function createConfig(projectRootPath: string) {
-  const defaultFullPath = path.join(projectRootPath, "src/config/config.default.ts")
-  const localFullPath = path.join(projectRootPath, "src/config/config.local.ts")
-  const prodFullPath = path.join(projectRootPath, "src/config/config.prod.ts")
+  const defaultFullPath = path.join(projectRootPath, path.format(configPaths.default))
+  const localFullPath = path.join(projectRootPath, path.format(configPaths.local))
+  const prodFullPath = path.join(projectRootPath, path.format(configPaths.prod))
 
   if (fs.existsSync(defaultFullPath)) {
     throw Error(`layout already exist!`)
@@ -170,7 +182,7 @@ export async function addStore(projectRootPath: string, options: {
   const camelName = _.camelCase(options.name)
   const camelUpperFirstName = _.upperFirst(camelName)
   const kebabName = _.kebabCase(options.name)
-  const fileFullPath = path.join(projectRootPath, "src/stores", kebabName) + ".tsx"
+  const fileFullPath = path.join(projectRootPath, storesPath.dir, kebabName) + ".tsx"
 
   if (fs.existsSync(fileFullPath)) {
     throw Error(`${kebabName} already exist!`)

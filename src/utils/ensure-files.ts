@@ -170,16 +170,31 @@ function ensureHomePage(projectRootPath: string) {
     import { env } from "pri"
     import * as React from "react"
 
-    export default () => (
-      <div>
-        <h1 style={{ display: "flex", alignItems: "center", justifyContent: "center"}}>
-          Welcome to pri!
-        </h1>
-        <p style={{ padding: "10 50px" }}>
-          Current env: {env.isLocal && "local"}{env.isProd && "prod"}
-        </p>
-      </div>
-    )
+    class Props {
+
+    }
+
+    class State {
+
+    }
+
+    export default class Page extends React.PureComponent<Props, State> {
+      public static defaultProps = new Props()
+      public state = new State()
+
+      public render() {
+        return (
+          <div>
+            <h1 style={{ display: "flex", alignItems: "center", justifyContent: "center"}}>
+              Welcome to pri!
+            </h1>
+            <p style={{ padding: "10 50px" }}>
+              Current env: {env.isLocal && "local"}{env.isProd && "prod"}
+            </p>
+          </div>
+        )
+      }
+    }
   `
 
   fs.outputFileSync(filePath, prettier.format(ensureContent, {

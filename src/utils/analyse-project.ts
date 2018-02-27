@@ -2,11 +2,7 @@ import * as fs from "fs"
 import * as path from "path"
 import * as walk from "walk"
 import { IProjectInfo } from "./analyse-project-interface"
-
-const PAGE_ROOT = "src/pages"
-const LAYTOU_ROOT = "src/layouts"
-const NOTFOUND_PATH = "src/404"
-const STORE_ROOT = "src/stores"
+import { layoutsPath, notFoundPath, pagesPath, storesPath } from "./structor-config"
 
 export const analyseProject = async (projectRootPath: string) => {
   const info = await walkProject(projectRootPath)
@@ -23,7 +19,7 @@ export const analyseProject = async (projectRootPath: string) => {
     info.hasLayoutFile = true
   }
 
-  if (hasFileWithoutExt(path.join(projectRootPath, "src/404"))) {
+  if (fs.existsSync(path.join(projectRootPath, path.format(notFoundPath)))) {
     info.has404File = true
   }
 
@@ -67,11 +63,6 @@ function walkProject(projectRootPath: string): Promise<IProjectInfo> {
         info.layout = layoutInfo
       }
 
-      const notFoundInfo = judgeNotFoundFile(projectRootPath, root, fileStats)
-      if (notFoundInfo) {
-        info.notFound = notFoundInfo
-      }
-
       const storeInfo = judgeStoreFile(projectRootPath, root, fileStats)
       if (storeInfo) {
         info.stores.push(storeInfo)
@@ -97,11 +88,11 @@ function judgePageFile(projectRootPath: string, dir: string, fileStats: WalkStat
     path.relative(projectRootPath, dir) :
     path.relative(projectRootPath, path.join(dir, fileInfo.name))
 
-  if (!relativePath.startsWith(PAGE_ROOT)) {
+  if (!relativePath.startsWith(pagesPath.dir)) {
     return null
   }
 
-  const prefix = "/" + path.relative(PAGE_ROOT, relativePath)
+  const prefix = "/" + path.relative(pagesPath.dir, relativePath)
 
   return {
     path: prefix,
@@ -113,27 +104,14 @@ function judgePageFile(projectRootPath: string, dir: string, fileStats: WalkStat
 function judgeLayoutFile(projectRootPath: string, dir: string, fileStats: WalkStats) {
   const relativePath = path.relative(projectRootPath, dir)
 
-  if (!relativePath.startsWith(LAYTOU_ROOT)) {
+  if (!relativePath.startsWith(layoutsPath.dir)) {
     return null
   }
 
   const pathInfo = path.parse(fileStats.name)
 
   // Use index file
-  if (relativePath === LAYTOU_ROOT && pathInfo.name === "index") {
-    return {
-      filePath: path.join(dir, fileStats.name)
-    }
-  }
-
-  return null
-}
-
-function judgeNotFoundFile(projectRootPath: string, dir: string, fileStats: WalkStats) {
-  const relativePath = path.relative(projectRootPath, dir)
-  const pathInfo = path.parse(fileStats.name)
-
-  if (path.join(relativePath, pathInfo.dir, pathInfo.name) === NOTFOUND_PATH) {
+  if (relativePath === layoutsPath.dir && pathInfo.name === "index") {
     return {
       filePath: path.join(dir, fileStats.name)
     }
@@ -147,7 +125,7 @@ function judgeStoreFile(projectRootPath: string, dir: string, fileStats: WalkSta
 
   const relativePath = path.relative(projectRootPath, path.join(dir, fileInfo.name))
 
-  if (!relativePath.startsWith(STORE_ROOT)) {
+  if (!relativePath.startsWith(storesPath.dir)) {
     return null
   }
 
