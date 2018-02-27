@@ -184,8 +184,19 @@ export async function createEntry(info: IProjectInfo, projectRootPath: string, e
   // Set layout
   if (info.layout) {
     const layoutPath = path.parse(info.layout.filePath)
+    let layoutImportCode = ""
+
+    if (info.stores.length === 0) {
+      layoutImportCode = `import LayoutComponent from "${path.join(layoutPath.dir, layoutPath.name)}"`
+    } else {
+      layoutImportCode = `
+        import LayoutComponentOrigin from "${path.join(layoutPath.dir, layoutPath.name)}"
+        const LayoutComponent = Connect()(LayoutComponentOrigin)
+      `
+    }
+
     entryText.layoutImporter = `
-      import LayoutComponent from "${path.join(layoutPath.dir, layoutPath.name)}"
+      ${layoutImportCode}
 
       const LayoutRoute = ({ component: Component, ...rest }) => {
         return (
