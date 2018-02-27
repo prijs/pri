@@ -114,7 +114,7 @@ Production deployment. By default the dist folder is `./dist`.
 
   > You can also create 404 page by project dashboard easily!
 
-  Populate `.src/404.tsx` inside your project:
+  Populate `.src/pages/404.tsx` inside your project:
 
   ```typescript
   import * as React from "react"
