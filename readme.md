@@ -360,8 +360,12 @@ Production deployment. By default the dist folder is `./dist`.
 
   Create `./src/layouts/markdown.tsx`, then all markdown pages will use this template. For example:
 
-  ```typescript
-  
+  ```tsx
+  export default () => (
+    <div style={{ padding: 10 }}>
+      {this.props.children}
+    </div>
+  )
   ```
 
   </p>
