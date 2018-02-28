@@ -98,9 +98,9 @@ Production deployment. By default the dist folder is `./dist`.
 
   Then, just run `npm start`, this page will route to `/example-page`.
 
-  **Custom markdown page style**
+  **Markdown layout**
 
-  Create `./src/layouts/markdown.tsx`, then all markdown pages will use this template. For example:
+  Create `./src/layouts/markdown.tsx`, then all markdown pages will use this layout template. For example:
 
   ```tsx
   export default () => (
