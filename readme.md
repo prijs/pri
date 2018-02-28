@@ -84,7 +84,73 @@ Production deployment. By default the dist folder is `./dist`.
 </details>
 
 <details>
-  <summary>Support layouts.</summary>
+  <summary>Markdown support.</summary>
+  
+  <p>
+
+  Populate `./src/pages/example-page/index.md` inside your project:
+
+  ```text
+  ## Markdown File
+  ```
+
+  Then, just run `npm start`, this page will route to `/example-page`.
+
+  **Custom markdown page style**
+
+  Create `./src/layouts/markdown.tsx`, then all markdown pages will use this template. For example:
+
+  ```tsx
+  export default () => (
+    <div style={{ padding: 10 }}>
+      {this.props.children}
+    </div>
+  )
+  ```
+
+  </p>
+
+</details>
+
+<details>
+  <summary>Scss/Less/Css support.</summary>
+  
+  <p>
+
+  **sass**
+
+  Install `node-sass` first, or it will be auto installed on the first execution of `npm start` :
+
+  ```shell
+  npm i node-sass --save
+  ```
+
+  Then you can create scss files, and include it from `pages/**/index.tsx`:
+
+  ```typescript
+  import "./index.scss"
+  ```
+
+  **less**
+
+  Install `less` first, or it will be auto installed on the first execution of `npm start` :
+
+  ```shell
+  npm i less --save
+  ```
+
+  The same as sass.
+
+  **css**
+
+  Native support it.
+
+  </p>
+
+</details>
+
+<details>
+  <summary>Layouts support.</summary>
 
   <p>
 
@@ -340,35 +406,6 @@ Production deployment. By default the dist folder is `./dist`.
   > This is because js files will be served from `/<your-repo-name>` and the root path changed to `/<your-repo-name>` on github-pages.
 
   > `staticBuild` will generate static index file for each route.
-
-  </p>
-
-</details>
-
-<details>
-  <summary>Markdown support.</summary>
-  
-  <p>
-
-  Populate `./src/pages/example-page/index.md` inside your project:
-
-  ```text
-  ## Markdown File
-  ```
-
-  Then, just run `npm start`, this page will route to `/example-page`.
-
-  **Custom markdown page style**
-
-  Create `./src/layouts/markdown.tsx`, then all markdown pages will use this template. For example:
-
-  ```tsx
-  export default () => (
-    <div style={{ padding: 10 }}>
-      {this.props.children}
-    </div>
-  )
-  ```
 
   </p>
 
