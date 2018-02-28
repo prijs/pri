@@ -56,7 +56,7 @@ function walkProject(projectRootPath: string): Promise<IProjectInfo> {
 
   return new Promise((resolve, reject) => {
     const walker = walk.walk(projectRootPath, {
-      filters: ["node_modules"]
+      filters: ["node_modules", ".git"]
     });
 
     walker.on("directories", (root: string, dirStatsArray: WalkStats[], next: () => void) => {
@@ -95,15 +95,23 @@ function walkProject(projectRootPath: string): Promise<IProjectInfo> {
 function judgePageFile(projectRootPath: string, dir: string, fileStats: WalkStats) {
   const fileInfo = path.parse(fileStats.name)
 
-  const relativePath = fileInfo.name === "index" ?
-    path.relative(projectRootPath, dir) :
-    path.relative(projectRootPath, path.join(dir, fileInfo.name))
+  const relativePath = path.relative(projectRootPath, path.join(dir, fileInfo.name))
 
   if (!relativePath.startsWith(pagesPath.dir)) {
     return null
   }
 
-  const prefix = "/" + path.relative(pagesPath.dir, relativePath)
+  if (fileInfo.name !== "index") {
+    return null
+  }
+
+  if ([".tsx", ".md"].indexOf(fileInfo.ext) === -1) {
+    return null
+  }
+
+  const relativePathWithoutIndex = path.relative(projectRootPath, dir)
+
+  const prefix = "/" + path.relative(pagesPath.dir, relativePathWithoutIndex)
 
   return {
     path: prefix,

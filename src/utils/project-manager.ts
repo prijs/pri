@@ -9,7 +9,7 @@ export async function addPage(projectRootPath: string, options: {
   path: string
 }) {
   const projectInfo = await analyseProject(projectRootPath)
-  const fileFullPath = path.join(projectRootPath, pagesPath.dir, options.path) + ".tsx"
+  const fileFullPath = path.join(projectRootPath, pagesPath.dir, options.path, "index") + ".tsx"
 
   if (fs.existsSync(fileFullPath)) {
     throw Error(`${options.path} already exist!`)

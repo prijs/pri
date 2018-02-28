@@ -137,6 +137,7 @@ chokidar.watch(path.join(projectRootPath, "/**"), {
   .on("change", async (filePath) => {
     // fresh when config change
     const relativePath = path.relative(projectRootPath, filePath)
+    const pathInfo = path.parse(filePath)
 
     try {
       io.emit("changeFile", {
@@ -148,6 +149,8 @@ chokidar.watch(path.join(projectRootPath, "/**"), {
     }
 
     if (relativePath.startsWith("src/config")) {
+      await fresh()
+    } else if (pathInfo.ext === ".md") {
       await fresh()
     }
   })
