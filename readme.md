@@ -343,6 +343,31 @@ Production deployment. By default the dist folder is `./dist`.
 
 </details>
 
+<details>
+  <summary>Markdown support.</summary>
+  
+  <p>
+
+  Populate `./src/pages/example-page.md` inside your project:
+
+  ```text
+  ## Markdown File
+  ```
+
+  Then, just run `npm start`, this page will route to `/example-page`.
+
+  **Custom markdown page style**
+
+  Create `./src/layouts/markdown.tsx`, then all markdown pages will use this template. For example:
+
+  ```typescript
+  
+  ```
+
+  </p>
+
+</details>
+
 #### TODO
 
 - Static file serving.

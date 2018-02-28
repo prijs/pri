@@ -2,25 +2,36 @@ import * as fs from "fs"
 import * as path from "path"
 import * as walk from "walk"
 import { IProjectInfo } from "./analyse-project-interface"
-import { layoutsPath, notFoundPath, pagesPath, storesPath } from "./structor-config"
+import {
+  configPaths,
+  layoutsPath,
+  markdownPath,
+  notFoundPath,
+  pagesPath,
+  storesPath
+} from "./structor-config"
 
 export const analyseProject = async (projectRootPath: string) => {
   const info = await walkProject(projectRootPath)
 
   if (
-    hasFileWithoutExt(path.join(projectRootPath, "src/config/config.default")) ||
-    hasFileWithoutExt(path.join(projectRootPath, "src/config/config.local")) ||
-    hasFileWithoutExt(path.join(projectRootPath, "src/config/config.prod"))
+    fs.existsSync(path.join(projectRootPath, path.format(configPaths.default))) ||
+    fs.existsSync(path.join(projectRootPath, path.format(configPaths.local))) ||
+    fs.existsSync(path.join(projectRootPath, path.format(configPaths.prod)))
   ) {
     info.hasConfigFile = true
   }
 
-  if (hasFileWithoutExt(path.join(projectRootPath, "src/layouts/index"))) {
+  if (fs.existsSync(path.join(projectRootPath, path.format(layoutsPath)))) {
     info.hasLayoutFile = true
   }
 
   if (fs.existsSync(path.join(projectRootPath, path.format(notFoundPath)))) {
     info.has404File = true
+  }
+
+  if (fs.existsSync(path.join(projectRootPath, path.format(markdownPath)))) {
+    info.hasMarkdownFile = true
   }
 
   return info

@@ -10,6 +10,7 @@ export class IProjectInfo {
   public hasConfigFile = false
   public hasLayoutFile = false
   public has404File = false
+  public hasMarkdownFile = false
   public stores: Array<{
     filePath: string
     name: string

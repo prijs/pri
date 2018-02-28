@@ -42,6 +42,12 @@ export const layoutsPath = {
   ext: ".tsx"
 }
 
+export const markdownPath = {
+  dir: layoutsPath.dir,
+  name: "markdown",
+  ext: ".tsx"
+}
+
 export const storesPath = {
   dir: path.join(srcPath.dir, `stores`)
 }
@@ -66,4 +72,8 @@ export const configPaths = {
     name: "config.prod",
     ext: ".ts"
   }
+}
+
+export const markdownTempPath = {
+  dir: path.join(tempPath.dir, "markdowns")
 }

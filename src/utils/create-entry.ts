@@ -5,7 +5,16 @@ import * as prettier from "prettier"
 import { IProjectInfo } from "./analyse-project-interface"
 import { md5 } from "./md5"
 import { IProjectConfig } from "./project-config-interface"
-import { helperPath, notFoundPath, tempJsEntryPath } from "./structor-config"
+import {
+  helperPath,
+  markdownPath,
+  markdownTempPath,
+  notFoundPath,
+  tempJsEntryPath
+} from "./structor-config"
+
+const MARKDOWN_TEMPLATE_NAME = "MarkdownTemplate"
+const MARKDOWN_WRAPPER = "MarkdownWrapper"
 
 interface IEntryText {
   pageImporter: string
@@ -17,6 +26,8 @@ interface IEntryText {
   setCustomEnv: string
   storesImporter: string
   storesHelper: string
+  markdownImporter: string
+  markedImporter: string
 }
 
 // Entry file content
@@ -30,6 +41,8 @@ const getEntryContent = (entryText: IEntryText, projectInfo: IProjectInfo, proje
     import createBrowserHistory from 'history/createBrowserHistory'
 
     ${entryText.storesImporter}
+    ${entryText.markdownImporter}
+    ${entryText.markedImporter}
 
     const customHistory = createBrowserHistory({
       basename: "${env === "local" ? "/" : projectConfig.baseHref}"
@@ -99,7 +112,9 @@ export async function createEntry(info: IProjectInfo, projectRootPath: string, e
     setEnv: "",
     setCustomEnv: "",
     storesImporter: "",
-    storesHelper: ""
+    storesHelper: "",
+    markdownImporter: "",
+    markedImporter: ""
   }
 
   // Set env
@@ -118,6 +133,12 @@ export async function createEntry(info: IProjectInfo, projectRootPath: string, e
     entryText.setCustomEnv = `setCustomEnv(${JSON.stringify(projectConfig.env)})`
   }
 
+  // Set markdownImporter
+  if (info.hasMarkdownFile) {
+    const markdownRelativePath = path.relative(tempJsEntryPath.dir, path.join(markdownPath.dir, markdownPath.name))
+    entryText.markdownImporter += `import ${MARKDOWN_TEMPLATE_NAME} from "${markdownRelativePath}"\n`
+  }
+
   // Set routes
   info.routes.forEach(route => {
     const filePath = path.parse(route.filePath)
@@ -126,29 +147,128 @@ export async function createEntry(info: IProjectInfo, projectRootPath: string, e
 
     const pathInfo = path.parse(route.filePath)
 
-    if (info.routes.length < 2) {
-      // If only one page, don't need code splitting.
-      if (info.stores.length === 0) {
-        entryText.pageImporter += `
-          import ${componentName} from "${path.join(pathInfo.dir, pathInfo.name)}"
-        `
-      } else {
-        entryText.pageImporter += `
-          import ${componentName}Temp from "${path.join(pathInfo.dir, pathInfo.name)}"
-          const ${componentName} = Connect()(${componentName}Temp)
-        `
-      }
-    } else {
-      const importCode = info.stores.length === 0 ?
-        `import("${path.join(pathInfo.dir, pathInfo.name)}")` :
-        `import("${path.join(pathInfo.dir, pathInfo.name)}").then(res => Connect()(res.default))  `
+    switch (filePath.ext) {
+      case ".tsx":
+      case ".ts":
+        if (info.routes.length < 2) {
+          // If only one page, don't need code splitting.
+          if (info.stores.length === 0) {
+            entryText.pageImporter += `
+              import ${componentName} from "${path.join(pathInfo.dir, pathInfo.name)}"
+            `
+          } else {
+            entryText.pageImporter += `
+              import ${componentName}Temp from "${path.join(pathInfo.dir, pathInfo.name)}"
+              const ${componentName} = Connect()(${componentName}Temp)
+            `
+          }
+        } else {
+          const importCode = info.stores.length === 0 ?
+            `import("${path.join(pathInfo.dir, pathInfo.name)}")` :
+            `import("${path.join(pathInfo.dir, pathInfo.name)}").then(res => Connect()(res.default))  `
 
-      entryText.pageImporter += `
-        const ${componentName} = Loadable({
-          loader: () => ${importCode},
-          loading: () => null
-        })\n
-      `
+          entryText.pageImporter += `
+            const ${componentName} = Loadable({
+              loader: () => ${importCode},
+              loading: () => null
+            })\n
+          `
+        }
+        break
+      case ".md":
+        if (!entryText.markedImporter) {
+          entryText.markedImporter = `
+            import * as highlight from "highlight.js"
+            import "highlight.js/styles/github.css"
+            import * as markdownIt from "markdown-it"
+
+            const markdown = markdownIt({
+              html: true,
+              linkify: true,
+              typographer: true,
+              highlight: (str, lang) => {
+                if (lang === "tsx") {
+                  lang = "jsx"
+                }
+
+                if (lang === "typescript") {
+                  lang = "javascript"
+                }
+
+                if (lang && hljs.getLanguage(lang)) {
+                  try {
+                    return hljs.highlight(lang, str).value;
+                  } catch (__) {
+                    //
+                  }
+                }
+
+                return ""
+              }
+            })
+
+            const ${MARKDOWN_WRAPPER} = () => (
+              <div dangerouslySetInnerHTML={{ __html: markdown.render(this.props.children as string) }} />
+            )
+          `
+        }
+
+        // Create esmodule file for markdown
+        const fileContent = fs.readFileSync(route.filePath).toString()
+        const safeFileContent = fileContent.replace(/\`/g, `\\\``)
+        const markdownTsAbsolutePath = path.join(projectRootPath, markdownTempPath.dir, componentName + ".ts")
+        const markdownTsAbsolutePathWithoutExt = path.join(projectRootPath, markdownTempPath.dir, componentName)
+        fs.outputFileSync(markdownTsAbsolutePath, `export default \`${safeFileContent}\``)
+
+        if (info.routes.length < 2) {
+          // If only one page, don't need code splitting.
+          const tempComponentName = `${componentName}Md`
+          const wrapperStr = `<${MARKDOWN_WRAPPER}>{${tempComponentName}}</${MARKDOWN_WRAPPER}>`
+          if (info.hasMarkdownFile) {
+            entryText.pageImporter += `
+              import ${tempComponentName} from "${markdownTsAbsolutePathWithoutExt}"
+              const ${componentName} = () => (
+                <${MARKDOWN_TEMPLATE_NAME}>
+                  ${wrapperStr}
+                </${MARKDOWN_TEMPLATE_NAME}>
+              )
+            `
+          } else {
+            entryText.pageImporter += `
+              import ${tempComponentName} from "${markdownTsAbsolutePathWithoutExt}"
+              const ${componentName} = () => (${wrapperStr})
+            `
+          }
+        } else {
+          let importCode = ""
+          const wrapperStr = `<${MARKDOWN_WRAPPER}>{code.default}</${MARKDOWN_WRAPPER}>`
+          if (info.hasMarkdownFile) {
+            importCode = `
+              import("${markdownTsAbsolutePathWithoutExt}").then(code => {
+                return () => (
+                  <${MARKDOWN_TEMPLATE_NAME}>
+                    ${wrapperStr}
+                  </${MARKDOWN_TEMPLATE_NAME}>
+                )
+              })
+            `
+          } else {
+            importCode = `
+              import("${markdownTsAbsolutePathWithoutExt}").then(code => {
+                return () => (${wrapperStr})
+              })
+            `
+          }
+
+          entryText.pageImporter += `
+            const ${componentName} = Loadable({
+              loader: () => ${importCode},
+              loading: () => null
+            })\n
+          `
+        }
+        break
+      default:
     }
 
     const routeComponent = info.layout ? "LayoutRoute" : "Route"
@@ -214,7 +334,7 @@ export async function createEntry(info: IProjectInfo, projectRootPath: string, e
 
   // Set not found
   if (info.has404File) {
-    entryText.notFoundImporter = `import NotFoundComponent from "${path.join(projectRootPath, path.format(notFoundPath))}"`
+    entryText.notFoundImporter = `import NotFoundComponent from "${path.join(projectRootPath, path.join(notFoundPath.dir, notFoundPath.name))}"`
     entryText.notFoundRoute = `
       <Route component={NotFoundComponent} />
     `
