@@ -16,6 +16,6 @@ export const CommandInit = async () => {
   const config = getConfig(projectRootPath, null)
 
   await spinner("Ensure project files", async () => {
-    ensureFiles(projectRootPath, config)
+    ensureFiles(projectRootPath, config, true)
   })
 }

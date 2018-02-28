@@ -30,7 +30,7 @@ export const CommandBuild = async (options: {
   execSync(`rm -rf ${path.join(projectRootPath, ".temp")}`)
 
   await spinner("Ensure project files", async () => {
-    ensureFiles(projectRootPath, projectConfig)
+    ensureFiles(projectRootPath, projectConfig, false)
   })
 
   const result = await spinner("Analyse project", async () => {

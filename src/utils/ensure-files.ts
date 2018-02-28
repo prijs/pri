@@ -5,14 +5,17 @@ import * as path from "path"
 import * as prettier from "prettier"
 import { IProjectConfig } from "./project-config-interface"
 
-export const ensureFiles = (projectRootPath: string, config: IProjectConfig) => {
+export const ensureFiles = (projectRootPath: string, config: IProjectConfig, supplementCode: boolean) => {
   ensureGitignore(projectRootPath, config)
   ensureTsconfig(projectRootPath)
   ensureBabelrc(projectRootPath)
   ensureTslint(projectRootPath)
   ensurePackageJson(projectRootPath)
   ensureVscode(projectRootPath)
-  ensureHomePage(projectRootPath)
+
+  if (supplementCode) {
+    ensureHomePage(projectRootPath)
+  }
 }
 
 function ensureGitignore(projectRootPath: string, config: IProjectConfig) {

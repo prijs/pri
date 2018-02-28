@@ -31,7 +31,7 @@ export const CommandPreview = async () => {
   lint(projectRootPath)
 
   await spinner("Ensure project files", async () => {
-    ensureFiles(projectRootPath, config)
+    ensureFiles(projectRootPath, config, false)
   })
 
   const entryPath = await spinner("Analyse project", async () => {

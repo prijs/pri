@@ -18,7 +18,7 @@ export const CommandDev = async () => {
   const config = getConfig(projectRootPath, env)
 
   await spinner("Ensure project files", async () => {
-    ensureFiles(projectRootPath, config)
+    ensureFiles(projectRootPath, config, false)
   })
 
   const entryPath = await spinner("Analyse project", async () => {
