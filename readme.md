@@ -75,7 +75,9 @@ Production deployment. By default the dist folder is `./dist`.
 
   **Routes**
 
-  Routes will be automatically created by the file's path in `./src/pages`. For example, file `./src/pages/user/about/index.tsx` will be found in route `/user/about`.
+  Routes will be automatically created by the file's path in `./src/pages/**/index.tsx`.
+  
+  For example, file `./src/pages/user/about/index.tsx` will be found in route `/user/about`.
 
   `index.tsx` will be read as router under each folders, The folder path is the URL path.
   
