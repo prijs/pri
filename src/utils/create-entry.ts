@@ -33,12 +33,12 @@ interface IEntryText {
 // Entry file content
 const getEntryContent = (entryText: IEntryText, projectInfo: IProjectInfo, projectConfig: IProjectConfig, env: string) => {
   return `
-    import { setEnvLocal, setEnvProd, setCustomEnv } from "pri"
+    import createBrowserHistory from "history/createBrowserHistory"
+    import { setCustomEnv, setEnvLocal, setEnvProd } from "pri"
     import * as React from "react"
     import * as ReactDOM from "react-dom"
     import Loadable from "react-loadable"
-    import { Redirect, Route, Switch, Router } from "react-router-dom"
-    import createBrowserHistory from 'history/createBrowserHistory'
+    import { Redirect, Route, Router, Switch } from "react-router-dom"
 
     ${entryText.storesImporter}
     ${entryText.markdownImporter}
@@ -180,7 +180,7 @@ export async function createEntry(info: IProjectInfo, projectRootPath: string, e
           entryText.markedImporter = `
             import * as highlight from "highlight.js"
             import "highlight.js/styles/github.css"
-            import * as markdownIt from "markdown-it"
+            import markdownIt from "markdown-it"
 
             const markdown = markdownIt({
               html: true,
@@ -195,9 +195,9 @@ export async function createEntry(info: IProjectInfo, projectRootPath: string, e
                   lang = "javascript"
                 }
 
-                if (lang && hljs.getLanguage(lang)) {
+                if (lang && highlight.getLanguage(lang)) {
                   try {
-                    return hljs.highlight(lang, str).value;
+                    return highlight.highlight(lang, str).value;
                   } catch (__) {
                     //
                   }
@@ -207,8 +207,8 @@ export async function createEntry(info: IProjectInfo, projectRootPath: string, e
               }
             })
 
-            const ${MARKDOWN_WRAPPER} = () => (
-              <div dangerouslySetInnerHTML={{ __html: markdown.render(this.props.children as string) }} />
+            const ${MARKDOWN_WRAPPER} = ({ children }) => (
+              <div dangerouslySetInnerHTML={{ __html: markdown.render(children as string) }} />
             )
           `
         }
