@@ -156,6 +156,9 @@ export async function createEntry(info: IProjectInfo, projectRootPath: string, e
 
     const pathInfo = path.parse(route.filePath)
 
+    // Clear temp markdown files
+    fs.emptyDirSync(path.join(projectRootPath, markdownTempPath.dir))
+
     switch (filePath.ext) {
       case ".tsx":
       case ".ts":

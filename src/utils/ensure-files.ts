@@ -82,7 +82,10 @@ function ensureTsconfig(projectRootPath: string) {
 function ensureBabelrc(projectRootPath: string) {
   const filePath = path.join(projectRootPath, ".babelrc")
   const ensureContents = {
-    presets: ["env"]
+    presets: ["env"],
+    plugins: [
+      ["transform-runtime"]
+    ]
   }
 
   fs.writeFileSync(filePath, JSON.stringify(ensureContents, null, 2))

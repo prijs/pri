@@ -1,6 +1,6 @@
 {
   "name": "pri",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "types": "src/index.ts",
   "main": "built/index.js",
   "scripts": {
@@ -43,6 +43,7 @@
     "@types/update-notifier": "^2.0.0",
     "@types/yargs": "^10.0.1",
     "antd": "^3.2.1",
+    "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-env": "^1.6.1",
     "body-parser": "^1.18.2",
     "chokidar": "^2.0.1",
