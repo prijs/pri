@@ -148,6 +148,9 @@ export async function createEntry(info: IProjectInfo, projectRootPath: string, e
     }
   }
 
+  // Clear temp markdown files
+  fs.emptyDirSync(path.join(projectRootPath, markdownTempPath.dir))
+
   // Set routes
   info.routes.forEach(route => {
     const filePath = path.parse(route.filePath)
@@ -155,9 +158,6 @@ export async function createEntry(info: IProjectInfo, projectRootPath: string, e
     const componentName = safeName(relativePageFilePath) + md5(relativePageFilePath).slice(0, 5)
 
     const pathInfo = path.parse(route.filePath)
-
-    // Clear temp markdown files
-    fs.emptyDirSync(path.join(projectRootPath, markdownTempPath.dir))
 
     switch (filePath.ext) {
       case ".tsx":
