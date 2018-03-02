@@ -5,7 +5,7 @@ import { IProjectInfo } from "./analyse-project-interface"
 import {
   configPaths,
   layoutsPath,
-  markdownPath,
+  markdownLayoutPath,
   notFoundPath,
   pagesPath,
   storesPath
@@ -30,7 +30,7 @@ export const analyseProject = async (projectRootPath: string) => {
     info.has404File = true
   }
 
-  if (fs.existsSync(path.join(projectRootPath, path.format(markdownPath)))) {
+  if (fs.existsSync(path.join(projectRootPath, path.format(markdownLayoutPath)))) {
     info.hasMarkdownFile = true
   }
 

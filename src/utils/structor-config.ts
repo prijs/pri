@@ -42,7 +42,7 @@ export const layoutsPath = {
   ext: ".tsx"
 }
 
-export const markdownPath = {
+export const markdownLayoutPath = {
   dir: layoutsPath.dir,
   name: "markdown",
   ext: ".tsx"

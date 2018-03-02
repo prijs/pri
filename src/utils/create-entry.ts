@@ -7,13 +7,13 @@ import { md5 } from "./md5"
 import { IProjectConfig } from "./project-config-interface"
 import {
   helperPath,
-  markdownPath,
+  markdownLayoutPath,
   markdownTempPath,
   notFoundPath,
   tempJsEntryPath
 } from "./structor-config"
 
-const MARKDOWN_TEMPLATE_NAME = "MarkdownTemplate"
+const MARKDOWN_LAYOUT_NAME = "MarkdownTemplate"
 const MARKDOWN_WRAPPER = "MarkdownWrapper"
 
 interface IEntryText {
@@ -135,8 +135,17 @@ export async function createEntry(info: IProjectInfo, projectRootPath: string, e
 
   // Set markdownImporter
   if (info.hasMarkdownFile) {
-    const markdownRelativePath = path.relative(tempJsEntryPath.dir, path.join(markdownPath.dir, markdownPath.name))
-    entryText.markdownImporter += `import ${MARKDOWN_TEMPLATE_NAME} from "${markdownRelativePath}"\n`
+    const markdownRelativePath = path.relative(tempJsEntryPath.dir, path.join(markdownLayoutPath.dir, markdownLayoutPath.name))
+
+    if (info.stores.length === 0) {
+      entryText.markdownImporter = `import ${MARKDOWN_LAYOUT_NAME} from "${markdownRelativePath}"\n`
+    } else {
+      const markdownLayoutPure = `${MARKDOWN_LAYOUT_NAME}Pure`
+      entryText.markdownImporter = `
+        import ${markdownLayoutPure} from "${markdownRelativePath}"
+        const ${MARKDOWN_LAYOUT_NAME} = Connect()(${markdownLayoutPure})
+      `
+    }
   }
 
   // Set routes
@@ -228,9 +237,9 @@ export async function createEntry(info: IProjectInfo, projectRootPath: string, e
             entryText.pageImporter += `
               import ${tempComponentName} from "${markdownTsAbsolutePathWithoutExt}"
               const ${componentName} = () => (
-                <${MARKDOWN_TEMPLATE_NAME}>
+                <${MARKDOWN_LAYOUT_NAME}>
                   ${wrapperStr}
-                </${MARKDOWN_TEMPLATE_NAME}>
+                </${MARKDOWN_LAYOUT_NAME}>
               )
             `
           } else {
@@ -246,9 +255,9 @@ export async function createEntry(info: IProjectInfo, projectRootPath: string, e
             importCode = `
               import("${markdownTsAbsolutePathWithoutExt}").then(code => {
                 return () => (
-                  <${MARKDOWN_TEMPLATE_NAME}>
+                  <${MARKDOWN_LAYOUT_NAME}>
                     ${wrapperStr}
-                  </${MARKDOWN_TEMPLATE_NAME}>
+                  </${MARKDOWN_LAYOUT_NAME}>
                 )
               })
             `
