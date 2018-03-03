@@ -37,7 +37,7 @@ export function generateHtmlByRouterPath(routerPath: string, projectRootPath: st
       <title>${projectConfig.title}</title>
 
       ${hasCssOutput ? `
-        <link rel="stylesheet" type="text/css" href="${getEntryPath(projectConfig, "entry.css")}"/>
+        <link rel="stylesheet" type="text/css" href="${getEntryPath(projectConfig, "main.css")}"/>
       ` : ""}
 
       <style>
@@ -51,7 +51,7 @@ export function generateHtmlByRouterPath(routerPath: string, projectRootPath: st
 
     <body>
       <div id="root"></div>
-      <script src="${getEntryPath(projectConfig, "entry.js")}"></script>
+      <script src="${getEntryPath(projectConfig, "main.js")}"></script>
     </body>
 
     </html>

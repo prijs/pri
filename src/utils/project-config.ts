@@ -28,17 +28,7 @@ export const getConfig = (projectRootPath: string, env: "local" | "prod" | null)
   return finalConfig
 }
 
-function execTsByPath(filePathWithoutExt: string) {
-  let filePath = ""
-
-  if (fs.existsSync(filePathWithoutExt + ".ts")) {
-    filePath = filePathWithoutExt + ".ts"
-  } else if (fs.existsSync(filePathWithoutExt + ".tsx")) {
-    filePath = filePathWithoutExt + ".tsx"
-  } else {
-    return null
-  }
-
+function execTsByPath(filePath: string) {
   const fileContent = fs.readFileSync(filePath).toString()
   const jsTransferContent = ts.transpile(fileContent)
 

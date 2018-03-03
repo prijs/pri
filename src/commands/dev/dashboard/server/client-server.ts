@@ -13,12 +13,15 @@ import * as zlib from "zlib"
 import { generateCertificate } from "../../../../utils/generate-certificate"
 import { log } from "../../../../utils/log"
 
-const app = new Koa();
+const app = new Koa()
 
 const projectRootPath = yargs.argv.projectRootPath
 const dashboardBundleRootPath = yargs.argv.dashboardBundleRootPath
 const serverPort = yargs.argv.serverPort
 const clientPort = yargs.argv.clientPort
+const dashboardBundleFileName = yargs.argv.dashboardBundleFileName
+
+const staticPrefix = "/static"
 
 app.use(koaCors())
 
@@ -27,7 +30,7 @@ app.use(koaCompress({
 }))
 
 app.use(
-  koaMount("/static",
+  koaMount(staticPrefix,
     koaStatic(dashboardBundleRootPath, {
       gzip: true
     })
@@ -49,7 +52,7 @@ app.use(async ctx => {
         }
       </style>
 
-      <link href="/static/index.css" media="all" rel="stylesheet" />
+      <link href="${staticPrefix}/${dashboardBundleFileName}.css" media="all" rel="stylesheet" />
     </head>
 
     <body>
@@ -57,7 +60,7 @@ app.use(async ctx => {
       <script>
         window.serverPort = ${serverPort}
       </script>
-      <script src="/static/index.js"></script>
+      <script src="${staticPrefix}/${dashboardBundleFileName}.js"></script>
     </body>
 
     </html>

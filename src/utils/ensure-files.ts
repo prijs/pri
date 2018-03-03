@@ -4,6 +4,7 @@ import * as _ from "lodash"
 import * as path from "path"
 import * as prettier from "prettier"
 import { IProjectConfig } from "./project-config-interface"
+import { declarePath, pagesPath } from "./structor-config"
 
 export const ensureFiles = (projectRootPath: string, config: IProjectConfig, supplementCode: boolean) => {
   ensureGitignore(projectRootPath, config)
@@ -12,6 +13,7 @@ export const ensureFiles = (projectRootPath: string, config: IProjectConfig, sup
   ensureTslint(projectRootPath)
   ensurePackageJson(projectRootPath)
   ensureVscode(projectRootPath)
+  ensureDeclares(projectRootPath)
 
   if (supplementCode) {
     ensureHomePage(projectRootPath)
@@ -49,7 +51,7 @@ function ensureTsconfig(projectRootPath: string) {
       strict: true,
       strictNullChecks: false,
       jsx: "react",
-      target: "es6",
+      target: "esnext",
       experimentalDecorators: true,
       skipLibCheck: true,
       lib: [
@@ -82,9 +84,15 @@ function ensureTsconfig(projectRootPath: string) {
 function ensureBabelrc(projectRootPath: string) {
   const filePath = path.join(projectRootPath, ".babelrc")
   const ensureContents = {
-    presets: ["env"],
+    presets: [
+      ["env"]
+    ],
     plugins: [
-      ["transform-runtime"]
+      ["transform-runtime"],
+      ["dynamic-import-webpack"],
+      ["import", {
+        libraryName: "antd"
+      }]
     ]
   }
 
@@ -166,7 +174,7 @@ function ensureVscode(projectRootPath: string) {
 }
 
 function ensureHomePage(projectRootPath: string) {
-  const filePath = path.join(projectRootPath, "src/pages/index.tsx")
+  const filePath = path.join(projectRootPath, path.join(pagesPath.dir, "index.tsx"))
 
   if (fs.existsSync(filePath)) {
     return
@@ -207,4 +215,9 @@ function ensureHomePage(projectRootPath: string) {
     semi: false,
     parser: "typescript"
   }))
+}
+
+function ensureDeclares(projectRootPath: string) {
+  const declareAbsolutePath = path.join(projectRootPath, declarePath.dir)
+  fs.copySync(path.join(__dirname, "../../declare"), declareAbsolutePath)
 }

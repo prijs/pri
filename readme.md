@@ -535,6 +535,25 @@ Production deployment. By default the dist folder is `./dist`.
 </details>
 
 <details>
+  <summary>Import on demand.</summary>
+  
+  <p>
+
+  By using [babel-plugin-import](https://github.com/ant-design/babel-plugin-import), we can import individual components on demand:
+
+  ```typescript
+  import { Button } from 'antd'
+
+  ↓ ↓ ↓ ↓ ↓ ↓
+
+  var _button = require('antd/lib/button')
+  ```
+
+  </p>
+
+</details>
+
+<details>
   <summary>Automatic Ensure project files.</summary>
   
   <p>
@@ -619,9 +638,8 @@ Production deployment. By default the dist folder is `./dist`.
 - [react@16.2.0](https://www.npmjs.com/package/react)
 - [react-dom@16.2.0](https://www.npmjs.com/package/react-dom)
 - [react-router-dom@4.2.2](https://www.npmjs.com/package/react-router-dom)
-- [parcel-bundler@1.6.2](https://www.npmjs.com/package/parcel-bundler)
+- [webpack@4.0.2](https://www.npmjs.com/package/parcel-bundler)
 - [dob@2.5.8](https://www.npmjs.com/package/dob)
-- [dob-react@2.4.10](https://www.npmjs.com/package/dob-react)
 - [react-loadable@5.3.1](https://www.npmjs.com/package/react-loadable)
 - [antd@3.2.1](https://www.npmjs.com/package/antd)
 - [typescript@2.7.1](https://github.com/Microsoft/TypeScript)

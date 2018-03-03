@@ -33,6 +33,7 @@ interface IEntryText {
 // Entry file content
 const getEntryContent = (entryText: IEntryText, projectInfo: IProjectInfo, projectConfig: IProjectConfig, env: string) => {
   return `
+    // tslint:disable
     import createBrowserHistory from "history/createBrowserHistory"
     import { setCustomEnv, setEnvLocal, setEnvProd } from "pri"
     import * as React from "react"
@@ -182,7 +183,7 @@ export async function createEntry(info: IProjectInfo, projectRootPath: string, e
           entryText.pageImporter += `
             const ${componentName} = Loadable({
               loader: () => ${importCode},
-              loading: () => null
+              loading: (): any => null
             })\n
           `
         }
@@ -198,7 +199,7 @@ export async function createEntry(info: IProjectInfo, projectRootPath: string, e
               html: true,
               linkify: true,
               typographer: true,
-              highlight: (str, lang) => {
+              highlight: (str: string, lang: string) => {
                 if (lang === "tsx") {
                   lang = "jsx"
                 }
@@ -219,7 +220,7 @@ export async function createEntry(info: IProjectInfo, projectRootPath: string, e
               }
             })
 
-            const ${MARKDOWN_WRAPPER} = ({ children }) => (
+            const ${MARKDOWN_WRAPPER} = ({ children }: any) => (
               <div dangerouslySetInnerHTML={{ __html: markdown.render(children as string) }} />
             )
           `
@@ -275,7 +276,7 @@ export async function createEntry(info: IProjectInfo, projectRootPath: string, e
           entryText.pageImporter += `
             const ${componentName} = Loadable({
               loader: () => ${importCode},
-              loading: () => null
+              loading: (): any => null
             })\n
           `
         }

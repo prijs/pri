@@ -31,11 +31,8 @@ commander.command(DEV)
 const BUILD = "build"
 commander.command(BUILD)
   .description("Pack your project.")
-  .option("-s, --static")
   .action(async (options) => {
-    await CommandBuild({
-      static: options.static
-    })
+    await CommandBuild()
   })
 
 const PREVIEW = "preview"

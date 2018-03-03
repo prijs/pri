@@ -17,32 +17,21 @@ import { generateCertificate } from "../../utils/generate-certificate"
 import { spinner } from "../../utils/log"
 import { findNearestNodemodules } from "../../utils/npm-finder"
 import { getConfig } from "../../utils/project-config"
-import { lint } from "../../utils/tslint"
+import { CommandBuild } from "../build"
 
-const app = new Koa();
+const app = new Koa()
 
-const projectRootPath = process.cwd();
+const projectRootPath = process.cwd()
+
+const publicPath = "/static/"
 
 export const CommandPreview = async () => {
   const env = "prod"
-  const config = getConfig(projectRootPath, env)
+  const projectConfig = getConfig(projectRootPath, env)
+  const outDir = path.join(projectRootPath, projectConfig.distDir)
 
-  // tslint check
-  lint(projectRootPath)
-
-  await spinner("Ensure project files", async () => {
-    ensureFiles(projectRootPath, config, false)
-  })
-
-  const entryPath = await spinner("Analyse project", async () => {
-    const info = await analyseProject(projectRootPath)
-    return createEntry(info, projectRootPath, env, config)
-  })
-
-  // Run parcel
-  execSync(`${findNearestNodemodules()}/.bin/parcel build ${entryPath} --out-dir ${path.join(projectRootPath, ".temp/preview")}`, {
-    stdio: "inherit",
-    cwd: __dirname
+  await CommandBuild({
+    publicPath
   })
 
   const freePort = await portfinder.getPortPromise()
@@ -51,10 +40,10 @@ export const CommandPreview = async () => {
     flush: zlib.Z_SYNC_FLUSH
   }))
 
-  const previewDistPath = path.join(projectRootPath, ".temp/preview")
+  const previewDistPath = outDir
 
   app.use(
-    koaMount("/static",
+    koaMount(publicPath,
       koaStatic(previewDistPath, {
         gzip: true
       })
@@ -88,7 +77,7 @@ export const CommandPreview = async () => {
 
       <body>
         <div id="root"></div>
-        <script src="/static/entry.js"></script>
+        <script src="${publicPath}main.js"></script>
       </body>
 
       </html>

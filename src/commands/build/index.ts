@@ -12,11 +12,14 @@ import { getConfig } from "../../utils/project-config"
 import { IProjectConfig } from "../../utils/project-config-interface"
 import { lint } from "../../utils/tslint"
 
-const projectRootPath = process.cwd();
+const projectRootPath = process.cwd()
 
-export const CommandBuild = async (options: {
-  static?: boolean
-}) => {
+export const CommandBuild = async (
+  option: {
+    publicPath: string
+  } = {
+      publicPath: null
+    }) => {
   const env = "prod"
   const projectConfig = getConfig(projectRootPath, env)
 
@@ -41,11 +44,20 @@ export const CommandBuild = async (options: {
     }
   })
 
-  // Run parcel
-  execSync(`${findNearestNodemodules()}/.bin/parcel build ${result.entryPath} --out-dir ${path.join(projectRootPath, projectConfig.distDir || "dist")}`, {
-    stdio: "inherit",
-    cwd: __dirname
-  })
+  // Run webpack
+  execSync([
+    `${findNearestNodemodules()}/.bin/webpack`,
+    `--progress`,
+    `--mode production`,
+    `--config ${path.join(__dirname, "../../utils/webpack-config.js")}`,
+    `--env.projectRootPath ${projectRootPath}`,
+    `--env.env ${env}`,
+    `--env.entryPath ${result.entryPath}`,
+    `--env.publicPath ${option.publicPath}`
+  ].join(" "), {
+      stdio: "inherit",
+      cwd: projectRootPath
+    })
 
   // If using staticBuild, generate index pages for all router.
   if (projectConfig.staticBuild) {
