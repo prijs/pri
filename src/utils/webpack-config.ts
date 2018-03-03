@@ -21,7 +21,11 @@ const overridePublicPath = yargs.argv.env.publicPath
 const overrideOutDir = yargs.argv.env.outDir
 
 const outDir = overrideOutDir || path.join(projectRootPath, projectConfig.distDir)
-const publicPath = overridePublicPath || projectConfig.publicPath || "/"
+
+let publicPath: string = overridePublicPath || projectConfig.publicPath || "/"
+if (!publicPath.endsWith("/")) {
+  publicPath += "/"
+}
 
 // TODO: any
 const config: webpack.Configuration & any = {
