@@ -29,6 +29,10 @@ export const getConfig = (projectRootPath: string, env: "local" | "prod" | null)
 }
 
 function execTsByPath(filePath: string) {
+  if (!fs.existsSync(filePath)) {
+    return null
+  }
+
   const fileContent = fs.readFileSync(filePath).toString()
   const jsTransferContent = ts.transpile(fileContent)
 
