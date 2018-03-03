@@ -18,7 +18,7 @@ export function generateHtmlByRouterPath(routerPath: string, projectRootPath: st
   const relativePathWithSuffix = path.join(routerPath, "index.html")
   const htmlPath = path.join(projectRootPath, projectConfig.distDir, relativePathWithSuffix)
 
-  const cssPath = path.join(projectRootPath, projectConfig.distDir, "entry.css")
+  const cssPath = path.join(projectRootPath, projectConfig.distDir, "main.css")
   const hasCssOutput = fs.existsSync(cssPath)
 
   // TODO:
