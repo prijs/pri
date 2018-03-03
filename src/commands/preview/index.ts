@@ -49,7 +49,7 @@ export const CommandPreview = async () => {
     )
   )
 
-  const cssPath = path.join(previewDistPath, "entry.css")
+  const cssPath = path.join(previewDistPath, "main.css")
   const hasCssOutput = fs.existsSync(cssPath)
 
   app.use(async (ctx, next) => {
@@ -62,7 +62,7 @@ export const CommandPreview = async () => {
         <title>pri</title>
 
         ${hasCssOutput ? `
-          <link rel="stylesheet" type="text/css" href="/static/entry.css"/>
+          <link rel="stylesheet" type="text/css" href="/static/main.css"/>
         ` : ""}
 
         <style>

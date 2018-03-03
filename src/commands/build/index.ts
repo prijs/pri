@@ -53,7 +53,7 @@ export const CommandBuild = async (
     `--env.projectRootPath ${projectRootPath}`,
     `--env.env ${env}`,
     `--env.entryPath ${result.entryPath}`,
-    `--env.publicPath ${option.publicPath}`
+    option.publicPath && `--env.publicPath ${option.publicPath}`
   ].join(" "), {
       stdio: "inherit",
       cwd: projectRootPath

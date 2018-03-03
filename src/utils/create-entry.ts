@@ -197,8 +197,8 @@ export async function createEntry(info: IProjectInfo, projectRootPath: string, e
           }
         } else {
           const importCode = info.stores.length === 0 ?
-            `import("${path.join(pathInfo.dir, pathInfo.name)}")` :
-            `import("${path.join(pathInfo.dir, pathInfo.name)}").then(res => Connect()(res.default))  `
+            `import(/* webpackChunkName: "${componentName}" */ "${path.join(pathInfo.dir, pathInfo.name)}")` :
+            `import(/* webpackChunkName: "${componentName}" */"${path.join(pathInfo.dir, pathInfo.name)}").then(res => Connect()(res.default))  `
 
           entryText.pageImporter += `
             const ${componentName} = Loadable({
@@ -277,7 +277,7 @@ export async function createEntry(info: IProjectInfo, projectRootPath: string, e
           const wrapperStr = `<${MARKDOWN_WRAPPER}>{code.default}</${MARKDOWN_WRAPPER}>`
           if (info.hasMarkdownFile) {
             importCode = `
-              import("${markdownTsAbsolutePathWithoutExt}").then(code => {
+              import(/* webpackChunkName: "${componentName}" */ "${markdownTsAbsolutePathWithoutExt}").then(code => {
                 return () => (
                   <${MARKDOWN_LAYOUT_NAME}>
                     ${wrapperStr}
@@ -287,7 +287,7 @@ export async function createEntry(info: IProjectInfo, projectRootPath: string, e
             `
           } else {
             importCode = `
-              import("${markdownTsAbsolutePathWithoutExt}").then(code => {
+              import(/* webpackChunkName: "${componentName}" */ "${markdownTsAbsolutePathWithoutExt}").then(code => {
                 return () => (${wrapperStr})
               })
             `

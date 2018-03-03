@@ -21,7 +21,7 @@ const overridePublicPath = yargs.argv.env.publicPath
 const overrideOutDir = yargs.argv.env.outDir
 
 const outDir = overrideOutDir || path.join(projectRootPath, projectConfig.distDir)
-const publicPath = overridePublicPath || projectConfig.publicPath
+const publicPath = overridePublicPath || projectConfig.publicPath || "/"
 
 // TODO: any
 const config: webpack.Configuration & any = {
@@ -30,7 +30,8 @@ const config: webpack.Configuration & any = {
   output: {
     path: outDir,
     filename: fileName + ".js",
-    publicPath
+    publicPath,
+    chunkFilename: "[name].chunk.js",
   },
 
   module: {
