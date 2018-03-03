@@ -41,6 +41,12 @@ const getEntryContent = (entryText: IEntryText, projectInfo: IProjectInfo, proje
     import Loadable from "react-loadable"
     import { Redirect, Route, Router, Switch } from "react-router-dom"
 
+    ${env === "local" ?
+      `import { hot } from "react-hot-loader"` :
+      ""
+    }
+
+
     ${entryText.storesImporter}
     ${entryText.markdownImporter}
     ${entryText.markedImporter}
@@ -85,10 +91,24 @@ const getEntryContent = (entryText: IEntryText, projectInfo: IProjectInfo, proje
       }
     }
 
-    ReactDOM.render(
-      <Root />,
-      document.getElementById("root")
-    )
+    ${env === "local" ?
+      `
+      const HotRoot = hot(module)(Root)
+
+      ReactDOM.render(
+        <HotRoot />,
+        document.getElementById("root")
+      )
+    ` :
+      `
+      ReactDOM.render(
+        <Root />,
+        document.getElementById("root")
+      )
+    `
+    }
+
+
   `
 }
 

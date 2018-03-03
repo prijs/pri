@@ -91,7 +91,8 @@ const config: webpack.Configuration & any = {
     stats: {
       version: false,
       modules: false
-    }
+    },
+    clientLogLevel: "warning"
   }
 }
 

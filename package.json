@@ -1,6 +1,6 @@
 {
   "name": "pri",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "types": "src/index.ts",
   "main": "built/index.js",
   "scripts": {
@@ -55,7 +55,7 @@
     "cors": "^2.8.4",
     "css-loader": "^0.28.10",
     "dob": "^2.5.8",
-    "dob-react": "^2.4.10",
+    "dob-react": "^2.4.12",
     "extract-text-webpack-plugin": "^4.0.0-beta.0",
     "fs-extra": "^5.0.0",
     "highlight.js": "^9.12.0",
@@ -75,6 +75,7 @@
     "prettier": "^1.10.2",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
+    "react-hot-loader": "^4.0.0",
     "react-loadable": "^5.3.1",
     "react-router-dom": "^4.2.2",
     "socket.io": "^2.0.4",
