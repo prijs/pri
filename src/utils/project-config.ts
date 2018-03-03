@@ -3,7 +3,6 @@ import * as _ from "lodash"
 import * as path from "path"
 import * as ts from "typescript"
 import { exec } from "./exec"
-import { findNearestNodemodules } from "./npm-finder"
 import { IProjectConfig } from "./project-config-interface"
 import { configPaths } from "./structor-config"
 

@@ -1,12 +1,12 @@
 import { execSync } from "child_process"
 import * as path from "path"
-import { findNearestNodemodules } from "../../../utils/npm-finder"
+import { findNearestNodemodulesFile } from "../../../utils/npm-finder"
 
 const env = "prod"
 
 // Run webpack
 execSync([
-  `${findNearestNodemodules()}/.bin/webpack`,
+  `${findNearestNodemodulesFile("/.bin/webpack")}`,
   `--progress`,
   `--mode production`,
   `--config ${path.join(__dirname, "../../../utils/webpack-config.js")}`,

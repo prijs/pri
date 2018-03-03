@@ -7,7 +7,6 @@ import { analyseProject } from "../../utils/analyse-project"
 import { createEntry } from "../../utils/create-entry"
 import { ensureFiles } from "../../utils/ensure-files"
 import { spinner } from "../../utils/log"
-import { findNearestNodemodules } from "../../utils/npm-finder"
 import { getConfig } from "../../utils/project-config"
 
 const projectRootPath = process.cwd();

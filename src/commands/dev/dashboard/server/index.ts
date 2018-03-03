@@ -17,7 +17,6 @@ import { createEntry } from "../../../../utils/create-entry"
 import { generateCertificate } from "../../../../utils/generate-certificate"
 import { log } from "../../../../utils/log"
 import { md5 } from "../../../../utils/md5"
-import { findNearestNodemodules } from "../../../../utils/npm-finder"
 import { getConfig } from "../../../../utils/project-config"
 import * as projectManage from "../../../../utils/project-manager"
 

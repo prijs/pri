@@ -5,22 +5,25 @@ export const findNearestNodemodules = () => {
   return findNearestNodemodulesByPath(__dirname)
 }
 
-function findNearestNodemodulesByPath(filePath: string): string {
-  const findPath = path.join(filePath, "node_modules")
-
-  if (hasNodeModules(filePath)) {
-    return findPath
-  }
-
-  // Find parent dir
-  return findNearestNodemodulesByPath(path.resolve(filePath, ".."))
+export const findNearestNodemodulesFile = (tryRelativeFilePath: string) => {
+  const nodemodulePath = findNearestNodemodulesByPath(__dirname, tryRelativeFilePath)
+  return path.join(nodemodulePath, tryRelativeFilePath)
 }
 
-function hasNodeModules(filePath: string) {
+function findNearestNodemodulesByPath(filePath: string, tryRelativeFilePath?: string): string {
   const findPath = path.join(filePath, "node_modules")
 
   if (fs.existsSync(findPath)) {
-    return true
+    if (!tryRelativeFilePath) {
+      return findPath
+    } else {
+      const tryAbsoluteFilePath = path.join(findPath, tryRelativeFilePath)
+      if (fs.existsSync(tryAbsoluteFilePath)) {
+        return findPath
+      }
+    }
   }
-  return false
+
+  // Find parent dir
+  return findNearestNodemodulesByPath(path.resolve(filePath, ".."), tryRelativeFilePath)
 }

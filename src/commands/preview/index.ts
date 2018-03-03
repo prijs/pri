@@ -15,7 +15,6 @@ import { createEntry } from "../../utils/create-entry"
 import { ensureFiles } from "../../utils/ensure-files"
 import { generateCertificate } from "../../utils/generate-certificate"
 import { spinner } from "../../utils/log"
-import { findNearestNodemodules } from "../../utils/npm-finder"
 import { getConfig } from "../../utils/project-config"
 import { CommandBuild } from "../build"
 

@@ -8,7 +8,7 @@ import { analyseProject } from "../../utils/analyse-project"
 import { createEntry } from "../../utils/create-entry"
 import { ensureFiles } from "../../utils/ensure-files"
 import { log, spinner } from "../../utils/log"
-import { findNearestNodemodules } from "../../utils/npm-finder"
+import { findNearestNodemodulesFile } from "../../utils/npm-finder"
 import { getConfig } from "../../utils/project-config"
 import { IProjectConfig } from "../../utils/project-config-interface"
 import { tempJsEntryPath, tempPath } from "../../utils/structor-config"
@@ -67,7 +67,7 @@ export const CommandDev = async () => {
 
     // Serve project
     execSync([
-      `${findNearestNodemodules()}/.bin/webpack-dev-server`,
+      `${findNearestNodemodulesFile("/.bin/webpack-dev-server")}`,
       `--mode development`,
       `--progress`,
       `--hot`,
@@ -88,7 +88,7 @@ export const CommandDev = async () => {
   } else {
     // Serve dashboard only
     execSync([
-      `${findNearestNodemodules()}/.bin/webpack-dev-server`,
+      `${findNearestNodemodulesFile("/.bin/webpack-dev-server")}`,
       `--mode development`,
       `--progress`,
       `--hot`,

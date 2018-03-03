@@ -7,7 +7,7 @@ import { createEntry } from "../../utils/create-entry"
 import { ensureFiles } from "../../utils/ensure-files"
 import { generateHtmlByRouterPath, generateStaticHtml } from "../../utils/generate-static-html"
 import { log, spinner } from "../../utils/log"
-import { findNearestNodemodules } from "../../utils/npm-finder"
+import { findNearestNodemodulesFile } from "../../utils/npm-finder"
 import { getConfig } from "../../utils/project-config"
 import { IProjectConfig } from "../../utils/project-config-interface"
 import { lint } from "../../utils/tslint"
@@ -46,7 +46,7 @@ export const CommandBuild = async (
 
   // Run webpack
   execSync([
-    `${findNearestNodemodules()}/.bin/webpack`,
+    `${findNearestNodemodulesFile(".bin/webpack")}`,
     `--progress`,
     `--mode production`,
     `--config ${path.join(__dirname, "../../utils/webpack-config.js")}`,
