@@ -630,6 +630,10 @@ Production deployment. By default the dist folder is `./dist`.
   
   <p>
 
+  Tree shaking is a term commonly used in the JavaScript context for dead-code elimination. It relies on the [static structure](http://exploringjs.com/es6/ch_modules.html#static-module-structure) of ES2015 module syntax.
+
+  [More details](https://webpack.js.org/guides/tree-shaking/#caveats).
+
   </p>
 
 </details>
@@ -638,6 +642,8 @@ Production deployment. By default the dist folder is `./dist`.
   <summary>Scope Hoist.</summary>
   
   <p>
+
+  In comparison, tools like Closure Compiler and RollupJS ‘hoist’ or concatenate the scope of all your modules into one closure and allow for your code to have a faster execution time in the browser. Pri do this by using webpack.
 
   </p>
 

@@ -85,7 +85,12 @@ function ensureBabelrc(projectRootPath: string) {
   const filePath = path.join(projectRootPath, ".babelrc")
   const ensureContents = {
     presets: [
-      ["env"]
+      ["env", {
+        modules: false,
+        targets: {
+          uglify: false
+        }
+      }]
     ],
     plugins: [
       ["transform-runtime"],
@@ -93,8 +98,7 @@ function ensureBabelrc(projectRootPath: string) {
       ["import", {
         libraryName: "antd"
       }]
-    ],
-    comments: true
+    ]
   }
 
   fs.writeFileSync(filePath, JSON.stringify(ensureContents, null, 2))

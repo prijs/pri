@@ -35,7 +35,7 @@ const config: webpack.Configuration & any = {
     path: outDir,
     filename: fileName + ".js",
     publicPath,
-    chunkFilename: "[chunkhash].chunk.js",
+    chunkFilename: "[name].chunk.js",
   },
 
   module: {
