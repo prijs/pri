@@ -5,7 +5,7 @@ import * as path from "path"
 import { analyseProject } from "../../utils/analyse-project"
 import { createEntry } from "../../utils/create-entry"
 import { ensureFiles } from "../../utils/ensure-files"
-import { generateHtmlByRouterPath, generateStaticHtml } from "../../utils/generate-static-html"
+import { generateStaticHtml } from "../../utils/generate-static-html"
 import { log, spinner } from "../../utils/log"
 import { findNearestNodemodulesFile } from "../../utils/npm-finder"
 import { getConfig } from "../../utils/project-config"
@@ -65,6 +65,4 @@ export const CommandBuild = async (
       await generateStaticHtml(projectRootPath, projectConfig, result.projectInfo)
     })
   }
-
-  generateHtmlByRouterPath("/", projectRootPath, projectConfig)
 }

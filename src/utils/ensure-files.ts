@@ -93,7 +93,8 @@ function ensureBabelrc(projectRootPath: string) {
       ["import", {
         libraryName: "antd"
       }]
-    ]
+    ],
+    comments: true
   }
 
   fs.writeFileSync(filePath, JSON.stringify(ensureContents, null, 2))

@@ -8,7 +8,6 @@ import { IProjectConfig } from "./project-config-interface"
 
 export async function generateStaticHtml(projectRootPath: string, projectConfig?: IProjectConfig, projectInfo?: IProjectInfo) {
   projectInfo.routes
-    .filter(route => route.path !== "/")
     .forEach(route => {
       generateHtmlByRouterPath(route.path, projectRootPath, projectConfig)
     })
