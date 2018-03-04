@@ -625,11 +625,27 @@ Production deployment. By default the dist folder is `./dist`.
 
 </details>
 
+<details>
+  <summary>Tree Shaking.</summary>
+  
+  <p>
+
+  </p>
+
+</details>
+
+<details>
+  <summary>Scope Hoist.</summary>
+  
+  <p>
+
+  </p>
+
+</details>
+
 ### TODO
 
 - PWA support.
-- Tree Shaking.
-- Scope Hoist.
 - Prefetching.
 - Code coverage.
 
