@@ -69,12 +69,19 @@ const config: webpack.Configuration = {
           ["style-loader", "css-loader"] :
           ExtractTextPlugin.extract({
             fallback: "style-loader",
-            use: ["css-loader"]
+            use: [{
+              loader: "css-loader",
+              options: { minimize: true }
+            }]
           })
       },
       {
         test: /\.scss$/,
         use: ["style-loader", "css-loader", "sass-loader"],
+      },
+      {
+        test: /\.less$/,
+        use: ["style-loader", "css-loader", "less-loader"],
       }
     ]
   },
