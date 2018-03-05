@@ -177,7 +177,7 @@ export async function createEntry(info: IProjectInfo, projectRootPath: string, e
     const filePath = path.parse(route.filePath)
     const relativePageFilePath = path.relative(projectRootPath, filePath.dir + "/" + filePath.name)
     const componentName = safeName(relativePageFilePath) + md5(relativePageFilePath).slice(0, 5)
-    const chunkName = relativePageFilePath.split("/").slice(2).join("-")
+    const chunkName = _.camelCase(route.path) || "index"
 
     const pathInfo = path.parse(route.filePath)
 
@@ -199,7 +199,7 @@ export async function createEntry(info: IProjectInfo, projectRootPath: string, e
         } else {
           const importCode = info.stores.length === 0 ?
             `import(/* webpackChunkName: "${chunkName}" */ "${path.join(pathInfo.dir, pathInfo.name)}")` :
-            `import(/* webpackChunkName: "${chunkName}" */"${path.join(pathInfo.dir, pathInfo.name)}").then(res => Connect()(res.default))  `
+            `import(/* webpackChunkName: "${chunkName}" */ "${path.join(pathInfo.dir, pathInfo.name)}").then(res => Connect()(res.default))  `
 
           entryText.pageImporter += `
             const ${componentName} = Loadable({
@@ -278,7 +278,7 @@ export async function createEntry(info: IProjectInfo, projectRootPath: string, e
           const wrapperStr = `<${MARKDOWN_WRAPPER}>{code.default}</${MARKDOWN_WRAPPER}>`
           if (info.hasMarkdownFile) {
             importCode = `
-              import(/* webpackChunkName: "${chunkName}" */ "${markdownTsAbsolutePathWithoutExt}").then(code => {
+              import(/* webpackChunkName: "${chunkName}" */ " ${markdownTsAbsolutePathWithoutExt}").then(code => {
                 return () => (
                   <${MARKDOWN_LAYOUT_NAME}>
                     ${wrapperStr}
@@ -288,7 +288,7 @@ export async function createEntry(info: IProjectInfo, projectRootPath: string, e
             `
           } else {
             importCode = `
-              import(/* webpackChunkName: "${chunkName}" */ "${markdownTsAbsolutePathWithoutExt}").then(code => {
+              import(/* webpackChunkName: "${chunkName}" */ " ${markdownTsAbsolutePathWithoutExt}").then(code => {
                 return () => (${wrapperStr})
               })
             `
