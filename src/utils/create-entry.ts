@@ -353,7 +353,7 @@ export async function createEntry(info: IProjectInfo, projectRootPath: string, e
     entryText.layoutImporter = `
       ${layoutImportCode}
 
-      const LayoutRoute = ({ component: Component, ...rest }) => {
+      const LayoutRoute = ({ component: Component, ...rest }: any) => {
         return (
           <Route {...rest} render={matchProps => (
             <LayoutComponent>

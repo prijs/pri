@@ -71,6 +71,10 @@ const config: webpack.Configuration & any = {
             fallback: "style-loader",
             use: ["css-loader"]
           })
+      },
+      {
+        test: /\.scss$/,
+        use: ["style-loader", "css-loader", "sass-loader"],
       }
     ]
   },
