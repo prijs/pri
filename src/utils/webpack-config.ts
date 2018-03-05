@@ -28,6 +28,14 @@ if (!publicPath.endsWith("/")) {
   publicPath += "/"
 }
 
+const stats = {
+  warnings: false,
+  version: false,
+  modules: false,
+  entrypoints: false,
+  hash: false
+}
+
 const config: webpack.Configuration = {
   entry: entryPath,
 
@@ -35,7 +43,7 @@ const config: webpack.Configuration = {
     path: distDir,
     filename: distFileName + ".js",
     publicPath,
-    chunkFilename: "[chunkhash].chunk.js",
+    chunkFilename: "[name].chunk.js",
   },
 
   module: {
@@ -44,22 +52,20 @@ const config: webpack.Configuration = {
         test: /\.(tsx|ts)?$/, use: [{
           loader: "babel-loader",
           options: {
+            babelrc: false,
             presets: [
               ["env", {
                 modules: false,
-                targets: {
-                  uglify: false
-                }
               }],
               ["stage-2"]
             ],
             plugins: [
               ["transform-runtime"],
-              ["dynamic-import-webpack"],
               ["import", {
                 libraryName: "antd"
               }]
-            ]
+            ],
+            comments: true
           }
         }, "ts-loader"]
       },
@@ -107,6 +113,8 @@ const config: webpack.Configuration = {
 
   plugins: [],
 
+  stats,
+
   // Only for Devserver
   devServer: {
     historyApiFallback: {
@@ -124,10 +132,7 @@ const config: webpack.Configuration = {
       errors: true
     },
     port: devServerPort,
-    stats: {
-      version: false,
-      modules: false
-    },
+    stats,
     clientLogLevel: "warning"
   }
 }
