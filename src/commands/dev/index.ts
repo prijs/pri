@@ -97,7 +97,7 @@ export const CommandDev = async () => {
       `--env.env ${env}`,
       `--env.publicPath /static/`,
       `--env.entryPath ${path.join(__dirname, "dashboard/client/index.js")}`,
-      `--env.outFileName main`,
+      `--env.distFileName main`,
       `--env.devServerPort ${dashboardClientPort}`,
       `--env.htmlTemplatePath ${path.join(__dirname, "../../../template-dashboard.ejs")}`,
       `--env.htmlTemplateArgs.dashboardServerPort ${dashboardServerPort}`

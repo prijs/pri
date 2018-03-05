@@ -14,8 +14,8 @@ execSync([
   `--env.env ${env}`,
   `--env.publicPath /bundle/`,
   `--env.entryPath ${path.join(__dirname, "client/index.js")}`,
-  `--env.outDir ${path.join(__dirname, "../../../bundle")}`,
-  `--env.outFileName main`
+  `--env.distDir ${path.join(__dirname, "../../../bundle")}`,
+  `--env.distFileName main`
 ].join(" "), {
     stdio: "inherit"
   })

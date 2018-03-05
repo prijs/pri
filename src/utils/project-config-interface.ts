@@ -12,7 +12,7 @@ export class IProjectConfig {
    * Dist main file name
    * Only take effect on npm run build | pri build
    */
-  public outFileName?: string = "main"
+  public distFileName?: string = "main"
   /**
    * Assets public path. eg: some.com, some.com/somePath, /somePath
    * If not set, result: /<distPath>

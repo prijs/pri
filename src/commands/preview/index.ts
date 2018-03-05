@@ -27,7 +27,7 @@ const publicPath = "/static/"
 export const CommandPreview = async () => {
   const env = "prod"
   const projectConfig = getConfig(projectRootPath, env)
-  const outDir = path.join(projectRootPath, projectConfig.distDir)
+  const distDir = path.join(projectRootPath, projectConfig.distDir)
 
   await CommandBuild({
     publicPath
@@ -39,7 +39,7 @@ export const CommandPreview = async () => {
     flush: zlib.Z_SYNC_FLUSH
   }))
 
-  const previewDistPath = outDir
+  const previewDistPath = distDir
 
   app.use(
     koaMount(publicPath,

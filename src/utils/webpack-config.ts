@@ -17,11 +17,11 @@ const projectConfig = getConfig(projectRootPath, env)
 
 // Override variable
 const argsPublicPath = yargs.argv.env.publicPath
-const argsOutDir = yargs.argv.env.outDir
-const argsOutFileName = yargs.argv.env.outFileName || "main"
+const argsDistDir = yargs.argv.env.distDir
+const argsDistFileName = yargs.argv.env.distFileName || "main"
 
-const outDir = argsOutDir || path.join(projectRootPath, projectConfig.distDir)
-const outFileName = argsOutFileName || projectConfig.outFileName
+const distDir = argsDistDir || path.join(projectRootPath, projectConfig.distDir)
+const distFileName = argsDistFileName || projectConfig.distFileName
 
 let publicPath: string = argsPublicPath || projectConfig.publicPath || "/"
 if (!publicPath.endsWith("/")) {
@@ -32,8 +32,8 @@ const config: webpack.Configuration = {
   entry: entryPath,
 
   output: {
-    path: outDir,
-    filename: outFileName + ".js",
+    path: distDir,
+    filename: distFileName + ".js",
     publicPath,
     chunkFilename: "[chunkhash].chunk.js",
   },
@@ -139,7 +139,7 @@ if (env === "local") {
 }
 
 if (env === "prod") {
-  config.plugins.push(new ExtractTextPlugin(outFileName + ".css"))
+  config.plugins.push(new ExtractTextPlugin(distFileName + ".css"))
 }
 
 export default config
