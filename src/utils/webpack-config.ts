@@ -41,7 +41,27 @@ const config: webpack.Configuration & any = {
   module: {
     rules: [
       {
-        test: /\.(tsx|ts)?$/, use: ["babel-loader", "ts-loader"]
+        test: /\.(tsx|ts)?$/, use: [{
+          loader: "babel-loader",
+          options: {
+            presets: [
+              ["env", {
+                modules: false,
+                targets: {
+                  uglify: false
+                }
+              }],
+              ["stage-2"]
+            ],
+            plugins: [
+              ["transform-runtime"],
+              ["dynamic-import-webpack"],
+              ["import", {
+                libraryName: "antd"
+              }]
+            ]
+          }
+        }, "ts-loader"]
       },
       {
         test: /\.css$/,

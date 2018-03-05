@@ -9,7 +9,6 @@ import { declarePath, pagesPath } from "./structor-config"
 export const ensureFiles = (projectRootPath: string, config: IProjectConfig, supplementCode: boolean) => {
   ensureGitignore(projectRootPath, config)
   ensureTsconfig(projectRootPath)
-  ensureBabelrc(projectRootPath)
   ensureTslint(projectRootPath)
   ensurePackageJson(projectRootPath)
   ensureVscode(projectRootPath)
@@ -79,29 +78,6 @@ function ensureTsconfig(projectRootPath: string) {
   }
 
   fs.writeFileSync(filePath, JSON.stringify(exitFileContent, null, 2))
-}
-
-function ensureBabelrc(projectRootPath: string) {
-  const filePath = path.join(projectRootPath, ".babelrc")
-  const ensureContents = {
-    presets: [
-      ["env", {
-        modules: false,
-        targets: {
-          uglify: false
-        }
-      }]
-    ],
-    plugins: [
-      ["transform-runtime"],
-      ["dynamic-import-webpack"],
-      ["import", {
-        libraryName: "antd"
-      }]
-    ]
-  }
-
-  fs.writeFileSync(filePath, JSON.stringify(ensureContents, null, 2))
 }
 
 function ensureTslint(projectRootPath: string) {
