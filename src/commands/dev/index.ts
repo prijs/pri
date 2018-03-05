@@ -77,7 +77,6 @@ export const CommandDev = async () => {
       `--env.env ${env}`,
       `--env.publicPath /static/`,
       `--env.entryPath ${path.join(projectRootPath, path.format(tempJsEntryPath))}`,
-      `--env.fileName main`,
       `--env.devServerPort ${freePort}`,
       `--env.htmlTemplatePath ${path.join(__dirname, "../../../template-project.ejs")}`,
       `--env.htmlTemplateArgs.dashboardServerPort ${dashboardServerPort}`,
@@ -98,7 +97,7 @@ export const CommandDev = async () => {
       `--env.env ${env}`,
       `--env.publicPath /static/`,
       `--env.entryPath ${path.join(__dirname, "dashboard/client/index.js")}`,
-      `--env.fileName main`,
+      `--env.outFileName main`,
       `--env.devServerPort ${dashboardClientPort}`,
       `--env.htmlTemplatePath ${path.join(__dirname, "../../../template-dashboard.ejs")}`,
       `--env.htmlTemplateArgs.dashboardServerPort ${dashboardServerPort}`

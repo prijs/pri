@@ -240,6 +240,11 @@ Production deployment. By default the dist folder is `./dist`.
      */
     public distDir?: string = "dist"
     /**
+     * Dist main file name
+     * Only take effect on npm run build | pri build
+     */
+    public outFileName?: string = "main"
+    /**
      * Assets public path. eg: some.com, some.com/somePath, /somePath
      * If not set, result: /<distPath>
      * If set /somePath for example, result: /somePath/<distPath>
@@ -632,7 +637,7 @@ Production deployment. By default the dist folder is `./dist`.
 
   Tree shaking is a term commonly used in the JavaScript context for dead-code elimination. It relies on the [static structure](http://exploringjs.com/es6/ch_modules.html#static-module-structure) of ES2015 module syntax.
 
-  [More details](https://webpack.js.org/guides/tree-shaking/#caveats).
+  Read [more](https://webpack.js.org/guides/tree-shaking/#caveats).
 
   </p>
 
@@ -661,6 +666,7 @@ Production deployment. By default the dist folder is `./dist`.
 - [react-dom@16.2.0](https://www.npmjs.com/package/react-dom)
 - [react-router-dom@4.2.2](https://www.npmjs.com/package/react-router-dom)
 - [webpack@4.0.2](https://www.npmjs.com/package/parcel-bundler)
+- [babel@7.0.0](https://www.npmjs.com/package/babel-core)
 - [dob@2.5.8](https://www.npmjs.com/package/dob)
 - [react-loadable@5.3.1](https://www.npmjs.com/package/react-loadable)
 - [antd@3.2.1](https://www.npmjs.com/package/antd)

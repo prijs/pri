@@ -9,7 +9,6 @@ import { getConfig } from "./project-config"
 const projectRootPath = yargs.argv.env.projectRootPath
 const entryPath = yargs.argv.env.entryPath
 const env = yargs.argv.env.env
-const fileName = yargs.argv.env.fileName || "main"
 const htmlTemplatePath = yargs.argv.env.htmlTemplatePath
 const htmlTemplateArgs = yargs.argv.env.htmlTemplateArgs
 const devServerPort = yargs.argv.env.devServerPort
@@ -17,23 +16,24 @@ const devServerPort = yargs.argv.env.devServerPort
 const projectConfig = getConfig(projectRootPath, env)
 
 // Override variable
-const overridePublicPath = yargs.argv.env.publicPath
-const overrideOutDir = yargs.argv.env.outDir
+const argsPublicPath = yargs.argv.env.publicPath
+const argsOutDir = yargs.argv.env.outDir
+const argsOutFileName = yargs.argv.env.outFileName || "main"
 
-const outDir = overrideOutDir || path.join(projectRootPath, projectConfig.distDir)
+const outDir = argsOutDir || path.join(projectRootPath, projectConfig.distDir)
+const outFileName = argsOutFileName || projectConfig.outFileName
 
-let publicPath: string = overridePublicPath || projectConfig.publicPath || "/"
+let publicPath: string = argsPublicPath || projectConfig.publicPath || "/"
 if (!publicPath.endsWith("/")) {
   publicPath += "/"
 }
 
-// TODO: any
-const config: webpack.Configuration & any = {
+const config: webpack.Configuration = {
   entry: entryPath,
 
   output: {
     path: outDir,
-    filename: fileName + ".js",
+    filename: outFileName + ".js",
     publicPath,
     chunkFilename: "[chunkhash].chunk.js",
   },
@@ -139,7 +139,7 @@ if (env === "local") {
 }
 
 if (env === "prod") {
-  config.plugins.push(new ExtractTextPlugin(fileName + ".css"))
+  config.plugins.push(new ExtractTextPlugin(outFileName + ".css"))
 }
 
 export default config
