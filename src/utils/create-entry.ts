@@ -278,7 +278,7 @@ export async function createEntry(info: IProjectInfo, projectRootPath: string, e
           const wrapperStr = `<${MARKDOWN_WRAPPER}>{code.default}</${MARKDOWN_WRAPPER}>`
           if (info.hasMarkdownFile) {
             importCode = `
-              import(/* webpackChunkName: "${chunkName}" */ " ${markdownTsAbsolutePathWithoutExt}").then(code => {
+              import(/* webpackChunkName: "${chunkName}" */ "${markdownTsAbsolutePathWithoutExt}").then(code => {
                 return () => (
                   <${MARKDOWN_LAYOUT_NAME}>
                     ${wrapperStr}
@@ -288,7 +288,7 @@ export async function createEntry(info: IProjectInfo, projectRootPath: string, e
             `
           } else {
             importCode = `
-              import(/* webpackChunkName: "${chunkName}" */ " ${markdownTsAbsolutePathWithoutExt}").then(code => {
+              import(/* webpackChunkName: "${chunkName}" */ "${markdownTsAbsolutePathWithoutExt}").then(code => {
                 return () => (${wrapperStr})
               })
             `
