@@ -1,5 +1,6 @@
 import * as fs from "fs-extra"
 import * as _ from "lodash"
+import * as normalizePath from "normalize-path"
 import * as path from "path"
 import * as prettier from "prettier"
 import { IProjectInfo } from "./analyse-project-interface"
@@ -177,18 +178,18 @@ export async function createEntry(info: IProjectInfo, projectRootPath: string, e
           // If only one page, don't need code splitting.
           if (info.stores.length === 0) {
             entryText.pageImporter += `
-              import ${componentName} from "${path.join(pathInfo.dir, pathInfo.name)}"
+              import ${componentName} from "${normalizePath(path.join(pathInfo.dir, pathInfo.name))}"
             `
           } else {
             entryText.pageImporter += `
-              import ${componentName}Temp from "${path.join(pathInfo.dir, pathInfo.name)}"
+              import ${componentName}Temp from "${normalizePath(path.join(pathInfo.dir, pathInfo.name))}"
               const ${componentName} = Connect()(${componentName}Temp)
             `
           }
         } else {
           const importCode = info.stores.length === 0 ?
-            `import(/* webpackChunkName: "${chunkName}" */ "${path.join(pathInfo.dir, pathInfo.name)}")` :
-            `import(/* webpackChunkName: "${chunkName}" */ "${path.join(pathInfo.dir, pathInfo.name)}").then(res => Connect()(res.default))  `
+            `import(/* webpackChunkName: "${chunkName}" */ "${normalizePath(path.join(pathInfo.dir, pathInfo.name))}")` :
+            `import(/* webpackChunkName: "${chunkName}" */ "${normalizePath(path.join(pathInfo.dir, pathInfo.name))}").then(res => Connect()(res.default))  `
 
           entryText.pageImporter += `
             const ${componentName} = Loadable({
@@ -252,14 +253,14 @@ export async function createEntry(info: IProjectInfo, projectRootPath: string, e
           const tempComponentName = `${componentName}Md`
           const wrapperStr = `<${MARKDOWN_WRAPPER}>{${tempComponentName}}</${MARKDOWN_WRAPPER}>`
           entryText.pageImporter += `
-            import ${tempComponentName} from "${markdownTsAbsolutePathWithoutExt}"
+            import ${tempComponentName} from "${normalizePath(markdownTsAbsolutePathWithoutExt)}"
             const ${componentName} = () => (${wrapperStr})
           `
         } else {
           let importCode = ""
           const wrapperStr = `<${MARKDOWN_WRAPPER}>{code.default}</${MARKDOWN_WRAPPER}>`
           importCode = `
-            import(/* webpackChunkName: "${chunkName}" */ "${markdownTsAbsolutePathWithoutExt}").then(code => {
+            import(/* webpackChunkName: "${chunkName}" */ "${normalizePath(markdownTsAbsolutePathWithoutExt)}").then(code => {
               return () => (${wrapperStr})
             })
           `
@@ -286,14 +287,14 @@ export async function createEntry(info: IProjectInfo, projectRootPath: string, e
     entryText.storesImporter += `import { useStrict } from "dob"\n`
     entryText.storesImporter += `import { Connect, Provider } from "dob-react"\n`
     entryText.storesImporter += `useStrict()\n`
-    entryText.storesImporter += `import { stores } from "${entryRelativeToHelper}"\n`
+    entryText.storesImporter += `import { stores } from "${normalizePath(entryRelativeToHelper)}"\n`
     entryText.storesHelper += `import { combineStores } from "dob"\n`
     entryText.storesHelper += info.stores
       .map(eachStore => {
         const filePath = path.parse(eachStore.filePath)
         const importAbsolutePath = path.join(filePath.dir, filePath.name)
         const importRelativePath = path.relative(path.join(projectRootPath, helperPath.dir), importAbsolutePath)
-        return `import { ${safeName(eachStore.name)}Action, ${safeName(eachStore.name)}Store } from "${importRelativePath}"`
+        return `import { ${safeName(eachStore.name)}Action, ${safeName(eachStore.name)}Store } from "${normalizePath(importRelativePath)}"`
       })
       .join("\n")
     entryText.storesHelper += `
@@ -311,10 +312,10 @@ export async function createEntry(info: IProjectInfo, projectRootPath: string, e
     const layoutRelativePath = path.relative(tempJsEntryPath.dir, path.join(layoutPath.dir, layoutPath.name))
 
     if (info.stores.length === 0) {
-      layoutImportCode = `import ${LAYOUT} from "${layoutRelativePath}"`
+      layoutImportCode = `import ${LAYOUT} from "${normalizePath(layoutRelativePath)}"`
     } else {
       layoutImportCode = `
-        import ${LAYOUT}Pure from "${layoutRelativePath}"
+        import ${LAYOUT}Pure from "${normalizePath(layoutRelativePath)}"
         const ${LAYOUT} = Connect()(${LAYOUT}Pure)
       `
     }
@@ -341,11 +342,11 @@ export async function createEntry(info: IProjectInfo, projectRootPath: string, e
     let markdownLayoutInportCode = ""
 
     if (info.stores.length === 0) {
-      markdownLayoutInportCode = `import ${MARKDOWN_LAYOUT} from "${markdownRelativePath}"\n`
+      markdownLayoutInportCode = `import ${MARKDOWN_LAYOUT} from "${normalizePath(markdownRelativePath)}"\n`
     } else {
       const markdownLayoutPure = `${MARKDOWN_LAYOUT}Pure`
       markdownLayoutInportCode = `
-        import ${markdownLayoutPure} from "${markdownRelativePath}"
+        import ${markdownLayoutPure} from "${normalizePath(markdownRelativePath)}"
         const ${MARKDOWN_LAYOUT} = Connect()(${markdownLayoutPure})
       `
     }
@@ -367,7 +368,7 @@ export async function createEntry(info: IProjectInfo, projectRootPath: string, e
 
   // Set not found
   if (info.has404File) {
-    entryText.notFoundImporter = `import NotFoundComponent from "${path.join(projectRootPath, path.join(notFoundPath.dir, notFoundPath.name))}"`
+    entryText.notFoundImporter = `import NotFoundComponent from "${normalizePath(path.join(projectRootPath, path.join(notFoundPath.dir, notFoundPath.name)))}"`
     entryText.notFoundRoute = `
       <Route component={NotFoundComponent} />
     `

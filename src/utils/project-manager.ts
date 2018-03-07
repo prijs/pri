@@ -1,5 +1,6 @@
 import * as fs from "fs-extra"
 import * as _ from "lodash"
+import * as normalizePath from "normalize-path"
 import * as path from "path"
 import * as prettier from "prettier"
 import { analyseProject } from "./analyse-project"
@@ -49,7 +50,7 @@ export async function addPage(projectRootPath: string, options: {
     const relativeToHelperPath = path.relative(fileAbsoluteDirPath, helperAbsolutePath)
     fs.outputFileSync(fileFullPath, prettier.format(`
       import * as React from "react"
-      import { stores } from "${relativeToHelperPath}"
+      import { stores } from "${normalizePath(relativeToHelperPath)}"
 
       class Props {
 
