@@ -61,11 +61,11 @@ if (!commander.args.length) {
 }
 
 /**
- * update notify
+ * Update notify.
  */
 updateNotifier({ pkg }).notify()
 
-// 捕获异常
+// Catch error.
 process.on("unhandledRejection", error => {
   log(colors.red(error.toString()))
 })
