@@ -7,13 +7,17 @@ import { md5 } from "./md5"
 import { IProjectConfig } from "./project-config-interface"
 import {
   helperPath,
+  layoutPath,
   markdownLayoutPath,
   markdownTempPath,
   notFoundPath,
   tempJsEntryPath
 } from "./structor-config"
 
-const MARKDOWN_LAYOUT_NAME = "MarkdownTemplate"
+const LAYOUT = "LayoutComponent"
+const LAYOUT_ROUTE = "LayoutRoute"
+const MARKDOWN_LAYOUT = "MarkdownLayoutComponent"
+const MARKDOWN_LAYOUT_ROUTE = "MarkdownLayoutRoute"
 const MARKDOWN_WRAPPER = "MarkdownWrapper"
 
 interface IEntryText {
@@ -26,7 +30,7 @@ interface IEntryText {
   setCustomEnv: string
   storesImporter: string
   storesHelper: string
-  markdownImporter: string
+  markdownLayoutImporter: string
   markedImporter: string
 }
 
@@ -48,7 +52,7 @@ const getEntryContent = (entryText: IEntryText, projectInfo: IProjectInfo, proje
 
 
     ${entryText.storesImporter}
-    ${entryText.markdownImporter}
+    ${entryText.markdownLayoutImporter}
     ${entryText.markedImporter}
 
     const customHistory = createBrowserHistory({
@@ -134,7 +138,7 @@ export async function createEntry(info: IProjectInfo, projectRootPath: string, e
     setCustomEnv: "",
     storesImporter: "",
     storesHelper: "",
-    markdownImporter: "",
+    markdownLayoutImporter: "",
     markedImporter: ""
   }
 
@@ -152,21 +156,6 @@ export async function createEntry(info: IProjectInfo, projectRootPath: string, e
   // Set custom env
   if (projectConfig.env) {
     entryText.setCustomEnv = `setCustomEnv(${JSON.stringify(projectConfig.env)})`
-  }
-
-  // Set markdownImporter
-  if (info.hasMarkdownFile) {
-    const markdownRelativePath = path.relative(tempJsEntryPath.dir, path.join(markdownLayoutPath.dir, markdownLayoutPath.name))
-
-    if (info.stores.length === 0) {
-      entryText.markdownImporter = `import ${MARKDOWN_LAYOUT_NAME} from "${markdownRelativePath}"\n`
-    } else {
-      const markdownLayoutPure = `${MARKDOWN_LAYOUT_NAME}Pure`
-      entryText.markdownImporter = `
-        import ${markdownLayoutPure} from "${markdownRelativePath}"
-        const ${MARKDOWN_LAYOUT_NAME} = Connect()(${markdownLayoutPure})
-      `
-    }
   }
 
   // Clear temp markdown files
@@ -208,6 +197,10 @@ export async function createEntry(info: IProjectInfo, projectRootPath: string, e
             })\n
           `
         }
+
+        entryText.pageRoutes += `
+          <${info.hasLayout ? LAYOUT_ROUTE : "Route"} exact path="${route.path}" component={${componentName}} />\n
+        `
         break
       case ".md":
         if (!entryText.markedImporter) {
@@ -258,41 +251,18 @@ export async function createEntry(info: IProjectInfo, projectRootPath: string, e
           // If only one page, don't need code splitting.
           const tempComponentName = `${componentName}Md`
           const wrapperStr = `<${MARKDOWN_WRAPPER}>{${tempComponentName}}</${MARKDOWN_WRAPPER}>`
-          if (info.hasMarkdownFile) {
-            entryText.pageImporter += `
-              import ${tempComponentName} from "${markdownTsAbsolutePathWithoutExt}"
-              const ${componentName} = () => (
-                <${MARKDOWN_LAYOUT_NAME}>
-                  ${wrapperStr}
-                </${MARKDOWN_LAYOUT_NAME}>
-              )
-            `
-          } else {
-            entryText.pageImporter += `
-              import ${tempComponentName} from "${markdownTsAbsolutePathWithoutExt}"
-              const ${componentName} = () => (${wrapperStr})
-            `
-          }
+          entryText.pageImporter += `
+            import ${tempComponentName} from "${markdownTsAbsolutePathWithoutExt}"
+            const ${componentName} = () => (${wrapperStr})
+          `
         } else {
           let importCode = ""
           const wrapperStr = `<${MARKDOWN_WRAPPER}>{code.default}</${MARKDOWN_WRAPPER}>`
-          if (info.hasMarkdownFile) {
-            importCode = `
-              import(/* webpackChunkName: "${chunkName}" */ "${markdownTsAbsolutePathWithoutExt}").then(code => {
-                return () => (
-                  <${MARKDOWN_LAYOUT_NAME}>
-                    ${wrapperStr}
-                  </${MARKDOWN_LAYOUT_NAME}>
-                )
-              })
-            `
-          } else {
-            importCode = `
-              import(/* webpackChunkName: "${chunkName}" */ "${markdownTsAbsolutePathWithoutExt}").then(code => {
-                return () => (${wrapperStr})
-              })
-            `
-          }
+          importCode = `
+            import(/* webpackChunkName: "${chunkName}" */ "${markdownTsAbsolutePathWithoutExt}").then(code => {
+              return () => (${wrapperStr})
+            })
+          `
 
           entryText.pageImporter += `
             const ${componentName} = Loadable({
@@ -301,15 +271,13 @@ export async function createEntry(info: IProjectInfo, projectRootPath: string, e
             })\n
           `
         }
+
+        entryText.pageRoutes += `
+          <${info.hasMarkdownLayout ? MARKDOWN_LAYOUT_ROUTE : "Route"} exact path="${route.path}" component={${componentName}} />\n
+        `
         break
       default:
     }
-
-    const routeComponent = info.layout ? "LayoutRoute" : "Route"
-
-    entryText.pageRoutes += `
-      <${routeComponent} exact path="${route.path}" component={${componentName}} />\n
-    `
   })
 
   // Set stores
@@ -338,28 +306,59 @@ export async function createEntry(info: IProjectInfo, projectRootPath: string, e
   }
 
   // Set layout
-  if (info.layout) {
-    const layoutPath = path.parse(info.layout.filePath)
+  if (info.hasLayout) {
     let layoutImportCode = ""
+    const layoutRelativePath = path.relative(tempJsEntryPath.dir, path.join(layoutPath.dir, layoutPath.name))
 
     if (info.stores.length === 0) {
-      layoutImportCode = `import LayoutComponent from "${path.join(layoutPath.dir, layoutPath.name)}"`
+      layoutImportCode = `import ${LAYOUT} from "${layoutRelativePath}"`
     } else {
       layoutImportCode = `
-        import LayoutComponentOrigin from "${path.join(layoutPath.dir, layoutPath.name)}"
-        const LayoutComponent = Connect()(LayoutComponentOrigin)
+        import ${LAYOUT}Pure from "${layoutRelativePath}"
+        const ${LAYOUT} = Connect()(${LAYOUT}Pure)
       `
     }
 
     entryText.layoutImporter = `
       ${layoutImportCode}
 
-      const LayoutRoute = ({ component: Component, ...rest }: any) => {
+      const ${LAYOUT_ROUTE} = ({ component: Component, ...rest }: any) => {
         return (
           <Route {...rest} render={matchProps => (
-            <LayoutComponent>
+            <${LAYOUT}>
               <Component {...matchProps} />
-            </LayoutComponent>
+            </${LAYOUT}>
+          )} />
+        )
+      };\n
+    `
+  }
+
+  // Set markdown layout
+  if (info.hasMarkdownLayout) {
+    const markdownRelativePath = path.relative(tempJsEntryPath.dir, path.join(markdownLayoutPath.dir, markdownLayoutPath.name))
+
+    let markdownLayoutInportCode = ""
+
+    if (info.stores.length === 0) {
+      markdownLayoutInportCode = `import ${MARKDOWN_LAYOUT} from "${markdownRelativePath}"\n`
+    } else {
+      const markdownLayoutPure = `${MARKDOWN_LAYOUT}Pure`
+      markdownLayoutInportCode = `
+        import ${markdownLayoutPure} from "${markdownRelativePath}"
+        const ${MARKDOWN_LAYOUT} = Connect()(${markdownLayoutPure})
+      `
+    }
+
+    entryText.markdownLayoutImporter = `
+      ${markdownLayoutInportCode}
+
+      const ${MARKDOWN_LAYOUT_ROUTE} = ({ component: Component, ...rest }: any) => {
+        return (
+          <Route {...rest} render={matchProps => (
+            <${MARKDOWN_LAYOUT}>
+              <Component {...matchProps} />
+            </${MARKDOWN_LAYOUT}>
           )} />
         )
       };\n

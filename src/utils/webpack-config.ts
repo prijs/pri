@@ -84,26 +84,26 @@ const config: webpack.Configuration = {
       {
         test: /\.scss$/,
         use: env === "local" ?
-        ["style-loader", "css-loader", "sass-loader"] :
-        ExtractTextPlugin.extract({
-          fallback: "style-loader",
-          use: [{
-            loader: "css-loader",
-            options: { minimize: true }
-          }, "sass-loader"]
-        })
+          ["style-loader", "css-loader", "sass-loader"] :
+          ExtractTextPlugin.extract({
+            fallback: "style-loader",
+            use: [{
+              loader: "css-loader",
+              options: { minimize: true }
+            }, "sass-loader"]
+          })
       },
       {
         test: /\.less$/,
         use: env === "local" ?
-        ["style-loader", "css-loader", "less-loader"] :
-        ExtractTextPlugin.extract({
-          fallback: "style-loader",
-          use: [{
-            loader: "css-loader",
-            options: { minimize: true }
-          }, "less-loader"]
-        })
+          ["style-loader", "css-loader", "less-loader"] :
+          ExtractTextPlugin.extract({
+            fallback: "style-loader",
+            use: [{
+              loader: "css-loader",
+              options: { minimize: true }
+            }, "less-loader"]
+          })
       }
     ]
   },

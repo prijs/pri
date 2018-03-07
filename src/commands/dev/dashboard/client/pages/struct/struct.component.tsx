@@ -132,14 +132,14 @@ export class StructComponent extends PureComponent<Props, State> {
     treeData[0].children.push({
       key: "layout",
       title: `Layout`,
-      icon: this.props.ApplciationStore.status.info.hasLayoutFile ? (
+      icon: this.props.ApplciationStore.status.info.hasLayout ? (
         <TreeIcon type="layout" />
       ) : (
           <Tooltip title="Auto create layout files." placement="right">
             <PlusIcon onClick={this.props.ApplicationAction.createLayout} />
           </Tooltip>
         ),
-      disabled: !this.props.ApplciationStore.status.info.hasLayoutFile
+      disabled: !this.props.ApplciationStore.status.info.hasLayout
     })
 
     // 404

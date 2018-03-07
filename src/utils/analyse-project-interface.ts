@@ -4,13 +4,10 @@ export class IProjectInfo {
     filePath: string
     isIndex: boolean
   }> = []
-  public layout: {
-    filePath: string
-  } | null = null
   public hasConfigFile = false
-  public hasLayoutFile = false
+  public hasLayout = false
   public has404File = false
-  public hasMarkdownFile = false
+  public hasMarkdownLayout = false
   public stores: Array<{
     filePath: string
     name: string

@@ -4,7 +4,7 @@ import * as walk from "walk"
 import { IProjectInfo } from "./analyse-project-interface"
 import {
   configPaths,
-  layoutsPath,
+  layoutPath,
   markdownLayoutPath,
   notFoundPath,
   pagesPath,
@@ -22,8 +22,8 @@ export const analyseProject = async (projectRootPath: string) => {
     info.hasConfigFile = true
   }
 
-  if (fs.existsSync(path.join(projectRootPath, path.format(layoutsPath)))) {
-    info.hasLayoutFile = true
+  if (fs.existsSync(path.join(projectRootPath, path.format(layoutPath)))) {
+    info.hasLayout = true
   }
 
   if (fs.existsSync(path.join(projectRootPath, path.format(notFoundPath)))) {
@@ -31,7 +31,7 @@ export const analyseProject = async (projectRootPath: string) => {
   }
 
   if (fs.existsSync(path.join(projectRootPath, path.format(markdownLayoutPath)))) {
-    info.hasMarkdownFile = true
+    info.hasMarkdownLayout = true
   }
 
   return info
@@ -67,11 +67,6 @@ function walkProject(projectRootPath: string): Promise<IProjectInfo> {
       const pageInfo = judgePageFile(projectRootPath, root, fileStats)
       if (pageInfo) {
         info.routes.push(pageInfo)
-      }
-
-      const layoutInfo = judgeLayoutFile(projectRootPath, root, fileStats)
-      if (layoutInfo) {
-        info.layout = layoutInfo
       }
 
       const storeInfo = judgeStoreFile(projectRootPath, root, fileStats)
@@ -118,25 +113,6 @@ function judgePageFile(projectRootPath: string, dir: string, fileStats: WalkStat
     filePath: path.join(dir, fileStats.name),
     isIndex: fileInfo.name === "index"
   }
-}
-
-function judgeLayoutFile(projectRootPath: string, dir: string, fileStats: WalkStats) {
-  const relativePath = path.relative(projectRootPath, dir)
-
-  if (!relativePath.startsWith(layoutsPath.dir)) {
-    return null
-  }
-
-  const pathInfo = path.parse(fileStats.name)
-
-  // Use index file
-  if (relativePath === layoutsPath.dir && pathInfo.name === "index") {
-    return {
-      filePath: path.join(dir, fileStats.name)
-    }
-  }
-
-  return null
 }
 
 function judgeStoreFile(projectRootPath: string, dir: string, fileStats: WalkStats) {

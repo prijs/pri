@@ -38,14 +38,14 @@ export const declarePath = {
   dir: path.join(utilPath.dir, "declare")
 }
 
-export const layoutsPath = {
+export const layoutPath = {
   dir: path.join(srcPath.dir, `layouts`),
   name: "index",
   ext: ".tsx"
 }
 
 export const markdownLayoutPath = {
-  dir: layoutsPath.dir,
+  dir: layoutPath.dir,
   name: "markdown",
   ext: ".tsx"
 }

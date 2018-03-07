@@ -3,7 +3,7 @@ import * as _ from "lodash"
 import * as path from "path"
 import * as prettier from "prettier"
 import { analyseProject } from "./analyse-project"
-import { configPaths, helperPath, layoutsPath, notFoundPath, pagesPath, storesPath } from "./structor-config"
+import { configPaths, helperPath, layoutPath, notFoundPath, pagesPath, storesPath } from "./structor-config"
 
 export async function addPage(projectRootPath: string, options: {
   path: string
@@ -79,7 +79,7 @@ export async function addPage(projectRootPath: string, options: {
 }
 
 export async function createLayout(projectRootPath: string) {
-  const pathFullPath = path.join(projectRootPath, path.format(layoutsPath))
+  const pathFullPath = path.join(projectRootPath, path.format(layoutPath))
 
   if (fs.existsSync(pathFullPath)) {
     throw Error(`layout already exist!`)
