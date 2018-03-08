@@ -11,6 +11,8 @@ import { CommandDev } from "./commands/dev"
 import { CommandInit } from "./commands/init"
 import { CommandPreview } from "./commands/preview"
 
+import text from "./utils/text"
+
 import { log } from "./utils/log"
 
 /**
@@ -23,21 +25,21 @@ commander.version(pkg.version, "-v, --version")
  */
 const DEV = "dev"
 commander.command(DEV)
-  .description("Develop your project.")
+  .description(text.commander.dev.description)
   .action(async () => {
     await CommandDev()
   })
 
 const BUILD = "build"
 commander.command(BUILD)
-  .description("Pack your project.")
+  .description(text.commander.build.description)
   .action(async (options) => {
     await CommandBuild()
   })
 
 const PREVIEW = "preview"
 commander.command(PREVIEW)
-  .description("Preview your project in production mode.")
+  .description(text.commander.preview.description)
   .action(async () => {
     await CommandPreview()
   })

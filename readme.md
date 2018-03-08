@@ -18,26 +18,7 @@ Then, init the pri project:
 npx pri init
 ```
 
-<details>
-  <summary>
-  No <code>npx</code>?
-  </summary>
-
-  <p>
-
-  If you haven't `npx` cli, you can copy following npm scripts into `package.json`:
-  
-  ```json
-  "scripts": {
-    "start": "pri",
-    "build": "pri build",
-    "preview": "pri preview"
-  }
-  ```
-
-  Or, upgrade your `npm`!
-  
-  </p>
+No `npx`? Run `./node_modules/.bin/pri init`.
 
 </details>
 
