@@ -7,7 +7,7 @@ Pri is a toolkit for building web applications with React. **Helps you deal with
 First, create an empty folder:
 
 ```shell
-mkdir test; cd test
+# test folder
 npm init
 npm i pri --save
 ```
