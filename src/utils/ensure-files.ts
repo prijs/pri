@@ -15,7 +15,12 @@ export const ensureFiles = (projectRootPath: string, config: IProjectConfig, sup
   ensureDeclares(projectRootPath)
 
   if (supplementCode) {
-    ensureHomePage(projectRootPath)
+    const pagesAbsolutePath = path.join(projectRootPath, pagesPath.dir)
+    if (
+      fs.readdirSync(pagesAbsolutePath).every(fileName => path.parse(fileName).name !== "index")
+    ) {
+      ensureHomePage(projectRootPath)
+    }
   }
 }
 
