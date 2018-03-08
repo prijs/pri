@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 import * as colors from "colors"
 import * as commander from "commander";
 import * as updateNotifier from "update-notifier"
