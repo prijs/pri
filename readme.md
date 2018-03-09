@@ -200,7 +200,7 @@ Production deployment. By default the dist folder is `./dist`.
   ```typescript
   // ./src/config/config.default.ts
 
-  import { ProjectConfig } from "pri"
+  import { ProjectConfig } from "pri/client"
 
   export default {
     distDir: "output"
@@ -326,7 +326,7 @@ Production deployment. By default the dist folder is `./dist`.
   ```typescript
   // ./src/pages/index.tsx
 
-  import { env } from "pri"
+  import { env } from "pri/client"
 
   if (env.isLocal) {
     console.log("I'm running in local now!")
@@ -348,7 +348,7 @@ Production deployment. By default the dist folder is `./dist`.
   ```typescript
   // ./src/config/config.default.ts
 
-  import { ProjectConfig } from "pri"
+  import { ProjectConfig } from "pri/client"
 
   export default {
     env: {
@@ -374,7 +374,7 @@ Production deployment. By default the dist folder is `./dist`.
   ```typescript
   // src/config/config.default.ts
 
-  import { ProjectConfig } from "pri"
+  import { ProjectConfig } from "pri/client"
 
   export default {
     staticBuild: true,
@@ -464,7 +464,7 @@ Production deployment. By default the dist folder is `./dist`.
   **Dynamic component**
 
   ```typescript
-  import { Loadable } from "pri"
+  import Loadable from "react-loadable"
 
   const SomePage = Loadable({
     loader: () => import("../components/some-page"),

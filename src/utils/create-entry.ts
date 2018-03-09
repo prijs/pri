@@ -40,7 +40,7 @@ const getEntryContent = (entryText: IEntryText, projectInfo: IProjectInfo, proje
   return `
     // tslint:disable
     import createBrowserHistory from "history/createBrowserHistory"
-    import { setCustomEnv, setEnvLocal, setEnvProd } from "pri"
+    import { setCustomEnv, setEnvLocal, setEnvProd } from "pri/client"
     import * as React from "react"
     import * as ReactDOM from "react-dom"
     import Loadable from "react-loadable"
@@ -50,7 +50,6 @@ const getEntryContent = (entryText: IEntryText, projectInfo: IProjectInfo, proje
       `import { hot } from "react-hot-loader"` :
       ""
     }
-
 
     ${entryText.storesImporter}
     ${entryText.markdownLayoutImporter}

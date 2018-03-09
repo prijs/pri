@@ -161,7 +161,7 @@ export async function createConfig(projectRootPath: string) {
   }
 
   const fileContent = prettier.format(`
-    import { ProjectConfig } from "pri"
+    import { ProjectConfig } from "pri/client"
 
     export default {
 
