@@ -1,13 +1,19 @@
 import * as fs from "fs-extra"
 import { flatten } from "lodash"
 import * as path from "path"
+import * as webpack from "webpack"
+import { getDefault } from "./esModule"
 
-export class IPlugin {
-  public commands?: Array<{
+let hasInitPlugins = false
+
+interface IPlugin {
+  commands?: Array<{
     name?: string
     description?: string
     action?: () => void
-  }> = []
+  }>
+
+  buildConfig?: (config: webpack.Configuration) => webpack.Configuration
 }
 
 export interface IPluginInfo {
@@ -16,10 +22,9 @@ export interface IPluginInfo {
   instance: IPlugin
 }
 
-export const plugins: IPluginInfo[] = []
-export const mergedPlugin = new IPlugin()
+const plugins: IPluginInfo[] = []
 
-export const initPlugins = (projectRootPath: string) => {
+const initPlugins = (projectRootPath: string) => {
   const projectPackageJsonPath = path.join(projectRootPath, "package.json")
 
   if (!fs.existsSync(projectPackageJsonPath)) {
@@ -27,14 +32,6 @@ export const initPlugins = (projectRootPath: string) => {
   }
 
   getPriPlugins(path.join(projectRootPath, "package.json")).forEach(plugin => plugins.push(plugin))
-
-  // Merge plugins
-  plugins.forEach(plugin => {
-    if (plugin.instance.commands) {
-      // mergedPlugin.commands.push(plugin.instance.commands)
-    }
-
-  })
 }
 
 function getPriPlugins(packageJsonPath: string): IPluginInfo[] {
@@ -61,8 +58,17 @@ function getPriPlugins(packageJsonPath: string): IPluginInfo[] {
         return [{
           name: subPackageName,
           version: subPackageVersion,
-          instance: plugin
+          instance: getDefault(plugin)
         }, ...getPriPlugins(subPackageAbsolutePath)]
       })
   )
+}
+
+export function getPlugins(projectRootPath: string) {
+  if (!hasInitPlugins) {
+    initPlugins(projectRootPath)
+    hasInitPlugins = true
+  }
+
+  return plugins
 }

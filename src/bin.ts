@@ -16,11 +16,6 @@ import text from "./utils/text"
 
 import { log } from "./utils/log"
 
-import { initPlugins, mergedPlugin } from "./utils/plugins"
-
-initPlugins(process.cwd())
-// console.log("mergedPlugin", mergedPlugin)
-
 commander.version(pkg.version, "-v, --version")
 
 /**

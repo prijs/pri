@@ -1,10 +1,11 @@
 {
   "name": "pri",
-  "version": "0.2.23",
-  "types": "src/index.ts",
-  "main": "built/index.js",
+  "version": "0.3.0",
+  "types": "src/node/index.ts",
+  "main": "built/node/index.js",
   "scripts": {
     "start": "tsc -w",
+    "create-client-declaration": "tsc --declaration src/client/index --declarationDir declare/client --outDir declare/client && find declare/client -type f -name \"*.js\" -delete",
     "build": "rm -rf built && rm -rf .cache && tsc && npm run build-dashboard",
     "prepublishOnly": "npm run build",
     "build-dashboard": "node ./built/commands/dev/dashboard/bundle-client.js",

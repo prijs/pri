@@ -1,4 +1,4 @@
-class GlobalEnv {
+export class GlobalEnv {
   public isLocal = false
   public isProd = false
   public customEnv: any = {}

@@ -5,6 +5,7 @@ import * as normalizePath from "normalize-path"
 import * as path from "path"
 import * as webpack from "webpack"
 import * as yargs from "yargs"
+import { getPlugins } from "./plugins"
 import { getConfig } from "./project-config"
 
 const projectRootPath = yargs.argv.env.projectRootPath
@@ -23,6 +24,8 @@ const argsDistFileName = yargs.argv.env.distFileName || "main"
 
 const distDir = argsDistDir || path.join(projectRootPath, projectConfig.distDir)
 const distFileName = argsDistFileName || projectConfig.distFileName
+
+const plugins = getPlugins(projectRootPath)
 
 let publicPath: string = argsPublicPath || projectConfig.publicPath || "/"
 if (!publicPath.endsWith("/")) {
@@ -171,4 +174,9 @@ if (env === "prod") {
   config.plugins.push(new ExtractTextPlugin(distFileName + ".css"))
 }
 
-export default config
+export default plugins.reduce((newConfig, plugin) => {
+  if (plugin.instance.buildConfig) {
+    return plugin.instance.buildConfig(newConfig)
+  }
+  return newConfig
+}, config)
