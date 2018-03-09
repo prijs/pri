@@ -1,4 +1,5 @@
 import * as fs from "fs"
+import * as normalizePath from "normalize-path"
 import * as path from "path"
 import * as walk from "walk"
 import { IProjectInfo } from "./analyse-project-interface"
@@ -109,7 +110,7 @@ function judgePageFile(projectRootPath: string, dir: string, fileStats: WalkStat
   const prefix = "/" + path.relative(pagesPath.dir, relativePathWithoutIndex)
 
   return {
-    path: prefix,
+    path: normalizePath(prefix),
     filePath: path.join(dir, fileStats.name),
     isIndex: fileInfo.name === "index"
   }

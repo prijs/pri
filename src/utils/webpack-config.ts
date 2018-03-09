@@ -1,6 +1,7 @@
 import * as  ExtractTextPlugin from "extract-text-webpack-plugin"
 import * as fs from "fs-extra"
 import * as HtmlWebpackPlugin from "html-webpack-plugin"
+import * as normalizePath from "normalize-path"
 import * as path from "path"
 import * as webpack from "webpack"
 import * as yargs from "yargs"
@@ -137,7 +138,7 @@ const config: webpack.Configuration = {
       rewrites: [
         {
           from: "/",
-          to: path.join(publicPath, "index.html")
+          to: normalizePath(path.join(publicPath, "index.html"))
         }
       ]
     },
