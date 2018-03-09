@@ -6,7 +6,7 @@
   "scripts": {
     "start": "tsc -w",
     "create-client-declaration": "tsc --declaration src/client/index --declarationDir declare/client --outDir declare/client && find declare/client -type f -name \"*.js\" -delete",
-    "build": "rm -rf built && rm -rf .cache && tsc && npm run build-dashboard",
+    "build": "rm -rf built && rm -rf .cache && tsc && npm run build-dashboard && npm run create-client-declaration",
     "prepublishOnly": "npm run build",
     "build-dashboard": "node ./built/commands/dev/dashboard/bundle-client.js",
     "lint": "echo 'Pre-commit checks...' && tslint --fix './src/**/*.?(ts|tsx)'"
