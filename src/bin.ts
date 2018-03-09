@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import * as colors from "colors"
-import * as commander from "commander";
+import * as commander from "commander"
 import * as updateNotifier from "update-notifier"
 
 import * as pkg from "../package.json"
@@ -12,9 +12,11 @@ import { CommandInit } from "./commands/init"
 import { CommandPlugin } from "./commands/plugin"
 import { CommandPreview } from "./commands/preview"
 
+import { log } from "./utils/log"
+import { initPlugins } from "./utils/plugins"
 import text from "./utils/text"
 
-import { log } from "./utils/log"
+initPlugins(process.cwd())
 
 commander.version(pkg.version, "-v, --version")
 

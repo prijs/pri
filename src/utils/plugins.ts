@@ -24,7 +24,12 @@ export interface IPluginInfo {
 
 const plugins: IPluginInfo[] = []
 
-const initPlugins = (projectRootPath: string) => {
+export const initPlugins = (projectRootPath: string) => {
+  if (hasInitPlugins) {
+    return
+  }
+  hasInitPlugins = true
+
   const projectPackageJsonPath = path.join(projectRootPath, "package.json")
 
   if (!fs.existsSync(projectPackageJsonPath)) {
@@ -65,10 +70,7 @@ function getPriPlugins(packageJsonPath: string): IPluginInfo[] {
 }
 
 export function getPlugins(projectRootPath: string) {
-  if (!hasInitPlugins) {
-    initPlugins(projectRootPath)
-    hasInitPlugins = true
-  }
+  initPlugins(projectRootPath)
 
   return plugins
 }

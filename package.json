@@ -1,6 +1,6 @@
 {
   "name": "pri",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "types": "src/node/index.ts",
   "main": "built/node/index.js",
   "scripts": {
@@ -16,9 +16,6 @@
   ],
   "bin": {
     "pri": "built/bin.js"
-  },
-  "tnpm": {
-    "mode": "npm"
   },
   "dependencies": {
     "@babel/core": "^7.0.0-beta.39",
