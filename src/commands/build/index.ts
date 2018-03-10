@@ -27,10 +27,10 @@ export const CommandBuild = async (
   lint(projectRootPath)
 
   // Clean dist dir
-  execSync(`rm -rf ${path.join(projectRootPath, projectConfig.distDir)}`)
+  execSync(`${findNearestNodemodulesFile(".bin/rimraf")} ${path.join(projectRootPath, projectConfig.distDir)}`)
 
   // Clean .temp dir
-  execSync(`rm -rf ${path.join(projectRootPath, ".temp")}`)
+  execSync(`${findNearestNodemodulesFile(".bin/rimraf")} ${path.join(projectRootPath, ".temp")}`)
 
   await spinner("Ensure project files", async () => {
     ensureFiles(projectRootPath, projectConfig, false)

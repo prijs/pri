@@ -1,5 +1,8 @@
 import * as commands from "./commands"
 
-export {
+export const pri = {
+  /**
+   * Operate cli commands
+   */
   commands
 }

@@ -13,10 +13,16 @@ import { CommandPlugin } from "./commands/plugin"
 import { CommandPreview } from "./commands/preview"
 
 import { log } from "./utils/log"
-import { initPlugins } from "./utils/plugins"
+import { initPlugins, pluginPackages } from "./utils/plugins"
 import text from "./utils/text"
 
+import { pri } from "./node"
+
 initPlugins(process.cwd())
+
+pluginPackages.forEach(pluginPackage => {
+  pluginPackage.instance(pri)
+})
 
 commander.version(pkg.version, "-v, --version")
 

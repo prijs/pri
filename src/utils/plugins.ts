@@ -6,23 +6,24 @@ import { getDefault } from "./esModule"
 
 let hasInitPlugins = false
 
-interface IPlugin {
-  commands?: Array<{
+export class IPluginConfig {
+  public commands?: Array<{
     name?: string
     description?: string
     action?: () => void
-  }>
+  }> = []
 
-  buildConfig?: (config: webpack.Configuration) => webpack.Configuration
+  public webpackConfig: webpack.Configuration = {}
 }
 
-export interface IPluginInfo {
+export interface IPluginPackageInfo {
   name: string
   version: string
-  instance: IPlugin
+  instance: any
 }
 
-const plugins: IPluginInfo[] = []
+export const pluginPackages: IPluginPackageInfo[] = []
+export const plugin: IPluginConfig = new IPluginConfig()
 
 export const initPlugins = (projectRootPath: string) => {
   if (hasInitPlugins) {
@@ -36,10 +37,10 @@ export const initPlugins = (projectRootPath: string) => {
     return
   }
 
-  getPriPlugins(path.join(projectRootPath, "package.json")).forEach(plugin => plugins.push(plugin))
+  getPriPlugins(path.join(projectRootPath, "package.json")).forEach(eachPlugin => pluginPackages.push(eachPlugin))
 }
 
-function getPriPlugins(packageJsonPath: string): IPluginInfo[] {
+function getPriPlugins(packageJsonPath: string): IPluginPackageInfo[] {
   const projectRootPath = path.resolve(packageJsonPath, "..")
 
   if (!fs.existsSync(packageJsonPath)) {
@@ -58,19 +59,13 @@ function getPriPlugins(packageJsonPath: string): IPluginInfo[] {
           path.join(projectRootPath, subPackageVersion.replace(/^file\:/g, "")) :
           subPackageName
         const subPackageAbsolutePath = require.resolve(path.join(path.join(subPackageRealEntry), "package.json"))
-        const plugin: IPlugin = require(subPackageRealEntry)
+        const instance = getDefault(require(subPackageRealEntry))
 
         return [{
+          instance,
           name: subPackageName,
-          version: subPackageVersion,
-          instance: getDefault(plugin)
+          version: subPackageVersion
         }, ...getPriPlugins(subPackageAbsolutePath)]
       })
   )
-}
-
-export function getPlugins(projectRootPath: string) {
-  initPlugins(projectRootPath)
-
-  return plugins
 }

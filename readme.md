@@ -638,7 +638,7 @@ Production deployment. By default the dist folder is `./dist`.
 ### TODO
 
 - PWA support.
-- Prefetching.
+- Prefetch.
 - Code coverage.
 
 ## Built-in packages in 0.x version
