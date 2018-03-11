@@ -7,9 +7,13 @@ import * as path from "path"
 // import * as PreloadWebpackPlugin from "preload-webpack-plugin"
 import * as webpack from "webpack"
 import * as yargs from "yargs"
+import { initPlugins, plugin } from "../utils/plugins"
 import { getConfig } from "./project-config"
 
 const projectRootPath = yargs.argv.env.projectRootPath
+
+initPlugins(projectRootPath)
+
 const entryPath = yargs.argv.env.entryPath
 const env = yargs.argv.env.env
 const htmlTemplatePath = yargs.argv.env.htmlTemplatePath
@@ -188,10 +192,4 @@ if (env === "prod") {
   config.plugins.push(new ExtractTextPlugin(distFileName + ".css"))
 }
 
-// export default plugins.reduce((newConfig, plugin) => {
-//   if (plugin.instance.buildConfig) {
-//     return plugin.instance.buildConfig(newConfig)
-//   }
-//   return newConfig
-// }, config)
-export default config
+export default plugin.buildConfigPipes.reduce((newConfig, fn) => fn(newConfig), config)

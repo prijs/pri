@@ -4,6 +4,7 @@ import * as fs from "fs-extra"
 import * as open from "opn";
 import * as path from "path"
 import * as portfinder from "portfinder";
+import { pri } from "../../node"
 import { analyseProject } from "../../utils/analyse-project"
 import { createEntry } from "../../utils/create-entry"
 import { ensureFiles } from "../../utils/ensure-files"
@@ -35,4 +36,12 @@ export const CommandInit = async () => {
 
   // log(colors.blue("  npm test"))
   // log("    Starts the test runner.\n")
+}
+
+export default (instance: typeof pri) => {
+  instance.commands.registerCommand({
+    name: "init",
+    description: text.commander.init.description,
+    action: CommandInit
+  })
 }

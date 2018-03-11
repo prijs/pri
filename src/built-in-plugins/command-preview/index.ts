@@ -10,13 +10,15 @@ import * as path from "path"
 import * as portfinder from "portfinder"
 import * as url from "url"
 import * as zlib from "zlib"
+import { pri } from "../../node"
 import { analyseProject } from "../../utils/analyse-project"
 import { createEntry } from "../../utils/create-entry"
 import { ensureFiles } from "../../utils/ensure-files"
 import { generateCertificate } from "../../utils/generate-certificate"
 import { spinner } from "../../utils/log"
 import { getConfig } from "../../utils/project-config"
-import { CommandBuild } from "../build"
+import text from "../../utils/text"
+import { CommandBuild } from "../command-build"
 
 const app = new Koa()
 
@@ -88,4 +90,12 @@ export const CommandPreview = async () => {
   )
 
   open(`https://localhost:${freePort}`)
+}
+
+export default (instance: typeof pri) => {
+  instance.commands.registerCommand({
+    name: "preview",
+    description: text.commander.preview.description,
+    action: CommandPreview
+  })
 }

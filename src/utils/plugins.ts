@@ -2,18 +2,30 @@ import * as fs from "fs-extra"
 import { flatten } from "lodash"
 import * as path from "path"
 import * as webpack from "webpack"
+import { pri } from "../node/index"
 import { getDefault } from "./esModule"
+
+import pluginCommandBuild from "../built-in-plugins/command-build"
+import pluginCommandDev from "../built-in-plugins/command-dev"
+import pluginCommandInit from "../built-in-plugins/command-init"
+import pluginCommandPlugin from "../built-in-plugins/command-plugin"
+import pluginCommandPreview from "../built-in-plugins/command-preview"
+
+export interface ICommand {
+  name?: string
+  description?: string
+  beforeActions?: any[]
+  action?: any
+  afterActions?: any[]
+  isDefault?: boolean
+}
 
 let hasInitPlugins = false
 
 export class IPluginConfig {
-  public commands?: Array<{
-    name?: string
-    description?: string
-    action?: () => void
-  }> = []
+  public commands?: ICommand[] = []
 
-  public webpackConfig: webpack.Configuration = {}
+  public buildConfigPipes: Array<(config: webpack.Configuration) => webpack.Configuration> = []
 }
 
 export interface IPluginPackageInfo {
@@ -31,6 +43,13 @@ export const initPlugins = (projectRootPath: string) => {
   }
   hasInitPlugins = true
 
+  // Init built-in plugins
+  pluginCommandBuild(pri)
+  pluginCommandPreview(pri)
+  pluginCommandInit(pri)
+  pluginCommandPlugin(pri)
+  pluginCommandDev(pri)
+
   const projectPackageJsonPath = path.join(projectRootPath, "package.json")
 
   if (!fs.existsSync(projectPackageJsonPath)) {
@@ -38,6 +57,11 @@ export const initPlugins = (projectRootPath: string) => {
   }
 
   getPriPlugins(path.join(projectRootPath, "package.json")).forEach(eachPlugin => pluginPackages.push(eachPlugin))
+
+  // Init custom plugins
+  pluginPackages.forEach(pluginPackage => {
+    pluginPackage.instance(pri)
+  })
 }
 
 function getPriPlugins(packageJsonPath: string): IPluginPackageInfo[] {

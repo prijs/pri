@@ -1,5 +1,8 @@
 export default {
   commander: {
+    init: {
+      description: "Init project."
+    },
     dev: {
       description: "Starts the development server."
     },

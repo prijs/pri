@@ -2,6 +2,7 @@ import { execSync } from "child_process"
 import * as colors from "colors"
 import * as fs from "fs-extra"
 import * as path from "path"
+import { pri } from "../../node"
 import { analyseProject } from "../../utils/analyse-project"
 import { createEntry } from "../../utils/create-entry"
 import { ensureFiles } from "../../utils/ensure-files"
@@ -10,6 +11,7 @@ import { log, spinner } from "../../utils/log"
 import { findNearestNodemodulesFile } from "../../utils/npm-finder"
 import { getConfig } from "../../utils/project-config"
 import { IProjectConfig } from "../../utils/project-config-interface"
+import text from "../../utils/text"
 import { lint } from "../../utils/tslint"
 
 const projectRootPath = process.cwd()
@@ -65,4 +67,12 @@ export const CommandBuild = async (
       await generateStaticHtml(projectRootPath, projectConfig, result.projectInfo)
     })
   }
+}
+
+export default (instance: typeof pri) => {
+  instance.commands.registerCommand({
+    name: "build",
+    description: text.commander.build.description,
+    action: CommandBuild
+  })
 }

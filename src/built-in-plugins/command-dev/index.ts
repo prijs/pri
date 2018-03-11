@@ -4,6 +4,7 @@ import * as open from "opn"
 import * as path from "path"
 import * as portfinder from "portfinder"
 import * as webpackDevServer from "webpack-dev-server";
+import { pri } from "../../node"
 import { analyseProject } from "../../utils/analyse-project"
 import { createEntry } from "../../utils/create-entry"
 import { ensureFiles } from "../../utils/ensure-files"
@@ -12,6 +13,7 @@ import { findNearestNodemodulesFile } from "../../utils/npm-finder"
 import { getConfig } from "../../utils/project-config"
 import { IProjectConfig } from "../../utils/project-config-interface"
 import { tempJsEntryPath, tempPath } from "../../utils/structor-config"
+import text from "../../utils/text"
 
 const projectRootPath = process.cwd();
 
@@ -105,4 +107,13 @@ export const CommandDev = async () => {
         stdio: "inherit"
       })
   }
+}
+
+export default (instance: typeof pri) => {
+  instance.commands.registerCommand({
+    name: "dev",
+    description: text.commander.dev.description,
+    action: CommandDev,
+    isDefault: true
+  })
 }
