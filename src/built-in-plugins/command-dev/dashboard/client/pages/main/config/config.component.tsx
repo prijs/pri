@@ -10,10 +10,6 @@ export class ConfigComponent extends PureComponent<Props, State> {
   public state = new State()
 
   public render() {
-    return (
-      <S.Container>
-        Config TODO
-      </S.Container>
-    )
+    return <S.Container>Config TODO</S.Container>
   }
 }

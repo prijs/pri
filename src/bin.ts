@@ -17,7 +17,8 @@ initPlugins(process.cwd())
 commander.version(pkg.version, "-v, --version")
 
 plugin.commands.forEach(command => {
-  commander.command(command.name)
+  commander
+    .command(command.name)
     .description(command.description)
     .action((...args: any[]) => {
       if (command.beforeActions) {
@@ -39,9 +40,7 @@ commander.parse(process.argv)
  * When no args given, use dev command
  */
 if (!commander.args.length) {
-  plugin.commands
-    .find(command => command.isDefault === true)
-    .action()
+  plugin.commands.find(command => command.isDefault === true).action()
 }
 
 /**

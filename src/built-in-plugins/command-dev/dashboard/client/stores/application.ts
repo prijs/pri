@@ -10,7 +10,7 @@ export class ApplciationStore {
   /**
    * Project status
    */
-  public status: IProjectStatus = null
+  public status: IProjectStatus
   /**
    * Selected key in left tree
    */
@@ -18,26 +18,28 @@ export class ApplciationStore {
 }
 
 export class ApplicationAction {
-  @inject(ApplciationStore) public applicationStore: ApplciationStore = null as any
+  @inject(ApplciationStore) public applicationStore: ApplciationStore
 
   private socket = io(`https://localhost:${serverPort}`)
 
-  @Action public initSocket() {
+  @Action
+  public initSocket() {
     this.socket.on("freshProjectStatus", (data: IProjectStatus) => {
       Action(() => {
         this.applicationStore.status = data
       })
     })
 
-    this.socket.on("changeFile", (data: {
-      path: string
-      fileContent: string
-    }) => {
-      //
-    })
+    this.socket.on(
+      "changeFile",
+      (data: { path: string; fileContent: string }) => {
+        //
+      }
+    )
   }
 
-  @Action public fetch<T= {}>(name: string, data?: T) {
+  @Action
+  public fetch<T = {}>(name: string, data?: T) {
     return new Promise((resolve, reject) => {
       this.socket.emit(name, data, (res: any) => {
         if (res.success) {
@@ -50,32 +52,33 @@ export class ApplicationAction {
     })
   }
 
-  @Action public async addPage(options: {
-    path: string
-  }) {
+  @Action
+  public async addPage(options: { path: string }) {
     await this.fetch<typeof options>("addPage", options)
   }
 
-  @Action public async addStore(options: {
-    name: string
-    withDemo: boolean
-  }) {
+  @Action
+  public async addStore(options: { name: string; withDemo: boolean }) {
     await this.fetch<typeof options>("addStore", options)
   }
 
-  @Action public async createConfig() {
+  @Action
+  public async createConfig() {
     await this.fetch("createConfig")
   }
 
-  @Action public async create404() {
+  @Action
+  public async create404() {
     await this.fetch("create404")
   }
 
-  @Action public async createLayout() {
+  @Action
+  public async createLayout() {
     await this.fetch("createLayout")
   }
 
-  @Action public setSelectedTreeKey(key: string) {
+  @Action
+  public setSelectedTreeKey(key: string) {
     this.applicationStore.selectedTreeKey = key
   }
 }

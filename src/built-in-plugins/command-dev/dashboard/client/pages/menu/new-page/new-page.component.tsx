@@ -18,7 +18,7 @@ export class NewPageComponent extends PureComponent<Props, State> {
         <S.Button onClick={this.showModal}>
           <S.MenuIcon type="file-add" />
           New Page
-          </S.Button>
+        </S.Button>
 
         <Modal
           title="New Page"
@@ -35,17 +35,17 @@ export class NewPageComponent extends PureComponent<Props, State> {
 
   private showModal = () => {
     this.setState({
-      visible: true,
-    });
+      visible: true
+    })
   }
   private handleOk = () => {
     this.setState({
-      visible: false,
-    });
+      visible: false
+    })
   }
   private handleCancel = () => {
     this.setState({
-      visible: false,
-    });
+      visible: false
+    })
   }
 }

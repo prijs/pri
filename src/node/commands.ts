@@ -12,7 +12,9 @@ interface IExpandCommand {
 }
 
 export const expandCommand = (opts: IExpandCommand) => {
-  const targetCommand = plugin.commands.find(command => command.name === opts.name)
+  const targetCommand = plugin.commands.find(
+    command => command.name === opts.name
+  )
   if (!targetCommand) {
     throw Error(`Command ${opts.name} not found!`)
   }

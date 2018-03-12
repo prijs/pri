@@ -1,9 +1,9 @@
 import { execSync, fork } from "child_process"
 import * as colors from "colors"
 import * as fs from "fs-extra"
-import * as open from "opn";
+import * as open from "opn"
 import * as path from "path"
-import * as portfinder from "portfinder";
+import * as portfinder from "portfinder"
 import { pri } from "../../node"
 import { analyseProject } from "../../utils/analyse-project"
 import { createEntry } from "../../utils/create-entry"

@@ -25,12 +25,15 @@ const staticPrefix = "/static"
 
 app.use(koaCors())
 
-app.use(koaCompress({
-  flush: zlib.Z_SYNC_FLUSH
-}))
+app.use(
+  koaCompress({
+    flush: zlib.Z_SYNC_FLUSH
+  })
+)
 
 app.use(
-  koaMount(staticPrefix,
+  koaMount(
+    staticPrefix,
     koaStatic(dashboardBundleRootPath, {
       gzip: true
     })
@@ -67,6 +70,11 @@ app.use(async ctx => {
   `
 })
 
-const server = https.createServer(generateCertificate(path.join(projectRootPath, ".temp/dashboard-client-server")), app.callback())
+const server = https.createServer(
+  generateCertificate(
+    path.join(projectRootPath, ".temp/dashboard-client-server")
+  ),
+  app.callback()
+)
 
 server.listen(clientPort)

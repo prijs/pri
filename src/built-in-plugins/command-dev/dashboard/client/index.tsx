@@ -6,7 +6,7 @@ import { LayoutComponent } from "./pages/layout/layout.component"
 import stores from "./stores"
 
 // tslint:disable-next-line:no-submodule-imports
-import "antd/dist/antd.css";
+import "antd/dist/antd.css"
 
 useStrict()
 

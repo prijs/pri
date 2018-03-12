@@ -6,16 +6,27 @@ import StaticRouter from "react-router-dom/StaticRouter"
 import { IProjectInfo } from "./analyse-project-interface"
 import { IProjectConfig } from "./project-config-interface"
 
-export async function generateStaticHtml(projectRootPath: string, projectConfig?: IProjectConfig, projectInfo?: IProjectInfo) {
-  projectInfo.routes
-    .forEach(route => {
-      generateHtmlByRouterPath(route.path, projectRootPath, projectConfig)
-    })
+export async function generateStaticHtml(
+  projectRootPath: string,
+  projectConfig?: IProjectConfig,
+  projectInfo?: IProjectInfo
+) {
+  projectInfo.routes.forEach(route => {
+    generateHtmlByRouterPath(route.path, projectRootPath, projectConfig)
+  })
 }
 
-export function generateHtmlByRouterPath(routerPath: string, projectRootPath: string, projectConfig?: IProjectConfig) {
+export function generateHtmlByRouterPath(
+  routerPath: string,
+  projectRootPath: string,
+  projectConfig?: IProjectConfig
+) {
   const relativePathWithSuffix = path.join(routerPath, "index.html")
-  const htmlPath = path.join(projectRootPath, projectConfig.distDir, relativePathWithSuffix)
+  const htmlPath = path.join(
+    projectRootPath,
+    projectConfig.distDir,
+    relativePathWithSuffix
+  )
 
   const cssPath = path.join(projectRootPath, projectConfig.distDir, "main.css")
   const hasCssOutput = fs.existsSync(cssPath)
@@ -29,15 +40,24 @@ export function generateHtmlByRouterPath(routerPath: string, projectRootPath: st
 
   // console.log(content)
 
-  fs.outputFileSync(htmlPath, `
+  fs.outputFileSync(
+    htmlPath,
+    `
     <html>
 
     <head>
       <title>${projectConfig.title}</title>
 
-      ${hasCssOutput ? `
-        <link rel="stylesheet" type="text/css" href="${getEntryPath(projectConfig, "main.css")}"/>
-      ` : ""}
+      ${
+        hasCssOutput
+          ? `
+        <link rel="stylesheet" type="text/css" href="${getEntryPath(
+          projectConfig,
+          "main.css"
+        )}"/>
+      `
+          : ""
+      }
 
       <style>
         html,
@@ -54,7 +74,8 @@ export function generateHtmlByRouterPath(routerPath: string, projectRootPath: st
     </body>
 
     </html>
-  `)
+  `
+  )
 }
 
 function getEntryPath(projectConfig: IProjectConfig, entryFileName: string) {

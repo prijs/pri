@@ -33,17 +33,19 @@ const getParentKey = (key: string, tree: ITreeNode[]): string => {
   return parentKey
 }
 
-const TreeIcon = (props: any) => (
-  <Icon style={{ marginRight: 5 }} {...props} />
-)
+const TreeIcon = (props: any) => <Icon style={{ marginRight: 5 }} {...props} />
 
 const PlusIcon = (props: any) => (
   <S.PlusIconContainer>
-    <Icon style={{
-      color: "#369",
-      cursor: "pointer",
-      fontWeight: "bold"
-    }} type="plus" {...props} />
+    <Icon
+      style={{
+        color: "#369",
+        cursor: "pointer",
+        fontWeight: "bold"
+      }}
+      type="plus"
+      {...props}
+    />
   </S.PlusIconContainer>
 )
 
@@ -62,10 +64,7 @@ export class StructComponent extends PureComponent<Props, State> {
     return (
       <S.Container>
         <S.SearchContainer>
-          <Search
-            placeholder="Search.."
-            onChange={pipeEvent(this.onChange)}
-          />
+          <Search placeholder="Search.." onChange={pipeEvent(this.onChange)} />
         </S.SearchContainer>
 
         <S.TreeContainer>
@@ -84,18 +83,22 @@ export class StructComponent extends PureComponent<Props, State> {
   }
 
   private getTreeData = () => {
-    const treeData: ITreeNode[] = [{
-      title: "Project",
-      key: "project-root",
-      icon: <TreeIcon type="chrome" />,
-      children: []
-    }]
+    const treeData: ITreeNode[] = [
+      {
+        title: "Project",
+        key: "project-root",
+        icon: <TreeIcon type="chrome" />,
+        children: []
+      }
+    ]
 
     // Pages
     if (this.props.ApplciationStore.status.info.routes) {
       treeData[0].children.push({
         key: "routes",
-        title: `Routes (${this.props.ApplciationStore.status.info.routes.length})`,
+        title: `Routes (${
+          this.props.ApplciationStore.status.info.routes.length
+        })`,
         icon: <TreeIcon type="share-alt" />,
         disabled: this.props.ApplciationStore.status.info.routes.length === 0
       })
@@ -105,7 +108,9 @@ export class StructComponent extends PureComponent<Props, State> {
     if (this.props.ApplciationStore.status.info.routes) {
       treeData[0].children.push({
         key: "stores",
-        title: `Stores (${this.props.ApplciationStore.status.info.stores.length})`,
+        title: `Stores (${
+          this.props.ApplciationStore.status.info.stores.length
+        })`,
         icon: <TreeIcon type="database" />,
         disabled: this.props.ApplciationStore.status.info.stores.length === 0,
         children: this.props.ApplciationStore.status.info.stores.map(store => {
@@ -135,10 +140,10 @@ export class StructComponent extends PureComponent<Props, State> {
       icon: this.props.ApplciationStore.status.info.hasLayout ? (
         <TreeIcon type="layout" />
       ) : (
-          <Tooltip title="Auto create layout files." placement="right">
-            <PlusIcon onClick={this.props.ApplicationAction.createLayout} />
-          </Tooltip>
-        ),
+        <Tooltip title="Auto create layout files." placement="right">
+          <PlusIcon onClick={this.props.ApplicationAction.createLayout} />
+        </Tooltip>
+      ),
       disabled: !this.props.ApplciationStore.status.info.hasLayout
     })
 
@@ -149,10 +154,10 @@ export class StructComponent extends PureComponent<Props, State> {
       icon: this.props.ApplciationStore.status.info.has404File ? (
         <TreeIcon type="file-unknown" />
       ) : (
-          <Tooltip title="Auto create 404 page." placement="right">
-            <PlusIcon onClick={this.props.ApplicationAction.create404} />
-          </Tooltip>
-        ),
+        <Tooltip title="Auto create 404 page." placement="right">
+          <PlusIcon onClick={this.props.ApplicationAction.create404} />
+        </Tooltip>
+      ),
       disabled: !this.props.ApplciationStore.status.info.has404File
     })
 
@@ -163,10 +168,10 @@ export class StructComponent extends PureComponent<Props, State> {
       icon: this.props.ApplciationStore.status.info.hasConfigFile ? (
         <TreeIcon type="setting" />
       ) : (
-          <Tooltip title="Auto create config files." placement="right">
-            <PlusIcon onClick={this.props.ApplicationAction.createConfig} />
-          </Tooltip>
-        ),
+        <Tooltip title="Auto create config files." placement="right">
+          <PlusIcon onClick={this.props.ApplicationAction.createConfig} />
+        </Tooltip>
+      ),
       disabled: !this.props.ApplciationStore.status.info.hasConfigFile
     })
 
@@ -197,7 +202,7 @@ export class StructComponent extends PureComponent<Props, State> {
   private onExpand = (expandedKeys: string[]) => {
     this.setState({
       expandedKeys,
-      autoExpandParent: false,
+      autoExpandParent: false
     })
   }
 
@@ -214,47 +219,42 @@ export class StructComponent extends PureComponent<Props, State> {
     this.setState({
       expandedKeys,
       searchValue: value,
-      autoExpandParent: true,
+      autoExpandParent: true
     })
   }
 
-  private loop = (data: ITreeNode[]): Array<React.ReactElement<any>> => data.map(item => {
-    const index = item.title.indexOf(this.state.searchValue)
-    const beforeStr = item.title.substr(0, index)
-    const afterStr = item.title.substr(index + this.state.searchValue.length)
+  private loop = (data: ITreeNode[]): Array<React.ReactElement<any>> =>
+    data.map(item => {
+      const index = item.title.indexOf(this.state.searchValue)
+      const beforeStr = item.title.substr(0, index)
+      const afterStr = item.title.substr(index + this.state.searchValue.length)
 
-    const title = index > -1 ? (
-      <span>
-        {item.icon}
-        {beforeStr}
-        <span style={{ color: "#f50" }}>{this.state.searchValue}</span>
-        {afterStr}
-      </span>
-    ) : (
-        <span>{item.icon}{item.title}</span>
-      )
+      const title =
+        index > -1 ? (
+          <span>
+            {item.icon}
+            {beforeStr}
+            <span style={{ color: "#f50" }}>{this.state.searchValue}</span>
+            {afterStr}
+          </span>
+        ) : (
+          <span>
+            {item.icon}
+            {item.title}
+          </span>
+        )
 
-    const treeProps = {
-      key: item.key,
-      title,
-      disabled: item.disabled === undefined ? false : item.disabled
-    }
+      const treeProps = {
+        key: item.key,
+        title,
+        disabled: item.disabled === undefined ? false : item.disabled
+      }
 
-    if (item.children) {
-      return (
-        <TreeNode
-          {...treeProps}
-        >
-          {this.loop(item.children)}
-        </TreeNode>
-      )
-    }
-    return (
-      <TreeNode
-        {...treeProps}
-      />
-    )
-  })
+      if (item.children) {
+        return <TreeNode {...treeProps}>{this.loop(item.children)}</TreeNode>
+      }
+      return <TreeNode {...treeProps} />
+    })
 
   private handleSelectTreeNode = (selectedKeys: string[]) => {
     const selectKey = selectedKeys[0]

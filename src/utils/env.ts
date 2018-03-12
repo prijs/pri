@@ -9,11 +9,13 @@ export class GlobalEnv {
 
 let env = new GlobalEnv()
 
+declare const window: any
+
 const tag = "priEnv"
-if ((window as any)[tag]) {
-  env = (window as any)[tag]
+if (window[tag]) {
+  env = window[tag]
 } else {
-  (window as any)[tag] = env
+  window[tag] = env
 }
 
 export { env }

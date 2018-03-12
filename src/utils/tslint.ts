@@ -15,7 +15,10 @@ export function lint(projectRootPath: string) {
   const files = Linter.getFileNames(program)
   files.forEach(file => {
     const fileContents = program.getSourceFile(file).getFullText()
-    const configuration = Configuration.findConfiguration(configurationFilename, file).results
+    const configuration = Configuration.findConfiguration(
+      configurationFilename,
+      file
+    ).results
     linter.lint(file, fileContents, configuration)
   })
 
@@ -25,7 +28,13 @@ export function lint(projectRootPath: string) {
     log(colors.red(`Tslint errors:`))
     results.failures.forEach(failure => {
       const errorPosition = failure.getStartPosition().getLineAndCharacter()
-      log(colors.red(`${failure.getFailure()}`), ", at: ", `${failure.getFileName()}:${errorPosition.line}:${errorPosition.character}`)
+      log(
+        colors.red(`${failure.getFailure()}`),
+        ", at: ",
+        `${failure.getFileName()}:${errorPosition.line}:${
+          errorPosition.character
+        }`
+      )
     })
     process.exit(0)
   }

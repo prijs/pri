@@ -6,26 +6,34 @@ import * as S from "./routes.style"
 import { Props, State } from "./routes.type"
 
 const handleJumpPage = (pathStr: string) => {
-  window.parent.postMessage({
-    type: "changeRoute",
-    path: pathStr
-  }, "*")
+  window.parent.postMessage(
+    {
+      type: "changeRoute",
+      path: pathStr
+    },
+    "*"
+  )
 }
 
-const columns: any = [{
-  title: "Path",
-  dataIndex: "path",
-  key: "path",
-  render: (pathStr: string) => {
-    return (
-      <S.PathLink onClick={handleJumpPage.bind(null, pathStr)}>{pathStr}</S.PathLink>
-    )
+const columns: any = [
+  {
+    title: "Path",
+    dataIndex: "path",
+    key: "path",
+    render: (pathStr: string) => {
+      return (
+        <S.PathLink onClick={handleJumpPage.bind(null, pathStr)}>
+          {pathStr}
+        </S.PathLink>
+      )
+    }
+  },
+  {
+    title: "IsIndex",
+    dataIndex: "isIndex",
+    key: "isIndex"
   }
-}, {
-  title: "IsIndex",
-  dataIndex: "isIndex",
-  key: "isIndex",
-}]
+]
 
 @Connect
 export class RoutesComponent extends PureComponent<Props, State> {
@@ -37,7 +45,8 @@ export class RoutesComponent extends PureComponent<Props, State> {
       return null
     }
 
-    const dataSource = this.props.ApplciationStore.status.info.routes.concat()
+    const dataSource = this.props.ApplciationStore.status.info.routes
+      .concat()
       .sort((left, right) => left.path.length - right.path.length)
       .map(route => {
         return {
@@ -49,11 +58,7 @@ export class RoutesComponent extends PureComponent<Props, State> {
 
     return (
       <S.Container>
-        <Table
-          dataSource={dataSource}
-          columns={columns}
-          pagination={false}
-        />
+        <Table dataSource={dataSource} columns={columns} pagination={false} />
       </S.Container>
     )
   }

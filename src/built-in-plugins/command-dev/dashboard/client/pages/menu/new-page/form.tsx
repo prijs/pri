@@ -10,25 +10,25 @@ const FormItem = Form.Item
 const formItemLayout = {
   labelCol: {
     xs: { span: 24 },
-    sm: { span: 8 },
+    sm: { span: 8 }
   },
   wrapperCol: {
     xs: { span: 24 },
-    sm: { span: 16 },
-  },
+    sm: { span: 16 }
+  }
 }
 
 const tailFormItemLayout = {
   wrapperCol: {
     xs: {
       span: 24,
-      offset: 0,
+      offset: 0
     },
     sm: {
       span: 16,
-      offset: 8,
-    },
-  },
+      offset: 8
+    }
+  }
 }
 
 function hasErrors(fieldsError: any) {
@@ -43,20 +43,20 @@ class FormComponent extends PureComponent<Props, State> {
   public render() {
     return (
       <Form onSubmit={this.handleSubmit}>
-        <FormItem
-          {...formItemLayout}
-          label="Path"
-        >
+        <FormItem {...formItemLayout} label="Path">
           {this.props.form.getFieldDecorator("path", {
             initialValue: "about",
-            rules: [{
-              type: "string", message: "Path must be string!",
-            }, {
-              required: true, message: "Path is required!",
-            }],
-          })(
-            <Input />
-          )}
+            rules: [
+              {
+                type: "string",
+                message: "Path must be string!"
+              },
+              {
+                required: true,
+                message: "Path is required!"
+              }
+            ]
+          })(<Input />)}
         </FormItem>
 
         <FormItem {...tailFormItemLayout}>
@@ -64,14 +64,16 @@ class FormComponent extends PureComponent<Props, State> {
             type="primary"
             htmlType="submit"
             disabled={hasErrors(this.props.form.getFieldsError())}
-          >Ok</Button>
+          >
+            Ok
+          </Button>
         </FormItem>
       </Form>
     )
   }
 
   private handleSubmit = async (e: any) => {
-    e.preventDefault();
+    e.preventDefault()
     await this.props.ApplicationAction.addPage(this.props.form.getFieldsValue())
     this.props.onSuccess()
   }

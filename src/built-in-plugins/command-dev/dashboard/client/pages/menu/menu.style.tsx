@@ -19,7 +19,7 @@ export const Button = styled.div`
   border-right: 1px solid #eee;
   padding: 0 10px;
   cursor: pointer;
-  transition: background-color .2s;
+  transition: background-color 0.2s;
   &:hover {
     background-color: whitesmoke;
   }

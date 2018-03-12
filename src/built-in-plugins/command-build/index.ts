@@ -20,8 +20,9 @@ export const CommandBuild = async (
   option: {
     publicPath: string
   } = {
-      publicPath: null
-    }) => {
+    publicPath: null
+  }
+) => {
   const env = "prod"
   const projectConfig = getConfig(projectRootPath, env)
 
@@ -29,10 +30,20 @@ export const CommandBuild = async (
   lint(projectRootPath)
 
   // Clean dist dir
-  execSync(`${findNearestNodemodulesFile(".bin/rimraf")} ${path.join(projectRootPath, projectConfig.distDir)}`)
+  execSync(
+    `${findNearestNodemodulesFile(".bin/rimraf")} ${path.join(
+      projectRootPath,
+      projectConfig.distDir
+    )}`
+  )
 
   // Clean .temp dir
-  execSync(`${findNearestNodemodulesFile(".bin/rimraf")} ${path.join(projectRootPath, ".temp")}`)
+  execSync(
+    `${findNearestNodemodulesFile(".bin/rimraf")} ${path.join(
+      projectRootPath,
+      ".temp"
+    )}`
+  )
 
   await spinner("Ensure project files", async () => {
     ensureFiles(projectRootPath, projectConfig, false)
@@ -40,31 +51,44 @@ export const CommandBuild = async (
 
   const result = await spinner("Analyse project", async () => {
     const projectInfo = await analyseProject(projectRootPath)
-    const entryPath = await createEntry(projectInfo, projectRootPath, env, projectConfig)
+    const entryPath = await createEntry(
+      projectInfo,
+      projectRootPath,
+      env,
+      projectConfig
+    )
     return {
-      projectInfo, entryPath
+      projectInfo,
+      entryPath
     }
   })
 
   // Run webpack
-  execSync([
-    `${findNearestNodemodulesFile(".bin/webpack")}`,
-    `--progress`,
-    `--mode production`,
-    `--config ${path.join(__dirname, "../../utils/webpack-config.js")}`,
-    `--env.projectRootPath ${projectRootPath}`,
-    `--env.env ${env}`,
-    `--env.entryPath ${result.entryPath}`,
-    option.publicPath && `--env.publicPath ${option.publicPath}`
-  ].join(" "), {
+  execSync(
+    [
+      `${findNearestNodemodulesFile(".bin/webpack")}`,
+      `--progress`,
+      `--mode production`,
+      `--config ${path.join(__dirname, "../../utils/webpack-config.js")}`,
+      `--env.projectRootPath ${projectRootPath}`,
+      `--env.env ${env}`,
+      `--env.entryPath ${result.entryPath}`,
+      option.publicPath && `--env.publicPath ${option.publicPath}`
+    ].join(" "),
+    {
       stdio: "inherit",
       cwd: projectRootPath
-    })
+    }
+  )
 
   // If using staticBuild, generate index pages for all router.
   if (projectConfig.staticBuild) {
     await spinner("Generate static files.", async () => {
-      await generateStaticHtml(projectRootPath, projectConfig, result.projectInfo)
+      await generateStaticHtml(
+        projectRootPath,
+        projectConfig,
+        result.projectInfo
+      )
     })
   }
 }

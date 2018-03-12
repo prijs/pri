@@ -6,23 +6,36 @@ import { exec } from "./exec"
 import { IProjectConfig } from "./project-config-interface"
 import { configPaths } from "./structor-config"
 
-export const getConfig = (projectRootPath: string, env: "local" | "prod" | null) => {
+export const getConfig = (
+  projectRootPath: string,
+  env: "local" | "prod" | null
+) => {
   const defaultConfig = new IProjectConfig()
 
-  const projectDefaultConfig = execTsByPath(path.join(projectRootPath, path.format(configPaths.default)))
+  const projectDefaultConfig = execTsByPath(
+    path.join(projectRootPath, path.format(configPaths.default))
+  )
   let projectEnvConfig = null
 
   switch (env) {
     case "local":
-      projectEnvConfig = execTsByPath(path.join(projectRootPath, path.format(configPaths.local)))
+      projectEnvConfig = execTsByPath(
+        path.join(projectRootPath, path.format(configPaths.local))
+      )
       break
     case "prod":
-      projectEnvConfig = execTsByPath(path.join(projectRootPath, path.format(configPaths.prod)))
+      projectEnvConfig = execTsByPath(
+        path.join(projectRootPath, path.format(configPaths.prod))
+      )
       break
     default:
   }
 
-  const finalConfig: IProjectConfig = { ...defaultConfig, ...projectDefaultConfig, ...projectEnvConfig }
+  const finalConfig: IProjectConfig = {
+    ...defaultConfig,
+    ...projectDefaultConfig,
+    ...projectEnvConfig
+  }
 
   return finalConfig
 }

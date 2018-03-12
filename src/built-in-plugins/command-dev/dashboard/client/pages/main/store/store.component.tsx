@@ -10,10 +10,6 @@ export class StoreComponent extends PureComponent<Props, State> {
   public state = new State()
 
   public render() {
-    return (
-      <S.Container>
-        Stores TODO
-      </S.Container>
-    )
+    return <S.Container>Stores TODO</S.Container>
   }
 }

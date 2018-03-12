@@ -4,20 +4,34 @@ import * as normalizePath from "normalize-path"
 import * as path from "path"
 import * as prettier from "prettier"
 import { analyseProject } from "./analyse-project"
-import { configPaths, helperPath, layoutPath, notFoundPath, pagesPath, storesPath } from "./structor-config"
+import {
+  configPaths,
+  helperPath,
+  layoutPath,
+  notFoundPath,
+  pagesPath,
+  storesPath
+} from "./structor-config"
 
-export async function addPage(projectRootPath: string, options: {
-  path: string
-}) {
+export async function addPage(
+  projectRootPath: string,
+  options: {
+    path: string
+  }
+) {
   const projectInfo = await analyseProject(projectRootPath)
-  const fileFullPath = path.join(projectRootPath, pagesPath.dir, options.path, "index") + ".tsx"
+  const fileFullPath =
+    path.join(projectRootPath, pagesPath.dir, options.path, "index") + ".tsx"
 
   if (fs.existsSync(fileFullPath)) {
     throw Error(`${options.path} already exist!`)
   }
 
   if (projectInfo.stores.length === 0) {
-    fs.outputFileSync(fileFullPath, prettier.format(`
+    fs.outputFileSync(
+      fileFullPath,
+      prettier.format(
+        `
       import * as React from "react"
 
       class Props {
@@ -40,15 +54,28 @@ export async function addPage(projectRootPath: string, options: {
           )
         }
       }
-    `, {
-        semi: false,
-        parser: "typescript"
-      }))
+    `,
+        {
+          semi: false,
+          parser: "typescript"
+        }
+      )
+    )
   } else {
-    const helperAbsolutePath = path.join(projectRootPath, helperPath.dir, helperPath.name)
+    const helperAbsolutePath = path.join(
+      projectRootPath,
+      helperPath.dir,
+      helperPath.name
+    )
     const fileAbsoluteDirPath = path.parse(fileFullPath).dir
-    const relativeToHelperPath = path.relative(fileAbsoluteDirPath, helperAbsolutePath)
-    fs.outputFileSync(fileFullPath, prettier.format(`
+    const relativeToHelperPath = path.relative(
+      fileAbsoluteDirPath,
+      helperAbsolutePath
+    )
+    fs.outputFileSync(
+      fileFullPath,
+      prettier.format(
+        `
       import * as React from "react"
       import { stores } from "${normalizePath(relativeToHelperPath)}"
 
@@ -72,10 +99,13 @@ export async function addPage(projectRootPath: string, options: {
           )
         }
       }
-    `, {
-        semi: false,
-        parser: "typescript"
-      }))
+    `,
+        {
+          semi: false,
+          parser: "typescript"
+        }
+      )
+    )
   }
 }
 
@@ -86,7 +116,10 @@ export async function createLayout(projectRootPath: string) {
     throw Error(`layout already exist!`)
   }
 
-  fs.outputFileSync(pathFullPath, prettier.format(`
+  fs.outputFileSync(
+    pathFullPath,
+    prettier.format(
+      `
     import * as React from "react"
 
     class Props {
@@ -109,10 +142,13 @@ export async function createLayout(projectRootPath: string) {
         )
       }
     }
-  `, {
-      semi: false,
-      parser: "typescript"
-    }))
+  `,
+      {
+        semi: false,
+        parser: "typescript"
+      }
+    )
+  )
 }
 
 export async function create404(projectRootPath: string) {
@@ -122,7 +158,10 @@ export async function create404(projectRootPath: string) {
     throw Error(`404 page already exist!`)
   }
 
-  fs.outputFileSync(pathFullPath, prettier.format(`
+  fs.outputFileSync(
+    pathFullPath,
+    prettier.format(
+      `
     import * as React from "react"
 
     class Props {
@@ -145,51 +184,70 @@ export async function create404(projectRootPath: string) {
         )
       }
     }
-  `, {
-      semi: false,
-      parser: "typescript"
-    }))
+  `,
+      {
+        semi: false,
+        parser: "typescript"
+      }
+    )
+  )
 }
 
 export async function createConfig(projectRootPath: string) {
-  const defaultFullPath = path.join(projectRootPath, path.format(configPaths.default))
-  const localFullPath = path.join(projectRootPath, path.format(configPaths.local))
+  const defaultFullPath = path.join(
+    projectRootPath,
+    path.format(configPaths.default)
+  )
+  const localFullPath = path.join(
+    projectRootPath,
+    path.format(configPaths.local)
+  )
   const prodFullPath = path.join(projectRootPath, path.format(configPaths.prod))
 
   if (fs.existsSync(defaultFullPath)) {
     throw Error(`layout already exist!`)
   }
 
-  const fileContent = prettier.format(`
+  const fileContent = prettier.format(
+    `
     import { ProjectConfig } from "pri/client"
 
     export default {
 
     } as ProjectConfig
-  `, {
+  `,
+    {
       semi: false,
       parser: "typescript"
-    })
+    }
+  )
 
   fs.outputFileSync(defaultFullPath, fileContent)
   fs.outputFileSync(localFullPath, fileContent)
   fs.outputFileSync(prodFullPath, fileContent)
 }
 
-export async function addStore(projectRootPath: string, options: {
-  name: string
-  withDemo: boolean
-}) {
+export async function addStore(
+  projectRootPath: string,
+  options: {
+    name: string
+    withDemo: boolean
+  }
+) {
   const camelName = _.camelCase(options.name)
   const camelUpperFirstName = _.upperFirst(camelName)
   const kebabName = _.kebabCase(options.name)
-  const fileFullPath = path.join(projectRootPath, storesPath.dir, kebabName) + ".tsx"
+  const fileFullPath =
+    path.join(projectRootPath, storesPath.dir, kebabName) + ".tsx"
 
   if (fs.existsSync(fileFullPath)) {
     throw Error(`${kebabName} already exist!`)
   }
 
-  fs.outputFileSync(fileFullPath, prettier.format(`
+  fs.outputFileSync(
+    fileFullPath,
+    prettier.format(
+      `
     import { observable, inject, Action } from "dob"
 
     @observable
@@ -200,14 +258,21 @@ export async function addStore(projectRootPath: string, options: {
     export class ${camelUpperFirstName}Action {
       @inject(${camelUpperFirstName}Store) public ${camelName}Store: ${camelUpperFirstName}Store
 
-      ${options.withDemo ? `
+      ${
+        options.withDemo
+          ? `
         @Action public test() {
           this.${camelName}Store.testValue++
         }
-      ` : ""}
+      `
+          : ""
+      }
     }
-  `, {
-      semi: false,
-      parser: "typescript"
-    }))
+  `,
+      {
+        semi: false,
+        parser: "typescript"
+      }
+    )
+  )
 }

@@ -10,25 +10,25 @@ const FormItem = Form.Item
 const formItemLayout = {
   labelCol: {
     xs: { span: 24 },
-    sm: { span: 8 },
+    sm: { span: 8 }
   },
   wrapperCol: {
     xs: { span: 24 },
-    sm: { span: 16 },
-  },
+    sm: { span: 16 }
+  }
 }
 
 const tailFormItemLayout = {
   wrapperCol: {
     xs: {
       span: 24,
-      offset: 0,
+      offset: 0
     },
     sm: {
       span: 16,
-      offset: 8,
-    },
-  },
+      offset: 8
+    }
+  }
 }
 
 function hasErrors(fieldsError: any) {
@@ -43,32 +43,27 @@ class FormComponent extends PureComponent<Props, State> {
   public render() {
     return (
       <Form onSubmit={this.handleSubmit}>
-        <FormItem
-          {...formItemLayout}
-          label="Name"
-        >
+        <FormItem {...formItemLayout} label="Name">
           {this.props.form.getFieldDecorator("name", {
             initialValue: "application",
-            rules: [{
-              type: "string", message: "Name must be string!",
-            }, {
-              required: true, message: "Name is required!",
-            }],
-          })(
-            <Input />
-          )}
+            rules: [
+              {
+                type: "string",
+                message: "Name must be string!"
+              },
+              {
+                required: true,
+                message: "Name is required!"
+              }
+            ]
+          })(<Input />)}
         </FormItem>
 
-        <FormItem
-          {...formItemLayout}
-          label="With demo"
-        >
+        <FormItem {...formItemLayout} label="With demo">
           {this.props.form.getFieldDecorator("withDemo", {
             initialValue: true,
             valuePropName: "checked"
-          })(
-            <Switch />
-          )}
+          })(<Switch />)}
         </FormItem>
 
         <FormItem {...tailFormItemLayout}>
@@ -76,15 +71,19 @@ class FormComponent extends PureComponent<Props, State> {
             type="primary"
             htmlType="submit"
             disabled={hasErrors(this.props.form.getFieldsError())}
-          >Ok</Button>
+          >
+            Ok
+          </Button>
         </FormItem>
       </Form>
     )
   }
 
   private handleSubmit = async (e: any) => {
-    e.preventDefault();
-    await this.props.ApplicationAction.addStore(this.props.form.getFieldsValue())
+    e.preventDefault()
+    await this.props.ApplicationAction.addStore(
+      this.props.form.getFieldsValue()
+    )
     this.props.onSuccess()
   }
 }

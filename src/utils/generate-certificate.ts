@@ -3,27 +3,27 @@ import * as forge from "node-forge"
 import * as path from "path"
 
 export function generateCertificate(cacheDir: string) {
-  const privateKeyPath = path.join(cacheDir, "private.pem");
-  const certPath = path.join(cacheDir, "primary.crt");
+  const privateKeyPath = path.join(cacheDir, "private.pem")
+  const certPath = path.join(cacheDir, "primary.crt")
   const cachedKey =
-    fs.existsSync(privateKeyPath) && fs.readFileSync(privateKeyPath);
-  const cachedCert = fs.existsSync(certPath) && fs.readFileSync(certPath);
+    fs.existsSync(privateKeyPath) && fs.readFileSync(privateKeyPath)
+  const cachedCert = fs.existsSync(certPath) && fs.readFileSync(certPath)
   if (cachedKey && cachedCert) {
     return {
       key: cachedKey,
       cert: cachedCert
-    };
+    }
   }
 
-  const pki = forge.pki;
-  const keys = pki.rsa.generateKeyPair(2048);
-  const cert = pki.createCertificate();
+  const pki = forge.pki
+  const keys = pki.rsa.generateKeyPair(2048)
+  const cert = pki.createCertificate()
 
-  cert.publicKey = keys.publicKey;
-  cert.serialNumber = "02";
-  cert.validity.notBefore = new Date();
-  cert.validity.notAfter = new Date();
-  cert.validity.notAfter.setFullYear(cert.validity.notBefore.getFullYear() + 1);
+  cert.publicKey = keys.publicKey
+  cert.serialNumber = "02"
+  cert.validity.notBefore = new Date()
+  cert.validity.notAfter = new Date()
+  cert.validity.notAfter.setFullYear(cert.validity.notBefore.getFullYear() + 1)
 
   const attrs = [
     {
@@ -50,10 +50,10 @@ export function generateCertificate(cacheDir: string) {
       shortName: "OU",
       value: "pri test"
     }
-  ];
+  ]
 
-  cert.setSubject(attrs);
-  cert.setIssuer(attrs);
+  cert.setSubject(attrs)
+  cert.setIssuer(attrs)
   cert.setExtensions([
     {
       name: "basicConstraints",
@@ -101,7 +101,7 @@ export function generateCertificate(cacheDir: string) {
     {
       name: "subjectKeyIdentifier"
     }
-  ]);
+  ])
 
   cert.sign(keys.privateKey, forge.md.sha256.create())
 
@@ -115,5 +115,5 @@ export function generateCertificate(cacheDir: string) {
   return {
     key: privPem,
     cert: certPem
-  };
+  }
 }

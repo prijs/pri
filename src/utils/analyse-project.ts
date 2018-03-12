@@ -16,7 +16,9 @@ export const analyseProject = async (projectRootPath: string) => {
   const info = await walkProject(projectRootPath)
 
   if (
-    fs.existsSync(path.join(projectRootPath, path.format(configPaths.default))) ||
+    fs.existsSync(
+      path.join(projectRootPath, path.format(configPaths.default))
+    ) ||
     fs.existsSync(path.join(projectRootPath, path.format(configPaths.local))) ||
     fs.existsSync(path.join(projectRootPath, path.format(configPaths.prod)))
   ) {
@@ -31,7 +33,9 @@ export const analyseProject = async (projectRootPath: string) => {
     info.has404File = true
   }
 
-  if (fs.existsSync(path.join(projectRootPath, path.format(markdownLayoutPath)))) {
+  if (
+    fs.existsSync(path.join(projectRootPath, path.format(markdownLayoutPath)))
+  ) {
     info.hasMarkdownLayout = true
   }
 
@@ -58,40 +62,56 @@ function walkProject(projectRootPath: string): Promise<IProjectInfo> {
   return new Promise((resolve, reject) => {
     const walker = walk.walk(projectRootPath, {
       filters: ["node_modules", ".git"]
-    });
+    })
 
-    walker.on("directories", (root: string, dirStatsArray: WalkStats[], next: () => void) => {
-      next();
-    });
-
-    walker.on("file", (root: string, fileStats: WalkStats, next: () => void) => {
-      const pageInfo = judgePageFile(projectRootPath, root, fileStats)
-      if (pageInfo) {
-        info.routes.push(pageInfo)
+    walker.on(
+      "directories",
+      (root: string, dirStatsArray: WalkStats[], next: () => void) => {
+        next()
       }
+    )
 
-      const storeInfo = judgeStoreFile(projectRootPath, root, fileStats)
-      if (storeInfo) {
-        info.stores.push(storeInfo)
+    walker.on(
+      "file",
+      (root: string, fileStats: WalkStats, next: () => void) => {
+        const pageInfo = judgePageFile(projectRootPath, root, fileStats)
+        if (pageInfo) {
+          info.routes.push(pageInfo)
+        }
+
+        const storeInfo = judgeStoreFile(projectRootPath, root, fileStats)
+        if (storeInfo) {
+          info.stores.push(storeInfo)
+        }
+
+        next()
       }
+    )
 
-      next()
-    });
-
-    walker.on("errors", (root: string, nodeStatsArray: WalkStats, next: () => void) => {
-      next()
-    });
+    walker.on(
+      "errors",
+      (root: string, nodeStatsArray: WalkStats, next: () => void) => {
+        next()
+      }
+    )
 
     walker.on("end", () => {
       resolve(info)
-    });
+    })
   })
 }
 
-function judgePageFile(projectRootPath: string, dir: string, fileStats: WalkStats) {
+function judgePageFile(
+  projectRootPath: string,
+  dir: string,
+  fileStats: WalkStats
+) {
   const fileInfo = path.parse(fileStats.name)
 
-  const relativePath = path.relative(projectRootPath, path.join(dir, fileInfo.name))
+  const relativePath = path.relative(
+    projectRootPath,
+    path.join(dir, fileInfo.name)
+  )
 
   if (!relativePath.startsWith(pagesPath.dir)) {
     return null
@@ -116,10 +136,17 @@ function judgePageFile(projectRootPath: string, dir: string, fileStats: WalkStat
   }
 }
 
-function judgeStoreFile(projectRootPath: string, dir: string, fileStats: WalkStats) {
+function judgeStoreFile(
+  projectRootPath: string,
+  dir: string,
+  fileStats: WalkStats
+) {
   const fileInfo = path.parse(fileStats.name)
 
-  const relativePath = path.relative(projectRootPath, path.join(dir, fileInfo.name))
+  const relativePath = path.relative(
+    projectRootPath,
+    path.join(dir, fileInfo.name)
+  )
 
   if (!relativePath.startsWith(storesPath.dir)) {
     return null

@@ -1,5 +1,5 @@
 // import * as AutoDllPlugin from "autodll-webpack-plugin"
-import * as  ExtractTextPlugin from "extract-text-webpack-plugin"
+import * as ExtractTextPlugin from "extract-text-webpack-plugin"
 import * as fs from "fs-extra"
 import * as HtmlWebpackPlugin from "html-webpack-plugin"
 import * as normalizePath from "normalize-path"
@@ -50,67 +50,88 @@ const config: webpack.Configuration = {
     path: distDir,
     filename: distFileName + ".js",
     publicPath,
-    chunkFilename: "[id].chunk.js",
+    chunkFilename: "[id].chunk.js"
   },
 
   module: {
     rules: [
       {
-        test: /\.(tsx|ts)?$/, use: [{
-          loader: "babel-loader",
-          options: {
-            babelrc: false,
-            presets: [
-              ["env", {
-                modules: false,
-              }],
-              ["stage-2"]
-            ],
-            plugins: [
-              ["transform-runtime"],
-              ["import", {
-                libraryName: "antd"
-              }]
-            ],
-            comments: true
-          }
-        }, "ts-loader"]
+        test: /\.(tsx|ts)?$/,
+        use: [
+          {
+            loader: "babel-loader",
+            options: {
+              babelrc: false,
+              presets: [
+                [
+                  "env",
+                  {
+                    modules: false
+                  }
+                ],
+                ["stage-2"]
+              ],
+              plugins: [
+                ["transform-runtime"],
+                [
+                  "import",
+                  {
+                    libraryName: "antd"
+                  }
+                ]
+              ],
+              comments: true
+            }
+          },
+          "ts-loader"
+        ]
       },
       {
         test: /\.css$/,
-        use: env === "local" ?
-          ["style-loader", "css-loader"] :
-          ExtractTextPlugin.extract({
-            fallback: "style-loader",
-            use: [{
-              loader: "css-loader",
-              options: { minimize: true }
-            }]
-          })
+        use:
+          env === "local"
+            ? ["style-loader", "css-loader"]
+            : ExtractTextPlugin.extract({
+                fallback: "style-loader",
+                use: [
+                  {
+                    loader: "css-loader",
+                    options: { minimize: true }
+                  }
+                ]
+              })
       },
       {
         test: /\.scss$/,
-        use: env === "local" ?
-          ["style-loader", "css-loader", "sass-loader"] :
-          ExtractTextPlugin.extract({
-            fallback: "style-loader",
-            use: [{
-              loader: "css-loader",
-              options: { minimize: true }
-            }, "sass-loader"]
-          })
+        use:
+          env === "local"
+            ? ["style-loader", "css-loader", "sass-loader"]
+            : ExtractTextPlugin.extract({
+                fallback: "style-loader",
+                use: [
+                  {
+                    loader: "css-loader",
+                    options: { minimize: true }
+                  },
+                  "sass-loader"
+                ]
+              })
       },
       {
         test: /\.less$/,
-        use: env === "local" ?
-          ["style-loader", "css-loader", "less-loader"] :
-          ExtractTextPlugin.extract({
-            fallback: "style-loader",
-            use: [{
-              loader: "css-loader",
-              options: { minimize: true }
-            }, "less-loader"]
-          })
+        use:
+          env === "local"
+            ? ["style-loader", "css-loader", "less-loader"]
+            : ExtractTextPlugin.extract({
+                fallback: "style-loader",
+                use: [
+                  {
+                    loader: "css-loader",
+                    options: { minimize: true }
+                  },
+                  "less-loader"
+                ]
+              })
       }
     ]
   },
@@ -145,7 +166,6 @@ const config: webpack.Configuration = {
     //     ]
     //   }
     // })
-
     // new PreloadWebpackPlugin({
     //   rel: "prefetch"
     // })
@@ -192,4 +212,7 @@ if (env === "prod") {
   config.plugins.push(new ExtractTextPlugin(distFileName + ".css"))
 }
 
-export default plugin.buildConfigPipes.reduce((newConfig, fn) => fn(newConfig), config)
+export default plugin.buildConfigPipes.reduce(
+  (newConfig, fn) => fn(newConfig),
+  config
+)

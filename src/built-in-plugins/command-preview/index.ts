@@ -5,7 +5,7 @@ import * as Koa from "koa"
 import * as koaCompress from "koa-compress"
 import * as koaMount from "koa-mount"
 import * as koaStatic from "koa-static"
-import * as open from "opn";
+import * as open from "opn"
 import * as path from "path"
 import * as portfinder from "portfinder"
 import * as url from "url"
@@ -37,14 +37,17 @@ export const CommandPreview = async () => {
 
   const freePort = await portfinder.getPortPromise()
 
-  app.use(koaCompress({
-    flush: zlib.Z_SYNC_FLUSH
-  }))
+  app.use(
+    koaCompress({
+      flush: zlib.Z_SYNC_FLUSH
+    })
+  )
 
   const previewDistPath = distDir
 
   app.use(
-    koaMount(publicPath,
+    koaMount(
+      publicPath,
       koaStatic(previewDistPath, {
         gzip: true
       })
@@ -63,9 +66,13 @@ export const CommandPreview = async () => {
       <head>
         <title>pri</title>
 
-        ${hasCssOutput ? `
+        ${
+          hasCssOutput
+            ? `
           <link rel="stylesheet" type="text/css" href="/static/main.css"/>
-        ` : ""}
+        `
+            : ""
+        }
 
         <style>
           html,
@@ -83,10 +90,15 @@ export const CommandPreview = async () => {
 
       </html>
     `
-  });
+  })
 
   await spinner("Create https server", async () =>
-    https.createServer(generateCertificate(path.join(projectRootPath, ".temp/preview")), app.callback()).listen(freePort)
+    https
+      .createServer(
+        generateCertificate(path.join(projectRootPath, ".temp/preview")),
+        app.callback()
+      )
+      .listen(freePort)
   )
 
   open(`https://localhost:${freePort}`)

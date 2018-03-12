@@ -17,9 +17,9 @@ export const TreeContainer = styled.div`
 `
 
 export const PlusIconContainer = styled.span`
-  transition: all .2s;
+  transition: all 0.2s;
   margin-right: 5px;
-  &:hover{
+  &:hover {
     background-color: whitesmoke;
   }
 `

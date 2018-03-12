@@ -1,7 +1,3 @@
-export class Props {
+export class Props {}
 
-}
-
-export class State {
-
-}
+export class State {}

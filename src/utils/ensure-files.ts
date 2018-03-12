@@ -6,7 +6,11 @@ import * as prettier from "prettier"
 import { IProjectConfig } from "./project-config-interface"
 import { declarePath, pagesPath } from "./structor-config"
 
-export const ensureFiles = (projectRootPath: string, config: IProjectConfig, supplementCode: boolean) => {
+export const ensureFiles = (
+  projectRootPath: string,
+  config: IProjectConfig,
+  supplementCode: boolean
+) => {
   ensureGitignore(projectRootPath, config)
   ensureTsconfig(projectRootPath)
   ensureTslint(projectRootPath)
@@ -17,7 +21,9 @@ export const ensureFiles = (projectRootPath: string, config: IProjectConfig, sup
   if (supplementCode) {
     const pagesAbsolutePath = path.join(projectRootPath, pagesPath.dir)
     if (
-      fs.readdirSync(pagesAbsolutePath).every(fileName => path.parse(fileName).name !== "index")
+      fs
+        .readdirSync(pagesAbsolutePath)
+        .every(fileName => path.parse(fileName).name !== "index")
     ) {
       ensureHomePage(projectRootPath)
     }
@@ -34,8 +40,12 @@ function ensureGitignore(projectRootPath: string, config: IProjectConfig) {
     ".temp"
   ]
 
-  const exitFileContent = fs.existsSync(filePath) ? (fs.readFileSync(filePath).toString() || "") : ""
-  const exitFileContentArray = exitFileContent.split("\n").filter(content => content !== "")
+  const exitFileContent = fs.existsSync(filePath)
+    ? fs.readFileSync(filePath).toString() || ""
+    : ""
+  const exitFileContentArray = exitFileContent
+    .split("\n")
+    .filter(content => content !== "")
 
   ensureContents.forEach(content => {
     if (exitFileContentArray.indexOf(content) === -1) {
@@ -58,18 +68,9 @@ function ensureTsconfig(projectRootPath: string) {
       target: "esnext",
       experimentalDecorators: true,
       skipLibCheck: true,
-      lib: [
-        "dom",
-        "es5",
-        "es6",
-        "scripthost"
-      ]
+      lib: ["dom", "es5", "es6", "scripthost"]
     },
-    exclude: [
-      "node_modules",
-      "built",
-      "lib"
-    ]
+    exclude: ["node_modules", "built", "lib"]
   }
 
   let exitFileContent: any = {}
@@ -91,22 +92,12 @@ function ensureTslint(projectRootPath: string) {
     extends: "tslint:latest",
     defaultSeverity: "error",
     rules: {
-      "semicolon": [
-        false
-      ],
+      semicolon: [false],
       "object-literal-sort-keys": false,
-      "max-classes-per-file": [
-        true,
-        5
-      ],
-      "trailing-comma": [
-        false
-      ],
+      "max-classes-per-file": [true, 5],
+      "trailing-comma": [false],
       "no-string-literal": false,
-      "max-line-length": [
-        true,
-        200
-      ],
+      "max-line-length": [true, 200],
       "arrow-parens": false,
       "no-implicit-dependencies": false,
       "no-object-literal-type-assertion": false,
@@ -153,14 +144,19 @@ function ensureVscode(projectRootPath: string) {
     "beautify.tabSize": 2,
     "tslint.autoFixOnSave": true,
     "tslint.ignoreDefinitionFiles": false,
-    "tslint.exclude": "**/node_modules/**/*"
+    "tslint.exclude": "**/node_modules/**/*",
+    "prettier.singleQuote": false,
+    "prettier.semi": false
   }
 
   fs.outputFileSync(filePath, JSON.stringify(ensureContent, null, 2))
 }
 
 function ensureHomePage(projectRootPath: string) {
-  const filePath = path.join(projectRootPath, path.join(pagesPath.dir, "index.tsx"))
+  const filePath = path.join(
+    projectRootPath,
+    path.join(pagesPath.dir, "index.tsx")
+  )
 
   if (fs.existsSync(filePath)) {
     return
@@ -197,10 +193,13 @@ function ensureHomePage(projectRootPath: string) {
     }
   `
 
-  fs.outputFileSync(filePath, prettier.format(ensureContent, {
-    semi: false,
-    parser: "typescript"
-  }))
+  fs.outputFileSync(
+    filePath,
+    prettier.format(ensureContent, {
+      semi: false,
+      parser: "typescript"
+    })
+  )
 }
 
 function ensureDeclares(projectRootPath: string) {

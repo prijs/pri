@@ -20,7 +20,7 @@ import { md5 } from "../../../../utils/md5"
 import { getConfig } from "../../../../utils/project-config"
 import * as projectManage from "../../../../utils/project-manager"
 
-const app = new Koa();
+const app = new Koa()
 
 const projectRootPath = yargs.argv.projectRootPath
 const serverPort = yargs.argv.serverPort
@@ -29,12 +29,15 @@ const distFileDir = path.join(projectRootPath, ".temp")
 
 app.use(koaCors())
 
-app.use(koaCompress({
-  flush: zlib.Z_SYNC_FLUSH
-}))
+app.use(
+  koaCompress({
+    flush: zlib.Z_SYNC_FLUSH
+  })
+)
 
 app.use(
-  koaMount("/static",
+  koaMount(
+    "/static",
     koaStatic(path.join(projectRootPath, ".temp"), {
       gzip: true
     })
@@ -46,30 +49,41 @@ app.use(
 //   ctx.body = info
 // }))
 
-const server = https.createServer(generateCertificate(path.join(projectRootPath, ".temp/dashboard-server")), app.callback())
+const server = https.createServer(
+  generateCertificate(path.join(projectRootPath, ".temp/dashboard-server")),
+  app.callback()
+)
 
 const io = socketIo(server)
 
-io.on("connection", async (socket) => {
+io.on("connection", async socket => {
   const projectStatus = await getProjectStatus()
   socket.emit("freshProjectStatus", projectStatus)
 
   function socketListen(
     name: string,
-    fn: (data: any, resolve: (data?: any) => void, reject: (error?: Error) => void) => void
+    fn: (
+      data: any,
+      resolve: (data?: any) => void,
+      reject: (error?: Error) => void
+    ) => void
   ) {
     socket.on(name, async (data, callback) => {
-      fn(data, resData => {
-        callback({
-          success: true,
-          data: resData
-        })
-      }, error => {
-        callback({
-          success: false,
-          data: error.toString()
-        })
-      })
+      fn(
+        data,
+        resData => {
+          callback({
+            success: true,
+            data: resData
+          })
+        },
+        error => {
+          callback({
+            success: false,
+            data: error.toString()
+          })
+        }
+      )
     })
   }
 
@@ -120,20 +134,21 @@ io.on("connection", async (socket) => {
 })
 
 // Watch project file's change
-chokidar.watch(path.join(projectRootPath, "/**"), {
-  ignored: /(^|[\/\\])\../,
-  ignoreInitial: true
-})
-  .on("add", async (filePath) => {
+chokidar
+  .watch(path.join(projectRootPath, "/**"), {
+    ignored: /(^|[\/\\])\../,
+    ignoreInitial: true
+  })
+  .on("add", async filePath => {
     await fresh()
   })
-  .on("unlink", async (filePath) => {
+  .on("unlink", async filePath => {
     await fresh()
   })
-  .on("unlinkDir", async (filePath) => {
+  .on("unlinkDir", async filePath => {
     await fresh()
   })
-  .on("change", async (filePath) => {
+  .on("change", async filePath => {
     // fresh when config change
     const relativePath = path.relative(projectRootPath, filePath)
     const pathInfo = path.parse(filePath)
@@ -156,15 +171,21 @@ chokidar.watch(path.join(projectRootPath, "/**"), {
 
 async function fresh() {
   const projectStatus = await getProjectStatus()
-  await createEntry(projectStatus.info, projectRootPath, yargs.argv.env, projectStatus.config)
-  io.emit("freshProjectStatus", projectStatus);
+  await createEntry(
+    projectStatus.info,
+    projectRootPath,
+    yargs.argv.env,
+    projectStatus.config
+  )
+  io.emit("freshProjectStatus", projectStatus)
 }
 
 async function getProjectStatus() {
   const config = getConfig(projectRootPath, yargs.argv.env)
   const info = await analyseProject(projectRootPath)
   return {
-    config, info
+    config,
+    info
   }
 }
 

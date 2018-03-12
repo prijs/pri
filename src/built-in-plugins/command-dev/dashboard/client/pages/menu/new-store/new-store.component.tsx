@@ -18,7 +18,7 @@ export class NewStoreComponent extends PureComponent<Props, State> {
         <S.Button onClick={this.showModal}>
           <S.MenuIcon type="plus" />
           New Store
-          </S.Button>
+        </S.Button>
 
         <Modal
           title="New Store"
@@ -35,17 +35,17 @@ export class NewStoreComponent extends PureComponent<Props, State> {
 
   private showModal = () => {
     this.setState({
-      visible: true,
-    });
+      visible: true
+    })
   }
   private handleOk = () => {
     this.setState({
-      visible: false,
-    });
+      visible: false
+    })
   }
   private handleCancel = () => {
     this.setState({
-      visible: false,
-    });
+      visible: false
+    })
   }
 }

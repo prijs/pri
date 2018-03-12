@@ -10,10 +10,6 @@ export class TempComponent extends PureComponent<Props, State> {
   public state = new State()
 
   public render() {
-    return (
-      <S.Container>
-
-      </S.Container>
-    )
+    return <S.Container />
   }
 }

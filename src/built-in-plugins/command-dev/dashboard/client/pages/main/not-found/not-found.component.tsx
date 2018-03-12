@@ -10,10 +10,6 @@ export class NotFoundComponent extends PureComponent<Props, State> {
   public state = new State()
 
   public render() {
-    return (
-      <S.Container>
-        404 TODO
-      </S.Container>
-    )
+    return <S.Container>404 TODO</S.Container>
   }
 }

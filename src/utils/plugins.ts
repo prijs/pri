@@ -25,7 +25,9 @@ let hasInitPlugins = false
 export class IPluginConfig {
   public commands?: ICommand[] = []
 
-  public buildConfigPipes: Array<(config: webpack.Configuration) => webpack.Configuration> = []
+  public buildConfigPipes: Array<
+    (config: webpack.Configuration) => webpack.Configuration
+  > = []
 }
 
 export interface IPluginPackageInfo {
@@ -56,7 +58,9 @@ export const initPlugins = (projectRootPath: string) => {
     return
   }
 
-  getPriPlugins(path.join(projectRootPath, "package.json")).forEach(eachPlugin => pluginPackages.push(eachPlugin))
+  getPriPlugins(path.join(projectRootPath, "package.json")).forEach(
+    eachPlugin => pluginPackages.push(eachPlugin)
+  )
 
   // Init custom plugins
   pluginPackages.forEach(pluginPackage => {
@@ -72,24 +76,35 @@ function getPriPlugins(packageJsonPath: string): IPluginPackageInfo[] {
   }
 
   const packageJson = fs.readJSONSync(packageJsonPath)
-  const allDependencies = { ...packageJson.dependencies, ...packageJson.devDependencies }
+  const allDependencies = {
+    ...packageJson.dependencies,
+    ...packageJson.devDependencies
+  }
 
   return flatten(
     Object.keys(allDependencies)
       .filter(subPackageName => subPackageName.startsWith("pri-plugin"))
       .map(subPackageName => {
         const subPackageVersion = allDependencies[subPackageName]
-        const subPackageRealEntry = subPackageVersion.startsWith("file:") ?
-          path.join(projectRootPath, subPackageVersion.replace(/^file\:/g, "")) :
-          subPackageName
-        const subPackageAbsolutePath = require.resolve(path.join(path.join(subPackageRealEntry), "package.json"))
+        const subPackageRealEntry = subPackageVersion.startsWith("file:")
+          ? path.join(
+              projectRootPath,
+              subPackageVersion.replace(/^file\:/g, "")
+            )
+          : subPackageName
+        const subPackageAbsolutePath = require.resolve(
+          path.join(path.join(subPackageRealEntry), "package.json")
+        )
         const instance = getDefault(require(subPackageRealEntry))
 
-        return [{
-          instance,
-          name: subPackageName,
-          version: subPackageVersion
-        }, ...getPriPlugins(subPackageAbsolutePath)]
+        return [
+          {
+            instance,
+            name: subPackageName,
+            version: subPackageVersion
+          },
+          ...getPriPlugins(subPackageAbsolutePath)
+        ]
       })
   )
 }
