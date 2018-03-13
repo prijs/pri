@@ -139,7 +139,7 @@ const getHelperContent = (
 const safeName = (str: string) => _.upperFirst(_.camelCase(str))
 
 export async function createEntry(
-  info: IProjectInfo,
+  projectInfo: IProjectInfo,
   projectRootPath: string,
   env: string,
   projectConfig: IProjectConfig
@@ -180,7 +180,7 @@ export async function createEntry(
   fs.emptyDirSync(path.join(projectRootPath, markdownTempPath.dir))
 
   // Set routes
-  info.routes.forEach(route => {
+  projectInfo.routes.forEach(route => {
     const filePath = path.parse(route.filePath)
     const relativePageFilePath = path.relative(
       projectRootPath,
@@ -195,9 +195,9 @@ export async function createEntry(
     switch (filePath.ext) {
       case ".tsx":
       case ".ts":
-        if (info.routes.length < 2) {
+        if (projectInfo.routes.length < 2) {
           // If only one page, don't need code splitting.
-          if (info.stores.length === 0) {
+          if (projectInfo.stores.length === 0) {
             entryText.pageImporter += `
               import ${componentName} from "${normalizePath(
               path.join(pathInfo.dir, pathInfo.name)
@@ -213,7 +213,7 @@ export async function createEntry(
           }
         } else {
           const importCode =
-            info.stores.length === 0
+            projectInfo.stores.length === 0
               ? `import(/* webpackChunkName: "${chunkName}" */ "${normalizePath(
                   path.join(pathInfo.dir, pathInfo.name)
                 )}")`
@@ -230,7 +230,7 @@ export async function createEntry(
         }
 
         entryText.pageRoutes += `
-          <${info.hasLayout ? LAYOUT_ROUTE : "Route"} exact path="${
+          <${projectInfo.hasLayout ? LAYOUT_ROUTE : "Route"} exact path="${
           route.path
         }" component={${componentName}} />\n
         `
@@ -291,7 +291,7 @@ export async function createEntry(
           `export default \`${safeFileContent}\``
         )
 
-        if (info.routes.length < 2) {
+        if (projectInfo.routes.length < 2) {
           // If only one page, don't need code splitting.
           const tempComponentName = `${componentName}Md`
           const wrapperStr = `<${MARKDOWN_WRAPPER}>{${tempComponentName}}</${MARKDOWN_WRAPPER}>`
@@ -322,7 +322,7 @@ export async function createEntry(
 
         entryText.pageRoutes += `
           <${
-            info.hasMarkdownLayout ? MARKDOWN_LAYOUT_ROUTE : "Route"
+            projectInfo.hasMarkdownLayout ? MARKDOWN_LAYOUT_ROUTE : "Route"
           } exact path="${route.path}" component={${componentName}} />\n
         `
         break
@@ -331,7 +331,7 @@ export async function createEntry(
   })
 
   // Set stores
-  if (info.stores.length > 0) {
+  if (projectInfo.stores.length > 0) {
     const entryRelativeToHelper = path.relative(
       path.join(tempJsEntryPath.dir),
       path.join(helperPath.dir, helperPath.name)
@@ -343,7 +343,7 @@ export async function createEntry(
       entryRelativeToHelper
     )}"\n`
     entryText.storesHelper += `import { combineStores } from "dob"\n`
-    entryText.storesHelper += info.stores
+    entryText.storesHelper += projectInfo.stores
       .map(eachStore => {
         const filePath = path.parse(eachStore.filePath)
         const importAbsolutePath = path.join(filePath.dir, filePath.name)
@@ -357,7 +357,7 @@ export async function createEntry(
       })
       .join("\n")
     entryText.storesHelper += `
-      \nconst stores = combineStores({${info.stores
+      \nconst stores = combineStores({${projectInfo.stores
         .map(eachStore => {
           return `${safeName(eachStore.name)}Action, ${safeName(
             eachStore.name
@@ -370,14 +370,14 @@ export async function createEntry(
   }
 
   // Set layout
-  if (info.hasLayout) {
+  if (projectInfo.hasLayout) {
     let layoutImportCode = ""
     const layoutRelativePath = path.relative(
       tempJsEntryPath.dir,
       path.join(layoutPath.dir, layoutPath.name)
     )
 
-    if (info.stores.length === 0) {
+    if (projectInfo.stores.length === 0) {
       layoutImportCode = `import ${LAYOUT} from "${normalizePath(
         layoutRelativePath
       )}"`
@@ -404,7 +404,7 @@ export async function createEntry(
   }
 
   // Set markdown layout
-  if (info.hasMarkdownLayout) {
+  if (projectInfo.hasMarkdownLayout) {
     const markdownRelativePath = path.relative(
       tempJsEntryPath.dir,
       path.join(markdownLayoutPath.dir, markdownLayoutPath.name)
@@ -412,7 +412,7 @@ export async function createEntry(
 
     let markdownLayoutInportCode = ""
 
-    if (info.stores.length === 0) {
+    if (projectInfo.stores.length === 0) {
       markdownLayoutInportCode = `import ${MARKDOWN_LAYOUT} from "${normalizePath(
         markdownRelativePath
       )}"\n`
@@ -442,7 +442,7 @@ export async function createEntry(
   }
 
   // Set not found
-  if (info.has404File) {
+  if (projectInfo.has404File) {
     entryText.notFoundImporter = `import NotFoundComponent from "${normalizePath(
       path.join(projectRootPath, path.join(notFoundPath.dir, notFoundPath.name))
     )}"`
@@ -455,18 +455,21 @@ export async function createEntry(
   const entryPath = path.join(projectRootPath, path.format(tempJsEntryPath))
   fs.outputFileSync(
     entryPath,
-    prettier.format(getEntryContent(entryText, info, projectConfig, env), {
-      semi: false,
-      parser: "typescript"
-    })
+    prettier.format(
+      getEntryContent(entryText, projectInfo, projectConfig, env),
+      {
+        semi: false,
+        parser: "typescript"
+      }
+    )
   )
 
   // If has stores, create helper.ts
   const helperAbsolutePath = path.join(projectRootPath, path.format(helperPath))
-  if (info.stores.length > 0) {
+  if (projectInfo.stores.length > 0) {
     fs.outputFileSync(
       helperAbsolutePath,
-      prettier.format(getHelperContent(entryText, info, env), {
+      prettier.format(getHelperContent(entryText, projectInfo, env), {
         semi: false,
         parser: "typescript"
       })
@@ -476,4 +479,32 @@ export async function createEntry(
   }
 
   return entryPath
+}
+
+const entryStructor = {
+  header: `
+    import createBrowserHistory from "history/createBrowserHistory"
+    import { setCustomEnv, setEnvLocal, setEnvProd } from "pri/client"
+    import * as React from "react"
+    import * as ReactDOM from "react-dom"
+    import Loadable from "react-loadable"
+    import { Redirect, Route, Router, Switch } from "react-router-dom"
+  `,
+  body: "",
+  entryComponent: `
+    class Root extends React.PureComponent<any, any> {
+      public render() {
+        return (
+          <Router history={customHistory}>
+            <Switch>
+
+            </Switch>
+          </Router>
+        )
+      }
+    }
+  `,
+  footer: `
+    ReactDOM.render(<Root />, document.getElementById("root"))
+  `
 }

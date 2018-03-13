@@ -183,7 +183,7 @@ const config: webpack.Configuration = {
         }
       ]
     },
-    https: true,
+    https: projectConfig.useHttps,
     open: true,
     overlay: {
       warnings: true,
@@ -213,6 +213,6 @@ if (env === "prod") {
 }
 
 export default plugin.buildConfigPipes.reduce(
-  (newConfig, fn) => fn(newConfig),
+  (newConfig, fn) => fn(env, newConfig),
   config
 )

@@ -2,6 +2,7 @@ import * as koaCors from "@koa/cors"
 import { execSync } from "child_process"
 import * as chokidar from "chokidar"
 import * as fs from "fs"
+import * as http from "http"
 import * as https from "https"
 import * as Koa from "koa"
 import * as koaCompress from "koa-compress"
@@ -49,10 +50,14 @@ app.use(
 //   ctx.body = info
 // }))
 
-const server = https.createServer(
-  generateCertificate(path.join(projectRootPath, ".temp/dashboard-server")),
-  app.callback()
-)
+const initProjectConfig = getConfig(projectRootPath, yargs.argv.env)
+
+const server = initProjectConfig.useHttps
+  ? https.createServer(
+      generateCertificate(path.join(projectRootPath, ".temp/dashboard-server")),
+      app.callback()
+    )
+  : http.createServer(app.callback())
 
 const io = socketIo(server)
 
@@ -171,21 +176,21 @@ chokidar
 
 async function fresh() {
   const projectStatus = await getProjectStatus()
-  await createEntry(
-    projectStatus.info,
-    projectRootPath,
-    yargs.argv.env,
-    projectStatus.config
-  )
   io.emit("freshProjectStatus", projectStatus)
 }
 
 async function getProjectStatus() {
-  const config = getConfig(projectRootPath, yargs.argv.env)
-  const info = await analyseProject(projectRootPath)
+  const projectConfig = getConfig(projectRootPath, yargs.argv.env)
+
+  const { projectInfo, entryPath } = await analyseProject(
+    projectRootPath,
+    yargs.argv.env,
+    projectConfig
+  )
+
   return {
-    config,
-    info
+    projectConfig,
+    projectInfo
   }
 }
 

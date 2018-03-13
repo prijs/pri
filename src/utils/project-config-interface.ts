@@ -38,7 +38,10 @@ export class IProjectConfig {
   /**
    * Custom env
    */
-  public env?: {
-    [key: string]: any
-  }
+  public env?: { [key: string]: any }
+  /**
+   * Using https for server
+   * Only take effect on npm start | pri run preview
+   */
+  public useHttps = true
 }

@@ -45,7 +45,7 @@ export class RoutesComponent extends PureComponent<Props, State> {
       return null
     }
 
-    const dataSource = this.props.ApplciationStore.status.info.routes
+    const dataSource = this.props.ApplciationStore.status.projectInfo.routes
       .concat()
       .sort((left, right) => left.path.length - right.path.length)
       .map(route => {

@@ -1,5 +1,6 @@
 import { execSync } from "child_process"
 import * as fs from "fs"
+import * as http from "http"
 import * as https from "https"
 import * as Koa from "koa"
 import * as koaCompress from "koa-compress"
@@ -12,7 +13,6 @@ import * as url from "url"
 import * as zlib from "zlib"
 import { pri } from "../../node"
 import { analyseProject } from "../../utils/analyse-project"
-import { createEntry } from "../../utils/create-entry"
 import { ensureFiles } from "../../utils/ensure-files"
 import { generateCertificate } from "../../utils/generate-certificate"
 import { spinner } from "../../utils/log"
@@ -92,14 +92,20 @@ export const CommandPreview = async () => {
     `
   })
 
-  await spinner("Create https server", async () =>
-    https
-      .createServer(
-        generateCertificate(path.join(projectRootPath, ".temp/preview")),
-        app.callback()
-      )
-      .listen(freePort)
-  )
+  if (projectConfig.useHttps) {
+    await spinner("Create https server", async () =>
+      https
+        .createServer(
+          generateCertificate(path.join(projectRootPath, ".temp/preview")),
+          app.callback()
+        )
+        .listen(freePort)
+    )
+  } else {
+    await spinner("Create http server", async () =>
+      http.createServer(app.callback()).listen(freePort)
+    )
+  }
 
   open(`https://localhost:${freePort}`)
 }

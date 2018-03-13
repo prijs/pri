@@ -55,7 +55,10 @@ export class StructComponent extends PureComponent<Props, State> {
   public state = new State()
 
   public render() {
-    if (this.props.ApplciationStore.status === null) {
+    if (
+      this.props.ApplciationStore.status === null ||
+      this.props.ApplciationStore.status === undefined
+    ) {
       return null
     }
 
@@ -93,38 +96,42 @@ export class StructComponent extends PureComponent<Props, State> {
     ]
 
     // Pages
-    if (this.props.ApplciationStore.status.info.routes) {
+    if (this.props.ApplciationStore.status.projectInfo.routes) {
       treeData[0].children.push({
         key: "routes",
         title: `Routes (${
-          this.props.ApplciationStore.status.info.routes.length
+          this.props.ApplciationStore.status.projectInfo.routes.length
         })`,
         icon: <TreeIcon type="share-alt" />,
-        disabled: this.props.ApplciationStore.status.info.routes.length === 0
+        disabled:
+          this.props.ApplciationStore.status.projectInfo.routes.length === 0
       })
     }
 
     // Stores
-    if (this.props.ApplciationStore.status.info.routes) {
+    if (this.props.ApplciationStore.status.projectInfo.routes) {
       treeData[0].children.push({
         key: "stores",
         title: `Stores (${
-          this.props.ApplciationStore.status.info.stores.length
+          this.props.ApplciationStore.status.projectInfo.stores.length
         })`,
         icon: <TreeIcon type="database" />,
-        disabled: this.props.ApplciationStore.status.info.stores.length === 0,
-        children: this.props.ApplciationStore.status.info.stores.map(store => {
-          return {
-            key: "store-" + store.filePath,
-            title: store.name,
-            icon: <TreeIcon type="database" />
+        disabled:
+          this.props.ApplciationStore.status.projectInfo.stores.length === 0,
+        children: this.props.ApplciationStore.status.projectInfo.stores.map(
+          store => {
+            return {
+              key: "store-" + store.filePath,
+              title: store.name,
+              icon: <TreeIcon type="database" />
+            }
           }
-        })
+        )
       })
     }
 
     // Components
-    if (this.props.ApplciationStore.status.info.routes) {
+    if (this.props.ApplciationStore.status.projectInfo.routes) {
       treeData[0].children.push({
         key: "components",
         title: `Components`,
@@ -137,42 +144,42 @@ export class StructComponent extends PureComponent<Props, State> {
     treeData[0].children.push({
       key: "layout",
       title: `Layout`,
-      icon: this.props.ApplciationStore.status.info.hasLayout ? (
+      icon: this.props.ApplciationStore.status.projectInfo.hasLayout ? (
         <TreeIcon type="layout" />
       ) : (
         <Tooltip title="Auto create layout files." placement="right">
           <PlusIcon onClick={this.props.ApplicationAction.createLayout} />
         </Tooltip>
       ),
-      disabled: !this.props.ApplciationStore.status.info.hasLayout
+      disabled: !this.props.ApplciationStore.status.projectInfo.hasLayout
     })
 
     // 404
     treeData[0].children.push({
       key: "404",
       title: `404`,
-      icon: this.props.ApplciationStore.status.info.has404File ? (
+      icon: this.props.ApplciationStore.status.projectInfo.has404File ? (
         <TreeIcon type="file-unknown" />
       ) : (
         <Tooltip title="Auto create 404 page." placement="right">
           <PlusIcon onClick={this.props.ApplicationAction.create404} />
         </Tooltip>
       ),
-      disabled: !this.props.ApplciationStore.status.info.has404File
+      disabled: !this.props.ApplciationStore.status.projectInfo.has404File
     })
 
     // Config
     treeData[0].children.push({
       key: "config",
       title: `Config`,
-      icon: this.props.ApplciationStore.status.info.hasConfigFile ? (
+      icon: this.props.ApplciationStore.status.projectInfo.hasConfigFile ? (
         <TreeIcon type="setting" />
       ) : (
         <Tooltip title="Auto create config files." placement="right">
           <PlusIcon onClick={this.props.ApplicationAction.createConfig} />
         </Tooltip>
       ),
-      disabled: !this.props.ApplciationStore.status.info.hasConfigFile
+      disabled: !this.props.ApplciationStore.status.projectInfo.hasConfigFile
     })
 
     return treeData

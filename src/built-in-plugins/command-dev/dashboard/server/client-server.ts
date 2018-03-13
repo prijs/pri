@@ -1,6 +1,7 @@
 import * as koaCors from "@koa/cors"
 import * as chokidar from "chokidar"
 import * as fs from "fs"
+import * as http from "http"
 import * as https from "https"
 import * as Koa from "koa"
 import * as koaCompress from "koa-compress"
@@ -12,6 +13,7 @@ import * as yargs from "yargs"
 import * as zlib from "zlib"
 import { generateCertificate } from "../../../../utils/generate-certificate"
 import { log } from "../../../../utils/log"
+import { getConfig } from "../../../../utils/project-config"
 
 const app = new Koa()
 
@@ -22,6 +24,8 @@ const clientPort = yargs.argv.clientPort
 const dashboardBundleFileName = yargs.argv.dashboardBundleFileName
 
 const staticPrefix = "/static"
+
+const projectConfig = getConfig(projectRootPath, "local")
 
 app.use(koaCors())
 
@@ -70,11 +74,15 @@ app.use(async ctx => {
   `
 })
 
-const server = https.createServer(
-  generateCertificate(
-    path.join(projectRootPath, ".temp/dashboard-client-server")
-  ),
-  app.callback()
-)
-
-server.listen(clientPort)
+if (projectConfig.useHttps) {
+  https
+    .createServer(
+      generateCertificate(
+        path.join(projectRootPath, ".temp/dashboard-client-server")
+      ),
+      app.callback()
+    )
+    .listen(clientPort)
+} else {
+  http.createServer(app.callback()).listen(clientPort)
+}

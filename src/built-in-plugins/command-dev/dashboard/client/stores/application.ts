@@ -20,7 +20,7 @@ export class ApplciationStore {
 export class ApplicationAction {
   @inject(ApplciationStore) public applicationStore: ApplciationStore
 
-  private socket = io(`https://localhost:${serverPort}`)
+  private socket = io(`//localhost:${serverPort}`)
 
   @Action
   public initSocket() {

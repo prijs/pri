@@ -4,7 +4,6 @@ import * as fs from "fs-extra"
 import * as path from "path"
 import { pri } from "../../node"
 import { analyseProject } from "../../utils/analyse-project"
-import { createEntry } from "../../utils/create-entry"
 import { ensureFiles } from "../../utils/ensure-files"
 import { generateStaticHtml } from "../../utils/generate-static-html"
 import { log, spinner } from "../../utils/log"
@@ -50,17 +49,7 @@ export const CommandBuild = async (
   })
 
   const result = await spinner("Analyse project", async () => {
-    const projectInfo = await analyseProject(projectRootPath)
-    const entryPath = await createEntry(
-      projectInfo,
-      projectRootPath,
-      env,
-      projectConfig
-    )
-    return {
-      projectInfo,
-      entryPath
-    }
+    return analyseProject(projectRootPath, env, projectConfig)
   })
 
   // Run webpack

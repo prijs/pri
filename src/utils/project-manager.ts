@@ -4,6 +4,7 @@ import * as normalizePath from "normalize-path"
 import * as path from "path"
 import * as prettier from "prettier"
 import { analyseProject } from "./analyse-project"
+import { getConfig } from "./project-config"
 import {
   configPaths,
   helperPath,
@@ -19,7 +20,13 @@ export async function addPage(
     path: string
   }
 ) {
-  const projectInfo = await analyseProject(projectRootPath)
+  const env = "local"
+  const projectConfig = getConfig(projectRootPath, env)
+  const { projectInfo } = await analyseProject(
+    projectRootPath,
+    env,
+    projectConfig
+  )
   const fileFullPath =
     path.join(projectRootPath, pagesPath.dir, options.path, "index") + ".tsx"
 

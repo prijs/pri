@@ -6,7 +6,6 @@ import * as portfinder from "portfinder"
 import * as webpackDevServer from "webpack-dev-server"
 import { pri } from "../../node"
 import { analyseProject } from "../../utils/analyse-project"
-import { createEntry } from "../../utils/create-entry"
 import { ensureFiles } from "../../utils/ensure-files"
 import { log, spinner } from "../../utils/log"
 import { findNearestNodemodulesFile } from "../../utils/npm-finder"
@@ -19,15 +18,15 @@ const projectRootPath = process.cwd()
 
 export const CommandDev = async () => {
   const env = "local"
-  const config = getConfig(projectRootPath, env)
+  const projectConfig = getConfig(projectRootPath, env)
 
   await spinner("Ensure project files", async () => {
-    ensureFiles(projectRootPath, config, false)
+    ensureFiles(projectRootPath, projectConfig, false)
   })
 
   const entryPath = await spinner("Analyse project", async () => {
-    const info = await analyseProject(projectRootPath)
-    return createEntry(info, projectRootPath, env, config)
+    const result = await analyseProject(projectRootPath, env, projectConfig)
+    return result.entryPath
   })
 
   const freePort = await portfinder.getPortPromise()
@@ -57,9 +56,11 @@ export const CommandDev = async () => {
   )
 
   if (hasDashboardBundle) {
-    log(
-      `you should set chrome://flags/#allow-insecure-localhost, to trust local certificate.`
-    )
+    if (projectConfig.useHttps) {
+      log(
+        `you should set chrome://flags/#allow-insecure-localhost, to trust local certificate.`
+      )
+    }
 
     // Start dashboard client production server
     fork(path.join(__dirname, "dashboard/server/client-server.js"), [

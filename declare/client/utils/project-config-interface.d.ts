@@ -41,4 +41,9 @@ export declare class IProjectConfig {
     env?: {
         [key: string]: any;
     };
+    /**
+     * Using https for server
+     * Only take effect on npm start | pri run preview
+     */
+    useHttps: boolean;
 }

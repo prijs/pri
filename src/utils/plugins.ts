@@ -11,6 +11,8 @@ import pluginCommandInit from "../built-in-plugins/command-init"
 import pluginCommandPlugin from "../built-in-plugins/command-plugin"
 import pluginCommandPreview from "../built-in-plugins/command-preview"
 
+import pluginProjectAnalysePages from "../built-in-plugins/project-analyse-pages"
+
 export interface ICommand {
   name?: string
   description?: string
@@ -20,14 +22,29 @@ export interface ICommand {
   isDefault?: boolean
 }
 
+export type IAnalyseProject = (
+  projectFilesParsedPaths?: path.ParsedPath[],
+  entryOperate?: {
+    pipeHeader?: (text: string) => string
+    pipeBody?: (text: string) => string
+    pipeEntryComponent?: (text: string) => string
+    pipeFooter?: (text: string) => string
+  }
+) => void
+
+export type IBuildConfigPipe = (
+  env: "local" | "prod",
+  config: webpack.Configuration
+) => webpack.Configuration
+
 let hasInitPlugins = false
 
 export class IPluginConfig {
   public commands?: ICommand[] = []
 
-  public buildConfigPipes: Array<
-    (config: webpack.Configuration) => webpack.Configuration
-  > = []
+  public buildConfigPipes: IBuildConfigPipe[] = []
+
+  public projectAnalyses: IAnalyseProject[] = []
 }
 
 export interface IPluginPackageInfo {
@@ -51,6 +68,7 @@ export const initPlugins = (projectRootPath: string) => {
   pluginCommandInit(pri)
   pluginCommandPlugin(pri)
   pluginCommandDev(pri)
+  pluginProjectAnalysePages(pri)
 
   const projectPackageJsonPath = path.join(projectRootPath, "package.json")
 
