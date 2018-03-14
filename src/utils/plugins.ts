@@ -12,6 +12,7 @@ import pluginCommandInit from "../built-in-plugins/command-init"
 import pluginCommandPlugin from "../built-in-plugins/command-plugin"
 import pluginCommandPreview from "../built-in-plugins/command-preview"
 
+import pluginProjectAnalyseDob from "../built-in-plugins/project-analyse-dob"
 import pluginProjectAnalyseLayouts from "../built-in-plugins/project-analyse-layouts"
 import pluginProjectAnalyseMarkdownLayouts from "../built-in-plugins/project-analyse-markdown-layouts"
 import pluginProjectAnalysePages from "../built-in-plugins/project-analyse-pages"
@@ -71,6 +72,7 @@ export const initPlugins = (projectRootPath: string) => {
   pluginProjectAnalysePagesMarkdown(pri)
   pluginProjectAnalyseLayouts(pri)
   pluginProjectAnalyseMarkdownLayouts(pri)
+  pluginProjectAnalyseDob(pri)
 
   const projectPackageJsonPath = path.join(projectRootPath, "package.json")
 
