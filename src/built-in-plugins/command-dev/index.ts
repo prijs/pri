@@ -29,6 +29,8 @@ export const CommandDev = async () => {
     return result.entryPath
   })
 
+  process.exit(0)
+
   const freePort = await portfinder.getPortPromise()
   const dashboardServerPort = await portfinder.getPortPromise({
     port: freePort + 1

@@ -1,5 +1,6 @@
 import * as build from "./build"
 import * as commands from "./commands"
+import * as pipe from "./pipe"
 import * as project from "./project"
 
 export const pri = {
@@ -14,5 +15,9 @@ export const pri = {
   /**
    * Project management
    */
-  project
+  project,
+  /**
+   * Pipes
+   */
+  pipe
 }

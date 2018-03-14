@@ -7,6 +7,7 @@ import { md5 } from "../../utils/md5"
 import { markdownTempPath, pagesPath } from "../../utils/structor-config"
 
 const safeName = (str: string) => _.upperFirst(_.camelCase(str))
+const MARKDOWN_WRAPPER = "MarkdownWrapper"
 
 export default (instance: typeof pri) => {
   const projectRootPath = instance.project.getProjectRootPath()
@@ -27,7 +28,7 @@ export default (instance: typeof pri) => {
           return false
         }
 
-        if ([".tsx"].indexOf(file.ext) === -1) {
+        if ([".md"].indexOf(file.ext) === -1) {
           return false
         }
 
@@ -47,6 +48,53 @@ export default (instance: typeof pri) => {
         }
       })
 
+    // If has markdown files, init markdown component wrapper.
+    if (pages.some(page => page.file.ext === ".md")) {
+      entry.pipeHeader(header => {
+        return `
+          ${header}
+          import * as highlight from "highlight.js"
+          import "highlight.js/styles/github.css"
+          import markdownIt from "markdown-it"
+        `
+      })
+
+      entry.pipeBody(body => {
+        return `
+          const markdown = markdownIt({
+            html: true,
+            linkify: true,
+            typographer: true,
+            highlight: (str: string, lang: string) => {
+              if (lang === "tsx") {
+                lang = "jsx"
+              }
+
+              if (lang === "typescript") {
+                lang = "javascript"
+              }
+
+              if (lang && highlight.getLanguage(lang)) {
+                try {
+                  return highlight.highlight(lang, str).value;
+                } catch (__) {
+                  //
+                }
+              }
+
+              return ""
+            }
+          })
+
+          const ${MARKDOWN_WRAPPER} = ({ children }: any) => (
+            <div dangerouslySetInnerHTML={{ __html: markdown.render(children as string) }} />
+          )
+
+          ${body}
+      `
+      })
+    }
+
     entry.pipeEntryComponent(entryComponent => {
       return `
         ${pages
@@ -61,15 +109,38 @@ export default (instance: typeof pri) => {
               md5(relativePageFilePath).slice(0, 5)
             const chunkName = _.camelCase(page.routerPath) || "index"
 
-            const pageRequirePath = normalizePath(
-              path.join(page.file.dir, page.file.name)
+            // Create esmodule file for markdown
+            const fileContent = fs
+              .readFileSync(path.format(page.file))
+              .toString()
+            const safeFileContent = fileContent.replace(/\`/g, `\\\``)
+            const markdownTsAbsolutePath = path.join(
+              projectRootPath,
+              markdownTempPath.dir,
+              componentName + ".ts"
+            )
+            const markdownTsAbsolutePathWithoutExt = path.join(
+              projectRootPath,
+              markdownTempPath.dir,
+              componentName
             )
 
-            const importCode = `import(/* webpackChunkName: "${chunkName}" */ "${pageRequirePath}")`
+            fs.outputFileSync(
+              markdownTsAbsolutePath,
+              `export default \`${safeFileContent}\``
+            )
+
+            const markdownImportCode = `
+              import(/* webpackChunkName: "${chunkName}" */ "${normalizePath(
+              markdownTsAbsolutePathWithoutExt
+            )}").then(code => {
+                return () => <${MARKDOWN_WRAPPER}>{code.default}</${MARKDOWN_WRAPPER}>
+              })
+            `
 
             return `
               const ${componentName} = Loadable({
-                loader: () => ${importCode},
+                loader: () => ${markdownImportCode},
                 loading: (): any => null
               })\n
             `
@@ -95,7 +166,7 @@ export default (instance: typeof pri) => {
             const chunkName = _.camelCase(page.routerPath) || "index"
 
             return `
-              <${instance.pipe.get("commonRoute", "Route")} exact path="${
+              <${instance.pipe.get("markdownRoute", "Route")} exact path="${
               page.routerPath
             }" component={${componentName}} />\n
             `

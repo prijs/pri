@@ -3,7 +3,7 @@ import * as normalizePath from "normalize-path"
 import * as path from "path"
 import * as walk from "walk"
 import { IProjectInfo } from "./analyse-project-interface"
-import { createEntry } from "./create-entry"
+import { createEntry, Entry } from "./create-entry"
 import { plugin } from "./plugins"
 import { IProjectConfig } from "./project-config-interface"
 import {
@@ -21,7 +21,10 @@ export const analyseProject = async (
   env: "local" | "prod",
   projectConfig: IProjectConfig
 ) => {
-  const projectInfo = await walkProject(projectRootPath)
+  const { projectInfo, files } = await walkProject(
+    projectRootPath,
+    projectConfig
+  )
 
   if (
     fs.existsSync(
@@ -47,12 +50,13 @@ export const analyseProject = async (
     projectInfo.hasMarkdownLayout = true
   }
 
-  const entryPath = await createEntry(
-    projectInfo,
-    projectRootPath,
-    env,
-    projectConfig
-  )
+  const newEntryObject = new Entry(env, projectConfig)
+
+  plugin.projectAnalyses.forEach(projectAnalyse => {
+    projectAnalyse(files, newEntryObject)
+  })
+
+  const entryPath = createEntry(projectRootPath, newEntryObject.getAll())
 
   return { projectInfo, entryPath }
 }
@@ -71,8 +75,14 @@ type WalkStats = fs.Stats & {
   name: string
 }
 
-function walkProject(projectRootPath: string): Promise<IProjectInfo> {
-  const info = new IProjectInfo()
+function walkProject(
+  projectRootPath: string,
+  projectConfig: IProjectConfig
+): Promise<{
+  projectInfo: IProjectInfo
+  files: path.ParsedPath[]
+}> {
+  const projectInfo = new IProjectInfo()
 
   return new Promise((resolve, reject) => {
     const walker = walk.walk(projectRootPath, {
@@ -96,16 +106,23 @@ function walkProject(projectRootPath: string): Promise<IProjectInfo> {
           return
         }
 
+        if (
+          root.startsWith(path.join(projectRootPath, projectConfig.distDir))
+        ) {
+          next()
+          return
+        }
+
         files.push(path.parse(path.join(root, fileStats.name)))
 
         const pageInfo = judgePageFile(projectRootPath, root, fileStats)
         if (pageInfo) {
-          info.routes.push(pageInfo)
+          projectInfo.routes.push(pageInfo)
         }
 
         const storeInfo = judgeStoreFile(projectRootPath, root, fileStats)
         if (storeInfo) {
-          info.stores.push(storeInfo)
+          projectInfo.stores.push(storeInfo)
         }
 
         next()
@@ -120,9 +137,7 @@ function walkProject(projectRootPath: string): Promise<IProjectInfo> {
     )
 
     walker.on("end", () => {
-      plugin.projectAnalyses.forEach(projectAnalyse => projectAnalyse(files))
-
-      resolve(info)
+      resolve({ projectInfo, files })
     })
   })
 }

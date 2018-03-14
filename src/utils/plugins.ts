@@ -3,6 +3,7 @@ import { flatten } from "lodash"
 import * as path from "path"
 import * as webpack from "webpack"
 import { pri } from "../node/index"
+import { Entry } from "./create-entry"
 import { getDefault } from "./esModule"
 
 import pluginCommandBuild from "../built-in-plugins/command-build"
@@ -11,7 +12,10 @@ import pluginCommandInit from "../built-in-plugins/command-init"
 import pluginCommandPlugin from "../built-in-plugins/command-plugin"
 import pluginCommandPreview from "../built-in-plugins/command-preview"
 
+import pluginProjectAnalyseLayouts from "../built-in-plugins/project-analyse-layouts"
+import pluginProjectAnalyseMarkdownLayouts from "../built-in-plugins/project-analyse-markdown-layouts"
 import pluginProjectAnalysePages from "../built-in-plugins/project-analyse-pages"
+import pluginProjectAnalysePagesMarkdown from "../built-in-plugins/project-analyse-pages-markdown"
 
 export interface ICommand {
   name?: string
@@ -24,12 +28,7 @@ export interface ICommand {
 
 export type IAnalyseProject = (
   projectFilesParsedPaths?: path.ParsedPath[],
-  entryOperate?: {
-    pipeHeader?: (text: string) => string
-    pipeBody?: (text: string) => string
-    pipeEntryComponent?: (text: string) => string
-    pipeFooter?: (text: string) => string
-  }
+  entry?: Entry
 ) => void
 
 export type IBuildConfigPipe = (
@@ -69,6 +68,9 @@ export const initPlugins = (projectRootPath: string) => {
   pluginCommandPlugin(pri)
   pluginCommandDev(pri)
   pluginProjectAnalysePages(pri)
+  pluginProjectAnalysePagesMarkdown(pri)
+  pluginProjectAnalyseLayouts(pri)
+  pluginProjectAnalyseMarkdownLayouts(pri)
 
   const projectPackageJsonPath = path.join(projectRootPath, "package.json")
 
