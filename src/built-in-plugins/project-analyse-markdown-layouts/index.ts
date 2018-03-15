@@ -47,15 +47,15 @@ export default (instance: typeof pri) => {
       entry.pipeHeader(header => {
         return `
         ${header}
-        import ${MARKDOWN_LAYOUT} from "${normalizePath(
-          markdownLayoutEntryRelativePath
-        )}"
+        import ${instance.pipe.get("analyseMarkdownLayoutImportName", MARKDOWN_LAYOUT)} from "${normalizePath(markdownLayoutEntryRelativePath)}"
       `
       })
 
       entry.pipeBody(body => {
         return `
         ${body}
+
+        ${instance.pipe.get("analyseMarkdownLayoutBody", "")}
 
         const ${MARKDOWN_LAYOUT_ROUTE} = ({ component: Component, ...rest }: any) => {
           return (

@@ -644,11 +644,12 @@ In comparison, tools like Closure Compiler and RollupJS ‘hoist’ or concatena
 * [react@16.2.0](https://www.npmjs.com/package/react)
 * [react-dom@16.2.0](https://www.npmjs.com/package/react-dom)
 * [react-router-dom@4.2.2](https://www.npmjs.com/package/react-router-dom)
+* [antd@3.2.1](https://www.npmjs.com/package/antd)
+* [dob@2.5.8](https://www.npmjs.com/package/dob)
+* [lodash@4.17.4](https://www.npmjs.com/package/lodash)
+* [react-loadable@5.3.1](https://www.npmjs.com/package/react-loadable)
 * [webpack@4.1.0](https://www.npmjs.com/package/parcel-bundler)
 * [babel@7.0.0](https://www.npmjs.com/package/babel-core)
-* [dob@2.5.8](https://www.npmjs.com/package/dob)
-* [react-loadable@5.3.1](https://www.npmjs.com/package/react-loadable)
-* [antd@3.2.1](https://www.npmjs.com/package/antd)
 * [typescript@2.7.1](https://github.com/Microsoft/TypeScript)
 
 ## Inspired

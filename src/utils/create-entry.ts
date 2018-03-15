@@ -135,4 +135,5 @@ export function createEntry(projectRootPath: string, content: string) {
       parser: "typescript"
     })
   )
+  return entryPath
 }

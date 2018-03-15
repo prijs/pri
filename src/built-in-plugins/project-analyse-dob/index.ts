@@ -11,6 +11,12 @@ import {
   tempJsEntryPath
 } from "../../utils/structor-config"
 
+const LAYOUT_TEMP = "LayoutTempComponent"
+const LAYOUT = "LayoutComponent"
+
+const MARKDOWN_LAYOUT_TEMP = "MarkdownLayoutTempComponent"
+const MARKDOWN_LAYOUT = "MarkdownLayoutComponent"
+
 const safeName = (str: string) => _.upperFirst(_.camelCase(str))
 
 export default (instance: typeof pri) => {
@@ -40,6 +46,31 @@ export default (instance: typeof pri) => {
       fs.removeSync(helperAbsolutePath)
       return
     }
+
+    // Connect normal pages
+    instance.pipe.set("normalPagesImportEnd", importEnd => {
+      return `
+        ${importEnd}.then(component => Connect()(component.default))
+      `
+    })
+
+    // Connect layout
+    instance.pipe.set("analyseLayoutImportName", text => LAYOUT_TEMP)
+    instance.pipe.set("analyseLayoutBody", body => {
+      return `
+        ${body}
+        const ${LAYOUT} = Connect()(${LAYOUT_TEMP})
+      `
+    })
+
+    // Connect markdown layout
+    instance.pipe.set("analyseMarkdownLayoutImportName", text => MARKDOWN_LAYOUT_TEMP)
+    instance.pipe.set("analyseMarkdownLayoutBody", body => {
+      return `
+      ${body}
+      const ${MARKDOWN_LAYOUT} = Connect()(${MARKDOWN_LAYOUT_TEMP})
+    `
+    })
 
     const entryRelativeToHelper = path.relative(
       path.join(tempJsEntryPath.dir),
@@ -82,7 +113,7 @@ export default (instance: typeof pri) => {
         return `import { ${safeName(storeFile.name)}Action, ${safeName(
           storeFile.name
         )}Store } from "${normalizePath(importRelativePath)}"`
-      })}
+      }).join("\n")}
 
       const stores = combineStores({${storeFiles
         .map(storeFile => {

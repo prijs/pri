@@ -37,13 +37,15 @@ export default (instance: typeof pri) => {
       entry.pipeHeader(header => {
         return `
         ${header}
-        import ${LAYOUT} from "${normalizePath(layoutEntryRelativePath)}"
+        import ${instance.pipe.get("analyseLayoutImportName", LAYOUT)} from "${normalizePath(layoutEntryRelativePath)}"
       `
       })
 
       entry.pipeBody(body => {
         return `
         ${body}
+
+        ${instance.pipe.get("analyseLayoutBody", "")}
 
         const ${LAYOUT_ROUTE} = ({ component: Component, ...rest }: any) => {
           return (

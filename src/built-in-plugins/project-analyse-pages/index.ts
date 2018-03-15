@@ -65,7 +65,7 @@ export default (instance: typeof pri) => {
               path.join(page.file.dir, page.file.name)
             )
 
-            const importCode = `import(/* webpackChunkName: "${chunkName}" */ "${pageRequirePath}")`
+            const importCode = `import(/* webpackChunkName: "${chunkName}" */ "${pageRequirePath}")${instance.pipe.get("normalPagesImportEnd", "")}`
 
             return `
               const ${componentName} = Loadable({
