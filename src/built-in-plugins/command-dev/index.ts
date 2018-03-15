@@ -136,6 +136,65 @@ export const CommandDev = async () => {
 }
 
 export default (instance: typeof pri) => {
+  instance.project.onAnalyseProject((files, entry, env, projectConfig) => {
+    if (env === "local") {
+      entry.pipeHeader(header => {
+        return `
+          ${header}
+          import { hot } from "react-hot-loader"
+        `
+      })
+
+      // Set local env
+      entry.pipeBody(body => {
+        return `
+          ${body}
+          setEnvLocal()
+        `
+      })
+
+      // Set custom env
+      if (projectConfig.env) {
+        entry.pipeBody(body => {
+          return `
+            ${body}
+            setCustomEnv(${JSON.stringify(projectConfig.env)})
+          `
+        })
+      }
+
+      // Jump page from iframe dashboard event.
+      entry.pipeEntryClassBody(entryClassBody => {
+        return `
+        ${entryClassBody}
+          public componentWillMount() {
+            window.addEventListener("message", event => {
+              const data = event.data
+              switch(data.type) {
+                case "changeRoute":
+                  customHistory.push(data.path)
+                  break
+                default:
+              }
+            }, false)
+          }
+      `
+      })
+
+      // React hot loader
+      entry.pipeFooter(footer => {
+        return `
+          const HotRoot = hot(module)(Root)
+
+          ReactDOM.render(
+            <HotRoot />,
+            document.getElementById("root")
+          )
+          `
+      })
+    }
+  })
+
   instance.commands.registerCommand({
     name: "dev",
     description: text.commander.dev.description,

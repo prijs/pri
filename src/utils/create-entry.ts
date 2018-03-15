@@ -523,6 +523,10 @@ export class Entry {
     pipe.set("entryRenderRouter", fn)
   }
 
+  public pipeEntryClassBody(fn: (renderRouter: string) => string) {
+    pipe.set("entryEntryClassBody", fn)
+  }
+
   protected getHeader() {
     return pipe.get(
       "entryHeader",
@@ -553,6 +557,8 @@ export class Entry {
       "entryEntryComponent",
       `
       class Root extends React.PureComponent<any, any> {
+        ${this.getEntryClassBody()}
+
         public render() {
           return (
             ${this.getRenderRouter()}
@@ -587,6 +593,10 @@ export class Entry {
       </Router>
     `
     )
+  }
+
+  protected getEntryClassBody() {
+    return pipe.get("entryEntryClassBody", "")
   }
 }
 

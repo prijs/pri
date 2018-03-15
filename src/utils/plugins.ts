@@ -5,6 +5,7 @@ import * as webpack from "webpack"
 import { pri } from "../node/index"
 import { Entry } from "./create-entry"
 import { getDefault } from "./esModule"
+import { IProjectConfig } from "./project-config-interface"
 
 import pluginCommandBuild from "../built-in-plugins/command-build"
 import pluginCommandDev from "../built-in-plugins/command-dev"
@@ -15,6 +16,7 @@ import pluginCommandPreview from "../built-in-plugins/command-preview"
 import pluginProjectAnalyseDob from "../built-in-plugins/project-analyse-dob"
 import pluginProjectAnalyseLayouts from "../built-in-plugins/project-analyse-layouts"
 import pluginProjectAnalyseMarkdownLayouts from "../built-in-plugins/project-analyse-markdown-layouts"
+import pluginProjectAnalyseNotFound from "../built-in-plugins/project-analyse-not-found"
 import pluginProjectAnalysePages from "../built-in-plugins/project-analyse-pages"
 import pluginProjectAnalysePagesMarkdown from "../built-in-plugins/project-analyse-pages-markdown"
 
@@ -29,7 +31,9 @@ export interface ICommand {
 
 export type IAnalyseProject = (
   projectFilesParsedPaths?: path.ParsedPath[],
-  entry?: Entry
+  entry?: Entry,
+  env?: "local" | "prod",
+  projectConfig?: IProjectConfig
 ) => void
 
 export type IBuildConfigPipe = (
@@ -73,6 +77,7 @@ export const initPlugins = (projectRootPath: string) => {
   pluginProjectAnalyseLayouts(pri)
   pluginProjectAnalyseMarkdownLayouts(pri)
   pluginProjectAnalyseDob(pri)
+  pluginProjectAnalyseNotFound(pri)
 
   const projectPackageJsonPath = path.join(projectRootPath, "package.json")
 

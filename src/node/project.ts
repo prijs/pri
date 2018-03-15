@@ -3,12 +3,11 @@ import { getConfig as getProjectConfig } from "../utils/project-config"
 
 const projectRootPath = process.cwd()
 
+/**
+ * Each time, scan this project's files.
+ */
 export const onAnalyseProject = (fn: IAnalyseProject) => {
   plugin.projectAnalyses.push(fn)
-}
-
-export const pipeAnalyse = () => {
-  //
 }
 
 export const getConfig = (env: "local" | "prod") => {

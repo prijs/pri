@@ -53,7 +53,7 @@ export const analyseProject = async (
   const newEntryObject = new Entry(env, projectConfig)
 
   plugin.projectAnalyses.forEach(projectAnalyse => {
-    projectAnalyse(files, newEntryObject)
+    projectAnalyse(files, newEntryObject, env, projectConfig)
   })
 
   const entryPath = createEntry(projectRootPath, newEntryObject.getAll())

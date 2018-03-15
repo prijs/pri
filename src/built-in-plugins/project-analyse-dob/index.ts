@@ -62,6 +62,14 @@ export default (instance: typeof pri) => {
       `
     })
 
+    entry.pipeRenderRouter(router => {
+      return `
+        <Provider {...stores}>
+          ${router}
+        </Provider>
+      `
+    })
+
     const storesHelper = `
       import { combineStores } from "dob"
 

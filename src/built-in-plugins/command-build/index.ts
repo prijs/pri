@@ -83,6 +83,28 @@ export const CommandBuild = async (
 }
 
 export default (instance: typeof pri) => {
+  instance.project.onAnalyseProject((files, entry, env, projectConfig) => {
+    if (env === "prod") {
+      // Set prod env
+      entry.pipeBody(body => {
+        return `
+          ${body}
+          setEnvProd()
+        `
+      })
+
+      // Set custom env
+      if (projectConfig.env) {
+        entry.pipeBody(body => {
+          return `
+            ${body}
+            setCustomEnv(${JSON.stringify(projectConfig.env)})
+          `
+        })
+      }
+    }
+  })
+
   instance.commands.registerCommand({
     name: "build",
     description: text.commander.build.description,
