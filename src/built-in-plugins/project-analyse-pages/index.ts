@@ -6,50 +6,67 @@ import { pri } from "../../node"
 import { md5 } from "../../utils/md5"
 import { markdownTempPath, pagesPath } from "../../utils/structor-config"
 
+interface IResult {
+  projectAnalysePages: {
+    pages: Array<{
+      routerPath: string
+      file: path.ParsedPath
+    }>
+  }
+}
+
 const safeName = (str: string) => _.upperFirst(_.camelCase(str))
 
 export default (instance: typeof pri) => {
   const projectRootPath = instance.project.getProjectRootPath()
 
-  instance.project.onAnalyseProject((files, entry) => {
-    const pages = files
-      .filter(file => {
-        const relativePath = path.relative(
-          projectRootPath,
-          path.join(file.dir, file.name)
-        )
+  instance.project.onAnalyseProject(files => {
+    return {
+      projectAnalysePages: {
+        pages: files
+          .filter(file => {
+            const relativePath = path.relative(
+              projectRootPath,
+              path.join(file.dir, file.name)
+            )
 
-        if (!relativePath.startsWith(pagesPath.dir)) {
-          return false
-        }
+            if (!relativePath.startsWith(pagesPath.dir)) {
+              return false
+            }
 
-        if (file.name !== "index") {
-          return false
-        }
+            if (file.name !== "index") {
+              return false
+            }
 
-        if ([".tsx"].indexOf(file.ext) === -1) {
-          return false
-        }
+            if ([".tsx"].indexOf(file.ext) === -1) {
+              return false
+            }
 
-        return true
-      })
-      .map(file => {
-        const relativePathWithoutIndex = path.relative(
-          projectRootPath,
-          file.dir
-        )
-        const routerPath =
-          "/" + path.relative(pagesPath.dir, relativePathWithoutIndex)
+            return true
+          })
+          .map(file => {
+            const relativePathWithoutIndex = path.relative(
+              projectRootPath,
+              file.dir
+            )
+            const routerPath =
+              "/" + path.relative(pagesPath.dir, relativePathWithoutIndex)
 
-        return {
-          routerPath: normalizePath(routerPath),
-          file
-        }
-      })
+            return { routerPath: normalizePath(routerPath), file }
+          })
+      }
+    } as IResult
+  })
 
-    entry.pipeEntryComponent(entryComponent => {
-      return `
-        ${pages
+  instance.project.onCreateEntry(
+    (analyseInfo: IResult, entry, env, projectConfig) => {
+      if (analyseInfo.projectAnalysePages.pages.length === 0) {
+        return
+      }
+
+      entry.pipeEntryComponent(entryComponent => {
+        return `
+        ${analyseInfo.projectAnalysePages.pages
           .map(page => {
             const relativePageFilePath = path.relative(
               projectRootPath,
@@ -65,7 +82,10 @@ export default (instance: typeof pri) => {
               path.join(page.file.dir, page.file.name)
             )
 
-            const importCode = `import(/* webpackChunkName: "${chunkName}" */ "${pageRequirePath}")${instance.pipe.get("normalPagesImportEnd", "")}`
+            const importCode = `import(/* webpackChunkName: "${chunkName}" */ "${pageRequirePath}")${entry.pipe.get(
+              "normalPagesImportEnd",
+              ""
+            )}`
 
             return `
               const ${componentName} = Loadable({
@@ -77,12 +97,12 @@ export default (instance: typeof pri) => {
           .join("\n")}
           ${entryComponent}
       `
-    })
+      })
 
-    entry.pipeRenderRoutes(renderRoutes => {
-      return `
+      entry.pipeRenderRoutes(renderRoutes => {
+        return `
         ${renderRoutes}
-        ${pages
+        ${analyseInfo.projectAnalysePages.pages
           .map(page => {
             const relativePageFilePath = path.relative(
               projectRootPath,
@@ -95,13 +115,14 @@ export default (instance: typeof pri) => {
             const chunkName = _.camelCase(page.routerPath) || "index"
 
             return `
-              <${instance.pipe.get("commonRoute", "Route")} exact path="${
+              <${entry.pipe.get("commonRoute", "Route")} exact path="${
               page.routerPath
             }" component={${componentName}} />\n
             `
           })
           .join("\n")}
       `
-    })
-  })
+      })
+    }
+  )
 }

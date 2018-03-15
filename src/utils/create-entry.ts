@@ -3,6 +3,7 @@ import * as path from "path"
 import * as prettier from "prettier"
 import * as pipe from "../node/pipe"
 import { IProjectInfo } from "./analyse-project-interface"
+import { plugin } from "./plugins"
 import { IProjectConfig } from "./project-config-interface"
 import { tempJsEntryPath } from "./structor-config"
 
@@ -22,6 +23,10 @@ export class Entry {
       this.getEntryComponent(),
       this.getFooter()
     ].join("\n")
+  }
+
+  public get pipe() {
+    return pipe
   }
 
   public pipeHeader(fn: (header: string) => string) {
@@ -125,15 +130,30 @@ export class Entry {
   }
 }
 
-export function createEntry(projectRootPath: string, content: string) {
+export function createEntry(
+  projectRootPath: string,
+  env: "local" | "prod",
+  projectConfig: IProjectConfig
+) {
+  const newEntryObject = new Entry(env, projectConfig)
+
+  // Clear pipe
+  pipe.clear()
+
+  plugin.projectCreateEntrys.forEach(projectCreateEntry => {
+    projectCreateEntry(plugin.analyseInfo, newEntryObject, env, projectConfig)
+  })
+
   // Create entry tsx file
   const entryPath = path.join(projectRootPath, path.format(tempJsEntryPath))
+
   fs.outputFileSync(
     entryPath,
-    prettier.format(content, {
+    prettier.format(newEntryObject.getAll(), {
       semi: false,
       parser: "typescript"
     })
   )
+
   return entryPath
 }

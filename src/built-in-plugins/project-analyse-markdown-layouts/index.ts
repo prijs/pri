@@ -13,32 +13,42 @@ import {
 const MARKDOWN_LAYOUT = "MarkdownLayoutComponent"
 const MARKDOWN_LAYOUT_ROUTE = "MarkdownLayoutRoute"
 
+interface IResult {
+  projectAnalyseMarkdownLayout: {
+    hasMarkdownLayout: boolean
+  }
+}
+
 export default (instance: typeof pri) => {
   const projectRootPath = instance.project.getProjectRootPath()
 
-  instance.project.onAnalyseProject((files, entry) => {
-    let hasMarkdownLayout = false
+  instance.project.onAnalyseProject(files => {
+    return {
+      projectAnalyseMarkdownLayout: {
+        hasMarkdownLayout: files
+          .filter(file => {
+            const relativePath = path.relative(
+              projectRootPath,
+              path.join(file.dir, file.name)
+            )
 
-    files
-      .filter(file => {
-        const relativePath = path.relative(
-          projectRootPath,
-          path.join(file.dir, file.name)
-        )
+            if (!relativePath.startsWith(layoutPath.dir)) {
+              return false
+            }
 
-        if (!relativePath.startsWith(layoutPath.dir)) {
-          return false
-        }
+            return true
+          })
+          .some(file => file.name === "markdown")
+      }
+    } as IResult
+  })
 
-        return true
-      })
-      .forEach(file => {
-        if (file.name === "markdown") {
-          hasMarkdownLayout = true
-        }
-      })
+  instance.project.onCreateEntry(
+    (analyseInfo: IResult, entry, env, projectConfig) => {
+      if (!analyseInfo.projectAnalyseMarkdownLayout.hasMarkdownLayout) {
+        return
+      }
 
-    if (hasMarkdownLayout) {
       const markdownLayoutEntryRelativePath = path.relative(
         tempJsEntryPath.dir,
         path.join(markdownLayoutPath.dir, markdownLayoutPath.name)
@@ -47,7 +57,10 @@ export default (instance: typeof pri) => {
       entry.pipeHeader(header => {
         return `
         ${header}
-        import ${instance.pipe.get("analyseMarkdownLayoutImportName", MARKDOWN_LAYOUT)} from "${normalizePath(markdownLayoutEntryRelativePath)}"
+        import ${entry.pipe.get(
+          "analyseMarkdownLayoutImportName",
+          MARKDOWN_LAYOUT
+        )} from "${normalizePath(markdownLayoutEntryRelativePath)}"
       `
       })
 
@@ -55,7 +68,7 @@ export default (instance: typeof pri) => {
         return `
         ${body}
 
-        ${instance.pipe.get("analyseMarkdownLayoutBody", "")}
+        ${entry.pipe.get("analyseMarkdownLayoutBody", "")}
 
         const ${MARKDOWN_LAYOUT_ROUTE} = ({ component: Component, ...rest }: any) => {
           return (
@@ -69,9 +82,9 @@ export default (instance: typeof pri) => {
       `
       })
 
-      instance.pipe.set("markdownRoute", route => {
+      entry.pipe.set("markdownRoute", route => {
         return MARKDOWN_LAYOUT_ROUTE
       })
     }
-  })
+  )
 }

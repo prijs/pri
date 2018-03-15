@@ -51,18 +51,17 @@ export const analyseProject = async (
     projectInfo.hasMarkdownLayout = true
   }
 
-  const newEntryObject = new Entry(env, projectConfig)
-
-  // Clear pipe
-  pipe.clear()
+  // Clear analyseInfo
+  plugin.analyseInfo = {}
 
   plugin.projectAnalyses.forEach(projectAnalyse => {
-    projectAnalyse(files, newEntryObject, env, projectConfig)
+    const result = projectAnalyse(files, env, projectConfig)
+    if (result && typeof result === "object") {
+      plugin.analyseInfo = { ...plugin.analyseInfo, ...result }
+    }
   })
 
-  const entryPath = createEntry(projectRootPath, newEntryObject.getAll())
-
-  return { projectInfo, entryPath }
+  return projectInfo
 }
 
 function hasFileWithoutExt(pathName: string) {

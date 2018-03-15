@@ -6,50 +6,65 @@ import { pri } from "../../node"
 import { md5 } from "../../utils/md5"
 import { markdownTempPath, pagesPath } from "../../utils/structor-config"
 
+interface IResult {
+  projectAnalyseMarkdownPages: {
+    pages: Array<{
+      routerPath: string
+      file: path.ParsedPath
+    }>
+  }
+}
+
 const safeName = (str: string) => _.upperFirst(_.camelCase(str))
 const MARKDOWN_WRAPPER = "MarkdownWrapper"
 
 export default (instance: typeof pri) => {
   const projectRootPath = instance.project.getProjectRootPath()
 
-  instance.project.onAnalyseProject((files, entry) => {
-    const pages = files
-      .filter(file => {
-        const relativePath = path.relative(
-          projectRootPath,
-          path.join(file.dir, file.name)
-        )
+  instance.project.onAnalyseProject(files => {
+    return {
+      projectAnalyseMarkdownPages: {
+        pages: files
+          .filter(file => {
+            const relativePath = path.relative(
+              projectRootPath,
+              path.join(file.dir, file.name)
+            )
 
-        if (!relativePath.startsWith(pagesPath.dir)) {
-          return false
-        }
+            if (!relativePath.startsWith(pagesPath.dir)) {
+              return false
+            }
 
-        if (file.name !== "index") {
-          return false
-        }
+            if (file.name !== "index") {
+              return false
+            }
 
-        if ([".md"].indexOf(file.ext) === -1) {
-          return false
-        }
+            if ([".md"].indexOf(file.ext) === -1) {
+              return false
+            }
 
-        return true
-      })
-      .map(file => {
-        const relativePathWithoutIndex = path.relative(
-          projectRootPath,
-          file.dir
-        )
-        const routerPath =
-          "/" + path.relative(pagesPath.dir, relativePathWithoutIndex)
+            return true
+          })
+          .map(file => {
+            const relativePathWithoutIndex = path.relative(
+              projectRootPath,
+              file.dir
+            )
+            const routerPath =
+              "/" + path.relative(pagesPath.dir, relativePathWithoutIndex)
 
-        return {
-          routerPath: normalizePath(routerPath),
-          file
-        }
-      })
+            return { routerPath: normalizePath(routerPath), file }
+          })
+      }
+    } as IResult
+  })
 
-    // If has markdown files, init markdown component wrapper.
-    if (pages.some(page => page.file.ext === ".md")) {
+  instance.project.onCreateEntry(
+    (analyseInfo: IResult, entry, env, projectConfig) => {
+      if (analyseInfo.projectAnalyseMarkdownPages.pages.length === 0) {
+        return
+      }
+
       entry.pipeHeader(header => {
         return `
           ${header}
@@ -93,11 +108,10 @@ export default (instance: typeof pri) => {
           ${body}
       `
       })
-    }
 
-    entry.pipeEntryComponent(entryComponent => {
-      return `
-        ${pages
+      entry.pipeEntryComponent(entryComponent => {
+        return `
+        ${analyseInfo.projectAnalyseMarkdownPages.pages
           .map(page => {
             const relativePageFilePath = path.relative(
               projectRootPath,
@@ -148,12 +162,12 @@ export default (instance: typeof pri) => {
           .join("\n")}
           ${entryComponent}
       `
-    })
+      })
 
-    entry.pipeRenderRoutes(renderRoutes => {
-      return `
+      entry.pipeRenderRoutes(renderRoutes => {
+        return `
         ${renderRoutes}
-        ${pages
+        ${analyseInfo.projectAnalyseMarkdownPages.pages
           .map(page => {
             const relativePageFilePath = path.relative(
               projectRootPath,
@@ -166,13 +180,14 @@ export default (instance: typeof pri) => {
             const chunkName = _.camelCase(page.routerPath) || "index"
 
             return `
-              <${instance.pipe.get("markdownRoute", "Route")} exact path="${
+              <${entry.pipe.get("markdownRoute", "Route")} exact path="${
               page.routerPath
             }" component={${componentName}} />\n
             `
           })
           .join("\n")}
       `
-    })
-  })
+      })
+    }
+  )
 }

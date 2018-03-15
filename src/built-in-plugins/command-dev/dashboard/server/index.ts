@@ -179,13 +179,14 @@ chokidar
 
 async function fresh() {
   const projectStatus = await getProjectStatus()
+  createEntry(projectRootPath, yargs.argv.env, projectStatus.projectConfig)
   io.emit("freshProjectStatus", projectStatus)
 }
 
 async function getProjectStatus() {
   const projectConfig = getConfig(projectRootPath, yargs.argv.env)
 
-  const { projectInfo, entryPath } = await analyseProject(
+  const projectInfo = await analyseProject(
     projectRootPath,
     yargs.argv.env,
     projectConfig

@@ -9,26 +9,42 @@ import { layoutPath, tempJsEntryPath } from "../../utils/structor-config"
 const LAYOUT = "LayoutComponent"
 const LAYOUT_ROUTE = "LayoutRoute"
 
+interface IResult {
+  projectAnalyseLayout: {
+    hasLayout: boolean
+  }
+}
+
 export default (instance: typeof pri) => {
   const projectRootPath = instance.project.getProjectRootPath()
 
-  instance.project.onAnalyseProject((files, entry) => {
-    const hasNormalLayout = files
-      .filter(file => {
-        const relativePath = path.relative(
-          projectRootPath,
-          path.join(file.dir, file.name)
-        )
+  instance.project.onAnalyseProject(files => {
+    return {
+      projectAnalyseLayout: {
+        hasLayout: files
+          .filter(file => {
+            const relativePath = path.relative(
+              projectRootPath,
+              path.join(file.dir, file.name)
+            )
 
-        if (!relativePath.startsWith(layoutPath.dir)) {
-          return false
-        }
+            if (!relativePath.startsWith(layoutPath.dir)) {
+              return false
+            }
 
-        return true
-      })
-      .some(file => file.name === "index")
+            return true
+          })
+          .some(file => file.name === "index")
+      }
+    } as IResult
+  })
 
-    if (hasNormalLayout) {
+  instance.project.onCreateEntry(
+    (analyseInfo: IResult, entry, env, projectConfig) => {
+      if (!analyseInfo.projectAnalyseLayout.hasLayout) {
+        return
+      }
+
       const layoutEntryRelativePath = path.relative(
         tempJsEntryPath.dir,
         path.join(layoutPath.dir, layoutPath.name)
@@ -37,7 +53,10 @@ export default (instance: typeof pri) => {
       entry.pipeHeader(header => {
         return `
         ${header}
-        import ${instance.pipe.get("analyseLayoutImportName", LAYOUT)} from "${normalizePath(layoutEntryRelativePath)}"
+        import ${entry.pipe.get(
+          "analyseLayoutImportName",
+          LAYOUT
+        )} from "${normalizePath(layoutEntryRelativePath)}"
       `
       })
 
@@ -45,7 +64,7 @@ export default (instance: typeof pri) => {
         return `
         ${body}
 
-        ${instance.pipe.get("analyseLayoutBody", "")}
+        ${entry.pipe.get("analyseLayoutBody", "")}
 
         const ${LAYOUT_ROUTE} = ({ component: Component, ...rest }: any) => {
           return (
@@ -59,9 +78,9 @@ export default (instance: typeof pri) => {
       `
       })
 
-      instance.pipe.set("commonRoute", route => {
+      entry.pipe.set("commonRoute", route => {
         return LAYOUT_ROUTE
       })
     }
-  })
+  )
 }

@@ -16,9 +16,9 @@ import pluginCommandPreview from "../built-in-plugins/command-preview"
 import pluginProjectAnalyseDob from "../built-in-plugins/project-analyse-dob"
 import pluginProjectAnalyseLayouts from "../built-in-plugins/project-analyse-layouts"
 import pluginProjectAnalyseMarkdownLayouts from "../built-in-plugins/project-analyse-markdown-layouts"
+import pluginProjectAnalyseMarkdownPages from "../built-in-plugins/project-analyse-markdown-pages"
 import pluginProjectAnalyseNotFound from "../built-in-plugins/project-analyse-not-found"
 import pluginProjectAnalysePages from "../built-in-plugins/project-analyse-pages"
-import pluginProjectAnalysePagesMarkdown from "../built-in-plugins/project-analyse-pages-markdown"
 
 export interface ICommand {
   name?: string
@@ -31,6 +31,12 @@ export interface ICommand {
 
 export type IAnalyseProject = (
   projectFilesParsedPaths?: path.ParsedPath[],
+  env?: "local" | "prod",
+  projectConfig?: IProjectConfig
+) => any
+
+export type ICreateEntry = (
+  analyseInfo?: any,
   entry?: Entry,
   env?: "local" | "prod",
   projectConfig?: IProjectConfig
@@ -44,11 +50,15 @@ export type IBuildConfigPipe = (
 let hasInitPlugins = false
 
 export class IPluginConfig {
+  public analyseInfo?: any = {}
+
   public commands?: ICommand[] = []
 
   public buildConfigPipes: IBuildConfigPipe[] = []
 
   public projectAnalyses: IAnalyseProject[] = []
+
+  public projectCreateEntrys: ICreateEntry[] = []
 }
 
 export interface IPluginPackageInfo {
@@ -73,7 +83,7 @@ export const initPlugins = (projectRootPath: string) => {
   pluginCommandPlugin(pri)
   pluginCommandDev(pri)
   pluginProjectAnalysePages(pri)
-  pluginProjectAnalysePagesMarkdown(pri)
+  pluginProjectAnalyseMarkdownPages(pri)
   pluginProjectAnalyseLayouts(pri)
   pluginProjectAnalyseMarkdownLayouts(pri)
   pluginProjectAnalyseDob(pri)

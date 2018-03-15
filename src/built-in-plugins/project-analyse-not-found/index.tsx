@@ -6,10 +6,16 @@ import { pri } from "../../node"
 import { md5 } from "../../utils/md5"
 import { notFoundPath } from "../../utils/structor-config"
 
+interface IResult {
+  projectAnalyseNotFound: {
+    hasNotFound: boolean
+  }
+}
+
 export default (instance: typeof pri) => {
   const projectRootPath = instance.project.getProjectRootPath()
 
-  instance.project.onAnalyseProject((files, entry) => {
+  instance.project.onAnalyseProject(files => {
     const notFoundFiles = files.filter(file => {
       if (
         path.format(file) !==
@@ -21,12 +27,19 @@ export default (instance: typeof pri) => {
       return true
     })
 
-    if (notFoundFiles.length !== 1) {
-      return false
-    }
+    return {
+      projectAnalyseNotFound: { hasNotFound: notFoundFiles.length === 1 }
+    } as IResult
+  })
 
-    entry.pipeHeader(header => {
-      return `
+  instance.project.onCreateEntry(
+    (analyseInfo: IResult, entry, env, projectConfig) => {
+      if (!analyseInfo.projectAnalyseNotFound.hasNotFound) {
+        return
+      }
+
+      entry.pipeHeader(header => {
+        return `
         ${header}
         import NotFoundComponent from "${normalizePath(
           path.join(
@@ -35,13 +48,14 @@ export default (instance: typeof pri) => {
           )
         )}"
       `
-    })
+      })
 
-    entry.pipeRenderRoutes(renderRoutes => {
-      return `
+      entry.pipeRenderRoutes(renderRoutes => {
+        return `
         ${renderRoutes}
         <Route component={NotFoundComponent} />
       `
-    })
-  })
+      })
+    }
+  )
 }

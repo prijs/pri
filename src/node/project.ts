@@ -1,4 +1,4 @@
-import { IAnalyseProject, plugin } from "../utils/plugins"
+import { IAnalyseProject, ICreateEntry, plugin } from "../utils/plugins"
 import { getConfig as getProjectConfig } from "../utils/project-config"
 
 const projectRootPath = process.cwd()
@@ -15,3 +15,7 @@ export const getConfig = (env: "local" | "prod") => {
 }
 
 export const getProjectRootPath = () => projectRootPath
+
+export const onCreateEntry = (fn: ICreateEntry) => {
+  plugin.projectCreateEntrys.push(fn)
+}

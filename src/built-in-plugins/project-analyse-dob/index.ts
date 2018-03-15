@@ -19,103 +19,133 @@ const MARKDOWN_LAYOUT = "MarkdownLayoutComponent"
 
 const safeName = (str: string) => _.upperFirst(_.camelCase(str))
 
+interface IResult {
+  projectAnalyseDob: {
+    storeFiles: Array<{
+      file: path.ParsedPath
+    }>
+  }
+}
+
 export default (instance: typeof pri) => {
   const projectRootPath = instance.project.getProjectRootPath()
 
-  instance.project.onAnalyseProject((files, entry) => {
-    const storeFiles = files.filter(file => {
-      const relativePath = path.relative(
+  instance.project.onAnalyseProject(files => {
+    return {
+      projectAnalyseDob: {
+        storeFiles: files
+          .filter(file => {
+            const relativePath = path.relative(
+              projectRootPath,
+              path.join(file.dir, file.name)
+            )
+
+            if (!relativePath.startsWith(storesPath.dir)) {
+              return false
+            }
+
+            return true
+          })
+          .map(file => {
+            return { file }
+          })
+      }
+    } as IResult
+  })
+
+  instance.project.onCreateEntry(
+    (analyseInfo: IResult, entry, env, projectConfig) => {
+      const helperAbsolutePath = path.join(
         projectRootPath,
-        path.join(file.dir, file.name)
+        path.format(helperPath)
       )
 
-      if (!relativePath.startsWith(storesPath.dir)) {
-        return false
+      if (analyseInfo.projectAnalyseDob.storeFiles.length === 0) {
+        if (fs.existsSync(helperAbsolutePath)) {
+          fs.removeSync(helperAbsolutePath)
+        }
+
+        return
       }
 
-      return true
-    })
+      const storeFilesInfo = analyseInfo.projectAnalyseDob.storeFiles.map(
+        storeFile => storeFile.file
+      )
 
-    const helperAbsolutePath = path.join(
-      projectRootPath,
-      path.format(helperPath)
-    )
-
-    // If hasn't stores, remove helper.ts
-    if (storeFiles.length === 0) {
-      fs.removeSync(helperAbsolutePath)
-      return
-    }
-
-    // Connect normal pages
-    instance.pipe.set("normalPagesImportEnd", importEnd => {
-      return `
+      // Connect normal pages
+      entry.pipe.set("normalPagesImportEnd", importEnd => {
+        return `
         ${importEnd}.then(component => Connect()(component.default))
       `
-    })
+      })
 
-    // Connect layout
-    instance.pipe.set("analyseLayoutImportName", text => LAYOUT_TEMP)
-    instance.pipe.set("analyseLayoutBody", body => {
-      return `
+      // Connect layout
+      entry.pipe.set("analyseLayoutImportName", text => LAYOUT_TEMP)
+      entry.pipe.set("analyseLayoutBody", body => {
+        return `
         ${body}
         const ${LAYOUT} = Connect()(${LAYOUT_TEMP})
       `
-    })
+      })
 
-    // Connect markdown layout
-    instance.pipe.set("analyseMarkdownLayoutImportName", text => MARKDOWN_LAYOUT_TEMP)
-    instance.pipe.set("analyseMarkdownLayoutBody", body => {
-      return `
+      // Connect markdown layout
+      entry.pipe.set(
+        "analyseMarkdownLayoutImportName",
+        text => MARKDOWN_LAYOUT_TEMP
+      )
+      entry.pipe.set("analyseMarkdownLayoutBody", body => {
+        return `
       ${body}
       const ${MARKDOWN_LAYOUT} = Connect()(${MARKDOWN_LAYOUT_TEMP})
     `
-    })
+      })
 
-    const entryRelativeToHelper = path.relative(
-      path.join(tempJsEntryPath.dir),
-      path.join(helperPath.dir, helperPath.name)
-    )
+      const entryRelativeToHelper = path.relative(
+        path.join(tempJsEntryPath.dir),
+        path.join(helperPath.dir, helperPath.name)
+      )
 
-    entry.pipeHeader(header => {
-      return `
+      entry.pipeHeader(header => {
+        return `
         ${header}
         import { useStrict } from "dob"
         import { Connect, Provider } from "dob-react"
         import { stores } from "${normalizePath(entryRelativeToHelper)}"
       `
-    })
+      })
 
-    entry.pipeBody(body => {
-      return `
+      entry.pipeBody(body => {
+        return `
         ${body}
         useStrict()
       `
-    })
+      })
 
-    entry.pipeRenderRouter(router => {
-      return `
+      entry.pipeRenderRouter(router => {
+        return `
         <Provider {...stores}>
           ${router}
         </Provider>
       `
-    })
+      })
 
-    const storesHelper = `
+      const storesHelper = `
       import { combineStores } from "dob"
 
-      ${storeFiles.map(storeFile => {
-        const importAbsolutePath = path.join(storeFile.dir, storeFile.name)
-        const importRelativePath = path.relative(
-          path.join(projectRootPath, helperPath.dir),
-          importAbsolutePath
-        )
-        return `import { ${safeName(storeFile.name)}Action, ${safeName(
-          storeFile.name
-        )}Store } from "${normalizePath(importRelativePath)}"`
-      }).join("\n")}
+      ${storeFilesInfo
+        .map(storeFile => {
+          const importAbsolutePath = path.join(storeFile.dir, storeFile.name)
+          const importRelativePath = path.relative(
+            path.join(projectRootPath, helperPath.dir),
+            importAbsolutePath
+          )
+          return `import { ${safeName(storeFile.name)}Action, ${safeName(
+            storeFile.name
+          )}Store } from "${normalizePath(importRelativePath)}"`
+        })
+        .join("\n")}
 
-      const stores = combineStores({${storeFiles
+      const stores = combineStores({${storeFilesInfo
         .map(storeFile => {
           return `${safeName(storeFile.name)}Action, ${safeName(
             storeFile.name
@@ -126,15 +156,16 @@ export default (instance: typeof pri) => {
       export { stores }
     `
 
-    // If has stores, create helper.ts
-    fs.outputFileSync(
-      helperAbsolutePath,
-      prettier.format(getHelperContent(storesHelper), {
-        semi: false,
-        parser: "typescript"
-      })
-    )
-  })
+      // If has stores, create helper.ts
+      fs.outputFileSync(
+        helperAbsolutePath,
+        prettier.format(getHelperContent(storesHelper), {
+          semi: false,
+          parser: "typescript"
+        })
+      )
+    }
+  )
 }
 
 function getHelperContent(str: string) {

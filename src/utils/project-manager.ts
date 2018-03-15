@@ -22,11 +22,7 @@ export async function addPage(
 ) {
   const env = "local"
   const projectConfig = getConfig(projectRootPath, env)
-  const { projectInfo } = await analyseProject(
-    projectRootPath,
-    env,
-    projectConfig
-  )
+  const projectInfo = await analyseProject(projectRootPath, env, projectConfig)
   const fileFullPath =
     path.join(projectRootPath, pagesPath.dir, options.path, "index") + ".tsx"
 

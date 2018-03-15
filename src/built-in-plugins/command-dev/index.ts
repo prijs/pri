@@ -6,6 +6,7 @@ import * as portfinder from "portfinder"
 import * as webpackDevServer from "webpack-dev-server"
 import { pri } from "../../node"
 import { analyseProject } from "../../utils/analyse-project"
+import { createEntry } from "../../utils/create-entry"
 import { ensureFiles } from "../../utils/ensure-files"
 import { log, spinner } from "../../utils/log"
 import { findNearestNodemodulesFile } from "../../utils/npm-finder"
@@ -26,7 +27,7 @@ export const CommandDev = async () => {
 
   const entryPath = await spinner("Analyse project", async () => {
     const result = await analyseProject(projectRootPath, env, projectConfig)
-    return result.entryPath
+    return createEntry(projectRootPath, env, projectConfig)
   })
 
   const freePort = await portfinder.getPortPromise()
@@ -134,7 +135,7 @@ export const CommandDev = async () => {
 }
 
 export default (instance: typeof pri) => {
-  instance.project.onAnalyseProject((files, entry, env, projectConfig) => {
+  instance.project.onCreateEntry((analyseInfo, entry, env, projectConfig) => {
     if (env === "local") {
       entry.pipeHeader(header => {
         return `
