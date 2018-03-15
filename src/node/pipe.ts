@@ -17,3 +17,7 @@ export const set = (pipeName: string, callback: (text?: string) => string) => {
     pipes.get(pipeName).push(callback)
   }
 }
+
+export const clear = () => {
+  pipes.clear()
+}

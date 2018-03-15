@@ -18,6 +18,7 @@ import { createEntry } from "../../../../utils/create-entry"
 import { generateCertificate } from "../../../../utils/generate-certificate"
 import { log } from "../../../../utils/log"
 import { md5 } from "../../../../utils/md5"
+import { initPlugins } from "../../../../utils/plugins"
 import { getConfig } from "../../../../utils/project-config"
 import * as projectManage from "../../../../utils/project-manager"
 
@@ -27,6 +28,8 @@ const projectRootPath = yargs.argv.projectRootPath
 const serverPort = yargs.argv.serverPort
 
 const distFileDir = path.join(projectRootPath, ".temp")
+
+initPlugins(projectRootPath)
 
 app.use(koaCors())
 

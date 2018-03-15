@@ -2,6 +2,7 @@ import * as fs from "fs"
 import * as normalizePath from "normalize-path"
 import * as path from "path"
 import * as walk from "walk"
+import * as pipe from "../node/pipe"
 import { IProjectInfo } from "./analyse-project-interface"
 import { createEntry, Entry } from "./create-entry"
 import { plugin } from "./plugins"
@@ -51,6 +52,9 @@ export const analyseProject = async (
   }
 
   const newEntryObject = new Entry(env, projectConfig)
+
+  // Clear pipe
+  pipe.clear()
 
   plugin.projectAnalyses.forEach(projectAnalyse => {
     projectAnalyse(files, newEntryObject, env, projectConfig)
