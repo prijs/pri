@@ -13,9 +13,7 @@ export default (instance: typeof pri) => {
   const projectRootPath = instance.project.getProjectRootPath()
 
   instance.project.onAnalyseProject((files, entry) => {
-    let hasNormalLayout = false
-
-    files
+    const hasNormalLayout = files
       .filter(file => {
         const relativePath = path.relative(
           projectRootPath,
@@ -28,11 +26,7 @@ export default (instance: typeof pri) => {
 
         return true
       })
-      .forEach(file => {
-        if (file.name === "index") {
-          hasNormalLayout = true
-        }
-      })
+      .some(file => file.name === "index")
 
     if (hasNormalLayout) {
       const layoutEntryRelativePath = path.relative(
