@@ -95,34 +95,44 @@ export class StructComponent extends PureComponent<Props, State> {
       }
     ]
 
+    const pages = this.props.ApplciationStore.status.analyseInfo
+      .projectAnalysePages
+      ? this.props.ApplciationStore.status.analyseInfo.projectAnalysePages.pages
+      : []
+    const markdownPages = this.props.ApplciationStore.status.analyseInfo
+      .projectAnalyseMarkdownPages
+      ? this.props.ApplciationStore.status.analyseInfo
+          .projectAnalyseMarkdownPages.pages
+      : []
+    const allPages = [...pages, ...markdownPages]
+
     // Pages
-    if (this.props.ApplciationStore.status.projectInfo.routes) {
+    if (allPages) {
       treeData[0].children.push({
         key: "routes",
-        title: `Routes (${
-          this.props.ApplciationStore.status.projectInfo.routes.length
-        })`,
+        title: `Routes (${allPages.length})`,
         icon: <TreeIcon type="share-alt" />,
-        disabled:
-          this.props.ApplciationStore.status.projectInfo.routes.length === 0
+        disabled: allPages.length === 0
       })
     }
 
     // Stores
-    if (this.props.ApplciationStore.status.projectInfo.routes) {
+    if (this.props.ApplciationStore.status.analyseInfo.projectAnalyseDob) {
       treeData[0].children.push({
         key: "stores",
         title: `Stores (${
-          this.props.ApplciationStore.status.projectInfo.stores.length
+          this.props.ApplciationStore.status.analyseInfo.projectAnalyseDob
+            .storeFiles.length
         })`,
         icon: <TreeIcon type="database" />,
         disabled:
-          this.props.ApplciationStore.status.projectInfo.stores.length === 0,
-        children: this.props.ApplciationStore.status.projectInfo.stores.map(
-          store => {
+          this.props.ApplciationStore.status.analyseInfo.projectAnalyseDob
+            .storeFiles.length === 0,
+        children: this.props.ApplciationStore.status.analyseInfo.projectAnalyseDob.storeFiles.map(
+          (storeFile: any, index: number) => {
             return {
-              key: "store-" + store.filePath,
-              title: store.name,
+              key: index,
+              title: storeFile.name,
               icon: <TreeIcon type="database" />
             }
           }
@@ -131,55 +141,68 @@ export class StructComponent extends PureComponent<Props, State> {
     }
 
     // Components
-    if (this.props.ApplciationStore.status.projectInfo.routes) {
-      treeData[0].children.push({
-        key: "components",
-        title: `Components`,
-        icon: <TreeIcon type="appstore-o" />,
-        disabled: true
-      })
-    }
+    treeData[0].children.push({
+      key: "components",
+      title: `Components`,
+      icon: <TreeIcon type="appstore-o" />,
+      disabled: true
+    })
 
     // Layout
+    const hasLayout = this.props.ApplciationStore.status.analyseInfo
+      .projectAnalyseLayout
+      ? this.props.ApplciationStore.status.analyseInfo.projectAnalyseLayout
+          .hasLayout
+      : false
     treeData[0].children.push({
       key: "layout",
       title: `Layout`,
-      icon: this.props.ApplciationStore.status.projectInfo.hasLayout ? (
+      icon: hasLayout ? (
         <TreeIcon type="layout" />
       ) : (
         <Tooltip title="Auto create layout files." placement="right">
           <PlusIcon onClick={this.props.ApplicationAction.createLayout} />
         </Tooltip>
       ),
-      disabled: !this.props.ApplciationStore.status.projectInfo.hasLayout
+      disabled: !hasLayout
     })
 
     // 404
+    const hasNotFound = this.props.ApplciationStore.status.analyseInfo
+      .projectAnalyseNotFound
+      ? this.props.ApplciationStore.status.analyseInfo.projectAnalyseNotFound
+          .hasNotFound
+      : false
     treeData[0].children.push({
       key: "404",
       title: `404`,
-      icon: this.props.ApplciationStore.status.projectInfo.has404File ? (
+      icon: hasNotFound ? (
         <TreeIcon type="file-unknown" />
       ) : (
         <Tooltip title="Auto create 404 page." placement="right">
           <PlusIcon onClick={this.props.ApplicationAction.create404} />
         </Tooltip>
       ),
-      disabled: !this.props.ApplciationStore.status.projectInfo.has404File
+      disabled: !hasNotFound
     })
 
     // Config
+    const hasConfig = this.props.ApplciationStore.status.analyseInfo
+      .projectAnalyseConfig
+      ? this.props.ApplciationStore.status.analyseInfo.projectAnalyseConfig
+          .hasConfig
+      : false
     treeData[0].children.push({
       key: "config",
       title: `Config`,
-      icon: this.props.ApplciationStore.status.projectInfo.hasConfigFile ? (
+      icon: hasConfig ? (
         <TreeIcon type="setting" />
       ) : (
         <Tooltip title="Auto create config files." placement="right">
           <PlusIcon onClick={this.props.ApplicationAction.createConfig} />
         </Tooltip>
       ),
-      disabled: !this.props.ApplciationStore.status.projectInfo.hasConfigFile
+      disabled: !hasConfig
     })
 
     return treeData

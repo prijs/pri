@@ -3,16 +3,24 @@ import * as path from "path"
 import * as React from "react"
 import { renderToString } from "react-dom/server"
 import StaticRouter from "react-router-dom/StaticRouter"
-import { IProjectInfo } from "./analyse-project-interface"
-import { IProjectConfig } from "./project-config-interface"
+import { IProjectConfig } from "../../utils/project-config-interface"
 
 export async function generateStaticHtml(
   projectRootPath: string,
   projectConfig?: IProjectConfig,
-  projectInfo?: IProjectInfo
+  analyseInfo?: any
 ) {
-  projectInfo.routes.forEach(route => {
-    generateHtmlByRouterPath(route.path, projectRootPath, projectConfig)
+  const pages = analyseInfo.projectAnalysePages
+    ? analyseInfo.projectAnalysePages.pages
+    : []
+  const markdownPages = analyseInfo.projectAnalyseMarkdownPages
+    ? analyseInfo.projectAnalyseMarkdownPages.pages
+    : []
+
+  const allPages = [...pages, ...markdownPages]
+
+  allPages.forEach(page => {
+    generateHtmlByRouterPath(page.routerPath, projectRootPath, projectConfig)
   })
 }
 

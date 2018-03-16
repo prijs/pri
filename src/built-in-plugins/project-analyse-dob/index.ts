@@ -22,6 +22,7 @@ const safeName = (str: string) => _.upperFirst(_.camelCase(str))
 interface IResult {
   projectAnalyseDob: {
     storeFiles: Array<{
+      name: string
       file: path.ParsedPath
     }>
   }
@@ -47,7 +48,7 @@ export default (instance: typeof pri) => {
             return true
           })
           .map(file => {
-            return { file }
+            return { file, name: safeName(file.name) }
           })
       }
     } as IResult
@@ -67,10 +68,6 @@ export default (instance: typeof pri) => {
 
         return
       }
-
-      const storeFilesInfo = analyseInfo.projectAnalyseDob.storeFiles.map(
-        storeFile => storeFile.file
-      )
 
       // Connect normal pages
       entry.pipe.set("normalPagesImportEnd", importEnd => {
@@ -132,24 +129,25 @@ export default (instance: typeof pri) => {
       const storesHelper = `
       import { combineStores } from "dob"
 
-      ${storeFilesInfo
+      ${analyseInfo.projectAnalyseDob.storeFiles
         .map(storeFile => {
-          const importAbsolutePath = path.join(storeFile.dir, storeFile.name)
+          const importAbsolutePath = path.join(
+            storeFile.file.dir,
+            storeFile.file.name
+          )
           const importRelativePath = path.relative(
             path.join(projectRootPath, helperPath.dir),
             importAbsolutePath
           )
-          return `import { ${safeName(storeFile.name)}Action, ${safeName(
+          return `import { ${storeFile.name}Action, ${
             storeFile.name
-          )}Store } from "${normalizePath(importRelativePath)}"`
+          }Store } from "${normalizePath(importRelativePath)}"`
         })
         .join("\n")}
 
-      const stores = combineStores({${storeFilesInfo
+      const stores = combineStores({${analyseInfo.projectAnalyseDob.storeFiles
         .map(storeFile => {
-          return `${safeName(storeFile.name)}Action, ${safeName(
-            storeFile.name
-          )}Store`
+          return `${storeFile.name}Action, ${storeFile.name}Store`
         })
         .join(",")}})
 

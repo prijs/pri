@@ -27,11 +27,6 @@ const columns: any = [
         </S.PathLink>
       )
     }
-  },
-  {
-    title: "IsIndex",
-    dataIndex: "isIndex",
-    key: "isIndex"
   }
 ]
 
@@ -45,15 +40,22 @@ export class RoutesComponent extends PureComponent<Props, State> {
       return null
     }
 
-    const dataSource = this.props.ApplciationStore.status.projectInfo.routes
+    const pages = this.props.ApplciationStore.status.analyseInfo
+      .projectAnalysePages
+      ? this.props.ApplciationStore.status.analyseInfo.projectAnalysePages.pages
+      : []
+    const markdownPages = this.props.ApplciationStore.status.analyseInfo
+      .projectAnalyseMarkdownPages
+      ? this.props.ApplciationStore.status.analyseInfo
+          .projectAnalyseMarkdownPages.pages
+      : []
+    const allPages = [...pages, ...markdownPages]
+
+    const dataSource = allPages
       .concat()
-      .sort((left, right) => left.path.length - right.path.length)
+      .sort((left, right) => left.routerPath.length - right.routerPath.length)
       .map(route => {
-        return {
-          key: route.filePath,
-          path: route.path,
-          isIndex: route.isIndex
-        }
+        return { key: route.routerPath, path: route.routerPath }
       })
 
     return (

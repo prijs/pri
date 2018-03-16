@@ -49,8 +49,8 @@ app.use(
 )
 
 // app.use(koaRoute.get("/api/status", async ctx => {
-//   const info = await analyseProject(projectRootPath)
-//   ctx.body = info
+//   const analyseInfo = await analyseProject(projectRootPath)
+//   ctx.body = analyseInfo
 // }))
 
 const initProjectConfig = getConfig(projectRootPath, yargs.argv.env)
@@ -186,16 +186,13 @@ async function fresh() {
 async function getProjectStatus() {
   const projectConfig = getConfig(projectRootPath, yargs.argv.env)
 
-  const projectInfo = await analyseProject(
+  const analyseInfo = await analyseProject(
     projectRootPath,
     yargs.argv.env,
     projectConfig
   )
 
-  return {
-    projectConfig,
-    projectInfo
-  }
+  return { projectConfig, analyseInfo }
 }
 
 // Socket

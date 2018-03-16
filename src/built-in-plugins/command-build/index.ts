@@ -6,13 +6,13 @@ import { pri } from "../../node"
 import { analyseProject } from "../../utils/analyse-project"
 import { createEntry } from "../../utils/create-entry"
 import { ensureFiles } from "../../utils/ensure-files"
-import { generateStaticHtml } from "../../utils/generate-static-html"
 import { log, spinner } from "../../utils/log"
 import { findNearestNodemodulesFile } from "../../utils/npm-finder"
 import { getConfig } from "../../utils/project-config"
 import { IProjectConfig } from "../../utils/project-config-interface"
 import text from "../../utils/text"
 import { lint } from "../../utils/tslint"
+import { generateStaticHtml } from "./generate-static-html"
 
 const projectRootPath = process.cwd()
 
@@ -50,16 +50,13 @@ export const CommandBuild = async (
   })
 
   const result = await spinner("Analyse project", async () => {
-    const projectInfo = await analyseProject(
+    const analyseInfo = await analyseProject(
       projectRootPath,
       env,
       projectConfig
     )
     const entryPath = createEntry(projectRootPath, env, projectConfig)
-    return {
-      projectInfo,
-      entryPath
-    }
+    return { analyseInfo, entryPath }
   })
 
   // Run webpack
@@ -86,7 +83,7 @@ export const CommandBuild = async (
       await generateStaticHtml(
         projectRootPath,
         projectConfig,
-        result.projectInfo
+        result.analyseInfo
       )
     })
   }

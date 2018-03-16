@@ -25,9 +25,9 @@ export const CommandDev = async () => {
     ensureFiles(projectRootPath, projectConfig, false)
   })
 
-  const entryPath = await spinner("Analyse project", async () => {
-    const result = await analyseProject(projectRootPath, env, projectConfig)
-    return createEntry(projectRootPath, env, projectConfig)
+  await spinner("Analyse project", async () => {
+    await analyseProject(projectRootPath, env, projectConfig)
+    createEntry(projectRootPath, env, projectConfig)
   })
 
   const freePort = await portfinder.getPortPromise()

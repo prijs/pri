@@ -30,7 +30,7 @@ export async function addPage(
     throw Error(`${options.path} already exist!`)
   }
 
-  if (projectInfo.stores.length === 0) {
+  if (projectInfo.projectInfo.stores.length === 0) {
     fs.outputFileSync(
       fileFullPath,
       prettier.format(
