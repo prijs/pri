@@ -61,6 +61,7 @@ export default (instance: typeof pri) => {
       return `
           ${header}
           import * as highlight from "highlight.js"
+          import "highlight.js/styles/github.css"
           import markdownIt from "markdown-it"
         `
     })
