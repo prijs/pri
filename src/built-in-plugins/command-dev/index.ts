@@ -187,11 +187,11 @@ export default (instance: typeof pri) => {
       }
 
       // Set custom env
-      if (projectConfig.env) {
+      if (projectConfig.customEnv) {
         entry.pipeBody(body => {
           return `
             ${body}
-            setCustomEnv(${JSON.stringify(projectConfig.env)})
+            setCustomEnv(${JSON.stringify(projectConfig.customEnv)})
           `
         })
       }
