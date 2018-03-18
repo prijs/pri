@@ -17,15 +17,8 @@ import {
   tempPath
 } from "./structor-config"
 
-export const analyseProject = async (
-  projectRootPath: string,
-  env: "local" | "prod",
-  projectConfig: IProjectConfig
-) => {
-  const { projectInfo, files } = await walkProject(
-    projectRootPath,
-    projectConfig
-  )
+export const analyseProject = async (projectRootPath: string, env: "local" | "prod", projectConfig: IProjectConfig) => {
+  const { projectInfo, files } = await walkProject(projectRootPath, projectConfig)
 
   // Clear analyseInfo
   plugin.analyseInfo = {}
@@ -65,45 +58,33 @@ function walkProject(
 
   return new Promise((resolve, reject) => {
     const walker = walk.walk(projectRootPath, {
-      filters: ["node_modules", ".git"]
+      filters: [
+        path.join(projectRootPath, "node_modules"),
+        path.join(projectRootPath, ".git"),
+        path.join(projectRootPath, tempPath.dir)
+      ]
     })
 
     const files: path.ParsedPath[] = []
 
-    walker.on(
-      "directories",
-      (root: string, dirStatsArray: WalkStats[], next: () => void) => {
+    walker.on("directories", (root: string, dirStatsArray: WalkStats[], next: () => void) => {
+      next()
+    })
+
+    walker.on("file", (root: string, fileStats: WalkStats, next: () => void) => {
+      if (root.startsWith(path.join(projectRootPath, projectConfig.distDir))) {
         next()
+        return
       }
-    )
 
-    walker.on(
-      "file",
-      (root: string, fileStats: WalkStats, next: () => void) => {
-        if (root.startsWith(path.join(projectRootPath, tempPath.dir))) {
-          next()
-          return
-        }
+      files.push(path.parse(path.join(root, fileStats.name)))
 
-        if (
-          root.startsWith(path.join(projectRootPath, projectConfig.distDir))
-        ) {
-          next()
-          return
-        }
+      next()
+    })
 
-        files.push(path.parse(path.join(root, fileStats.name)))
-
-        next()
-      }
-    )
-
-    walker.on(
-      "errors",
-      (root: string, nodeStatsArray: WalkStats, next: () => void) => {
-        next()
-      }
-    )
+    walker.on("errors", (root: string, nodeStatsArray: WalkStats, next: () => void) => {
+      next()
+    })
 
     walker.on("end", () => {
       resolve({ projectInfo, files })

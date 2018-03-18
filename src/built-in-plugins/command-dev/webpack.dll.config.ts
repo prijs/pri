@@ -25,14 +25,21 @@ export default {
       "dob",
       "dob-react",
       "antd",
+      "antd/dist/antd.css",
       "highlight.js",
       "markdown-it",
-      "react-hot-loader",
       "react-loadable",
       "react-router-dom",
       "styled-components",
       "history/createBrowserHistory",
-      "pri/client"
+      "pri/client",
+
+      /** include this will make hot load invaild! */
+      // "react-hot-loader",
+
+      // /** webpack */
+      "sockjs-client/dist/sockjs.js",
+      "html-entities"
     ]
   },
 

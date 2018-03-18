@@ -43,6 +43,8 @@ const stats = {
   hash: false
 }
 
+const babelPlugins: any = [["transform-runtime"]]
+
 const config: webpack.Configuration = {
   entry: entryPath,
 
@@ -73,15 +75,7 @@ const config: webpack.Configuration = {
                 ],
                 ["stage-2"]
               ],
-              plugins: [
-                ["transform-runtime"],
-                [
-                  "import",
-                  {
-                    libraryName: "antd"
-                  }
-                ]
-              ],
+              plugins: babelPlugins,
               comments: true
             }
           },
@@ -204,6 +198,10 @@ if (env === "local") {
 
 if (env === "prod") {
   config.plugins.push(new ExtractTextPlugin(distFileName + ".css"))
+}
+
+if (env === "prod") {
+  babelPlugins.push(["import", { libraryName: "antd" }])
 }
 
 export default plugin.buildConfigPipes.reduce((newConfig, fn) => fn(env, newConfig), config)

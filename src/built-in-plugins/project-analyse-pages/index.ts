@@ -25,10 +25,7 @@ export default (instance: typeof pri) => {
       projectAnalysePages: {
         pages: files
           .filter(file => {
-            const relativePath = path.relative(
-              projectRootPath,
-              path.join(file.dir, file.name)
-            )
+            const relativePath = path.relative(projectRootPath, path.join(file.dir, file.name))
 
             if (!relativePath.startsWith(pagesPath.dir)) {
               return false
@@ -45,12 +42,8 @@ export default (instance: typeof pri) => {
             return true
           })
           .map(file => {
-            const relativePathWithoutIndex = path.relative(
-              projectRootPath,
-              file.dir
-            )
-            const routerPath =
-              "/" + path.relative(pagesPath.dir, relativePathWithoutIndex)
+            const relativePathWithoutIndex = path.relative(projectRootPath, file.dir)
+            const routerPath = "/" + path.relative(pagesPath.dir, relativePathWithoutIndex)
 
             return { routerPath: normalizePath(routerPath), file }
           })
@@ -58,29 +51,21 @@ export default (instance: typeof pri) => {
     } as IResult
   })
 
-  instance.project.onCreateEntry(
-    (analyseInfo: IResult, entry, env, projectConfig) => {
-      if (analyseInfo.projectAnalysePages.pages.length === 0) {
-        return
-      }
+  instance.project.onCreateEntry((analyseInfo: IResult, entry, env, projectConfig) => {
+    if (analyseInfo.projectAnalysePages.pages.length === 0) {
+      return
+    }
 
-      entry.pipeEntryComponent(entryComponent => {
-        return `
+    entry.pipeEntryComponent(entryComponent => {
+      return `
         ${analyseInfo.projectAnalysePages.pages
           .map(page => {
-            const relativePageFilePath = path.relative(
-              projectRootPath,
-              page.file.dir + "/" + page.file.name
-            )
+            const relativePageFilePath = path.relative(projectRootPath, page.file.dir + "/" + page.file.name)
 
-            const componentName =
-              safeName(relativePageFilePath) +
-              md5(relativePageFilePath).slice(0, 5)
+            const componentName = safeName(relativePageFilePath) + md5(relativePageFilePath).slice(0, 5)
             const chunkName = _.camelCase(page.routerPath) || "index"
 
-            const pageRequirePath = normalizePath(
-              path.join(page.file.dir, page.file.name)
-            )
+            const pageRequirePath = normalizePath(path.join(page.file.dir, page.file.name))
 
             const importCode = `import(/* webpackChunkName: "${chunkName}" */ "${pageRequirePath}")${entry.pipe.get(
               "normalPagesImportEnd",
@@ -97,21 +82,16 @@ export default (instance: typeof pri) => {
           .join("\n")}
           ${entryComponent}
       `
-      })
+    })
 
-      entry.pipeRenderRoutes(renderRoutes => {
-        return `
+    entry.pipeRenderRoutes(renderRoutes => {
+      return `
         ${renderRoutes}
         ${analyseInfo.projectAnalysePages.pages
           .map(page => {
-            const relativePageFilePath = path.relative(
-              projectRootPath,
-              page.file.dir + "/" + page.file.name
-            )
+            const relativePageFilePath = path.relative(projectRootPath, page.file.dir + "/" + page.file.name)
 
-            const componentName =
-              safeName(relativePageFilePath) +
-              md5(relativePageFilePath).slice(0, 5)
+            const componentName = safeName(relativePageFilePath) + md5(relativePageFilePath).slice(0, 5)
             const chunkName = _.camelCase(page.routerPath) || "index"
 
             return `
@@ -122,7 +102,6 @@ export default (instance: typeof pri) => {
           })
           .join("\n")}
       `
-      })
-    }
-  )
+    })
+  })
 }
