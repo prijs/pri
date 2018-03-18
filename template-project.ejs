@@ -72,8 +72,9 @@
   <div id="root"></div>
   <div id="pri-help-button" onclick="priToggleHelpIframe()">Toggle dashboard</div>
 
-  <iframe id="pri-help-iframe" src="//localhost:<%= htmlWebpackPlugin.options.htmlTemplateArgs.dashboardClientPort %>"></iframe>
+  <iframe id="pri-help-iframe" src="//127.0.0.1:<%= htmlWebpackPlugin.options.htmlTemplateArgs.dashboardClientPort %>"></iframe>
 
+  <script src="<%= htmlWebpackPlugin.options.htmlTemplateArgs.libraryStaticPath %>"></script>
   <script>
     const priHelpButton = document.getElementById("pri-help-button")
     const priHelpIframe = document.getElementById("pri-help-iframe")

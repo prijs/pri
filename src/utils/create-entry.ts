@@ -17,12 +17,7 @@ export class Entry {
   }
 
   public getAll() {
-    return [
-      this.getHeader(),
-      this.getBody(),
-      this.getEntryComponent(),
-      this.getFooter()
-    ].join("\n")
+    return [this.getHeader(), this.getBody(), this.getEntryComponent(), this.getFooter()].join("\n")
   }
 
   public get pipe() {
@@ -76,7 +71,7 @@ export class Entry {
       "entryBody",
       `
       const customHistory = createBrowserHistory({
-        basename: "${this.env === "local" ? "/" : this.projectConfig.baseHref}"
+        basename: "${this.projectConfig.baseHref}"
       })
     `
     )
@@ -130,11 +125,7 @@ export class Entry {
   }
 }
 
-export function createEntry(
-  projectRootPath: string,
-  env: "local" | "prod",
-  projectConfig: IProjectConfig
-) {
+export function createEntry(projectRootPath: string, env: "local" | "prod", projectConfig: IProjectConfig) {
   const newEntryObject = new Entry(env, projectConfig)
 
   // Clear pipe

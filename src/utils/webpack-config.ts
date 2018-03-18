@@ -1,4 +1,3 @@
-// import * as AutoDllPlugin from "autodll-webpack-plugin"
 import * as ExtractTextPlugin from "extract-text-webpack-plugin"
 import * as fs from "fs-extra"
 import * as HtmlWebpackPlugin from "html-webpack-plugin"
@@ -8,6 +7,7 @@ import * as path from "path"
 import * as webpack from "webpack"
 import * as yargs from "yargs"
 import { initPlugins, plugin } from "../utils/plugins"
+import { tempPath } from "../utils/structor-config"
 import { getConfig } from "./project-config"
 
 const projectRootPath = yargs.argv.env.projectRootPath
@@ -50,7 +50,9 @@ const config: webpack.Configuration = {
     path: distDir,
     filename: distFileName + ".js",
     publicPath,
-    chunkFilename: "[id].chunk.js"
+    chunkFilename: "[id].chunk.js",
+    hotUpdateChunkFilename: "hot~[id].[hash:4].chunk.js",
+    hotUpdateMainFilename: "hot-update.[hash:4].json"
   },
 
   module: {
@@ -156,16 +158,6 @@ const config: webpack.Configuration = {
   },
 
   plugins: [
-    // new AutoDllPlugin({
-    //   inject: true,
-    //   filename: "[name].dll.js",
-    //   entry: {
-    //     vendor: [
-    //       "react",
-    //       "react-dom"
-    //     ]
-    //   }
-    // })
     // new PreloadWebpackPlugin({
     //   rel: "prefetch"
     // })
@@ -175,6 +167,8 @@ const config: webpack.Configuration = {
 
   // Only for Devserver
   devServer: {
+    contentBase: path.join(projectRootPath, tempPath.dir, "static"),
+    compress: true,
     historyApiFallback: {
       rewrites: [
         {
@@ -212,7 +206,4 @@ if (env === "prod") {
   config.plugins.push(new ExtractTextPlugin(distFileName + ".css"))
 }
 
-export default plugin.buildConfigPipes.reduce(
-  (newConfig, fn) => fn(env, newConfig),
-  config
-)
+export default plugin.buildConfigPipes.reduce((newConfig, fn) => fn(env, newConfig), config)

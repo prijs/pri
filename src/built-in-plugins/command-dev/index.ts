@@ -1,8 +1,10 @@
 import { exec, execSync, fork } from "child_process"
+import * as colors from "colors"
 import * as fs from "fs-extra"
 import * as open from "opn"
 import * as path from "path"
 import * as portfinder from "portfinder"
+import * as webpack from "webpack"
 import * as webpackDevServer from "webpack-dev-server"
 import { pri } from "../../node"
 import { analyseProject } from "../../utils/analyse-project"
@@ -16,6 +18,10 @@ import { tempJsEntryPath, tempPath } from "../../utils/structor-config"
 import text from "../../utils/text"
 
 const projectRootPath = process.cwd()
+const dllFileName = "main.dll.js"
+const dllMainfestName = "mainfest.json"
+const dllOutPath = path.join(projectRootPath, ".temp/static/dlls")
+const libraryStaticPath = "/dlls/" + dllFileName
 
 export const CommandDev = async () => {
   const env = "local"
@@ -29,6 +35,26 @@ export const CommandDev = async () => {
     await analyseProject(projectRootPath, env, projectConfig)
     createEntry(projectRootPath, env, projectConfig)
   })
+
+  log(colors.blue("\nCreate dlls\n"))
+
+  execSync(
+    [
+      `${findNearestNodemodulesFile("/.bin/webpack")}`,
+      `--mode development`,
+      `--progress`,
+      `--config ${path.join(__dirname, "./webpack.dll.config.js")}`,
+      `--env.projectRootPath ${projectRootPath}`,
+      `--env.dllOutPath ${dllOutPath}`,
+      `--env.dllFileName ${dllFileName}`,
+      `--env.dllMainfestName ${dllMainfestName}`
+    ].join(" "),
+    {
+      stdio: "inherit"
+    }
+  )
+
+  log(colors.blue("\nStart dev server.\n"))
 
   const freePort = await portfinder.getPortPromise()
   const dashboardServerPort = await portfinder.getPortPromise({
@@ -52,15 +78,11 @@ export const CommandDev = async () => {
   // If has't dashboard bundle, run dashboard dev server only.
   const dashboardBundleRootPath = path.join(__dirname, "../../bundle")
   const dashboardBundleFileName = "main"
-  const hasDashboardBundle = fs.existsSync(
-    path.join(dashboardBundleRootPath, dashboardBundleFileName + ".js")
-  )
+  const hasDashboardBundle = fs.existsSync(path.join(dashboardBundleRootPath, dashboardBundleFileName + ".js"))
 
   if (hasDashboardBundle) {
     if (projectConfig.useHttps) {
-      log(
-        `you should set chrome://flags/#allow-insecure-localhost, to trust local certificate.`
-      )
+      log(`you should set chrome://flags/#allow-insecure-localhost, to trust local certificate.`)
     }
 
     // Start dashboard client production server
@@ -89,17 +111,12 @@ export const CommandDev = async () => {
         `--env.projectRootPath ${projectRootPath}`,
         `--env.env ${env}`,
         `--env.publicPath /static/`,
-        `--env.entryPath ${path.join(
-          projectRootPath,
-          path.format(tempJsEntryPath)
-        )}`,
+        `--env.entryPath ${path.join(projectRootPath, path.format(tempJsEntryPath))}`,
         `--env.devServerPort ${freePort}`,
-        `--env.htmlTemplatePath ${path.join(
-          __dirname,
-          "../../../template-project.ejs"
-        )}`,
+        `--env.htmlTemplatePath ${path.join(__dirname, "../../../template-project.ejs")}`,
         `--env.htmlTemplateArgs.dashboardServerPort ${dashboardServerPort}`,
-        `--env.htmlTemplateArgs.dashboardClientPort ${dashboardClientPort}`
+        `--env.htmlTemplateArgs.dashboardClientPort ${dashboardClientPort}`,
+        `--env.htmlTemplateArgs.libraryStaticPath ${libraryStaticPath}`
       ].join(" "),
       {
         stdio: "inherit"
@@ -121,10 +138,7 @@ export const CommandDev = async () => {
         `--env.entryPath ${path.join(__dirname, "dashboard/client/index.js")}`,
         `--env.distFileName main`,
         `--env.devServerPort ${dashboardClientPort}`,
-        `--env.htmlTemplatePath ${path.join(
-          __dirname,
-          "../../../template-dashboard.ejs"
-        )}`,
+        `--env.htmlTemplatePath ${path.join(__dirname, "../../../template-dashboard.ejs")}`,
         `--env.htmlTemplateArgs.dashboardServerPort ${dashboardServerPort}`
       ].join(" "),
       {
@@ -135,22 +149,42 @@ export const CommandDev = async () => {
 }
 
 export default (instance: typeof pri) => {
+  instance.build.pipeConfig((env, config) => {
+    if (env !== "local") {
+      return config
+    }
+
+    config.plugins.push(
+      new webpack.DllReferencePlugin({
+        context: ".",
+        manifest: require(path.join(dllOutPath, dllMainfestName))
+      })
+    )
+
+    return config
+  })
+
   instance.project.onCreateEntry((analyseInfo, entry, env, projectConfig) => {
     if (env === "local") {
       entry.pipeHeader(header => {
         return `
           ${header}
           import { hot } from "react-hot-loader"
-        `
-      })
-
-      // Set local env
-      entry.pipeBody(body => {
-        return `
-          ${body}
           setEnvLocal()
         `
       })
+
+      // Redirect to basename
+      if (projectConfig.baseHref !== "/") {
+        entry.pipeBody(body => {
+          return `
+            ${body}
+            if (location.pathname === "/") {
+              customHistory.push("/")
+            }
+          `
+        })
+      }
 
       // Set custom env
       if (projectConfig.env) {

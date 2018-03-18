@@ -30,31 +30,17 @@ export const CommandBuild = async (
   lint(projectRootPath)
 
   // Clean dist dir
-  execSync(
-    `${findNearestNodemodulesFile(".bin/rimraf")} ${path.join(
-      projectRootPath,
-      projectConfig.distDir
-    )}`
-  )
+  execSync(`${findNearestNodemodulesFile(".bin/rimraf")} ${path.join(projectRootPath, projectConfig.distDir)}`)
 
   // Clean .temp dir
-  execSync(
-    `${findNearestNodemodulesFile(".bin/rimraf")} ${path.join(
-      projectRootPath,
-      ".temp"
-    )}`
-  )
+  execSync(`${findNearestNodemodulesFile(".bin/rimraf")} ${path.join(projectRootPath, ".temp")}`)
 
   await spinner("Ensure project files", async () => {
     ensureFiles(projectRootPath, projectConfig, false)
   })
 
   const result = await spinner("Analyse project", async () => {
-    const analyseInfo = await analyseProject(
-      projectRootPath,
-      env,
-      projectConfig
-    )
+    const analyseInfo = await analyseProject(projectRootPath, env, projectConfig)
     const entryPath = createEntry(projectRootPath, env, projectConfig)
     return { analyseInfo, entryPath }
   })
@@ -80,11 +66,7 @@ export const CommandBuild = async (
   // If using staticBuild, generate index pages for all router.
   if (projectConfig.staticBuild) {
     await spinner("Generate static files.", async () => {
-      await generateStaticHtml(
-        projectRootPath,
-        projectConfig,
-        result.analyseInfo
-      )
+      await generateStaticHtml(projectRootPath, projectConfig, result.analyseInfo)
     })
   }
 }
@@ -92,11 +74,17 @@ export const CommandBuild = async (
 export default (instance: typeof pri) => {
   instance.project.onCreateEntry((analyseInfo, entry, env, projectConfig) => {
     if (env === "prod") {
+      entry.pipeHeader(header => {
+        return `
+          ${header}
+          setEnvProd()
+        `
+      })
+
       // Set prod env
       entry.pipeBody(body => {
         return `
           ${body}
-          setEnvProd()
         `
       })
 

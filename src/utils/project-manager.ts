@@ -5,14 +5,7 @@ import * as path from "path"
 import * as prettier from "prettier"
 import { analyseProject } from "./analyse-project"
 import { getConfig } from "./project-config"
-import {
-  configPaths,
-  helperPath,
-  layoutPath,
-  notFoundPath,
-  pagesPath,
-  storesPath
-} from "./structor-config"
+import { configPaths, helperPath, layoutPath, notFoundPath, pagesPath, storesPath } from "./structor-config"
 
 export async function addPage(
   projectRootPath: string,
@@ -23,8 +16,7 @@ export async function addPage(
   const env = "local"
   const projectConfig = getConfig(projectRootPath, env)
   const projectInfo = await analyseProject(projectRootPath, env, projectConfig)
-  const fileFullPath =
-    path.join(projectRootPath, pagesPath.dir, options.path, "index") + ".tsx"
+  const fileFullPath = path.join(projectRootPath, pagesPath.dir, options.path, "index") + ".tsx"
 
   if (fs.existsSync(fileFullPath)) {
     throw Error(`${options.path} already exist!`)
@@ -65,16 +57,9 @@ export async function addPage(
       )
     )
   } else {
-    const helperAbsolutePath = path.join(
-      projectRootPath,
-      helperPath.dir,
-      helperPath.name
-    )
+    const helperAbsolutePath = path.join(projectRootPath, helperPath.dir, helperPath.name)
     const fileAbsoluteDirPath = path.parse(fileFullPath).dir
-    const relativeToHelperPath = path.relative(
-      fileAbsoluteDirPath,
-      helperAbsolutePath
-    )
+    const relativeToHelperPath = path.relative(fileAbsoluteDirPath, helperAbsolutePath)
     fs.outputFileSync(
       fileFullPath,
       prettier.format(
@@ -197,14 +182,8 @@ export async function create404(projectRootPath: string) {
 }
 
 export async function createConfig(projectRootPath: string) {
-  const defaultFullPath = path.join(
-    projectRootPath,
-    path.format(configPaths.default)
-  )
-  const localFullPath = path.join(
-    projectRootPath,
-    path.format(configPaths.local)
-  )
+  const defaultFullPath = path.join(projectRootPath, path.format(configPaths.default))
+  const localFullPath = path.join(projectRootPath, path.format(configPaths.local))
   const prodFullPath = path.join(projectRootPath, path.format(configPaths.prod))
 
   if (fs.existsSync(defaultFullPath)) {
@@ -240,8 +219,7 @@ export async function addStore(
   const camelName = _.camelCase(options.name)
   const camelUpperFirstName = _.upperFirst(camelName)
   const kebabName = _.kebabCase(options.name)
-  const fileFullPath =
-    path.join(projectRootPath, storesPath.dir, kebabName) + ".tsx"
+  const fileFullPath = path.join(projectRootPath, storesPath.dir, kebabName) + ".tsx"
 
   if (fs.existsSync(fileFullPath)) {
     throw Error(`${kebabName} already exist!`)
