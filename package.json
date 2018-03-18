@@ -1,19 +1,18 @@
 {
   "name": "pri",
-  "version": "0.3.10",
+  "version": "0.3.11",
   "types": "src/node/index.ts",
   "main": "built/node/index.js",
   "scripts": {
     "start": "tsc -w",
-    "create-client-declaration": "tsc --lib dom,es5,es6,scripthost --declaration src/client/index --declarationDir declare/client --outDir declare/client && find declare/client -type f -name \"*.js\" -delete",
+    "create-client-declaration":
+      "tsc --lib dom,es5,es6,scripthost --declaration src/client/index --declarationDir declare/client --outDir declare/client && find declare/client -type f -name \"*.js\" -delete",
     "build": "rm -rf built && rm -rf .cache && tsc && npm run build-dashboard && npm run create-client-declaration",
     "prepublishOnly": "npm run build",
     "build-dashboard": "node ./built/built-in-plugins/command-dev/dashboard/bundle-client.js",
     "lint": "echo 'Pre-commit checks...' && tslint --fix './src/**/*.?(ts|tsx)'"
   },
-  "pre-commit": [
-    "lint"
-  ],
+  "pre-commit": ["lint"],
   "bin": {
     "pri": "built/bin.js"
   },
