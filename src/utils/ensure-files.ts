@@ -23,7 +23,7 @@ export const ensureFiles = (projectRootPath: string, config: IProjectConfig, sup
   }
 }
 
-function ensureGitignore(projectRootPath: string, config: IProjectConfig) {
+export function ensureGitignore(projectRootPath: string, config: IProjectConfig) {
   const filePath = path.join(projectRootPath, ".gitignore")
   const ensureContents = ["node_modules", config.distDir || "dist", ".cache", ".vscode", ".temp"]
 
@@ -39,7 +39,7 @@ function ensureGitignore(projectRootPath: string, config: IProjectConfig) {
   fs.writeFileSync(filePath, exitFileContentArray.join("\n"))
 }
 
-function ensureTsconfig(projectRootPath: string) {
+export function ensureTsconfig(projectRootPath: string) {
   const filePath = path.join(projectRootPath, "tsconfig.json")
   const ensureContent = {
     compilerOptions: {
@@ -69,7 +69,7 @@ function ensureTsconfig(projectRootPath: string) {
   fs.writeFileSync(filePath, JSON.stringify(exitFileContent, null, 2))
 }
 
-function ensureTslint(projectRootPath: string) {
+export function ensureTslint(projectRootPath: string) {
   const filePath = path.join(projectRootPath, "tslint.json")
   const ensureContents = {
     extends: "tslint:latest",
@@ -91,7 +91,7 @@ function ensureTslint(projectRootPath: string) {
   fs.writeFileSync(filePath, JSON.stringify(ensureContents, null, 2))
 }
 
-function ensurePackageJson(projectRootPath: string) {
+export function ensurePackageJson(projectRootPath: string) {
   const filePath = path.join(projectRootPath, "package.json")
   const ensureScripts = {
     start: "pri",
@@ -115,7 +115,7 @@ function ensurePackageJson(projectRootPath: string) {
   fs.writeFileSync(filePath, JSON.stringify(exitFileContent, null, 2))
 }
 
-function ensureVscode(projectRootPath: string) {
+export function ensureVscode(projectRootPath: string) {
   const filePath = path.join(projectRootPath, ".vscode/settings.json")
   const ensureContent = {
     "editor.formatOnPaste": true,
@@ -135,7 +135,7 @@ function ensureVscode(projectRootPath: string) {
   fs.outputFileSync(filePath, JSON.stringify(ensureContent, null, 2))
 }
 
-function ensureHomePage(projectRootPath: string) {
+export function ensureHomePage(projectRootPath: string) {
   const filePath = path.join(projectRootPath, path.join(pagesPath.dir, "index.tsx"))
 
   if (fs.existsSync(filePath)) {
@@ -182,12 +182,12 @@ function ensureHomePage(projectRootPath: string) {
   )
 }
 
-function ensureDeclares(projectRootPath: string) {
+export function ensureDeclares(projectRootPath: string) {
   const declareAbsolutePath = path.join(projectRootPath, declarePath.dir)
   fs.copySync(path.join(__dirname, "../../declare"), declareAbsolutePath)
 }
 
-function ensurePrettierrc(projectRootPath: string) {
+export function ensurePrettierrc(projectRootPath: string) {
   const filePath = path.join(projectRootPath, ".prettierrc")
 
   const prettierObject = {
