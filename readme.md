@@ -40,14 +40,14 @@ Production deployment. By default the dist folder is `./dist`.
 
 ## Usage
 
-* [Pages are routes.](https://ascoders.github.io/pri-docs/usage/pages-are-routes)
-* [Markdown support.](https://ascoders.github.io/pri-docs/usage/markdown-support)
-* [Scss/Less/Css support.](https://ascoders.github.io/pri-docs/usage/scss-less-css)
-* [Layout support.](https://ascoders.github.io/pri-docs/usage/layout-support)
-* [Page not found.](https://ascoders.github.io/pri-docs/usage/page-not-found)
-* [Built in data stream.](https://ascoders.github.io/pri-docs/usage/built-in-data-stream)
-* [Environment variable.](https://ascoders.github.io/pri-docs/usage/environment-variable)
-* [Deploy to github pages.](https://ascoders.github.io/pri-docs/usage/deploy-to-github-pages)
+* [Pages are routes.](https://ascoders.github.io/pri-docs/pages-are-routes)
+* [Markdown support.](https://ascoders.github.io/pri-docs/features/markdown-support)
+* [Scss/Less/Css support.](https://ascoders.github.io/pri-docs/features/scss-less-css)
+* [Layout support.](https://ascoders.github.io/pri-docs/layout-support)
+* [Page not found.](https://ascoders.github.io/pri-docs/features/page-not-found)
+* [Built in data stream.](https://ascoders.github.io/pri-docs/features/built-in-data-stream)
+* [Environment variable.](https://ascoders.github.io/pri-docs/features/environment-variable)
+* [Deploy to github pages.](https://ascoders.github.io/pri-docs/features/deploy-to-github-pages)
 
 #### TODO
 
@@ -57,16 +57,16 @@ Production deployment. By default the dist folder is `./dist`.
 ## Features
 
 * [Project Dashboard.](https://ascoders.github.io/pri-docs/features/project-dashboard)
-* [Typescript support.](https://ascoders.github.io/pri-docs/features/typescript-support)
-* [Tslint support.](https://ascoders.github.io/pri-docs/features/tslint-support)
+* [Typescript support.](https://ascoders.github.io/pri-docs/automatic-optimization/typescript-support)
+* [Tslint support.](https://ascoders.github.io/pri-docs/automatic-optimization/tslint-support)
 * [Dynamic import.](https://ascoders.github.io/pri-docs/features/dynamic-import)
-* [Automatic HMR.](https://ascoders.github.io/pri-docs/features/automatic-hmr)
-* [Automatic code splitting.](https://ascoders.github.io/pri-docs/features/automatic-code-splitting)
-* [Import on demand.](https://ascoders.github.io/pri-docs/features/import-on-demand)
-* [Auto create project files.](https://ascoders.github.io/pri-docs/features/auto-create-project-files)
-* [Auto pick shared modules.](https://ascoders.github.io/pri-docs/features/auto-pick-shared-modules)
-* [Tree Shaking.](https://ascoders.github.io/pri-docs/features/tree-shaking)
-* [Scope Hoist.](https://ascoders.github.io/pri-docs/features/scope-hoist)
+* [Automatic HMR.](https://ascoders.github.io/pri-docs/automatic-optimization/automatic-hmr)
+* [Automatic code splitting.](https://ascoders.github.io/pri-docs/automatic-optimization/automatic-code-splitting)
+* [Import on demand.](https://ascoders.github.io/pri-docs/automatic-optimization/import-on-demand)
+* [Auto create project files.](https://ascoders.github.io/pri-docs/automatic-optimization/auto-create-project-files)
+* [Auto pick shared modules.](https://ascoders.github.io/pri-docs/automatic-optimization/auto-pick-shared-modules)
+* [Tree Shaking.](https://ascoders.github.io/pri-docs/automatic-optimization/tree-shaking)
+* [Scope Hoist.](https://ascoders.github.io/pri-docs/automatic-optimization/scope-hoist)
 
 ### TODO
 
