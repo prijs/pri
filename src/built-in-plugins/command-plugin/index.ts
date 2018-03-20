@@ -23,6 +23,12 @@ const CommandPluginInit = () => {
   ensurePrettierrc(projectRootPath)
   ensurePackageJson(projectRootPath)
   ensureEntry(projectRootPath)
+
+  log("\n Success init pri plugin, you can run serval commands:\n")
+
+  log(colors.blue("  npm start"))
+
+  log(`    Run typescript watch.`)
 }
 
 export default (instance: typeof pri) => {

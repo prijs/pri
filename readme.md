@@ -67,6 +67,7 @@ Production deployment. By default the dist folder is `./dist`.
 * [Auto pick shared modules.](https://ascoders.github.io/pri-docs/automatic-optimization/auto-pick-shared-modules)
 * [Tree Shaking.](https://ascoders.github.io/pri-docs/automatic-optimization/tree-shaking)
 * [Scope Hoist.](https://ascoders.github.io/pri-docs/automatic-optimization/scope-hoist)
+* [Auto dlls.](https://ascoders.github.io/pri-docs/automatic-optimization/auto-dlls)
 
 ### TODO
 
