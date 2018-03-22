@@ -6,7 +6,7 @@ import * as prettier from "prettier"
 import { IProjectConfig } from "./project-config-interface"
 import { declarePath, pagesPath } from "./structor-config"
 
-export const ensureFiles = (projectRootPath: string, config: IProjectConfig, supplementCode: boolean) => {
+export const ensureFiles = (projectRootPath: string, config: IProjectConfig, createDefaultPage: boolean) => {
   ensureGitignore(projectRootPath, config)
   ensureTsconfig(projectRootPath)
   ensureTslint(projectRootPath)
@@ -15,9 +15,12 @@ export const ensureFiles = (projectRootPath: string, config: IProjectConfig, sup
   ensureDeclares(projectRootPath)
   ensurePrettierrc(projectRootPath)
 
-  if (supplementCode) {
+  if (createDefaultPage) {
     const pagesAbsolutePath = path.join(projectRootPath, pagesPath.dir)
-    if (fs.readdirSync(pagesAbsolutePath).every(fileName => path.parse(fileName).name !== "index")) {
+    if (
+      !fs.existsSync(pagesAbsolutePath) ||
+      fs.readdirSync(pagesAbsolutePath).every(fileName => path.parse(fileName).name !== "index")
+    ) {
       ensureHomePage(projectRootPath)
     }
   }
@@ -143,7 +146,7 @@ export function ensureHomePage(projectRootPath: string) {
   }
 
   const ensureContent = `
-    import { env } from "pri"
+    import { env } from "pri/client"
     import * as React from "react"
 
     class Props {

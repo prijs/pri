@@ -60,11 +60,7 @@ class FormComponent extends PureComponent<Props, State> {
         </FormItem>
 
         <FormItem {...tailFormItemLayout}>
-          <Button
-            type="primary"
-            htmlType="submit"
-            disabled={hasErrors(this.props.form.getFieldsError())}
-          >
+          <Button type="primary" htmlType="submit" disabled={hasErrors(this.props.form.getFieldsError())}>
             Ok
           </Button>
         </FormItem>

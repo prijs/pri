@@ -7,19 +7,27 @@ import { Entry } from "./create-entry"
 import { getDefault } from "./esModule"
 import { IProjectConfig } from "./project-config-interface"
 
-import pluginCommandBuild from "../built-in-plugins/command-build"
-import pluginCommandDev from "../built-in-plugins/command-dev"
-import pluginCommandInit from "../built-in-plugins/command-init"
-import pluginCommandPlugin from "../built-in-plugins/command-plugin"
-import pluginCommandPreview from "../built-in-plugins/command-preview"
+const getBuiltInPlugins = (projectRootPath: string) => {
+  const plugins = [
+    ["pri-plugin-command-dev", "../built-in-plugins/command-dev/index.js"],
+    ["pri-plugin-command-build", "../built-in-plugins/command-build/index.js"],
+    ["pri-plugin-command-init", "../built-in-plugins/command-init/index.js"],
+    ["pri-plugin-command-preview", "../built-in-plugins/command-preview/index.js"],
+    ["pri-plugin-command-plugin", "../built-in-plugins/command-plugin/index.js"],
+    ["pri-plugin-project-analyse-config", "../built-in-plugins/project-analyse-config/index.js"],
+    ["pri-plugin-project-analyse-dob", "../built-in-plugins/project-analyse-dob/index.js"],
+    ["pri-plugin-project-analyse-layouts", "../built-in-plugins/project-analyse-layouts/index.js"],
+    ["pri-plugin-project-analyse-markdown-layouts", "../built-in-plugins/project-analyse-markdown-layouts/index.js"],
+    ["pri-plugin-project-analyse-markdown-pages", "../built-in-plugins/project-analyse-markdown-pages/index.js"],
+    ["pri-plugin-project-analyse-not-found", "../built-in-plugins/project-analyse-not-found/index.js"],
+    ["pri-plugin-project-analyse-pages", "../built-in-plugins/project-analyse-pages/index.js"]
+  ]
 
-import pluginProjectAnalyseConfig from "../built-in-plugins/project-analyse-config"
-import pluginProjectAnalyseDob from "../built-in-plugins/project-analyse-dob"
-import pluginProjectAnalyseLayouts from "../built-in-plugins/project-analyse-layouts"
-import pluginProjectAnalyseMarkdownLayouts from "../built-in-plugins/project-analyse-markdown-layouts"
-import pluginProjectAnalyseMarkdownPages from "../built-in-plugins/project-analyse-markdown-pages"
-import pluginProjectAnalyseNotFound from "../built-in-plugins/project-analyse-not-found"
-import pluginProjectAnalysePages from "../built-in-plugins/project-analyse-pages"
+  return plugins.reduce((obj: any, right) => {
+    obj[right[0]] = "file:" + path.relative(projectRootPath, path.join(__dirname, right[1]))
+    return obj
+  }, {})
+}
 
 export interface ICommand {
   name?: string
@@ -43,10 +51,7 @@ export type ICreateEntry = (
   projectConfig?: IProjectConfig
 ) => void
 
-export type IBuildConfigPipe = (
-  env: "local" | "prod",
-  config: webpack.Configuration
-) => webpack.Configuration
+export type IBuildConfigPipe = (env: "local" | "prod", config: webpack.Configuration) => webpack.Configuration
 
 let hasInitPlugins = false
 
@@ -77,28 +82,16 @@ export const initPlugins = (projectRootPath: string) => {
   }
   hasInitPlugins = true
 
-  // Init built-in plugins
-  pluginCommandBuild(pri)
-  pluginCommandPreview(pri)
-  pluginCommandInit(pri)
-  pluginCommandPlugin(pri)
-  pluginCommandDev(pri)
-  pluginProjectAnalysePages(pri)
-  pluginProjectAnalyseMarkdownPages(pri)
-  pluginProjectAnalyseLayouts(pri)
-  pluginProjectAnalyseMarkdownLayouts(pri)
-  pluginProjectAnalyseDob(pri)
-  pluginProjectAnalyseNotFound(pri)
-  pluginProjectAnalyseConfig(pri)
-
   const projectPackageJsonPath = path.join(projectRootPath, "package.json")
 
   if (!fs.existsSync(projectPackageJsonPath)) {
     return
   }
 
-  getPriPlugins(path.join(projectRootPath, "package.json")).forEach(
-    eachPlugin => pluginPackages.push(eachPlugin)
+  const builtInPlugins = getBuiltInPlugins(projectRootPath)
+
+  getPriPlugins(path.join(projectRootPath, "package.json"), builtInPlugins).forEach(eachPlugin =>
+    pluginPackages.push(eachPlugin)
   )
 
   // Init custom plugins
@@ -107,7 +100,7 @@ export const initPlugins = (projectRootPath: string) => {
   })
 }
 
-function getPriPlugins(packageJsonPath: string): IPluginPackageInfo[] {
+function getPriPlugins(packageJsonPath: string, extendPlugins: any = {}): IPluginPackageInfo[] {
   const projectRootPath = path.resolve(packageJsonPath, "..")
 
   if (!fs.existsSync(packageJsonPath)) {
@@ -117,7 +110,8 @@ function getPriPlugins(packageJsonPath: string): IPluginPackageInfo[] {
   const packageJson = fs.readJSONSync(packageJsonPath)
   const allDependencies = {
     ...packageJson.dependencies,
-    ...packageJson.devDependencies
+    ...packageJson.devDependencies,
+    ...extendPlugins
   }
 
   return flatten(
@@ -126,24 +120,34 @@ function getPriPlugins(packageJsonPath: string): IPluginPackageInfo[] {
       .map(subPackageName => {
         const subPackageVersion = allDependencies[subPackageName]
         const subPackageRealEntry = subPackageVersion.startsWith("file:")
-          ? path.join(
-              projectRootPath,
-              subPackageVersion.replace(/^file\:/g, "")
-            )
+          ? path.join(projectRootPath, subPackageVersion.replace(/^file\:/g, ""))
           : subPackageName
-        const subPackageAbsolutePath = require.resolve(
-          path.join(path.join(subPackageRealEntry), "package.json")
-        )
+        const subPackageRealEntryFilePath = require.resolve(subPackageRealEntry)
+        const hasPackageJson = fs.existsSync(path.join(subPackageRealEntry, "package.json"))
+        const subPackageAbsolutePath = hasPackageJson
+          ? require.resolve(path.join(subPackageRealEntry, "package.json"))
+          : null
         const instance = getDefault(require(subPackageRealEntry))
 
-        return [
-          {
-            instance,
-            name: subPackageName,
-            version: subPackageVersion
-          },
-          ...getPriPlugins(subPackageAbsolutePath)
-        ]
+        // TODO:
+        // const subPackageClientAbsolutePath = path.resolve(subPackageRealEntryFilePath, "../client.js")
+
+        // if (fs.existsSync(subPackageClientAbsolutePath)) {
+        //   console.log("true", subPackageClientAbsolutePath)
+        // }
+
+        if (subPackageAbsolutePath) {
+          return [
+            {
+              instance,
+              name: subPackageName,
+              version: subPackageVersion
+            },
+            ...getPriPlugins(subPackageAbsolutePath)
+          ]
+        } else {
+          return [{ instance, name: subPackageName, version: subPackageVersion }]
+        }
       })
   )
 }

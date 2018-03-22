@@ -34,6 +34,7 @@ export class LayoutComponent extends PureComponent<Props, State> {
         <S.ContainerRight>
           <S.TopContainer>
             <MenuComponent />
+            {this.props.ApplicationAction.loadPluginsByPosition("menu")}
           </S.TopContainer>
 
           <S.BottomContainer>

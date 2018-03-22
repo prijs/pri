@@ -30,12 +30,9 @@ export class ApplicationAction {
       })
     })
 
-    this.socket.on(
-      "changeFile",
-      (data: { path: string; fileContent: string }) => {
-        //
-      }
-    )
+    this.socket.on("changeFile", (data: { path: string; fileContent: string }) => {
+      //
+    })
   }
 
   @Action
@@ -80,5 +77,10 @@ export class ApplicationAction {
   @Action
   public setSelectedTreeKey(key: string) {
     this.applicationStore.selectedTreeKey = key
+  }
+
+  @Action
+  public loadPluginsByPosition(position: string) {
+    // TODO:
   }
 }

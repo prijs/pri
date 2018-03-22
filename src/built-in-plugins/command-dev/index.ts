@@ -23,6 +23,10 @@ const dllMainfestName = "mainfest.json"
 const dllOutPath = path.join(projectRootPath, ".temp/static/dlls")
 const libraryStaticPath = "/dlls/" + dllFileName
 
+const dashboardBundleRootPath = path.join(__dirname, "../../bundle")
+const dashboardBundleFileName = "main"
+const hasDashboardBundle = fs.existsSync(path.join(dashboardBundleRootPath, dashboardBundleFileName + ".js"))
+
 export const CommandDev = async () => {
   const env = "local"
   const projectConfig = getConfig(projectRootPath, env)
@@ -36,25 +40,27 @@ export const CommandDev = async () => {
     createEntry(projectRootPath, env, projectConfig)
   })
 
-  log(colors.blue("\nCreate dlls\n"))
+  if (hasDashboardBundle) {
+    log(colors.blue("\nCreate dlls\n"))
 
-  execSync(
-    [
-      `${findNearestNodemodulesFile("/.bin/webpack")}`,
-      `--mode development`,
-      `--progress`,
-      `--config ${path.join(__dirname, "./webpack.dll.config.js")}`,
-      `--env.projectRootPath ${projectRootPath}`,
-      `--env.dllOutPath ${dllOutPath}`,
-      `--env.dllFileName ${dllFileName}`,
-      `--env.dllMainfestName ${dllMainfestName}`
-    ].join(" "),
-    {
-      stdio: "inherit"
-    }
-  )
+    execSync(
+      [
+        `${findNearestNodemodulesFile("/.bin/webpack")}`,
+        `--mode development`,
+        `--progress`,
+        `--config ${path.join(__dirname, "./webpack.dll.config.js")}`,
+        `--env.projectRootPath ${projectRootPath}`,
+        `--env.dllOutPath ${dllOutPath}`,
+        `--env.dllFileName ${dllFileName}`,
+        `--env.dllMainfestName ${dllMainfestName}`
+      ].join(" "),
+      {
+        stdio: "inherit"
+      }
+    )
 
-  log(colors.blue("\nStart dev server.\n"))
+    log(colors.blue("\nStart dev server.\n"))
+  }
 
   const freePort = await portfinder.getPortPromise()
   const dashboardServerPort = await portfinder.getPortPromise({
@@ -76,10 +82,6 @@ export const CommandDev = async () => {
 
   // If has dashboard bundle, run project with dashboard prod in iframe.
   // If has't dashboard bundle, run dashboard dev server only.
-  const dashboardBundleRootPath = path.join(__dirname, "../../bundle")
-  const dashboardBundleFileName = "main"
-  const hasDashboardBundle = fs.existsSync(path.join(dashboardBundleRootPath, dashboardBundleFileName + ".js"))
-
   if (hasDashboardBundle) {
     if (projectConfig.useHttps) {
       log(`you should set chrome://flags/#allow-insecure-localhost, to trust local certificate.`)
@@ -137,9 +139,10 @@ export const CommandDev = async () => {
         `--env.publicPath /static/`,
         `--env.entryPath ${path.join(__dirname, "dashboard/client/index.js")}`,
         `--env.distFileName main`,
-        `--env.devServerPort ${dashboardClientPort}`,
+        `--env.devServerPort ${freePort}`,
         `--env.htmlTemplatePath ${path.join(__dirname, "../../../template-dashboard.ejs")}`,
-        `--env.htmlTemplateArgs.dashboardServerPort ${dashboardServerPort}`
+        `--env.htmlTemplateArgs.dashboardServerPort ${dashboardServerPort}`,
+        `--env.htmlTemplateArgs.libraryStaticPath ${libraryStaticPath}`
       ].join(" "),
       {
         stdio: "inherit"
@@ -154,12 +157,14 @@ export default (instance: typeof pri) => {
       return config
     }
 
-    config.plugins.push(
-      new webpack.DllReferencePlugin({
-        context: ".",
-        manifest: require(path.join(dllOutPath, dllMainfestName))
-      })
-    )
+    if (hasDashboardBundle) {
+      config.plugins.push(
+        new webpack.DllReferencePlugin({
+          context: ".",
+          manifest: require(path.join(dllOutPath, dllMainfestName))
+        })
+      )
+    }
 
     return config
   })
