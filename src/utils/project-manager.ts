@@ -4,6 +4,7 @@ import * as normalizePath from "normalize-path"
 import * as path from "path"
 import * as prettier from "prettier"
 import { analyseProject } from "./analyse-project"
+import { plugin } from "./plugins"
 import { getConfig } from "./project-config"
 import { configPaths, helperPath, layoutPath, notFoundPath, pagesPath, storesPath } from "./structor-config"
 
@@ -22,7 +23,7 @@ export async function addPage(
     throw Error(`${options.path} already exist!`)
   }
 
-  if (projectInfo.projectInfo.stores.length === 0) {
+  if (plugin.analyseInfo.projectAnalyseDob.storeFiles.length === 0) {
     fs.outputFileSync(
       fileFullPath,
       prettier.format(

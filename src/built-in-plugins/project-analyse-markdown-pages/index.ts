@@ -140,7 +140,6 @@ export default (instance: typeof pri) => {
 
     entry.pipeRenderRoutes(renderRoutes => {
       return `
-        ${renderRoutes}
         ${analyseInfo.projectAnalyseMarkdownPages.pages
           .map(page => {
             const relativePageFilePath = path.relative(projectRootPath, page.file.dir + "/" + page.file.name)
@@ -155,6 +154,7 @@ export default (instance: typeof pri) => {
             `
           })
           .join("\n")}
+        ${renderRoutes}
       `
     })
   })
