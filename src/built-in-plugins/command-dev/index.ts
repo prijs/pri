@@ -14,6 +14,7 @@ import { log, spinner } from "../../utils/log"
 import { findNearestNodemodulesFile } from "../../utils/npm-finder"
 import { getConfig } from "../../utils/project-config"
 import { IProjectConfig } from "../../utils/project-config-interface"
+import { hasNodeModules, hasNodeModulesModified } from "../../utils/project-helper"
 import { tempJsEntryPath, tempPath } from "../../utils/structor-config"
 import text from "../../utils/text"
 
@@ -40,7 +41,7 @@ export const CommandDev = async () => {
     createEntry(projectRootPath, env, projectConfig)
   })
 
-  if (hasDashboardBundle) {
+  if (hasDashboardBundle && hasNodeModules(projectRootPath) && hasNodeModulesModified(projectRootPath)) {
     log(colors.blue("\nCreate dlls\n"))
 
     execSync(
