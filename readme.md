@@ -2,7 +2,7 @@
 
 Pri is a toolkit for building web applications with React. **Helps you deal with everything, and you can focus on business logic.**
 
-[Read docs](https://ascoders.github.io/pri-docs/).
+[Read docs](https://prijs/pri-docs/).
 
 ## Setup
 
@@ -40,14 +40,14 @@ Production deployment. By default the dist folder is `./dist`.
 
 ## Usage
 
-* [Pages are routes.](https://ascoders.github.io/pri-docs/pages-are-routes)
-* [Markdown support.](https://ascoders.github.io/pri-docs/features/markdown-support)
-* [Scss/Less/Css support.](https://ascoders.github.io/pri-docs/features/scss-less-css)
-* [Layout support.](https://ascoders.github.io/pri-docs/layout-support)
-* [Page not found.](https://ascoders.github.io/pri-docs/features/page-not-found)
-* [Built in data stream.](https://ascoders.github.io/pri-docs/features/built-in-data-stream)
-* [Environment variable.](https://ascoders.github.io/pri-docs/features/environment-variable)
-* [Deploy to github pages.](https://ascoders.github.io/pri-docs/features/deploy-to-github-pages)
+* [Pages are routes.](https://prijs/pri-docs/pages-are-routes)
+* [Markdown support.](https://prijs/pri-docs/features/markdown-support)
+* [Scss/Less/Css support.](https://prijs/pri-docs/features/scss-less-css)
+* [Layout support.](https://prijs/pri-docs/layout-support)
+* [Page not found.](https://prijs/pri-docs/features/page-not-found)
+* [Built in data stream.](https://prijs/pri-docs/features/built-in-data-stream)
+* [Environment variable.](https://prijs/pri-docs/features/environment-variable)
+* [Deploy to github pages.](https://prijs/pri-docs/features/deploy-to-github-pages)
 
 #### TODO
 
@@ -56,23 +56,23 @@ Production deployment. By default the dist folder is `./dist`.
 
 ## Features
 
-* [Project Dashboard.](https://ascoders.github.io/pri-docs/features/project-dashboard)
-* [Typescript support.](https://ascoders.github.io/pri-docs/automatic-optimization/typescript-support)
-* [Tslint support.](https://ascoders.github.io/pri-docs/automatic-optimization/tslint-support)
-* [Dynamic import.](https://ascoders.github.io/pri-docs/features/dynamic-import)
-* [Automatic HMR.](https://ascoders.github.io/pri-docs/automatic-optimization/automatic-hmr)
-* [Automatic code splitting.](https://ascoders.github.io/pri-docs/automatic-optimization/automatic-code-splitting)
-* [Import on demand.](https://ascoders.github.io/pri-docs/automatic-optimization/import-on-demand)
-* [Auto create project files.](https://ascoders.github.io/pri-docs/automatic-optimization/auto-create-project-files)
-* [Auto pick shared modules.](https://ascoders.github.io/pri-docs/automatic-optimization/auto-pick-shared-modules)
-* [Tree Shaking.](https://ascoders.github.io/pri-docs/automatic-optimization/tree-shaking)
-* [Scope Hoist.](https://ascoders.github.io/pri-docs/automatic-optimization/scope-hoist)
-* [Auto dlls.](https://ascoders.github.io/pri-docs/automatic-optimization/auto-dlls)
+* [Project Dashboard.](https://prijs/pri-docs/features/project-dashboard)
+* [Typescript support.](https://prijs/pri-docs/automatic-optimization/typescript-support)
+* [Tslint support.](https://prijs/pri-docs/automatic-optimization/tslint-support)
+* [Dynamic import.](https://prijs/pri-docs/features/dynamic-import)
+* [Automatic HMR.](https://prijs/pri-docs/automatic-optimization/automatic-hmr)
+* [Automatic code splitting.](https://prijs/pri-docs/automatic-optimization/automatic-code-splitting)
+* [Import on demand.](https://prijs/pri-docs/automatic-optimization/import-on-demand)
+* [Auto create project files.](https://prijs/pri-docs/automatic-optimization/auto-create-project-files)
+* [Auto pick shared modules.](https://prijs/pri-docs/automatic-optimization/auto-pick-shared-modules)
+* [Tree Shaking.](https://prijs/pri-docs/automatic-optimization/tree-shaking)
+* [Scope Hoist.](https://prijs/pri-docs/automatic-optimization/scope-hoist)
+* [Auto dlls.](https://prijs/pri-docs/automatic-optimization/auto-dlls)
+* [Auto prefetch.](https://prijs/pri-docs/automatic-optimization/auto-prefetch)
 
 ### TODO
 
 * PWA support.
-* Prefetch.
 * Code coverage.
 
 ## Built-in packages in 0.x version
