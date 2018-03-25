@@ -177,7 +177,22 @@ export default (instance: typeof pri) => {
           ${entryDidMount}
           ${analyseInfo.projectAnalyseMarkdownPages.pages
             .map(page => {
-              return `createMarkdownPagePreload("/static/${page.chunkName}.chunk.js", "script")`
+              if (env === "local") {
+                return `createMarkdownPagePreload("${path.join("/static", page.chunkName + ".chunk.js")}", "script")`
+              } else if (env === "prod") {
+                let thunkPath = ""
+                if (projectConfig.publicPath) {
+                  // tslint:disable-next-line:prefer-conditional-expression
+                  if (projectConfig.publicPath.startsWith("/")) {
+                    thunkPath = path.join(projectConfig.publicPath, page.chunkName + ".chunk.js")
+                  } else {
+                    const publicPathWithoutHead = projectConfig.publicPath.replace(/^\/\//g, "")
+                    thunkPath = "//" + path.join(publicPathWithoutHead, page.chunkName + ".chunk.js")
+                  }
+                }
+
+                return `createMarkdownPagePreload("${thunkPath}", "script")`
+              }
             })
             .join("\n")}
         `

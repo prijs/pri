@@ -14,7 +14,7 @@ export class IProjectConfig {
    */
   public distFileName?: string = "main"
   /**
-   * Assets public path. `"some.com"`, `"some.com/somePath"`, `"/somePath"`.
+   * Assets public path. `"//some.com"`, `"//some.com/somePath"`, `"/somePath"`.
    * If not set, result: `/<distPath>`.
    * If set /somePath for example, result: `/somePath/<distPath>`.
    * If set some.com for example, result: `//some.com/<distPath>`.

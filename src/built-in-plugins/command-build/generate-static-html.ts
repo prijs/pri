@@ -5,17 +5,9 @@ import { renderToString } from "react-dom/server"
 import StaticRouter from "react-router-dom/StaticRouter"
 import { IProjectConfig } from "../../utils/project-config-interface"
 
-export async function generateStaticHtml(
-  projectRootPath: string,
-  projectConfig?: IProjectConfig,
-  analyseInfo?: any
-) {
-  const pages = analyseInfo.projectAnalysePages
-    ? analyseInfo.projectAnalysePages.pages
-    : []
-  const markdownPages = analyseInfo.projectAnalyseMarkdownPages
-    ? analyseInfo.projectAnalyseMarkdownPages.pages
-    : []
+export async function generateStaticHtml(projectRootPath: string, projectConfig?: IProjectConfig, analyseInfo?: any) {
+  const pages = analyseInfo.projectAnalysePages ? analyseInfo.projectAnalysePages.pages : []
+  const markdownPages = analyseInfo.projectAnalyseMarkdownPages ? analyseInfo.projectAnalyseMarkdownPages.pages : []
 
   const allPages = [...pages, ...markdownPages]
 
@@ -24,17 +16,9 @@ export async function generateStaticHtml(
   })
 }
 
-export function generateHtmlByRouterPath(
-  routerPath: string,
-  projectRootPath: string,
-  projectConfig?: IProjectConfig
-) {
+export function generateHtmlByRouterPath(routerPath: string, projectRootPath: string, projectConfig?: IProjectConfig) {
   const relativePathWithSuffix = path.join(routerPath, "index.html")
-  const htmlPath = path.join(
-    projectRootPath,
-    projectConfig.distDir,
-    relativePathWithSuffix
-  )
+  const htmlPath = path.join(projectRootPath, projectConfig.distDir, relativePathWithSuffix)
 
   const cssPath = path.join(projectRootPath, projectConfig.distDir, "main.css")
   const hasCssOutput = fs.existsSync(cssPath)
@@ -59,10 +43,7 @@ export function generateHtmlByRouterPath(
       ${
         hasCssOutput
           ? `
-        <link rel="stylesheet" type="text/css" href="${getEntryPath(
-          projectConfig,
-          "main.css"
-        )}"/>
+        <link rel="stylesheet" type="text/css" href="${getEntryPath(projectConfig, "main.css")}"/>
       `
           : ""
       }
@@ -94,7 +75,8 @@ function getEntryPath(projectConfig: IProjectConfig, entryFileName: string) {
     if (projectConfig.publicPath.startsWith("/")) {
       entryPath = path.join(projectConfig.publicPath, entryFileName)
     } else {
-      entryPath = "//" + path.join(projectConfig.publicPath, entryFileName)
+      const publicPathWithoutHead = projectConfig.publicPath.replace(/^\/\//g, "")
+      entryPath = "//" + path.join(publicPathWithoutHead, entryFileName)
     }
   }
 
