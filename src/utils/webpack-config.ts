@@ -52,7 +52,7 @@ const config: webpack.Configuration = {
     path: distDir,
     filename: distFileName + ".js",
     publicPath,
-    chunkFilename: "[id].chunk.js",
+    chunkFilename: "[name].chunk.js",
     hotUpdateChunkFilename: "hot~[id].[hash:4].chunk.js",
     hotUpdateMainFilename: "hot-update.[hash:4].json"
   },
@@ -156,6 +156,10 @@ const config: webpack.Configuration = {
     //   rel: "prefetch"
     // })
   ],
+
+  optimization: {
+    namedChunks: false
+  },
 
   stats,
 

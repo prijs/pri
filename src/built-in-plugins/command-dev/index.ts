@@ -203,21 +203,19 @@ export default (instance: typeof pri) => {
       }
 
       // Jump page from iframe dashboard event.
-      entry.pipeEntryClassBody(entryClassBody => {
+      entry.pipeEntryClassDidMount(entryDidMount => {
         return `
-        ${entryClassBody}
-          public componentWillMount() {
-            window.addEventListener("message", event => {
-              const data = event.data
-              switch(data.type) {
-                case "changeRoute":
-                  customHistory.push(data.path)
-                  break
-                default:
-              }
-            }, false)
-          }
-      `
+          ${entryDidMount}
+          window.addEventListener("message", event => {
+            const data = event.data
+            switch(data.type) {
+              case "changeRoute":
+                customHistory.push(data.path)
+                break
+              default:
+            }
+          }, false)
+        `
       })
 
       // React hot loader

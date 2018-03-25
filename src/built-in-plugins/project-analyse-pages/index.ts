@@ -11,6 +11,7 @@ interface IResult {
     pages: Array<{
       routerPath: string
       file: path.ParsedPath
+      chunkName: string
     }>
   }
 }
@@ -43,9 +44,10 @@ export default (instance: typeof pri) => {
           })
           .map(file => {
             const relativePathWithoutIndex = path.relative(projectRootPath, file.dir)
-            const routerPath = "/" + path.relative(pagesPath.dir, relativePathWithoutIndex)
+            const routerPath = normalizePath("/" + path.relative(pagesPath.dir, relativePathWithoutIndex))
+            const chunkName = _.camelCase(routerPath) || "index"
 
-            return { routerPath: normalizePath(routerPath), file }
+            return { routerPath, file, chunkName }
           })
       }
     } as IResult
@@ -63,14 +65,12 @@ export default (instance: typeof pri) => {
             const relativePageFilePath = path.relative(projectRootPath, page.file.dir + "/" + page.file.name)
 
             const componentName = safeName(relativePageFilePath) + md5(relativePageFilePath).slice(0, 5)
-            const chunkName = _.camelCase(page.routerPath) || "index"
 
             const pageRequirePath = normalizePath(path.join(page.file.dir, page.file.name))
 
-            const importCode = `import(/* webpackChunkName: "${chunkName}" */ "${pageRequirePath}")${entry.pipe.get(
-              "normalPagesImportEnd",
-              ""
-            )}`
+            const importCode = `import(/* webpackChunkName: "${
+              page.chunkName
+            }" */ "${pageRequirePath}")${entry.pipe.get("normalPagesImportEnd", "")}`
 
             return `
               const ${componentName} = Loadable({
@@ -91,7 +91,6 @@ export default (instance: typeof pri) => {
             const relativePageFilePath = path.relative(projectRootPath, page.file.dir + "/" + page.file.name)
 
             const componentName = safeName(relativePageFilePath) + md5(relativePageFilePath).slice(0, 5)
-            const chunkName = _.camelCase(page.routerPath) || "index"
 
             return `
               <${entry.pipe.get("commonRoute", "Route")} exact path="${
@@ -102,6 +101,31 @@ export default (instance: typeof pri) => {
           .join("\n")}
         ${renderRoutes}
       `
+    })
+
+    // Set preload links
+    entry.pipeBody(body => {
+      return `
+        ${body}
+        function createPagePreload(href: string, as: string) {
+          const link: any = document.createElement("link")
+          link.href = href
+          link.rel = "preload"
+          link.as = as
+          document.head.appendChild(link)
+        }
+      `
+    })
+
+    entry.pipeEntryClassDidMount(entryDidMount => {
+      return `
+          ${entryDidMount}
+          ${analyseInfo.projectAnalysePages.pages
+            .map(page => {
+              return `createPagePreload("/static/${page.chunkName}.chunk.js", "script")`
+            })
+            .join("\n")}
+        `
     })
   })
 }

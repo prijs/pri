@@ -11,6 +11,7 @@ interface IResult {
     pages: Array<{
       routerPath: string
       file: path.ParsedPath
+      chunkName: string
     }>
   }
 }
@@ -44,9 +45,10 @@ export default (instance: typeof pri) => {
           })
           .map(file => {
             const relativePathWithoutIndex = path.relative(projectRootPath, file.dir)
-            const routerPath = "/" + path.relative(pagesPath.dir, relativePathWithoutIndex)
+            const routerPath = normalizePath("/" + path.relative(pagesPath.dir, relativePathWithoutIndex))
+            const chunkName = _.camelCase(routerPath) || "index"
 
-            return { routerPath: normalizePath(routerPath), file }
+            return { routerPath, file, chunkName }
           })
       }
     } as IResult
@@ -108,7 +110,6 @@ export default (instance: typeof pri) => {
             const relativePageFilePath = path.relative(projectRootPath, page.file.dir + "/" + page.file.name)
 
             const componentName = safeName(relativePageFilePath) + md5(relativePageFilePath).slice(0, 5)
-            const chunkName = _.camelCase(page.routerPath) || "index"
 
             // Create esmodule file for markdown
             const fileContent = fs.readFileSync(path.format(page.file)).toString()
@@ -119,7 +120,7 @@ export default (instance: typeof pri) => {
             fs.outputFileSync(markdownTsAbsolutePath, `export default \`${safeFileContent}\``)
 
             const markdownImportCode = `
-              import(/* webpackChunkName: "${chunkName}" */ "${normalizePath(
+              import(/* webpackChunkName: "${page.chunkName}" */ "${normalizePath(
               markdownTsAbsolutePathWithoutExt
             )}").then(code => {
                 return () => <${MARKDOWN_WRAPPER}>{code.default}</${MARKDOWN_WRAPPER}>
@@ -145,7 +146,6 @@ export default (instance: typeof pri) => {
             const relativePageFilePath = path.relative(projectRootPath, page.file.dir + "/" + page.file.name)
 
             const componentName = safeName(relativePageFilePath) + md5(relativePageFilePath).slice(0, 5)
-            const chunkName = _.camelCase(page.routerPath) || "index"
 
             return `
               <${entry.pipe.get("markdownRoute", "Route")} exact path="${
@@ -156,6 +156,31 @@ export default (instance: typeof pri) => {
           .join("\n")}
         ${renderRoutes}
       `
+    })
+
+    // Set preload links
+    entry.pipeBody(body => {
+      return `
+        ${body}
+        function createMarkdownPagePreload(href: string, as: string) {
+          const link: any = document.createElement("link")
+          link.href = href
+          link.rel = "preload"
+          link.as = as
+          document.head.appendChild(link)
+        }
+      `
+    })
+
+    entry.pipeEntryClassDidMount(entryDidMount => {
+      return `
+          ${entryDidMount}
+          ${analyseInfo.projectAnalyseMarkdownPages.pages
+            .map(page => {
+              return `createMarkdownPagePreload("/static/${page.chunkName}.chunk.js", "script")`
+            })
+            .join("\n")}
+        `
     })
   })
 }

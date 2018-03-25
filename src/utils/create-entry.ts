@@ -48,8 +48,8 @@ export class Entry {
     pipe.set("entryRenderRouter", fn)
   }
 
-  public pipeEntryClassBody(fn: (renderRouter: string) => string) {
-    pipe.set("entryEntryClassBody", fn)
+  public pipeEntryClassDidMount(fn: (renderRouter: string) => string) {
+    pipe.set("entryEntryClassDidMount", fn)
   }
 
   protected getHeader() {
@@ -82,7 +82,9 @@ export class Entry {
       "entryEntryComponent",
       `
       class Root extends React.PureComponent<any, any> {
-        ${this.getEntryClassBody()}
+        public componentDidMount() {
+          ${this.getEntryClassDidMount()}
+        }
 
         public render() {
           return (
@@ -120,8 +122,8 @@ export class Entry {
     )
   }
 
-  protected getEntryClassBody() {
-    return pipe.get("entryEntryClassBody", "")
+  protected getEntryClassDidMount() {
+    return pipe.get("entryEntryClassDidMount", "")
   }
 }
 
