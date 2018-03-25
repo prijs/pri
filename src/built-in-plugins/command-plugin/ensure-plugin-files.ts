@@ -2,9 +2,9 @@ import * as fs from "fs-extra"
 import * as path from "path"
 import * as prettier from "prettier"
 
-export function ensureGitignore(projectRootPath: string) {
-  const filePath = path.join(projectRootPath, ".gitignore")
-  const ensureContents = ["node_modules", ".cache", ".vscode", ".temp"]
+export function ensureNpmIgnore(projectRootPath: string) {
+  const filePath = path.join(projectRootPath, ".npmignore")
+  const ensureContents = ["node_modules", ".cache", ".vscode", ".temp", "built", "test"]
 
   const exitFileContent = fs.existsSync(filePath) ? fs.readFileSync(filePath).toString() || "" : ""
   const exitFileContentArray = exitFileContent.split("\n").filter(content => content !== "")
@@ -18,24 +18,35 @@ export function ensureGitignore(projectRootPath: string) {
   fs.writeFileSync(filePath, exitFileContentArray.join("\n"))
 }
 
-export function ensurePackageJson(projectRootPath: string) {
+export function ensureGitignore(projectRootPath: string) {
+  const filePath = path.join(projectRootPath, ".gitignore")
+  const ensureContents = ["node_modules", ".cache", ".vscode", ".temp", "built"]
+
+  const exitFileContent = fs.existsSync(filePath) ? fs.readFileSync(filePath).toString() || "" : ""
+  const exitFileContentArray = exitFileContent.split("\n").filter(content => content !== "")
+
+  ensureContents.forEach(content => {
+    if (exitFileContentArray.indexOf(content) === -1) {
+      exitFileContentArray.push(content)
+    }
+  })
+
+  fs.writeFileSync(filePath, exitFileContentArray.join("\n"))
+}
+
+export function ensurePackageJson(projectRootPath: string, pluginName: string) {
   const filePath = path.join(projectRootPath, "package.json")
 
   fs.writeFileSync(
     filePath,
     JSON.stringify(
       {
-        name: "pri-plugin-",
+        name: "pri-plugin-" + pluginName,
         version: "0.0.0",
         types: "src/index.ts",
         main: "built/index.js",
-        scripts: {
-          start: "tsc -w"
-        },
-        dependencies: {
-          pri: "*",
-          "@types/node": "*"
-        }
+        scripts: { start: "tsc -w", release: "np --no-yarn", test: "" },
+        dependencies: { pri: "*", "@types/node": "*" }
       },
       null,
       2
@@ -100,7 +111,6 @@ export function ensureEntry(projectRootPath: string) {
           return \`
             \${header}
             import "src/components/xxx"
-          )} "
           \`
         })
       })

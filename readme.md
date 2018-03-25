@@ -84,7 +84,7 @@ Production deployment. By default the dist folder is `./dist`.
 * [dob@2.5.8](https://www.npmjs.com/package/dob)
 * [lodash@4.17.4](https://www.npmjs.com/package/lodash)
 * [react-loadable@5.3.1](https://www.npmjs.com/package/react-loadable)
-* [webpack@4.1.0](https://www.npmjs.com/package/parcel-bundler)
+* [webpack@4.2.0](https://www.npmjs.com/package/parcel-bundler)
 * [babel@7.0.0](https://www.npmjs.com/package/babel-core)
 * [typescript@2.7.1](https://github.com/Microsoft/TypeScript)
 

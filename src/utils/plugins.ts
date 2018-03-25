@@ -84,10 +84,6 @@ export const initPlugins = (projectRootPath: string) => {
 
   const projectPackageJsonPath = path.join(projectRootPath, "package.json")
 
-  if (!fs.existsSync(projectPackageJsonPath)) {
-    return
-  }
-
   const builtInPlugins = getBuiltInPlugins(projectRootPath)
 
   getPriPlugins(path.join(projectRootPath, "package.json"), builtInPlugins).forEach(eachPlugin =>
@@ -102,17 +98,16 @@ export const initPlugins = (projectRootPath: string) => {
 
 function getPriPlugins(packageJsonPath: string, extendPlugins: any = {}): IPluginPackageInfo[] {
   const projectRootPath = path.resolve(packageJsonPath, "..")
+  const packageJsonExist = fs.existsSync(packageJsonPath)
 
-  if (!fs.existsSync(packageJsonPath)) {
-    return []
-  }
-
-  const packageJson = fs.readJSONSync(packageJsonPath)
-  const allDependencies = {
-    ...packageJson.dependencies,
-    ...packageJson.devDependencies,
-    ...extendPlugins
-  }
+  const packageJson = packageJsonExist ? fs.readJsonSync(packageJsonPath) : null
+  const allDependencies = packageJson
+    ? {
+        ...packageJson.dependencies,
+        ...packageJson.devDependencies,
+        ...extendPlugins
+      }
+    : extendPlugins
 
   return flatten(
     Object.keys(allDependencies)
@@ -129,7 +124,7 @@ function getPriPlugins(packageJsonPath: string, extendPlugins: any = {}): IPlugi
           : null
         const instance = getDefault(require(subPackageRealEntry))
 
-        // TODO:
+        // TODO: For client dashboard plugin
         // const subPackageClientAbsolutePath = path.resolve(subPackageRealEntryFilePath, "../client.js")
 
         // if (fs.existsSync(subPackageClientAbsolutePath)) {

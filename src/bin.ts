@@ -22,11 +22,11 @@ plugin.commands.forEach(command => {
     .description(command.description)
     .action((...args: any[]) => {
       if (command.beforeActions) {
-        command.beforeActions.forEach(beforeAction => beforeAction.apply(args))
+        command.beforeActions.forEach(beforeAction => beforeAction.apply(null, args))
       }
-      command.action.apply(args)
+      command.action.apply(null, args)
       if (command.afterActions) {
-        command.afterActions.forEach(afterAction => afterAction.apply(args))
+        command.afterActions.forEach(afterAction => afterAction.apply(null, args))
       }
     })
 })

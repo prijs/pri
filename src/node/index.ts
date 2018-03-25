@@ -16,3 +16,5 @@ export const pri = {
    */
   project
 }
+
+export * from "../utils/structor-config"
