@@ -45,7 +45,7 @@ export function ensurePackageJson(projectRootPath: string, pluginName: string) {
         version: "0.0.0",
         types: "src/index.ts",
         main: "built/index.js",
-        scripts: { start: "tsc -w", release: "np --no-yarn", test: "" },
+        scripts: { start: "tsc -w", release: "np --no-yarn", test: "pri test" },
         dependencies: { pri: "*" }
       },
       null,

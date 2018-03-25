@@ -100,7 +100,8 @@ export function ensurePackageJson(projectRootPath: string) {
   const ensureScripts = {
     start: "pri",
     build: "pri build",
-    preview: "pri preview"
+    preview: "pri preview",
+    test: "pri test"
   }
 
   let exitFileContent: any = {}
