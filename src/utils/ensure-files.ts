@@ -54,6 +54,7 @@ export function ensureTsconfig(projectRootPath: string) {
       target: "esnext",
       experimentalDecorators: true,
       skipLibCheck: true,
+      outDir: "built",
       lib: ["dom", "es5", "es6", "scripthost"]
     },
     exclude: ["node_modules", "built", "lib"]

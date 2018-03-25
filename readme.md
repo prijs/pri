@@ -87,6 +87,7 @@ Production deployment. By default the dist folder is `./dist`.
 * [webpack@4.2.0](https://www.npmjs.com/package/parcel-bundler)
 * [babel@7.0.0](https://www.npmjs.com/package/babel-core)
 * [typescript@2.7.1](https://github.com/Microsoft/TypeScript)
+* [ava@1.0.0](https://github.com/avajs/ava)
 
 ## Inspired
 

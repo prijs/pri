@@ -11,6 +11,9 @@ export default {
     },
     preview: {
       description: "Preview the app in production mode."
+    },
+    test: {
+      description: "Run all tests"
     }
   }
 }

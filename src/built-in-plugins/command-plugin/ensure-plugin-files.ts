@@ -4,7 +4,7 @@ import * as prettier from "prettier"
 
 export function ensureNpmIgnore(projectRootPath: string) {
   const filePath = path.join(projectRootPath, ".npmignore")
-  const ensureContents = ["node_modules", ".cache", ".vscode", ".temp", "built", "test"]
+  const ensureContents = ["node_modules", ".cache", ".vscode", ".temp", "built", "test", ".nyc_output", "coverage"]
 
   const exitFileContent = fs.existsSync(filePath) ? fs.readFileSync(filePath).toString() || "" : ""
   const exitFileContentArray = exitFileContent.split("\n").filter(content => content !== "")
@@ -20,7 +20,7 @@ export function ensureNpmIgnore(projectRootPath: string) {
 
 export function ensureGitignore(projectRootPath: string) {
   const filePath = path.join(projectRootPath, ".gitignore")
-  const ensureContents = ["node_modules", ".cache", ".vscode", ".temp", "built"]
+  const ensureContents = ["node_modules", ".cache", ".vscode", ".temp", "built", ".nyc_output", "coverage"]
 
   const exitFileContent = fs.existsSync(filePath) ? fs.readFileSync(filePath).toString() || "" : ""
   const exitFileContentArray = exitFileContent.split("\n").filter(content => content !== "")
@@ -46,7 +46,7 @@ export function ensurePackageJson(projectRootPath: string, pluginName: string) {
         types: "src/index.ts",
         main: "built/index.js",
         scripts: { start: "tsc -w", release: "np --no-yarn", test: "" },
-        dependencies: { pri: "*", "@types/node": "*" }
+        dependencies: { pri: "*" }
       },
       null,
       2
