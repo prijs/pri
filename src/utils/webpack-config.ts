@@ -68,12 +68,12 @@ const config: webpack.Configuration = {
               babelrc: false,
               presets: [
                 [
-                  "@babel/preset-env",
+                  "@babel/env",
                   {
                     modules: false
                   }
                 ],
-                ["stage-2"]
+                ["@babel/stage-2"]
               ],
               plugins: babelPlugins,
               comments: true
