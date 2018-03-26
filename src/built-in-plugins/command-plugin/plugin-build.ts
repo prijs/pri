@@ -13,7 +13,18 @@ function runTs(projectRootPath: string, outDir: string) {
   const hasTsConfig = fs.existsSync(tsConfigPath)
   const tsConfig = fs.readJsonSync(tsConfigPath)
 
-  const compilerOptions = hasTsConfig ? _.get(tsConfig, "compilerOptions") : null
+  const compilerOptions = hasTsConfig ? _.get(tsConfig, "compilerOptions") : {}
+
+  // Fix babel's bug.
+  // Babel couldn't handle esnext module, so in typescript:
+  //  import * as normalizePath from "normalize-path"
+  //  normalizePath()
+  // Will transfer to:
+  //  const normalizePath = wrapperDefault(require("normalize-path"))
+  //  normalizePath()
+  // So, babel can only handle require and import.
+  // But couldn't handle import * as.
+  compilerOptions.module = "commonjs"
 
   return new Promise((resolve, reject) => {
     gulp
