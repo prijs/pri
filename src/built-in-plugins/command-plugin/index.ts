@@ -4,8 +4,11 @@ import * as fs from "fs-extra"
 import { pri } from "../../node"
 import { ensureDeclares, ensurePrettierrc, ensureTsconfig, ensureTslint, ensureVscode } from "../../utils/ensure-files"
 import { log } from "../../utils/log"
+import { findNearestNodemodulesFile } from "../../utils/npm-finder"
 import { pluginPackages } from "../../utils/plugins"
 import { ensureEntry, ensureGitignore, ensureNpmIgnore, ensurePackageJson } from "./ensure-plugin-files"
+import { pluginBuild } from "./plugin-build"
+import { builtDir } from "./static"
 
 const projectRootPath = process.cwd()
 
@@ -41,6 +44,15 @@ const CommandPluginInit = (pluginName: string) => {
   log(`    Run test.`)
 }
 
+const CommandPluginWatch = () => {
+  execSync(`${findNearestNodemodulesFile("/.bin/tsc")} -w`, { stdio: "inherit" })
+}
+
+const CommandPluginBuild = async () => {
+  execSync(`${findNearestNodemodulesFile("/.bin/rimraf")} ${builtDir}`, { stdio: "inherit" })
+  await pluginBuild(projectRootPath)
+}
+
 export default (instance: typeof pri) => {
   instance.commands.registerCommand({
     name: "plugin",
@@ -48,4 +60,8 @@ export default (instance: typeof pri) => {
   })
 
   instance.commands.registerCommand({ name: "plugin-init <pluginName>", action: CommandPluginInit })
+
+  instance.commands.registerCommand({ name: "plugin-watch", action: CommandPluginWatch })
+
+  instance.commands.registerCommand({ name: "plugin-build", action: CommandPluginBuild })
 }

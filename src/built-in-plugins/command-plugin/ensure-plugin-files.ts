@@ -1,10 +1,11 @@
 import * as fs from "fs-extra"
 import * as path from "path"
 import * as prettier from "prettier"
+import { builtDir } from "./static"
 
 export function ensureNpmIgnore(projectRootPath: string) {
   const filePath = path.join(projectRootPath, ".npmignore")
-  const ensureContents = ["node_modules", ".cache", ".vscode", ".temp", "built", "test", ".nyc_output", "coverage"]
+  const ensureContents = ["node_modules", ".cache", ".vscode", ".temp", builtDir, "test", ".nyc_output", "coverage"]
 
   const exitFileContent = fs.existsSync(filePath) ? fs.readFileSync(filePath).toString() || "" : ""
   const exitFileContentArray = exitFileContent.split("\n").filter(content => content !== "")
@@ -20,7 +21,7 @@ export function ensureNpmIgnore(projectRootPath: string) {
 
 export function ensureGitignore(projectRootPath: string) {
   const filePath = path.join(projectRootPath, ".gitignore")
-  const ensureContents = ["node_modules", ".cache", ".vscode", ".temp", "built", ".nyc_output", "coverage"]
+  const ensureContents = ["node_modules", ".cache", ".vscode", ".temp", builtDir, ".nyc_output", "coverage"]
 
   const exitFileContent = fs.existsSync(filePath) ? fs.readFileSync(filePath).toString() || "" : ""
   const exitFileContentArray = exitFileContent.split("\n").filter(content => content !== "")
@@ -44,8 +45,13 @@ export function ensurePackageJson(projectRootPath: string, pluginName: string) {
         name: "pri-plugin-" + pluginName,
         version: "0.0.0",
         types: "src/index.ts",
-        main: "built/index.js",
-        scripts: { start: "tsc -w", release: "", test: "pri test" },
+        main: builtDir + "/index.js",
+        scripts: {
+          start: "pri plugin-watch",
+          prepublishOnly: "pri plugin-build",
+          release: "npm publish",
+          test: "pri test"
+        },
         dependencies: { pri: "*" }
       },
       null,
