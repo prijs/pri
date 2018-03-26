@@ -6,7 +6,7 @@ import { ensureDeclares, ensurePrettierrc, ensureTsconfig, ensureTslint, ensureV
 import { log } from "../../utils/log"
 import { findNearestNodemodulesFile } from "../../utils/npm-finder"
 import { pluginPackages } from "../../utils/plugins"
-import { ensureEntry, ensureGitignore, ensureNpmIgnore, ensurePackageJson } from "./ensure-plugin-files"
+import { ensureEntry, ensureGitignore, ensureNpmIgnore, ensurePackageJson, ensureTest } from "./ensure-plugin-files"
 import { pluginBuild } from "./plugin-build"
 import { builtDir } from "./static"
 
@@ -28,6 +28,7 @@ const CommandPluginInit = (pluginName: string) => {
   ensureEntry(projectRootPath)
   ensureNpmIgnore(projectRootPath)
   ensureDeclares(projectRootPath)
+  ensureTest(projectRootPath)
 
   log("\n Success init pri plugin, you can run serval commands:\n")
 

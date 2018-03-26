@@ -129,3 +129,21 @@ export function ensureEntry(projectRootPath: string) {
     )
   )
 }
+
+export function ensureTest(projectRootPath: string) {
+  const filePath = path.join(projectRootPath, "src/tests/index.ts")
+
+  const fileContent = `
+    import test from "ava"
+
+    function sum(a: number, b: number) {
+      return a + b
+    }
+
+    test("adds 1 + 2 to equal 3", t => {
+      t.true(sum(1, 2) === 3)
+    })
+  `
+
+  fs.outputFileSync(filePath, prettier.format(fileContent, { semi: false, parser: "typescript" }))
+}
