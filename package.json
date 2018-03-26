@@ -1,6 +1,6 @@
 {
   "name": "pri",
-  "version": "0.4.14",
+  "version": "0.4.15",
   "types": "src/node/index.ts",
   "main": "built/node/index.js",
   "scripts": {
@@ -44,7 +44,7 @@
     "@types/yargs": "^11.0.0",
     "antd": "^3.3.0",
     "ava": "^1.0.0-beta.3",
-    "babel-loader": "^7.1.4",
+    "babel-loader": "^8.0.0-beta.2",
     "babel-plugin-import": "^1.6.7",
     "body-parser": "^1.18.2",
     "chokidar": "^2.0.1",
