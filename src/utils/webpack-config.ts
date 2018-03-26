@@ -68,7 +68,7 @@ const config: webpack.Configuration = {
               babelrc: false,
               presets: [
                 [
-                  "env",
+                  "@babel/preset-env",
                   {
                     modules: false
                   }
