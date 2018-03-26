@@ -1,4 +1,5 @@
 import * as fs from "fs-extra"
+import * as _ from "lodash"
 import * as path from "path"
 import * as prettier from "prettier"
 import { builtDir } from "./static"
@@ -35,29 +36,35 @@ export function ensureGitignore(projectRootPath: string) {
   fs.writeFileSync(filePath, exitFileContentArray.join("\n"))
 }
 
-export function ensurePackageJson(projectRootPath: string, pluginName: string) {
+export function ensurePackageJson(projectRootPath: string) {
   const filePath = path.join(projectRootPath, "package.json")
 
-  fs.writeFileSync(
-    filePath,
-    JSON.stringify(
-      {
-        name: "pri-plugin-" + pluginName,
-        version: "0.0.0",
-        types: "src/index.ts",
-        main: builtDir + "/index.js",
-        scripts: {
-          start: "pri plugin-watch",
-          prepublishOnly: "pri plugin-build",
-          release: "npm publish",
-          test: "pri test"
-        },
-        dependencies: { pri: "*" }
-      },
-      null,
-      2
-    )
-  )
+  const ensureScripts = {
+    types: "src/index.ts",
+    main: builtDir + "/index.js",
+    scripts: {
+      start: "pri plugin-watch",
+      prepublishOnly: "pri plugin-build",
+      release: "npm publish",
+      test: "pri test"
+    },
+    dependencies: { pri: "*" }
+  }
+
+  let exitFileContent: any = {}
+
+  try {
+    exitFileContent = JSON.parse(fs.readFileSync(filePath).toString()) || {}
+    if (!exitFileContent.scripts) {
+      exitFileContent.scripts = {}
+    }
+  } catch (error) {
+    //
+  }
+
+  _.merge(exitFileContent || {}, ensureScripts)
+
+  fs.writeFileSync(filePath, JSON.stringify(ensureScripts, null, 2))
 }
 
 export function ensureEntry(projectRootPath: string) {

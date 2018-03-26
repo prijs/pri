@@ -18,13 +18,13 @@ const CommandPlugin = async () => {
   })
 }
 
-const CommandPluginInit = (pluginName: string) => {
+const CommandPluginInit = () => {
   ensureGitignore(projectRootPath)
   ensureTsconfig(projectRootPath)
   ensureTslint(projectRootPath)
   ensureVscode(projectRootPath)
   ensurePrettierrc(projectRootPath)
-  ensurePackageJson(projectRootPath, pluginName)
+  ensurePackageJson(projectRootPath)
   ensureEntry(projectRootPath)
   ensureNpmIgnore(projectRootPath)
   ensureDeclares(projectRootPath)
@@ -60,7 +60,7 @@ export default (instance: typeof pri) => {
     action: CommandPlugin
   })
 
-  instance.commands.registerCommand({ name: "plugin-init <pluginName>", action: CommandPluginInit })
+  instance.commands.registerCommand({ name: "plugin-init", action: CommandPluginInit })
 
   instance.commands.registerCommand({ name: "plugin-watch", action: CommandPluginWatch })
 

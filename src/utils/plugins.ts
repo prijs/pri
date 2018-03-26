@@ -112,7 +112,7 @@ function getPriPlugins(packageJsonPath: string, extendPlugins: any = {}): IPlugi
 
   return flatten(
     Object.keys(allDependencies)
-      .filter(subPackageName => subPackageName.startsWith("pri-plugin"))
+      .filter(subPackageName => subPackageName.startsWith("pri-plugin") || subPackageName.startsWith("@ali/pri-plugin"))
       .map(subPackageName => {
         const subPackageVersion = allDependencies[subPackageName]
         const subPackageRealEntry = subPackageVersion.startsWith("file:")
