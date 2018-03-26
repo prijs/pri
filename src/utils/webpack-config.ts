@@ -43,7 +43,7 @@ const stats = {
   hash: false
 }
 
-const babelPlugins: any = [["transform-runtime"]]
+const babelPlugins: any = [["@babel/plugin-transform-runtime"]]
 
 const config: webpack.Configuration = {
   entry: entryPath,
