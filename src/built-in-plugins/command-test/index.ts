@@ -10,7 +10,7 @@ const projectRootPath = process.cwd()
 
 export const CommandTest = async () => {
   log(`Build typescript files`)
-  execSync([findNearestNodemodulesFile("/.bin/tsc"), "--module CommonJS"].join(" "))
+  execSync([findNearestNodemodulesFile("/.bin/tsc"), "--module CommonJS", "--sourceMap"].join(" "))
 
   execSync(
     [
