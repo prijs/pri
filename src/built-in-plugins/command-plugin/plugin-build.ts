@@ -29,7 +29,7 @@ function runBabel(sourcePath: string) {
   return new Promise((resolve, reject) => {
     gulp
       .src(path.join(sourcePath, "**/*.js"))
-      .pipe(gulpBabel({ presets: [[babelEnv]] }))
+      .pipe(gulpBabel({ presets: [[babelEnv], [stage2]] }))
       .pipe(gulp.dest(sourcePath))
       .on("end", resolve)
       .on("error", reject)
