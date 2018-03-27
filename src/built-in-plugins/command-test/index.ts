@@ -1,5 +1,6 @@
 import { execSync } from "child_process"
 import * as fs from "fs-extra"
+import * as open from "opn"
 import * as path from "path"
 import { pri } from "../../node"
 import { log } from "../../utils/log"
@@ -18,6 +19,7 @@ export const CommandTest = async () => {
       `--reporter lcov`,
       `--reporter text`,
       `--reporter json`,
+      `--exclude tests`,
       `${findNearestNodemodulesFile("/.bin/ava")}`,
       `--files ${path.join(projectRootPath, "built/tests/**/*.js")}`,
       `--failFast`
@@ -30,6 +32,11 @@ export const CommandTest = async () => {
 
   // remove .nyc_output
   execSync(`${findNearestNodemodulesFile(".bin/rimraf")} ${path.join(projectRootPath, ".nyc_output")}`)
+
+  // Open test html in brower
+  open(path.join(projectRootPath, "coverage/lcov-report/index.html"))
+
+  process.exit(0)
 }
 
 export default (instance: typeof pri) => {

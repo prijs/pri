@@ -76,6 +76,7 @@ export function ensureEntry(projectRootPath: string) {
       `
     import * as path from "path"
     import { pri } from "pri"
+    import { judgeHasComponents } from "./methods"
 
     interface IResult {
       customPlugin: {
@@ -101,18 +102,7 @@ export function ensureEntry(projectRootPath: string) {
       })
 
       instance.project.onAnalyseProject(files => {
-        return {
-          customPlugin: {
-            hasComponents: files
-              .some(file => {
-                const relativePath = path.relative(projectRootPath, path.join(file.dir, file.name))
-                if (relativePath.startsWith("src/components")) {
-                  return true
-                }
-                return false
-              })
-          }
-        } as IResult
+        return { customPlugin: { hasComponents: judgeHasComponents(projectRootPath, files) } } as IResult
       })
 
       instance.project.onCreateEntry((analyseInfo: IResult, entry, env, projectConfig) => {
@@ -135,6 +125,35 @@ export function ensureEntry(projectRootPath: string) {
       }
     )
   )
+
+  ensureEntryMethods(projectRootPath)
+}
+
+function ensureEntryMethods(projectRootPath: string) {
+  const filePath = path.join(projectRootPath, "src/methods.ts")
+
+  fs.outputFileSync(
+    filePath,
+    prettier.format(
+      `
+    import * as path from "path"
+
+    export function judgeHasComponents(projectRootPath: string, files: path.ParsedPath[]) {
+      return files.some(file => {
+        const relativePath = path.relative(projectRootPath, path.join(file.dir, file.name))
+        if (relativePath.startsWith("src/components")) {
+          return true
+        }
+        return false
+      })
+    }
+  `,
+      {
+        semi: false,
+        parser: "typescript"
+      }
+    )
+  )
 }
 
 export function ensureTest(projectRootPath: string) {
@@ -142,13 +161,31 @@ export function ensureTest(projectRootPath: string) {
 
   const fileContent = `
     import test from "ava"
+    import * as path from "path"
+    import { judgeHasComponents } from "../methods"
 
-    function sum(a: number, b: number) {
-      return a + b
-    }
+    const testProjectRootPath = "/Users/someOne/workspace"
 
-    test("adds 1 + 2 to equal 3", t => {
-      t.true(sum(1, 2) === 3)
+    const testFilePaths = (filePaths: string[]) =>
+      filePaths.map(filePath => path.join(testProjectRootPath, filePath)).map(filePath => path.parse(filePath))
+
+    test("Single file", t => {
+      const relativeProjectFiles = ["src/components"]
+      t.true(judgeHasComponents(testProjectRootPath, testFilePaths(relativeProjectFiles)))
+    })
+
+    test("Multiple files", t => {
+      const relativeProjectFiles = [
+        "src/components/index.tsx",
+        "src/components/button/index.tsx",
+        "src/components/select/index.tsx"
+      ]
+      t.true(judgeHasComponents(testProjectRootPath, testFilePaths(relativeProjectFiles)))
+    })
+
+    test("hasn't components", t => {
+      const relativeProjectFiles = ["src/pages/index.tsx"]
+      t.false(judgeHasComponents(testProjectRootPath, testFilePaths(relativeProjectFiles)))
     })
   `
 
