@@ -19,7 +19,7 @@ export const CommandTest = async () => {
       `--reporter lcov`,
       `--reporter text`,
       `--reporter json`,
-      `--exclude tests`,
+      `--exclude built/tests/**/*.js`,
       `${findNearestNodemodulesFile("/.bin/ava")}`,
       `--files ${path.join(projectRootPath, "built/tests/**/*.js")}`,
       `--failFast`
