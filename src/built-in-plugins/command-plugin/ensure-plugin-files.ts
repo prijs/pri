@@ -6,7 +6,7 @@ import { builtDir } from "./static"
 
 export function ensureNpmIgnore(projectRootPath: string) {
   const filePath = path.join(projectRootPath, ".npmignore")
-  const ensureContents = ["node_modules", ".cache", ".vscode", ".temp", builtDir, "test", ".nyc_output", "coverage"]
+  const ensureContents = ["node_modules", ".cache", ".vscode", ".temp", builtDir, "tests", ".nyc_output", "coverage"]
 
   const exitFileContent = fs.existsSync(filePath) ? fs.readFileSync(filePath).toString() || "" : ""
   const exitFileContentArray = exitFileContent.split("\n").filter(content => content !== "")
@@ -157,12 +157,12 @@ function ensureEntryMethods(projectRootPath: string) {
 }
 
 export function ensureTest(projectRootPath: string) {
-  const filePath = path.join(projectRootPath, "src/tests/index.ts")
+  const filePath = path.join(projectRootPath, "tests/index.ts")
 
   const fileContent = `
     import test from "ava"
     import * as path from "path"
-    import { judgeHasComponents } from "../methods"
+    import { judgeHasComponents } from "../src/methods"
 
     const testProjectRootPath = "/Users/someOne/workspace"
 

@@ -6,11 +6,13 @@ import { pri } from "../../node"
 import { log } from "../../utils/log"
 import { findNearestNodemodulesFile } from "../../utils/npm-finder"
 import text from "../../utils/text"
+import { builtDir } from "../command-plugin/static"
 
 const projectRootPath = process.cwd()
 
 export const CommandTest = async () => {
   log(`Build typescript files`)
+  execSync(`${findNearestNodemodulesFile("/.bin/rimraf")} ${builtDir}`, { stdio: "inherit" })
   execSync([findNearestNodemodulesFile("/.bin/tsc"), "--module CommonJS", "--sourceMap"].join(" "))
 
   execSync(
