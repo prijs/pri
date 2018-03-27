@@ -64,7 +64,7 @@ export function ensurePackageJson(projectRootPath: string) {
 
   _.merge(exitFileContent || {}, ensureScripts)
 
-  fs.writeFileSync(filePath, JSON.stringify(ensureScripts, null, 2))
+  fs.writeFileSync(filePath, JSON.stringify(exitFileContent, null, 2))
 }
 
 export function ensureEntry(projectRootPath: string) {
