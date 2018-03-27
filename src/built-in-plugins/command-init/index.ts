@@ -32,8 +32,8 @@ export const CommandInit = async () => {
 
   log("\n Happy hacking!")
 
-  // log(colors.blue("  npm test"))
-  // log("    Starts the test runner.\n")
+  log(colors.blue("  npm test"))
+  log("    Run tests.\n")
 }
 
 export default (instance: typeof pri) => {

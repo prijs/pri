@@ -14,6 +14,7 @@ export const ensureFiles = (projectRootPath: string, config: IProjectConfig, cre
   ensureVscode(projectRootPath)
   ensureDeclares(projectRootPath)
   ensurePrettierrc(projectRootPath)
+  ensureTest(projectRootPath)
 
   if (createDefaultPage) {
     const pagesAbsolutePath = path.join(projectRootPath, pagesPath.dir)
@@ -209,4 +210,18 @@ export function ensurePrettierrc(projectRootPath: string) {
   }
 
   fs.outputFileSync(filePath, prettier.format(JSON.stringify(prettierObject), { semi: false, parser: "json" }))
+}
+
+function ensureTest(projectRootPath: string) {
+  const filePath = path.join(projectRootPath, "tests/index.ts")
+
+  const fileContent = `
+    import test from "ava"
+
+    test("Example", t => {
+      t.true(true)
+    })
+  `
+
+  fs.outputFileSync(filePath, prettier.format(fileContent, { semi: false, parser: "typescript" }))
 }
