@@ -57,7 +57,7 @@ export function ensureTsconfig(projectRootPath: string) {
       outDir: "built",
       lib: ["dom", "es5", "es6", "scripthost"]
     },
-    exclude: ["node_modules", "built", "lib", "tests"]
+    exclude: ["node_modules", "built", "lib"]
   }
 
   let exitFileContent: any = {}
