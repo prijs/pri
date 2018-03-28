@@ -13,7 +13,9 @@ const projectRootPath = process.cwd()
 export const CommandTest = async () => {
   log(`Build typescript files`)
   execSync(`${findNearestNodemodulesFile("/.bin/rimraf")} ${builtDir}`, { stdio: "inherit" })
-  execSync([findNearestNodemodulesFile("/.bin/tsc"), "--module CommonJS", "--sourceMap"].join(" "))
+  execSync([findNearestNodemodulesFile("/.bin/tsc"), "--module CommonJS", "--sourceMap"].join(" "), {
+    stdio: "inherit"
+  })
 
   execSync(
     [
