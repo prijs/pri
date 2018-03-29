@@ -6,9 +6,9 @@ import { ensureDeclares, ensurePrettierrc, ensureTsconfig, ensureTslint, ensureV
 import { log } from "../../utils/log"
 import { findNearestNodemodulesFile } from "../../utils/npm-finder"
 import { pluginPackages } from "../../utils/plugins"
+import { tsBuiltPath } from "../../utils/structor-config"
 import { ensureEntry, ensureGitignore, ensureNpmIgnore, ensurePackageJson, ensureTest } from "./ensure-plugin-files"
 import { pluginBuild } from "./plugin-build"
-import { builtDir } from "./static"
 
 const projectRootPath = process.cwd()
 
@@ -50,7 +50,7 @@ const CommandPluginWatch = () => {
 }
 
 const CommandPluginBuild = async () => {
-  execSync(`${findNearestNodemodulesFile("/.bin/rimraf")} ${builtDir}`, { stdio: "inherit" })
+  execSync(`${findNearestNodemodulesFile("/.bin/rimraf")} ${tsBuiltPath.dir}`, { stdio: "inherit" })
   await pluginBuild(projectRootPath)
 }
 

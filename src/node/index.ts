@@ -1,6 +1,6 @@
 import * as build from "./build"
 import * as commands from "./commands"
-import * as project from "./project"
+import * as project from "./project/index"
 
 export const pri = {
   /**

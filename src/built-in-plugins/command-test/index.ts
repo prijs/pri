@@ -5,14 +5,12 @@ import * as path from "path"
 import { pri } from "../../node"
 import { log } from "../../utils/log"
 import { findNearestNodemodulesFile } from "../../utils/npm-finder"
+import { testsPath, tsBuiltPath } from "../../utils/structor-config"
 import text from "../../utils/text"
-import { builtDir } from "../command-plugin/static"
 
-const projectRootPath = process.cwd()
-
-export const CommandTest = async () => {
+export const CommandTest = async (projectRootPath: string) => {
   log(`Build typescript files`)
-  execSync(`${findNearestNodemodulesFile("/.bin/rimraf")} ${builtDir}`, { stdio: "inherit" })
+  execSync(`${findNearestNodemodulesFile("/.bin/rimraf")} ${tsBuiltPath.dir}`, { stdio: "inherit" })
   execSync([findNearestNodemodulesFile("/.bin/tsc"), "--module CommonJS", "--sourceMap"].join(" "), {
     stdio: "inherit"
   })
@@ -23,9 +21,9 @@ export const CommandTest = async () => {
       `--reporter lcov`,
       `--reporter text`,
       `--reporter json`,
-      `--exclude built/tests/**/*.js`,
+      `--exclude ${tsBuiltPath.dir}/${testsPath.dir}/**/*.js`,
       `${findNearestNodemodulesFile("/.bin/ava")}`,
-      `--files ${path.join(projectRootPath, "built/tests/**/*.js")}`,
+      `--files ${path.join(projectRootPath, `${tsBuiltPath.dir}/${testsPath.dir}/**/*.js`)}`,
       `--failFast`
     ].join(" "),
     {
@@ -44,9 +42,18 @@ export const CommandTest = async () => {
 }
 
 export default (instance: typeof pri) => {
+  const projectRootPath = instance.project.getProjectRootPath()
+
+  instance.project.whiteFileRules.add({
+    judgeFile: file => {
+      const relativePath = path.relative(projectRootPath, file.dir)
+      return relativePath.startsWith(testsPath.dir)
+    }
+  })
+
   instance.commands.registerCommand({
     name: "test",
     description: text.commander.init.description,
-    action: CommandTest
+    action: CommandTest.bind(null, projectRootPath)
   })
 }

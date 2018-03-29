@@ -21,7 +21,8 @@ const getBuiltInPlugins = (projectRootPath: string) => {
     ["pri-plugin-project-analyse-markdown-layouts", "../built-in-plugins/project-analyse-markdown-layouts/index.js"],
     ["pri-plugin-project-analyse-markdown-pages", "../built-in-plugins/project-analyse-markdown-pages/index.js"],
     ["pri-plugin-project-analyse-not-found", "../built-in-plugins/project-analyse-not-found/index.js"],
-    ["pri-plugin-project-analyse-pages", "../built-in-plugins/project-analyse-pages/index.js"]
+    ["pri-plugin-project-analyse-pages", "../built-in-plugins/project-analyse-pages/index.js"],
+    ["pri-plugin-white-files", "../built-in-plugins/white-files/index.js"]
   ]
 
   return plugins.reduce((obj: any, right) => {
@@ -56,6 +57,10 @@ export type IBuildConfigPipe = (env: "local" | "prod", config: webpack.Configura
 
 let hasInitPlugins = false
 
+export interface IWhiteFile {
+  judgeFile: (file: path.ParsedPath & { isDir: boolean }) => boolean
+}
+
 export class IPluginConfig {
   public analyseInfo?: any = {}
 
@@ -66,6 +71,8 @@ export class IPluginConfig {
   public projectAnalyses: IAnalyseProject[] = []
 
   public projectCreateEntrys: ICreateEntry[] = []
+
+  public whiteFileRules: IWhiteFile[] = []
 }
 
 export interface IPluginPackageInfo {

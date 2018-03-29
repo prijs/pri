@@ -5,22 +5,14 @@ import * as path from "path"
 import * as prettier from "prettier"
 import { ensureFile } from "../../utils/ensure-files"
 import { log } from "../../utils/log"
-import { builtDir } from "./static"
+import { getGitignores, getNpmignores, tsBuiltPath } from "../../utils/structor-config"
 
 export function ensureNpmIgnore(projectRootPath: string) {
-  ensureFile(
-    projectRootPath,
-    ".npmignore",
-    ["node_modules", ".cache", ".vscode", ".temp", builtDir, "tests", ".nyc_output", "coverage"].join("\n")
-  )
+  ensureFile(projectRootPath, ".npmignore", getNpmignores().join("\n"))
 }
 
 export function ensureGitignore(projectRootPath: string) {
-  ensureFile(
-    projectRootPath,
-    ".gitignore",
-    ["node_modules", ".cache", ".vscode", ".temp", builtDir, ".nyc_output", "coverage"].join("\n")
-  )
+  ensureFile(projectRootPath, ".gitignore", getGitignores().join("\n"))
 }
 
 export function ensurePackageJson(projectRootPath: string) {
@@ -29,7 +21,7 @@ export function ensurePackageJson(projectRootPath: string) {
     return JSON.stringify(
       _.merge({}, prevJson, {
         types: "src/index.ts",
-        main: builtDir + "/index.js",
+        main: path.join(tsBuiltPath.dir, "index.js"),
         scripts: {
           start: "pri plugin-watch",
           prepublishOnly: "pri plugin-build",

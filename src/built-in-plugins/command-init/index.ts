@@ -15,7 +15,7 @@ const projectRootPath = process.cwd()
 export const CommandInit = async () => {
   const config = getConfig(projectRootPath, null)
 
-  ensureFiles(projectRootPath, config, true)
+  await ensureFiles(projectRootPath, config, true)
 
   log("\n Success init your project, you can run serval commands:\n")
 
@@ -28,10 +28,10 @@ export const CommandInit = async () => {
   log(colors.blue("  npm run preview"))
   log(`    ${text.commander.dev.description}\n`)
 
-  log("\n Happy hacking!")
-
   log(colors.blue("  npm test"))
   log("    Run tests.\n")
+
+  log("\n Happy hacking!")
 }
 
 export default (instance: typeof pri) => {

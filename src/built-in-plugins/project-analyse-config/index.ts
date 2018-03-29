@@ -15,19 +15,25 @@ interface IResult {
 export default (instance: typeof pri) => {
   const projectRootPath = instance.project.getProjectRootPath()
 
+  // src/config/config.default|local|prod.ts
+  instance.project.whiteFileRules.add({
+    judgeFile: file => {
+      const relativePath = path.relative(projectRootPath, file.dir)
+      return (
+        relativePath === "src/config" &&
+        file.ext === ".ts" &&
+        (file.name === "config.default" || file.name === "config.local" || file.name === "config.prod")
+      )
+    }
+  })
+
   instance.project.onAnalyseProject(files => {
     return {
       projectAnalyseConfig: {
         hasConfig:
-          fs.existsSync(
-            path.join(projectRootPath, path.format(configPaths.default))
-          ) ||
-          fs.existsSync(
-            path.join(projectRootPath, path.format(configPaths.local))
-          ) ||
-          fs.existsSync(
-            path.join(projectRootPath, path.format(configPaths.prod))
-          )
+          fs.existsSync(path.join(projectRootPath, path.format(configPaths.default))) ||
+          fs.existsSync(path.join(projectRootPath, path.format(configPaths.local))) ||
+          fs.existsSync(path.join(projectRootPath, path.format(configPaths.prod)))
       }
     } as IResult
   })

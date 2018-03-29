@@ -22,6 +22,13 @@ const MARKDOWN_WRAPPER = "MarkdownWrapper"
 export default (instance: typeof pri) => {
   const projectRootPath = instance.project.getProjectRootPath()
 
+  instance.project.whiteFileRules.add({
+    judgeFile: file => {
+      const relativePath = path.relative(projectRootPath, file.dir)
+      return relativePath.startsWith("src/pages") && file.name === "index" && file.ext === ".md"
+    }
+  })
+
   instance.project.onAnalyseProject(files => {
     return {
       projectAnalyseMarkdownPages: {

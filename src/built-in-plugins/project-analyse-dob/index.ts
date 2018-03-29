@@ -5,17 +5,15 @@ import * as path from "path"
 import * as prettier from "prettier"
 import { pri } from "../../node"
 import { md5 } from "../../utils/md5"
-import {
-  helperPath,
-  storesPath,
-  tempJsEntryPath
-} from "../../utils/structor-config"
+import { helperPath, storesPath, tempJsEntryPath } from "../../utils/structor-config"
 
 const LAYOUT_TEMP = "LayoutTempComponent"
 const LAYOUT = "LayoutComponent"
 
 const MARKDOWN_LAYOUT_TEMP = "MarkdownLayoutTempComponent"
 const MARKDOWN_LAYOUT = "MarkdownLayoutComponent"
+
+const whiteList = ["src/utils/helper.tsx"]
 
 const safeName = (str: string) => _.upperFirst(_.camelCase(str))
 
@@ -31,15 +29,26 @@ interface IResult {
 export default (instance: typeof pri) => {
   const projectRootPath = instance.project.getProjectRootPath()
 
+  instance.project.whiteFileRules.add({
+    judgeFile: file => {
+      return whiteList.some(whiteName => path.format(file) === path.join(projectRootPath, whiteName))
+    }
+  })
+
+  // src/stores/**
+  instance.project.whiteFileRules.add({
+    judgeFile: file => {
+      const relativePath = path.relative(projectRootPath, file.dir)
+      return relativePath.startsWith("src/stores")
+    }
+  })
+
   instance.project.onAnalyseProject(files => {
     return {
       projectAnalyseDob: {
         storeFiles: files
           .filter(file => {
-            const relativePath = path.relative(
-              projectRootPath,
-              path.join(file.dir, file.name)
-            )
+            const relativePath = path.relative(projectRootPath, path.join(file.dir, file.name))
 
             if (!relativePath.startsWith(storesPath.dir)) {
               return false
@@ -48,100 +57,90 @@ export default (instance: typeof pri) => {
             return true
           })
           .map(file => {
-            return { file, name: safeName(file.name) }
+            return {
+              file,
+              name: safeName(file.name)
+            }
           })
       }
     } as IResult
   })
 
-  instance.project.onCreateEntry(
-    (analyseInfo: IResult, entry, env, projectConfig) => {
-      const helperAbsolutePath = path.join(
-        projectRootPath,
-        path.format(helperPath)
-      )
+  instance.project.onCreateEntry((analyseInfo: IResult, entry, env, projectConfig) => {
+    const helperAbsolutePath = path.join(projectRootPath, path.format(helperPath))
 
-      if (analyseInfo.projectAnalyseDob.storeFiles.length === 0) {
-        if (fs.existsSync(helperAbsolutePath)) {
-          fs.removeSync(helperAbsolutePath)
-        }
-
-        return
+    if (analyseInfo.projectAnalyseDob.storeFiles.length === 0) {
+      if (fs.existsSync(helperAbsolutePath)) {
+        fs.removeSync(helperAbsolutePath)
       }
 
-      // Connect normal pages
-      entry.pipe.set("normalPagesImportEnd", importEnd => {
-        return `
+      return
+    }
+
+    // Connect normal pages
+    entry.pipe.set("normalPagesImportEnd", importEnd => {
+      return `
         ${importEnd}.then(component => Connect()(component.default))
       `
-      })
+    })
 
-      // Connect layout
-      entry.pipe.set("analyseLayoutImportName", text => LAYOUT_TEMP)
-      entry.pipe.set("analyseLayoutBody", body => {
-        return `
+    // Connect layout
+    entry.pipe.set("analyseLayoutImportName", text => LAYOUT_TEMP)
+    entry.pipe.set("analyseLayoutBody", body => {
+      return `
         ${body}
         const ${LAYOUT} = Connect()(${LAYOUT_TEMP})
       `
-      })
+    })
 
-      // Connect markdown layout
-      entry.pipe.set(
-        "analyseMarkdownLayoutImportName",
-        text => MARKDOWN_LAYOUT_TEMP
-      )
-      entry.pipe.set("analyseMarkdownLayoutBody", body => {
-        return `
+    // Connect markdown layout
+    entry.pipe.set("analyseMarkdownLayoutImportName", text => MARKDOWN_LAYOUT_TEMP)
+    entry.pipe.set("analyseMarkdownLayoutBody", body => {
+      return `
       ${body}
       const ${MARKDOWN_LAYOUT} = Connect()(${MARKDOWN_LAYOUT_TEMP})
     `
-      })
+    })
 
-      const entryRelativeToHelper = path.relative(
-        path.join(tempJsEntryPath.dir),
-        path.join(helperPath.dir, helperPath.name)
-      )
+    const entryRelativeToHelper = path.relative(
+      path.join(tempJsEntryPath.dir),
+      path.join(helperPath.dir, helperPath.name)
+    )
 
-      entry.pipeHeader(header => {
-        return `
+    entry.pipeHeader(header => {
+      return `
         ${header}
         import { useStrict } from "dob"
         import { Connect, Provider } from "dob-react"
         import { stores } from "${normalizePath(entryRelativeToHelper)}"
       `
-      })
+    })
 
-      entry.pipeBody(body => {
-        return `
+    entry.pipeBody(body => {
+      return `
         ${body}
         useStrict()
       `
-      })
+    })
 
-      entry.pipeRenderRouter(router => {
-        return `
+    entry.pipeRenderRouter(router => {
+      return `
         <Provider {...stores}>
           ${router}
         </Provider>
       `
-      })
+    })
 
-      const storesHelper = `
+    const storesHelper = `
       import { combineStores } from "dob"
 
       ${analyseInfo.projectAnalyseDob.storeFiles
         .map(storeFile => {
-          const importAbsolutePath = path.join(
-            storeFile.file.dir,
-            storeFile.file.name
-          )
-          const importRelativePath = path.relative(
-            path.join(projectRootPath, helperPath.dir),
-            importAbsolutePath
-          )
-          return `import { ${storeFile.name}Action, ${
-            storeFile.name
-          }Store } from "${normalizePath(importRelativePath)}"`
+          const importAbsolutePath = path.join(storeFile.file.dir, storeFile.file.name)
+          const importRelativePath = path.relative(path.join(projectRootPath, helperPath.dir), importAbsolutePath)
+          return `import { ${storeFile.name}Action, ${storeFile.name}Store } from "${normalizePath(
+            importRelativePath
+          )}"`
         })
         .join("\n")}
 
@@ -154,16 +153,15 @@ export default (instance: typeof pri) => {
       export { stores }
     `
 
-      // If has stores, create helper.ts
-      fs.outputFileSync(
-        helperAbsolutePath,
-        prettier.format(getHelperContent(storesHelper), {
-          semi: false,
-          parser: "typescript"
-        })
-      )
-    }
-  )
+    // If has stores, create helper.ts
+    fs.outputFileSync(
+      helperAbsolutePath,
+      prettier.format(getHelperContent(storesHelper), {
+        semi: false,
+        parser: "typescript"
+      })
+    )
+  })
 }
 
 function getHelperContent(str: string) {

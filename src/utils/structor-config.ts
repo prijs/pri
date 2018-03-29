@@ -1,4 +1,5 @@
 import * as path from "path"
+import { IProjectConfig } from "./project-config-interface"
 
 export const srcPath = {
   dir: "src"
@@ -6,6 +7,14 @@ export const srcPath = {
 
 export const tempPath = {
   dir: ".temp"
+}
+
+export const testsPath = {
+  dir: "tests"
+}
+
+export const tsBuiltPath = {
+  dir: "built"
 }
 
 export const pagesPath = {
@@ -79,3 +88,39 @@ export const configPaths = {
 export const markdownTempPath = {
   dir: path.join(tempPath.dir, "markdowns")
 }
+
+export const getGitignores = (projectConfig?: IProjectConfig) => {
+  const ignores = [
+    "node_modules",
+    ".cache",
+    ".vscode",
+    tempPath.dir,
+    tsBuiltPath.dir,
+    ".DS_Store",
+    "coverage",
+    ".nyc_output"
+  ]
+
+  if (projectConfig) {
+    ignores.push(projectConfig.distDir)
+  }
+
+  return ignores
+}
+
+export const getNpmignores = (projectConfig?: IProjectConfig) => {
+  const npmIgnores = getGitignores(projectConfig)
+  npmIgnores.push(testsPath.dir)
+  return npmIgnores
+}
+
+export const ignoreScanByNotDeployIgnore = [
+  ".gitignore",
+  ".npmignore",
+  ".prettierrc",
+  ".git",
+  "package-lock.json",
+  "package.json",
+  "tsconfig.json",
+  "tslint.json"
+]

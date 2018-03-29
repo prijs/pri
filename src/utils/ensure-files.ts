@@ -1,17 +1,33 @@
 import { execSync } from "child_process"
 import * as colors from "colors"
+import { FILE } from "dns"
 import * as fs from "fs-extra"
 import * as _ from "lodash"
 import * as path from "path"
 import * as prettier from "prettier"
+import * as walk from "walk"
 import { log } from "./log"
+import { plugin } from "./plugins"
 import { IProjectConfig } from "./project-config-interface"
-import { declarePath, pagesPath } from "./structor-config"
+import { declarePath, getGitignores, pagesPath, tempPath, tsBuiltPath } from "./structor-config"
+import { walkProjectFiles } from "./walk-project-files"
 
-export const ensureFiles = (projectRootPath: string, config: IProjectConfig, createDefaultPage: boolean) => {
-  log("Ensure project files\n")
+export const ensureFiles = async (
+  projectRootPath: string,
+  projectConfig: IProjectConfig,
+  createDefaultPage: boolean
+) => {
+  log("Check files.\n")
+  const files = await walkProjectFiles(projectRootPath, projectConfig)
+  files.forEach(file => {
+    if (!plugin.whiteFileRules.some(whiteFileRule => whiteFileRule.judgeFile(file))) {
+      throw Error(`Unexpected file or directory: ${path.format(file)}`)
+    }
+  })
 
-  ensureGitignore(projectRootPath, config)
+  log("Ensure project files.\n")
+
+  ensureGitignore(projectRootPath, projectConfig)
   ensureTsconfig(projectRootPath)
   ensureTslint(projectRootPath)
   ensurePackageJson(projectRootPath)
@@ -33,12 +49,8 @@ export const ensureFiles = (projectRootPath: string, config: IProjectConfig, cre
   }
 }
 
-export function ensureGitignore(projectRootPath: string, config: IProjectConfig) {
-  ensureFile(
-    projectRootPath,
-    ".gitignore",
-    ["node_modules", config.distDir || "dist", ".cache", ".vscode", ".temp"].join("\n")
-  )
+export function ensureGitignore(projectRootPath: string, projectConfig: IProjectConfig) {
+  ensureFile(projectRootPath, ".gitignore", getGitignores(projectConfig).join("\n"))
 }
 
 export function ensureTsconfig(projectRootPath: string) {
@@ -56,10 +68,10 @@ export function ensureTsconfig(projectRootPath: string) {
           target: "esnext",
           experimentalDecorators: true,
           skipLibCheck: true,
-          outDir: "built",
+          outDir: tsBuiltPath.dir,
           lib: ["dom", "es5", "es6", "scripthost"]
         },
-        exclude: ["node_modules", "built", "lib"]
+        exclude: ["node_modules", tsBuiltPath.dir, "lib"]
       },
       null,
       2

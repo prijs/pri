@@ -18,15 +18,28 @@ interface IResult {
 export default (instance: typeof pri) => {
   const projectRootPath = instance.project.getProjectRootPath()
 
+  // src/layouts/markdown.tsx
+  instance.project.whiteFileRules.add({
+    judgeFile: file => {
+      const relativePath = path.relative(projectRootPath, file.dir)
+      return relativePath === "src/layouts" && file.name === "index" && file.ext === ".tsx"
+    }
+  })
+
+  // src/layouts/markdown.style.tsx
+  instance.project.whiteFileRules.add({
+    judgeFile: file => {
+      const relativePath = path.relative(projectRootPath, file.dir)
+      return relativePath === "src/layouts" && file.name === "index.style" && file.ext === ".ts"
+    }
+  })
+
   instance.project.onAnalyseProject(files => {
     return {
       projectAnalyseLayout: {
         hasLayout: files
           .filter(file => {
-            const relativePath = path.relative(
-              projectRootPath,
-              path.join(file.dir, file.name)
-            )
+            const relativePath = path.relative(projectRootPath, path.join(file.dir, file.name))
 
             if (!relativePath.startsWith(layoutPath.dir)) {
               return false
@@ -39,29 +52,22 @@ export default (instance: typeof pri) => {
     } as IResult
   })
 
-  instance.project.onCreateEntry(
-    (analyseInfo: IResult, entry, env, projectConfig) => {
-      if (!analyseInfo.projectAnalyseLayout.hasLayout) {
-        return
-      }
+  instance.project.onCreateEntry((analyseInfo: IResult, entry, env, projectConfig) => {
+    if (!analyseInfo.projectAnalyseLayout.hasLayout) {
+      return
+    }
 
-      const layoutEntryRelativePath = path.relative(
-        tempJsEntryPath.dir,
-        path.join(layoutPath.dir, layoutPath.name)
-      )
+    const layoutEntryRelativePath = path.relative(tempJsEntryPath.dir, path.join(layoutPath.dir, layoutPath.name))
 
-      entry.pipeHeader(header => {
-        return `
+    entry.pipeHeader(header => {
+      return `
         ${header}
-        import ${entry.pipe.get(
-          "analyseLayoutImportName",
-          LAYOUT
-        )} from "${normalizePath(layoutEntryRelativePath)}"
+        import ${entry.pipe.get("analyseLayoutImportName", LAYOUT)} from "${normalizePath(layoutEntryRelativePath)}"
       `
-      })
+    })
 
-      entry.pipeBody(body => {
-        return `
+    entry.pipeBody(body => {
+      return `
         ${body}
 
         ${entry.pipe.get("analyseLayoutBody", "")}
@@ -76,11 +82,10 @@ export default (instance: typeof pri) => {
           )
         }
       `
-      })
+    })
 
-      entry.pipe.set("commonRoute", route => {
-        return LAYOUT_ROUTE
-      })
-    }
-  )
+    entry.pipe.set("commonRoute", route => {
+      return LAYOUT_ROUTE
+    })
+  })
 }

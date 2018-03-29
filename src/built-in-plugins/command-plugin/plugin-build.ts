@@ -6,7 +6,7 @@ import * as gulpBabel from "gulp-babel"
 import * as ts from "gulp-typescript"
 import * as _ from "lodash"
 import * as path from "path"
-import { builtDir } from "./static"
+import { tsBuiltPath } from "../../utils/structor-config"
 
 function runTs(projectRootPath: string, outDir: string) {
   const tsConfigPath = path.join(projectRootPath, "tsconfig.json")
@@ -48,6 +48,6 @@ function runBabel(sourcePath: string) {
 }
 
 export const pluginBuild = async (projectRootPath: string) => {
-  await runTs(projectRootPath, builtDir)
-  await runBabel(path.join(projectRootPath, builtDir))
+  await runTs(projectRootPath, tsBuiltPath.dir)
+  await runBabel(path.join(projectRootPath, tsBuiltPath.dir))
 }

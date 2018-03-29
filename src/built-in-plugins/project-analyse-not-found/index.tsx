@@ -15,12 +15,16 @@ interface IResult {
 export default (instance: typeof pri) => {
   const projectRootPath = instance.project.getProjectRootPath()
 
+  instance.project.whiteFileRules.add({
+    judgeFile: file => {
+      const relativePath = path.relative(projectRootPath, file.dir)
+      return relativePath === "src/pages" && file.name === "404" && file.ext === ".tsx"
+    }
+  })
+
   instance.project.onAnalyseProject(files => {
     const notFoundFiles = files.filter(file => {
-      if (
-        path.format(file) !==
-        path.join(projectRootPath, path.format(notFoundPath))
-      ) {
+      if (path.format(file) !== path.join(projectRootPath, path.format(notFoundPath))) {
         return false
       }
 
@@ -32,30 +36,25 @@ export default (instance: typeof pri) => {
     } as IResult
   })
 
-  instance.project.onCreateEntry(
-    (analyseInfo: IResult, entry, env, projectConfig) => {
-      if (!analyseInfo.projectAnalyseNotFound.hasNotFound) {
-        return
-      }
+  instance.project.onCreateEntry((analyseInfo: IResult, entry, env, projectConfig) => {
+    if (!analyseInfo.projectAnalyseNotFound.hasNotFound) {
+      return
+    }
 
-      entry.pipeHeader(header => {
-        return `
+    entry.pipeHeader(header => {
+      return `
         ${header}
         import NotFoundComponent from "${normalizePath(
-          path.join(
-            projectRootPath,
-            path.join(notFoundPath.dir, notFoundPath.name)
-          )
+          path.join(projectRootPath, path.join(notFoundPath.dir, notFoundPath.name))
         )}"
       `
-      })
+    })
 
-      entry.pipeRenderRoutes(renderRoutes => {
-        return `
+    entry.pipeRenderRoutes(renderRoutes => {
+      return `
         ${renderRoutes}
         <Route component={NotFoundComponent} />
       `
-      })
-    }
-  )
+    })
+  })
 }

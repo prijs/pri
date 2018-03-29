@@ -1,5 +1,6 @@
-import { IAnalyseProject, ICreateEntry, plugin } from "../utils/plugins"
-import { getConfig as getProjectConfig } from "../utils/project-config"
+import { IAnalyseProject, ICreateEntry, plugin } from "../../utils/plugins"
+import { getConfig as getProjectConfig } from "../../utils/project-config"
+import * as whiteFileRules from "./white-file-rules"
 
 const projectRootPath = process.cwd()
 
@@ -19,3 +20,5 @@ export const getProjectRootPath = () => projectRootPath
 export const onCreateEntry = (fn: ICreateEntry) => {
   plugin.projectCreateEntrys.push(fn)
 }
+
+export { whiteFileRules }

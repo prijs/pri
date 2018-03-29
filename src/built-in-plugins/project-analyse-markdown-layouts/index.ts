@@ -18,6 +18,22 @@ interface IResult {
 export default (instance: typeof pri) => {
   const projectRootPath = instance.project.getProjectRootPath()
 
+  // src/layouts/markdown.tsx
+  instance.project.whiteFileRules.add({
+    judgeFile: file => {
+      const relativePath = path.relative(projectRootPath, file.dir)
+      return relativePath === "src/layouts" && file.name === "markdown" && file.ext === ".tsx"
+    }
+  })
+
+  // src/layouts/markdown.style.tsx
+  instance.project.whiteFileRules.add({
+    judgeFile: file => {
+      const relativePath = path.relative(projectRootPath, file.dir)
+      return relativePath === "src/layouts" && file.name === "markdown.style" && file.ext === ".ts"
+    }
+  })
+
   instance.project.onAnalyseProject(files => {
     return {
       projectAnalyseMarkdownLayout: {

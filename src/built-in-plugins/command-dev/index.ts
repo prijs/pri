@@ -32,7 +32,7 @@ export const CommandDev = async () => {
   const env = "local"
   const projectConfig = getConfig(projectRootPath, env)
 
-  ensureFiles(projectRootPath, projectConfig, false)
+  await ensureFiles(projectRootPath, projectConfig, false)
 
   await spinner("Analyse project", async () => {
     await analyseProject(projectRootPath, env, projectConfig)
