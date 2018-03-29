@@ -20,7 +20,7 @@ export const ensureFiles = async (
   log("Check files.\n")
   const files = await walkProjectFiles(projectRootPath, projectConfig)
   files.forEach(file => {
-    if (!plugin.whiteFileRules.some(whiteFileRule => whiteFileRule.judgeFile(file))) {
+    if (!plugin.whiteFileRules.some(whiteFileRule => whiteFileRule(file))) {
       throw Error(`Unexpected file or directory: ${path.format(file)}`)
     }
   })

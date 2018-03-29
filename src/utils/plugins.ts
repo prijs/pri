@@ -57,9 +57,7 @@ export type IBuildConfigPipe = (env: "local" | "prod", config: webpack.Configura
 
 let hasInitPlugins = false
 
-export interface IWhiteFile {
-  judgeFile: (file: path.ParsedPath & { isDir: boolean }) => boolean
-}
+export type IWhiteFile = (file: path.ParsedPath & { isDir: boolean }) => boolean
 
 export class IPluginConfig {
   public analyseInfo?: any = {}

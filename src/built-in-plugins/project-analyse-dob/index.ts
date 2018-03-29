@@ -29,18 +29,14 @@ interface IResult {
 export default (instance: typeof pri) => {
   const projectRootPath = instance.project.getProjectRootPath()
 
-  instance.project.whiteFileRules.add({
-    judgeFile: file => {
-      return whiteList.some(whiteName => path.format(file) === path.join(projectRootPath, whiteName))
-    }
+  instance.project.whiteFileRules.add(file => {
+    return whiteList.some(whiteName => path.format(file) === path.join(projectRootPath, whiteName))
   })
 
   // src/stores/**
-  instance.project.whiteFileRules.add({
-    judgeFile: file => {
-      const relativePath = path.relative(projectRootPath, file.dir)
-      return relativePath.startsWith("src/stores")
-    }
+  instance.project.whiteFileRules.add(file => {
+    const relativePath = path.relative(projectRootPath, file.dir)
+    return relativePath.startsWith("src/stores")
   })
 
   instance.project.onAnalyseProject(files => {

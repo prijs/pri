@@ -44,11 +44,9 @@ export const CommandTest = async (projectRootPath: string) => {
 export default (instance: typeof pri) => {
   const projectRootPath = instance.project.getProjectRootPath()
 
-  instance.project.whiteFileRules.add({
-    judgeFile: file => {
-      const relativePath = path.relative(projectRootPath, file.dir)
-      return relativePath.startsWith(testsPath.dir)
-    }
+  instance.project.whiteFileRules.add(file => {
+    const relativePath = path.relative(projectRootPath, file.dir)
+    return relativePath.startsWith(testsPath.dir)
   })
 
   instance.commands.registerCommand({

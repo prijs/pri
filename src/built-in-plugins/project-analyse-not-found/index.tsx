@@ -15,11 +15,9 @@ interface IResult {
 export default (instance: typeof pri) => {
   const projectRootPath = instance.project.getProjectRootPath()
 
-  instance.project.whiteFileRules.add({
-    judgeFile: file => {
-      const relativePath = path.relative(projectRootPath, file.dir)
-      return relativePath === "src/pages" && file.name === "404" && file.ext === ".tsx"
-    }
+  instance.project.whiteFileRules.add(file => {
+    const relativePath = path.relative(projectRootPath, file.dir)
+    return relativePath === "src/pages" && file.name === "404" && file.ext === ".tsx"
   })
 
   instance.project.onAnalyseProject(files => {
