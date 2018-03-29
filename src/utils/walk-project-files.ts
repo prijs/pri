@@ -15,14 +15,16 @@ type WalkStats = fs.Stats & {
   name: string
 }
 
-export function walkProjectFiles(projectRootPath: string, projectConfig: IProjectConfig): Promise<path.ParsedPath[]> {
+type ICustomParsedPath = path.ParsedPath & { isDir: boolean }
+
+export function walkProjectFiles(projectRootPath: string, projectConfig: IProjectConfig): Promise<ICustomParsedPath[]> {
   return new Promise((resolve, reject) => {
     const gitIgnores = getGitignores(projectConfig).map(dir => path.join(projectRootPath, dir))
     const scanIgnores = ignoreScanByNotDeployIgnore.map(addon => path.join(projectRootPath, addon))
 
     const walker = walk.walk(projectRootPath, { filters: [...gitIgnores, ...scanIgnores] })
 
-    const files: Array<path.ParsedPath & { isDir: boolean }> = []
+    const files: ICustomParsedPath[] = []
 
     walker.on("directories", (root: string, dirStatsArray: WalkStats[], next: () => void) => {
       if (root === projectRootPath) {
