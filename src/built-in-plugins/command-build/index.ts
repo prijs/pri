@@ -35,9 +35,7 @@ export const CommandBuild = async (
   // Clean .temp dir
   execSync(`${findNearestNodemodulesFile(".bin/rimraf")} ${path.join(projectRootPath, ".temp")}`)
 
-  await spinner("Ensure project files", async () => {
-    ensureFiles(projectRootPath, projectConfig, false)
-  })
+  ensureFiles(projectRootPath, projectConfig, false)
 
   const result = await spinner("Analyse project", async () => {
     const analyseInfo = await analyseProject(projectRootPath, env, projectConfig)

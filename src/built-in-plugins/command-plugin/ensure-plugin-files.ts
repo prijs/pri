@@ -1,77 +1,61 @@
+import * as colors from "colors"
 import * as fs from "fs-extra"
 import * as _ from "lodash"
 import * as path from "path"
 import * as prettier from "prettier"
+import { ensureFile } from "../../utils/ensure-files"
+import { log } from "../../utils/log"
 import { builtDir } from "./static"
 
 export function ensureNpmIgnore(projectRootPath: string) {
-  const filePath = path.join(projectRootPath, ".npmignore")
-  const ensureContents = ["node_modules", ".cache", ".vscode", ".temp", builtDir, "tests", ".nyc_output", "coverage"]
-
-  const exitFileContent = fs.existsSync(filePath) ? fs.readFileSync(filePath).toString() || "" : ""
-  const exitFileContentArray = exitFileContent.split("\n").filter(content => content !== "")
-
-  ensureContents.forEach(content => {
-    if (exitFileContentArray.indexOf(content) === -1) {
-      exitFileContentArray.push(content)
-    }
-  })
-
-  fs.writeFileSync(filePath, exitFileContentArray.join("\n"))
+  ensureFile(
+    projectRootPath,
+    ".npmignore",
+    ["node_modules", ".cache", ".vscode", ".temp", builtDir, "tests", ".nyc_output", "coverage"].join("\n")
+  )
 }
 
 export function ensureGitignore(projectRootPath: string) {
-  const filePath = path.join(projectRootPath, ".gitignore")
-  const ensureContents = ["node_modules", ".cache", ".vscode", ".temp", builtDir, ".nyc_output", "coverage"]
-
-  const exitFileContent = fs.existsSync(filePath) ? fs.readFileSync(filePath).toString() || "" : ""
-  const exitFileContentArray = exitFileContent.split("\n").filter(content => content !== "")
-
-  ensureContents.forEach(content => {
-    if (exitFileContentArray.indexOf(content) === -1) {
-      exitFileContentArray.push(content)
-    }
-  })
-
-  fs.writeFileSync(filePath, exitFileContentArray.join("\n"))
+  ensureFile(
+    projectRootPath,
+    ".gitignore",
+    ["node_modules", ".cache", ".vscode", ".temp", builtDir, ".nyc_output", "coverage"].join("\n")
+  )
 }
 
 export function ensurePackageJson(projectRootPath: string) {
-  const filePath = path.join(projectRootPath, "package.json")
-
-  const ensureScripts = {
-    types: "src/index.ts",
-    main: builtDir + "/index.js",
-    scripts: {
-      start: "pri plugin-watch",
-      prepublishOnly: "pri plugin-build",
-      release: "npm publish",
-      test: "pri test"
-    },
-    dependencies: { pri: "*" }
-  }
-
-  let exitFileContent: any = {}
-
-  try {
-    exitFileContent = JSON.parse(fs.readFileSync(filePath).toString()) || {}
-    if (!exitFileContent.scripts) {
-      exitFileContent.scripts = {}
-    }
-  } catch (error) {
-    //
-  }
-
-  _.merge(exitFileContent || {}, ensureScripts)
-
-  fs.writeFileSync(filePath, JSON.stringify(exitFileContent, null, 2))
+  ensureFile(projectRootPath, "package.json", prev => {
+    const prevJson = JSON.parse(prev)
+    return JSON.stringify(
+      _.merge({}, prevJson, {
+        types: "src/index.ts",
+        main: builtDir + "/index.js",
+        scripts: {
+          start: "pri plugin-watch",
+          prepublishOnly: "pri plugin-build",
+          release: "npm publish",
+          test: "pri test"
+        },
+        dependencies: { pri: "*" }
+      }),
+      null,
+      2
+    )
+  })
 }
 
 export function ensureEntry(projectRootPath: string) {
-  const filePath = path.join(projectRootPath, "src/index.tsx")
+  const fileName = "src/index.tsx"
+  const filePath = path.join(projectRootPath, fileName)
 
-  fs.outputFileSync(
-    filePath,
+  if (fs.existsSync(filePath)) {
+    log(colors.green(`✔ Entry file already exist.`))
+    return
+  }
+
+  ensureFile(
+    projectRootPath,
+    fileName,
     prettier.format(
       `
     import * as path from "path"
@@ -125,15 +109,20 @@ export function ensureEntry(projectRootPath: string) {
       }
     )
   )
-
-  ensureEntryMethods(projectRootPath)
 }
 
 function ensureEntryMethods(projectRootPath: string) {
-  const filePath = path.join(projectRootPath, "src/methods.ts")
+  const fileName = "src/methods.ts"
+  const filePath = path.join(projectRootPath, fileName)
 
-  fs.outputFileSync(
-    filePath,
+  if (fs.existsSync(filePath)) {
+    log(colors.green(`✔ Methods file already exist.`))
+    return
+  }
+
+  ensureFile(
+    projectRootPath,
+    fileName,
     prettier.format(
       `
     import * as path from "path"
@@ -157,9 +146,19 @@ function ensureEntryMethods(projectRootPath: string) {
 }
 
 export function ensureTest(projectRootPath: string) {
-  const filePath = path.join(projectRootPath, "tests/index.ts")
+  const fileName = "tests/index.ts"
+  const filePath = path.join(projectRootPath, fileName)
 
-  const fileContent = `
+  if (fs.existsSync(filePath)) {
+    log(colors.green(`✔ Test file already exist.`))
+    return
+  }
+
+  ensureFile(
+    projectRootPath,
+    fileName,
+    prettier.format(
+      `
     import test from "ava"
     import * as path from "path"
     import { judgeHasComponents } from "../src/methods"
@@ -187,7 +186,11 @@ export function ensureTest(projectRootPath: string) {
       const relativeProjectFiles = ["src/pages/index.tsx"]
       t.false(judgeHasComponents(testProjectRootPath, testFilePaths(relativeProjectFiles)))
     })
-  `
-
-  fs.outputFileSync(filePath, prettier.format(fileContent, { semi: false, parser: "typescript" }))
+  `,
+      {
+        semi: false,
+        parser: "typescript"
+      }
+    )
+  )
 }

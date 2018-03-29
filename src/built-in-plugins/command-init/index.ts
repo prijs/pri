@@ -15,9 +15,7 @@ const projectRootPath = process.cwd()
 export const CommandInit = async () => {
   const config = getConfig(projectRootPath, null)
 
-  await spinner("Ensure project files", async () => {
-    ensureFiles(projectRootPath, config, true)
-  })
+  ensureFiles(projectRootPath, config, true)
 
   log("\n Success init your project, you can run serval commands:\n")
 
