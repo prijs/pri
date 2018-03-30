@@ -108,7 +108,7 @@ export const getGitignores = (projectConfig?: IProjectConfig) => {
   return ignores
 }
 
-export const getNpmignores = (projectConfig?: IProjectConfig) => {
+export const getNpmignores = (projectConfig: IProjectConfig) => {
   const npmIgnores = getGitignores(projectConfig)
   npmIgnores.push(testsPath.dir)
   return npmIgnores

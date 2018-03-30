@@ -5,43 +5,34 @@ import * as open from "opn"
 import * as path from "path"
 import * as portfinder from "portfinder"
 import { pri } from "../../node"
-import { ensureFiles } from "../../utils/ensure-files"
 import { log, spinner } from "../../utils/log"
 import { getConfig } from "../../utils/project-config"
 import text from "../../utils/text"
-
-const projectRootPath = process.cwd()
-
-export const CommandInit = async () => {
-  const config = getConfig(projectRootPath, null)
-
-  await ensureFiles(projectRootPath, config, true)
-
-  log("\n Success init your project, you can run serval commands:\n")
-
-  log(colors.blue("  npm start"))
-  log(`    ${text.commander.dev.description}\n`)
-
-  log(colors.blue("  npm run build"))
-  log(`    ${text.commander.build.description}\n`)
-
-  log(colors.blue("  npm run preview"))
-  log(`    ${text.commander.dev.description}\n`)
-
-  log(colors.blue("  npm test"))
-  log("    Run tests.\n")
-
-  log("\n Happy hacking!")
-}
 
 export default (instance: typeof pri) => {
   instance.commands.registerCommand({
     name: "init",
     description: text.commander.init.description,
-    action: () => {
+    action: async () => {
       const projectConfig = instance.project.getProjectConfig("prod")
-      CommandInit()
+      await instance.project.ensureProjectFiles(projectConfig)
       instance.project.checkProjectFiles(projectConfig)
+
+      log("\n Success init your project, you can run serval commands:\n")
+
+      log(colors.blue("  npm start"))
+      log(`    ${text.commander.dev.description}\n`)
+
+      log(colors.blue("  npm run build"))
+      log(`    ${text.commander.build.description}\n`)
+
+      log(colors.blue("  npm run preview"))
+      log(`    ${text.commander.dev.description}\n`)
+
+      log(colors.blue("  npm test"))
+      log("    Run tests.\n")
+
+      log("\n Happy hacking!")
     }
   })
 }

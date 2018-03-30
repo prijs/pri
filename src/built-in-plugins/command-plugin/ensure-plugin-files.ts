@@ -5,14 +5,11 @@ import * as path from "path"
 import * as prettier from "prettier"
 import { ensureFile } from "../../utils/ensure-files"
 import { log } from "../../utils/log"
+import { IProjectConfig } from "../../utils/project-config-interface"
 import { getGitignores, getNpmignores, tsBuiltPath } from "../../utils/structor-config"
 
-export function ensureNpmIgnore(projectRootPath: string) {
-  ensureFile(projectRootPath, ".npmignore", getNpmignores().join("\n"))
-}
-
-export function ensureGitignore(projectRootPath: string) {
-  ensureFile(projectRootPath, ".gitignore", getGitignores().join("\n"))
+export function ensureNpmIgnore(projectRootPath: string, projectConfig: IProjectConfig) {
+  ensureFile(projectRootPath, ".npmignore", getNpmignores(projectConfig).join("\n"))
 }
 
 export function ensurePackageJson(projectRootPath: string) {

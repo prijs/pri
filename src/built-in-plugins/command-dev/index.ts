@@ -9,7 +9,6 @@ import * as webpackDevServer from "webpack-dev-server"
 import { pri } from "../../node"
 import { analyseProject } from "../../utils/analyse-project"
 import { createEntry } from "../../utils/create-entry"
-import { ensureFiles } from "../../utils/ensure-files"
 import { log, spinner } from "../../utils/log"
 import { findNearestNodemodulesFile } from "../../utils/npm-finder"
 import { getConfig } from "../../utils/project-config"
@@ -31,8 +30,6 @@ const hasDashboardBundle = fs.existsSync(path.join(dashboardBundleRootPath, dash
 export const CommandDev = async () => {
   const env = "local"
   const projectConfig = getConfig(projectRootPath, env)
-
-  await ensureFiles(projectRootPath, projectConfig, false)
 
   await spinner("Analyse project", async () => {
     await analyseProject(projectRootPath, env, projectConfig)
@@ -236,8 +233,9 @@ export default (instance: typeof pri) => {
     action: async () => {
       const projectConfig = instance.project.getProjectConfig("local")
       instance.project.lint()
+      await instance.project.ensureProjectFiles(projectConfig)
       await instance.project.checkProjectFiles(projectConfig)
-      CommandDev()
+      await CommandDev()
     },
     isDefault: true
   })

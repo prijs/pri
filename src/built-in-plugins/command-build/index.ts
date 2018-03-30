@@ -5,7 +5,6 @@ import * as path from "path"
 import { pri } from "../../node"
 import { analyseProject } from "../../utils/analyse-project"
 import { createEntry } from "../../utils/create-entry"
-import { ensureFiles } from "../../utils/ensure-files"
 import { log, spinner } from "../../utils/log"
 import { findNearestNodemodulesFile } from "../../utils/npm-finder"
 import { getConfig } from "../../utils/project-config"
@@ -30,8 +29,6 @@ export const CommandBuild = async (
 
   // Clean .temp dir
   execSync(`${findNearestNodemodulesFile(".bin/rimraf")} ${path.join(projectRootPath, ".temp")}`)
-
-  await ensureFiles(projectRootPath, projectConfig, false)
 
   const result = await spinner("Analyse project", async () => {
     const analyseInfo = await analyseProject(projectRootPath, env, projectConfig)
@@ -100,8 +97,9 @@ export default (instance: typeof pri) => {
     action: async () => {
       const projectConfig = instance.project.getProjectConfig("prod")
       instance.project.lint()
+      await instance.project.ensureProjectFiles(projectConfig)
       await instance.project.checkProjectFiles(projectConfig)
-      CommandBuild()
+      await CommandBuild()
     }
   })
 }
