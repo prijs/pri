@@ -38,6 +38,10 @@ export default (instance: typeof pri) => {
   instance.commands.registerCommand({
     name: "init",
     description: text.commander.init.description,
-    action: CommandInit
+    action: () => {
+      const projectConfig = instance.project.getProjectConfig("prod")
+      CommandInit()
+      instance.project.checkProjectFiles(projectConfig)
+    }
   })
 }

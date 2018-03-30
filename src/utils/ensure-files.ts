@@ -17,14 +17,6 @@ export const ensureFiles = async (
   projectConfig: IProjectConfig,
   createDefaultPage: boolean
 ) => {
-  log("Check files.\n")
-  const files = await walkProjectFiles(projectRootPath, projectConfig)
-  files.forEach(file => {
-    if (!plugin.whiteFileRules.some(whiteFileRule => whiteFileRule(file))) {
-      throw Error(`Unexpected file or directory: ${path.format(file)}`)
-    }
-  })
-
   log("Ensure project files.\n")
 
   ensureGitignore(projectRootPath, projectConfig)

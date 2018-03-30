@@ -114,7 +114,7 @@ export const getNpmignores = (projectConfig?: IProjectConfig) => {
   return npmIgnores
 }
 
-export const ignoreScanByNotDeployIgnore = [
+export const ignoreScanSources = [
   ".gitignore",
   ".npmignore",
   ".prettierrc",

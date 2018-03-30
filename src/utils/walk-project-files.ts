@@ -2,14 +2,7 @@ import * as fs from "fs-extra"
 import * as path from "path"
 import * as walk from "walk"
 import { IProjectConfig } from "./project-config-interface"
-import {
-  declarePath,
-  getGitignores,
-  ignoreScanByNotDeployIgnore,
-  pagesPath,
-  tempPath,
-  tsBuiltPath
-} from "./structor-config"
+import { declarePath, getGitignores, ignoreScanSources, pagesPath, tempPath, tsBuiltPath } from "./structor-config"
 
 type WalkStats = fs.Stats & {
   name: string
@@ -20,7 +13,7 @@ type ICustomParsedPath = path.ParsedPath & { isDir: boolean }
 export function walkProjectFiles(projectRootPath: string, projectConfig: IProjectConfig): Promise<ICustomParsedPath[]> {
   return new Promise((resolve, reject) => {
     const gitIgnores = getGitignores(projectConfig).map(dir => path.join(projectRootPath, dir))
-    const scanIgnores = ignoreScanByNotDeployIgnore.map(addon => path.join(projectRootPath, addon))
+    const scanIgnores = ignoreScanSources.map(addon => path.join(projectRootPath, addon))
 
     const walker = walk.walk(projectRootPath, { filters: [...gitIgnores, ...scanIgnores] })
 

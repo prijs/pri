@@ -52,6 +52,11 @@ export default (instance: typeof pri) => {
   instance.commands.registerCommand({
     name: "test",
     description: text.commander.init.description,
-    action: CommandTest.bind(null, projectRootPath)
+    action: async () => {
+      const projectConfig = instance.project.getProjectConfig("prod")
+      instance.project.lint()
+      await instance.project.checkProjectFiles(projectConfig)
+      CommandTest(projectRootPath)
+    }
   })
 }

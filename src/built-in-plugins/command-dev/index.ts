@@ -233,7 +233,12 @@ export default (instance: typeof pri) => {
   instance.commands.registerCommand({
     name: "dev",
     description: text.commander.dev.description,
-    action: CommandDev,
+    action: async () => {
+      const projectConfig = instance.project.getProjectConfig("prod")
+      instance.project.lint()
+      await instance.project.checkProjectFiles(projectConfig)
+      CommandDev()
+    },
     isDefault: true
   })
 }
