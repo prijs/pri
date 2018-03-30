@@ -1,6 +1,6 @@
 {
   "name": "pri",
-  "version": "0.4.36",
+  "version": "0.4.37",
   "types": "src/node/index.ts",
   "main": "built/node/index.js",
   "scripts": {
@@ -36,6 +36,7 @@
     "@types/react-dom": "^16.0.3",
     "@types/react-router-dom": "^4.2.5",
     "@types/rimraf": "^2.0.2",
+    "@types/semver": "^5.5.0",
     "@types/socket.io": "^1.4.32",
     "@types/socket.io-client": "^1.4.32",
     "@types/update-notifier": "^2.2.0",
@@ -83,6 +84,7 @@
     "react-loadable": "^5.3.1",
     "react-router-dom": "^4.2.2",
     "rimraf": "^2.6.2",
+    "semver": "^5.5.0",
     "socket.io": "^2.0.4",
     "socket.io-client": "^2.0.4",
     "style-loader": "^0.20.3",

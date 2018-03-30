@@ -6,11 +6,18 @@ import * as updateNotifier from "update-notifier"
 
 import * as pkg from "../package.json"
 
+import * as semver from "semver"
 import { log } from "./utils/log"
 import { initPlugins, plugin, pluginPackages } from "./utils/plugins"
 import text from "./utils/text"
 
 import { pri } from "./node"
+
+// Check node version
+if (semver.lte(process.version, "8.0.0")) {
+  log(`nodejs version should be greater than 8, current is ${process.version}`)
+  process.exit(0)
+}
 
 initPlugins(process.cwd())
 
