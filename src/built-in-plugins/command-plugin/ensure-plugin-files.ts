@@ -101,6 +101,8 @@ export function ensureEntry(projectRootPath: string) {
       }
     )
   )
+
+  ensureEntryMethods(projectRootPath)
 }
 
 function ensureEntryMethods(projectRootPath: string) {
