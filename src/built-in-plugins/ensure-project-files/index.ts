@@ -123,8 +123,10 @@ export default (instance: typeof pri) => {
   })
 
   const homePagePath = path.join(pagesPath.dir, "index.tsx")
-  const filePath = path.join(projectRootPath, homePagePath)
-  if (!fs.existsSync(filePath)) {
+  const homePageAbsolutePath = path.join(projectRootPath, homePagePath)
+  const homeMarkdownPagePath = path.join(pagesPath.dir, "index.md")
+  const homeMarkdownPageAbsolutePath = path.join(projectRootPath, homeMarkdownPagePath)
+  if (!fs.existsSync(homePageAbsolutePath) && !fs.existsSync(homeMarkdownPageAbsolutePath)) {
     instance.project.onEnsureProjectFiles(() => ({
       fileRelativePath: homePagePath,
       fileContentOrResolve: prettier.format(
