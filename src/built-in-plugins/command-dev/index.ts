@@ -234,7 +234,7 @@ export default (instance: typeof pri) => {
     name: "dev",
     description: text.commander.dev.description,
     action: async () => {
-      const projectConfig = instance.project.getProjectConfig("prod")
+      const projectConfig = instance.project.getProjectConfig("local")
       instance.project.lint()
       await instance.project.checkProjectFiles(projectConfig)
       CommandDev()
