@@ -60,7 +60,7 @@ let hasInitPlugins = false
 
 export type IWhiteFile = (file: path.ParsedPath & { isDir: boolean }) => boolean
 
-export type IEnsureProjectFilesCallbackQueue = () => {
+export interface IEnsureProjectFilesQueue {
   fileRelativePath: string
   fileContentOrResolve: string | ((prev: string) => string)
 }
@@ -78,7 +78,7 @@ export class IPluginConfig {
 
   public whiteFileRules: IWhiteFile[] = []
 
-  public ensureProjectFilesCallbackQueue: IEnsureProjectFilesCallbackQueue[] = []
+  public ensureProjectFilesQueue: IEnsureProjectFilesQueue[] = []
 }
 
 export interface IPluginPackageInfo {

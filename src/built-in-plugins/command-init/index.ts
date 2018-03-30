@@ -14,7 +14,7 @@ export default (instance: typeof pri) => {
     name: "init",
     description: text.commander.init.description,
     action: async () => {
-      const projectConfig = instance.project.getProjectConfig("prod")
+      const projectConfig = instance.project.getProjectConfig("local")
       await instance.project.ensureProjectFiles(projectConfig)
       instance.project.checkProjectFiles(projectConfig)
 

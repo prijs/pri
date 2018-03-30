@@ -15,10 +15,9 @@ import { walkProjectFiles } from "./walk-project-files"
 export const ensureFiles = async (projectRootPath: string, projectConfig: IProjectConfig) => {
   log("Ensure project files.\n")
 
-  plugin.ensureProjectFilesCallbackQueue.forEach(ensureProjectFilesCallback => {
-    const result = ensureProjectFilesCallback()
-    if (result) {
-      ensureFile(projectRootPath, result.fileRelativePath, result.fileContentOrResolve)
+  plugin.ensureProjectFilesQueue.forEach(ensureProjectFiles => {
+    if (ensureProjectFiles) {
+      ensureFile(projectRootPath, ensureProjectFiles.fileRelativePath, ensureProjectFiles.fileContentOrResolve)
     }
   })
 }

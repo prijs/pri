@@ -109,25 +109,22 @@ export default (instance: typeof pri) => {
   const projectRootPath = instance.project.getProjectRootPath()
   const projectConfig = instance.project.getProjectConfig("local")
 
-  instance.project.onEnsureProjectFiles(() => ensureGitignore(projectConfig))
+  instance.project.onEnsureProjectFiles(ensureGitignore(projectConfig))
 
-  instance.project.onEnsureProjectFiles(() => ensureTsconfig(projectRootPath))
+  instance.project.onEnsureProjectFiles(ensureTsconfig(projectRootPath))
 
-  instance.project.onEnsureProjectFiles(() => ensureVscode(projectRootPath))
+  instance.project.onEnsureProjectFiles(ensureVscode(projectRootPath))
 
-  instance.project.onEnsureProjectFiles(() => ensurePrettierrc(projectRootPath))
+  instance.project.onEnsureProjectFiles(ensurePrettierrc(projectRootPath))
 
-  instance.project.onEnsureProjectFiles(() => {
-    ensureDeclares(projectRootPath)
-    return null
-  })
+  ensureDeclares(projectRootPath)
 
   const homePagePath = path.join(pagesPath.dir, "index.tsx")
   const homePageAbsolutePath = path.join(projectRootPath, homePagePath)
   const homeMarkdownPagePath = path.join(pagesPath.dir, "index.md")
   const homeMarkdownPageAbsolutePath = path.join(projectRootPath, homeMarkdownPagePath)
   if (!fs.existsSync(homePageAbsolutePath) && !fs.existsSync(homeMarkdownPageAbsolutePath)) {
-    instance.project.onEnsureProjectFiles(() => ({
+    instance.project.onEnsureProjectFiles({
       fileRelativePath: homePagePath,
       fileContentOrResolve: prettier.format(
         `
@@ -165,10 +162,10 @@ export default (instance: typeof pri) => {
           parser: "typescript"
         }
       )
-    }))
+    })
   }
 
-  instance.project.onEnsureProjectFiles(() => ({
+  instance.project.onEnsureProjectFiles({
     fileRelativePath: "package.json",
     fileContentOrResolve: prev => {
       const prevJson = JSON.parse(prev)
@@ -185,9 +182,9 @@ export default (instance: typeof pri) => {
         2
       )
     }
-  }))
+  })
 
-  instance.project.onEnsureProjectFiles(() => ({
+  instance.project.onEnsureProjectFiles({
     fileRelativePath: "tests/index.ts",
     fileContentOrResolve: prettier.format(
       `
@@ -199,5 +196,5 @@ export default (instance: typeof pri) => {
     `,
       { semi: false, parser: "typescript" }
     )
-  }))
+  })
 }
