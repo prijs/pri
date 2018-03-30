@@ -269,5 +269,5 @@ export function ensureFile(
     log(`${colors.magenta(`⚠ ${fileRelativePath} not exist, created.`)}`)
   }
 
-  fs.writeFileSync(filePath, nextContent)
+  fs.outputJson(filePath, nextContent)
 }
