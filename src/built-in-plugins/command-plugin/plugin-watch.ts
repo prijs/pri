@@ -1,3 +1,4 @@
+import transformRuntime from "@babel/plugin-transform-runtime"
 import babelEnv from "@babel/preset-env"
 import stage2 from "@babel/preset-stage-2"
 import * as fs from "fs-extra"
@@ -30,7 +31,7 @@ function build(projectRootPath: string, sourceBlob: string) {
   gulp
     .src(sourceBlob)
     .pipe(ts(compilerOptions))
-    .pipe(gulpBabel({ presets: [[babelEnv], [stage2]] }))
+    .pipe(gulpBabel({ presets: [[babelEnv], [stage2]], plugins: [[transformRuntime]] }))
     .pipe(gulp.dest(path.join(projectRootPath, tsBuiltPath.dir)))
 }
 

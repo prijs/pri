@@ -2,6 +2,7 @@
 
 import * as colors from "colors"
 import * as commander from "commander"
+import * as _ from "lodash"
 import * as updateNotifier from "update-notifier"
 
 import * as pkg from "../package.json"
@@ -23,20 +24,53 @@ initPlugins(process.cwd())
 
 commander.version(pkg.version, "-v, --version")
 
-plugin.commands.forEach(command => {
+const commandersGroupByName = _.groupBy(plugin.commands, "name")
+Object.keys(commandersGroupByName).forEach(commandName => {
+  const commandDetails = commandersGroupByName[commandName]
+  const actionCount = commandDetails.reduce((count, commandDetail) => count + (commandDetail.action ? 1 : 0), 0)
+  if (actionCount === 0) {
+    throw Error(`No command "${commandName}!"`)
+  }
+  if (actionCount > 1) {
+    throw Error(`Can't register "${commandName}" twice!`)
+  }
+
+  const mainCommand = commandDetails.find(commandDetail => !!commandDetail.action)
+
   commander
-    .command(command.name)
-    .description(command.description)
-    .action((...args: any[]) => {
-      if (command.beforeActions) {
-        command.beforeActions.forEach(beforeAction => beforeAction.apply(null, args))
+    .command(commandName)
+    .description(mainCommand.description)
+    .action(async (...args: any[]) => {
+      for (const commandDetail of commandDetails) {
+        if (commandDetail.beforeAction) {
+          await commandDetail.beforeAction.apply(null, args)
+        }
       }
-      command.action.apply(null, args)
-      if (command.afterActions) {
-        command.afterActions.forEach(afterAction => afterAction.apply(null, args))
+
+      await mainCommand.action.apply(null, args)
+
+      for (const commandDetail of commandDetails) {
+        if (commandDetail.afterAction) {
+          await commandDetail.afterAction.apply(null, args)
+        }
       }
     })
 })
+
+// plugin.commands.forEach(command => {
+// commander
+//   .command(command.name)
+//   .description(command.description)
+//   .action((...args: any[]) => {
+//     if (command.beforeActions) {
+//       command.beforeActions.forEach(beforeAction => beforeAction.apply(null, args))
+//     }
+//     command.action.apply(null, args)
+//     if (command.afterActions) {
+//       command.afterActions.forEach(afterAction => afterAction.apply(null, args))
+//     }
+//   })
+// })
 
 /**
  * Parse argv.

@@ -35,9 +35,9 @@ const getBuiltInPlugins = (projectRootPath: string) => {
 export interface ICommand {
   name?: string
   description?: string
-  beforeActions?: any[]
+  beforeAction?: any
   action?: any
-  afterActions?: any[]
+  afterAction?: any
   isDefault?: boolean
 }
 
