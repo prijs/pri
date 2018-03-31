@@ -15,7 +15,7 @@ import { walkProjectFiles } from "./walk-project-files"
 export const ensureFiles = async (projectRootPath: string, projectConfig: IProjectConfig) => {
   log("Ensure project files.\n")
 
-  const ensureProjectFilesQueueGroupByPath = _.groupBy(plugin.ensureProjectFilesQueue, "fileRelativePath")
+  const ensureProjectFilesQueueGroupByPath = _.groupBy(plugin.ensureProjectFilesQueue, "fileName")
 
   Object.keys(ensureProjectFilesQueueGroupByPath).forEach(fileRelativePath => {
     const ensureProjectFilesQueue = ensureProjectFilesQueueGroupByPath[fileRelativePath]
@@ -26,12 +26,6 @@ export const ensureFiles = async (projectRootPath: string, projectConfig: IProje
       ensureProjectFilesQueue.map(ensureProjectFiles => ensureProjectFiles.pipeContent)
     )
   })
-
-  // plugin.ensureProjectFilesQueue.forEach(ensureProjectFiles => {
-  //   if (ensureProjectFiles) {
-  //     ensureFile(projectRootPath, ensureProjectFiles.fileRelativePath, ensureProjectFiles.fileContentOrResolve)
-  //   }
-  // })
 }
 
 export function ensureFile(
