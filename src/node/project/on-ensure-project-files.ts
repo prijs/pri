@@ -5,8 +5,8 @@ import { getProjectRootPath } from "./get-project-root-path"
 
 const projectRootPath = getProjectRootPath()
 
-export function onEnsureProjectFiles(callback: IEnsureProjectFilesQueue) {
-  plugin.ensureProjectFilesQueue.push(callback)
+export function addProjectFiles(info: IEnsureProjectFilesQueue) {
+  plugin.ensureProjectFilesQueue.push(info)
 }
 
 /**

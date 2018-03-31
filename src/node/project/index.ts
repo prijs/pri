@@ -5,7 +5,7 @@ import { getProjectRootPath } from "./get-project-root-path"
 import { lint } from "./lint"
 import * as whiteFileRules from "./white-file-rules"
 
-export { onEnsureProjectFiles, ensureProjectFiles } from "./on-ensure-project-files"
+export { ensureProjectFiles, addProjectFiles } from "./on-ensure-project-files"
 
 /**
  * Each time, scan this project's files.

@@ -109,13 +109,13 @@ export default (instance: typeof pri) => {
   const projectRootPath = instance.project.getProjectRootPath()
   const projectConfig = instance.project.getProjectConfig("local")
 
-  instance.project.onEnsureProjectFiles(ensureGitignore(projectConfig))
+  instance.project.addProjectFiles(ensureGitignore(projectConfig))
 
-  instance.project.onEnsureProjectFiles(ensureTsconfig(projectRootPath))
+  instance.project.addProjectFiles(ensureTsconfig(projectRootPath))
 
-  instance.project.onEnsureProjectFiles(ensureVscode(projectRootPath))
+  instance.project.addProjectFiles(ensureVscode(projectRootPath))
 
-  instance.project.onEnsureProjectFiles(ensurePrettierrc(projectRootPath))
+  instance.project.addProjectFiles(ensurePrettierrc(projectRootPath))
 
   ensureDeclares(projectRootPath)
 
@@ -124,7 +124,7 @@ export default (instance: typeof pri) => {
   const homeMarkdownPagePath = path.join(pagesPath.dir, "index.md")
   const homeMarkdownPageAbsolutePath = path.join(projectRootPath, homeMarkdownPagePath)
   if (!fs.existsSync(homePageAbsolutePath) && !fs.existsSync(homeMarkdownPageAbsolutePath)) {
-    instance.project.onEnsureProjectFiles({
+    instance.project.addProjectFiles({
       fileRelativePath: homePagePath,
       fileContentOrResolve: prettier.format(
         `
@@ -165,7 +165,7 @@ export default (instance: typeof pri) => {
     })
   }
 
-  instance.project.onEnsureProjectFiles({
+  instance.project.addProjectFiles({
     fileRelativePath: "package.json",
     fileContentOrResolve: prev => {
       const prevJson = JSON.parse(prev)
@@ -184,7 +184,7 @@ export default (instance: typeof pri) => {
     }
   })
 
-  instance.project.onEnsureProjectFiles({
+  instance.project.addProjectFiles({
     fileRelativePath: "tests/index.ts",
     fileContentOrResolve: prettier.format(
       `
