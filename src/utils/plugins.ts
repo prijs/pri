@@ -61,7 +61,7 @@ let hasInitPlugins = false
 export type IWhiteFile = (file: path.ParsedPath & { isDir: boolean }) => boolean
 
 export interface IEnsureProjectFilesQueue {
-  fileRelativePath: string
+  fileName: string
   pipeContent: (prev?: string) => string
 }
 

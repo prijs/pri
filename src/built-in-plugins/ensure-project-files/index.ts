@@ -12,7 +12,7 @@ export function ensureDeclares(projectRootPath: string) {
 }
 
 export const ensurePrettierrc = (projectRootPath: string) => ({
-  fileRelativePath: ".prettierrc",
+  fileName: ".prettierrc",
   pipeContent: () =>
     JSON.stringify(
       {
@@ -33,7 +33,7 @@ export const ensurePrettierrc = (projectRootPath: string) => ({
 })
 
 export const ensureTsconfig = (projectRootPath: string) => ({
-  fileRelativePath: "tsconfig.json",
+  fileName: "tsconfig.json",
   pipeContent: () =>
     JSON.stringify(
       {
@@ -57,7 +57,7 @@ export const ensureTsconfig = (projectRootPath: string) => ({
 })
 
 export const ensureTslint = (projectRootPath: string) => ({
-  fileRelativePath: "tslint.json",
+  fileName: "tslint.json",
   pipeContent: () =>
     JSON.stringify(
       {
@@ -82,7 +82,7 @@ export const ensureTslint = (projectRootPath: string) => ({
 })
 
 export const ensureVscode = (projectRootPath: string) => ({
-  fileRelativePath: ".vscode/settings.json",
+  fileName: ".vscode/settings.json",
   pipeContent: () =>
     JSON.stringify(
       {
@@ -105,7 +105,7 @@ export const ensureVscode = (projectRootPath: string) => ({
 })
 
 export const ensureGitignore = (projectConfig: IProjectConfig) => ({
-  fileRelativePath: ".gitignore",
+  fileName: ".gitignore",
   pipeContent: () => getGitignores(projectConfig).join("\n")
 })
 
@@ -129,7 +129,7 @@ export default (instance: typeof pri) => {
   const homeMarkdownPageAbsolutePath = path.join(projectRootPath, homeMarkdownPagePath)
   if (!fs.existsSync(homePageAbsolutePath) && !fs.existsSync(homeMarkdownPageAbsolutePath)) {
     instance.project.addProjectFiles({
-      fileRelativePath: homePagePath,
+      fileName: homePagePath,
       pipeContent: () =>
         prettier.format(
           `
@@ -168,7 +168,7 @@ export default (instance: typeof pri) => {
   }
 
   instance.project.addProjectFiles({
-    fileRelativePath: "package.json",
+    fileName: "package.json",
     pipeContent: prev => {
       const prevJson = JSON.parse(prev)
       return JSON.stringify(
@@ -187,7 +187,7 @@ export default (instance: typeof pri) => {
   })
 
   instance.project.addProjectFiles({
-    fileRelativePath: "tests/index.ts",
+    fileName: "tests/index.ts",
     pipeContent: () =>
       prettier.format(
         `
