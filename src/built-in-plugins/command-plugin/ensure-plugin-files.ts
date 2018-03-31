@@ -63,14 +63,14 @@ export function ensureEntry(projectRootPath: string) {
 
       instance.commands.registerCommand({
         name: "deploy",
-        action: () => {
+        action: async () => {
           //
         }
       })
 
       instance.commands.expandCommand({
         name: "init",
-        beforeAction: (...args: any[]) => {
+        beforeAction: async (...args: any[]) => {
           //
         }
       })
