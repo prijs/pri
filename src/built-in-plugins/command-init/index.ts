@@ -16,7 +16,7 @@ export default (instance: typeof pri) => {
     action: async () => {
       const projectConfig = instance.project.getProjectConfig("local")
       await instance.project.ensureProjectFiles(projectConfig)
-      instance.project.checkProjectFiles(projectConfig)
+      await instance.project.checkProjectFiles(projectConfig)
 
       log("\n Success init your project, you can run serval commands:\n")
 

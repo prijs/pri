@@ -30,19 +30,19 @@ const CommandPluginInit = (projectRootPath: string, projectConfig: IProjectConfi
   ensureDeclares(projectRootPath)
 
   const ensurePrettierrcResult = ensurePrettierrc(projectRootPath)
-  ensureFile(projectRootPath, ensurePrettierrcResult.fileRelativePath, ensurePrettierrcResult.fileContentOrResolve)
+  ensureFile(projectRootPath, ensurePrettierrcResult.fileRelativePath, [ensurePrettierrcResult.pipeContent])
 
   const ensureTsconfigResult = ensureTsconfig(projectRootPath)
-  ensureFile(projectRootPath, ensureTsconfigResult.fileRelativePath, ensureTsconfigResult.fileContentOrResolve)
+  ensureFile(projectRootPath, ensureTsconfigResult.fileRelativePath, [ensureTsconfigResult.pipeContent])
 
   const ensureTslintResult = ensureTslint(projectRootPath)
-  ensureFile(projectRootPath, ensureTslintResult.fileRelativePath, ensureTslintResult.fileContentOrResolve)
+  ensureFile(projectRootPath, ensureTslintResult.fileRelativePath, [ensureTslintResult.pipeContent])
 
   const ensureVscodeResult = ensureVscode(projectRootPath)
-  ensureFile(projectRootPath, ensureVscodeResult.fileRelativePath, ensureVscodeResult.fileContentOrResolve)
+  ensureFile(projectRootPath, ensureVscodeResult.fileRelativePath, [ensureVscodeResult.pipeContent])
 
   const ensureGitignoreResult = ensureGitignore(projectConfig)
-  ensureFile(projectRootPath, ensureGitignoreResult.fileRelativePath, ensureGitignoreResult.fileContentOrResolve)
+  ensureFile(projectRootPath, ensureGitignoreResult.fileRelativePath, [ensureGitignoreResult.pipeContent])
 
   ensurePackageJson(projectRootPath)
   ensureNpmIgnore(projectRootPath, projectConfig)

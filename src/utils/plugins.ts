@@ -62,7 +62,7 @@ export type IWhiteFile = (file: path.ParsedPath & { isDir: boolean }) => boolean
 
 export interface IEnsureProjectFilesQueue {
   fileRelativePath: string
-  fileContentOrResolve: string | ((prev: string) => string)
+  pipeContent: (prev?: string) => string
 }
 
 export class IPluginConfig {

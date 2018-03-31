@@ -15,17 +15,29 @@ import { walkProjectFiles } from "./walk-project-files"
 export const ensureFiles = async (projectRootPath: string, projectConfig: IProjectConfig) => {
   log("Ensure project files.\n")
 
-  plugin.ensureProjectFilesQueue.forEach(ensureProjectFiles => {
-    if (ensureProjectFiles) {
-      ensureFile(projectRootPath, ensureProjectFiles.fileRelativePath, ensureProjectFiles.fileContentOrResolve)
-    }
+  const ensureProjectFilesQueueGroupByPath = _.groupBy(plugin.ensureProjectFilesQueue, "fileRelativePath")
+
+  Object.keys(ensureProjectFilesQueueGroupByPath).forEach(fileRelativePath => {
+    const ensureProjectFilesQueue = ensureProjectFilesQueueGroupByPath[fileRelativePath]
+
+    ensureFile(
+      projectRootPath,
+      fileRelativePath,
+      ensureProjectFilesQueue.map(ensureProjectFiles => ensureProjectFiles.pipeContent)
+    )
   })
+
+  // plugin.ensureProjectFilesQueue.forEach(ensureProjectFiles => {
+  //   if (ensureProjectFiles) {
+  //     ensureFile(projectRootPath, ensureProjectFiles.fileRelativePath, ensureProjectFiles.fileContentOrResolve)
+  //   }
+  // })
 }
 
 export function ensureFile(
   projectRootPath: string,
   fileRelativePath: string,
-  fileContentOrResolve: string | ((prev: string) => string)
+  pipeContents: Array<((prev: string) => string)>
 ) {
   const filePath = path.join(projectRootPath, fileRelativePath)
   const fileExist = fs.existsSync(filePath)
@@ -37,8 +49,7 @@ export function ensureFile(
     //
   }
 
-  const nextContent =
-    typeof fileContentOrResolve === "string" ? fileContentOrResolve : fileContentOrResolve(exitFileContent)
+  const nextContent = pipeContents.reduce((preContent, pipeContent) => pipeContent(preContent), exitFileContent)
 
   if (fileExist) {
     if (exitFileContent === nextContent) {

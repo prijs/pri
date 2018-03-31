@@ -9,28 +9,30 @@ import { IProjectConfig } from "../../utils/project-config-interface"
 import { getGitignores, getNpmignores, tsBuiltPath } from "../../utils/structor-config"
 
 export function ensureNpmIgnore(projectRootPath: string, projectConfig: IProjectConfig) {
-  ensureFile(projectRootPath, ".npmignore", getNpmignores(projectConfig).join("\n"))
+  ensureFile(projectRootPath, ".npmignore", [() => getNpmignores(projectConfig).join("\n")])
 }
 
 export function ensurePackageJson(projectRootPath: string) {
-  ensureFile(projectRootPath, "package.json", prev => {
-    const prevJson = JSON.parse(prev)
-    return JSON.stringify(
-      _.merge({}, prevJson, {
-        types: "src/index.ts",
-        main: path.join(tsBuiltPath.dir, "index.js"),
-        scripts: {
-          start: "pri plugin-watch",
-          prepublishOnly: "pri plugin-build",
-          release: "npm publish",
-          test: "pri test"
-        },
-        dependencies: { pri: "*" }
-      }),
-      null,
-      2
-    )
-  })
+  ensureFile(projectRootPath, "package.json", [
+    prev => {
+      const prevJson = JSON.parse(prev)
+      return JSON.stringify(
+        _.merge({}, prevJson, {
+          types: "src/index.ts",
+          main: path.join(tsBuiltPath.dir, "index.js"),
+          scripts: {
+            start: "pri plugin-watch",
+            prepublishOnly: "pri plugin-build",
+            release: "npm publish",
+            test: "pri test"
+          },
+          dependencies: { pri: "*" }
+        }),
+        null,
+        2
+      )
+    }
+  ])
 }
 
 export function ensureEntry(projectRootPath: string) {
@@ -42,11 +44,10 @@ export function ensureEntry(projectRootPath: string) {
     return
   }
 
-  ensureFile(
-    projectRootPath,
-    fileName,
-    prettier.format(
-      `
+  ensureFile(projectRootPath, fileName, [
+    () =>
+      prettier.format(
+        `
     import * as path from "path"
     import { pri } from "pri"
     import { judgeHasComponents } from "./methods"
@@ -92,12 +93,12 @@ export function ensureEntry(projectRootPath: string) {
       })
     }
   `,
-      {
-        semi: false,
-        parser: "typescript"
-      }
-    )
-  )
+        {
+          semi: false,
+          parser: "typescript"
+        }
+      )
+  ])
 
   ensureEntryMethods(projectRootPath)
 }
@@ -111,11 +112,10 @@ function ensureEntryMethods(projectRootPath: string) {
     return
   }
 
-  ensureFile(
-    projectRootPath,
-    fileName,
-    prettier.format(
-      `
+  ensureFile(projectRootPath, fileName, [
+    () =>
+      prettier.format(
+        `
     import * as path from "path"
 
     export function judgeHasComponents(projectRootPath: string, files: path.ParsedPath[]) {
@@ -128,12 +128,12 @@ function ensureEntryMethods(projectRootPath: string) {
       })
     }
   `,
-      {
-        semi: false,
-        parser: "typescript"
-      }
-    )
-  )
+        {
+          semi: false,
+          parser: "typescript"
+        }
+      )
+  ])
 }
 
 export function ensureTest(projectRootPath: string) {
@@ -145,11 +145,10 @@ export function ensureTest(projectRootPath: string) {
     return
   }
 
-  ensureFile(
-    projectRootPath,
-    fileName,
-    prettier.format(
-      `
+  ensureFile(projectRootPath, fileName, [
+    () =>
+      prettier.format(
+        `
     import test from "ava"
     import * as path from "path"
     import { judgeHasComponents } from "../src/methods"
@@ -178,10 +177,10 @@ export function ensureTest(projectRootPath: string) {
       t.false(judgeHasComponents(testProjectRootPath, testFilePaths(relativeProjectFiles)))
     })
   `,
-      {
-        semi: false,
-        parser: "typescript"
-      }
-    )
-  )
+        {
+          semi: false,
+          parser: "typescript"
+        }
+      )
+  ])
 }

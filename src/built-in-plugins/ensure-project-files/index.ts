@@ -13,96 +13,100 @@ export function ensureDeclares(projectRootPath: string) {
 
 export const ensurePrettierrc = (projectRootPath: string) => ({
   fileRelativePath: ".prettierrc",
-  fileContentOrResolve: JSON.stringify(
-    {
-      bracketSpacing: true,
-      printWidth: 120,
-      proseWrap: "never",
-      requirePragma: false,
-      semi: false,
-      singleQuote: false,
-      tabWidth: 2,
-      trailingComma: "none",
-      useTabs: false,
-      overrides: [{ files: "*.json", options: { printWidth: 200 } }]
-    },
-    null,
-    2
-  )
+  pipeContent: () =>
+    JSON.stringify(
+      {
+        bracketSpacing: true,
+        printWidth: 120,
+        proseWrap: "never",
+        requirePragma: false,
+        semi: false,
+        singleQuote: false,
+        tabWidth: 2,
+        trailingComma: "none",
+        useTabs: false,
+        overrides: [{ files: "*.json", options: { printWidth: 200 } }]
+      },
+      null,
+      2
+    )
 })
 
 export const ensureTsconfig = (projectRootPath: string) => ({
   fileRelativePath: "tsconfig.json",
-  fileContentOrResolve: JSON.stringify(
-    {
-      compilerOptions: {
-        module: "esnext",
-        moduleResolution: "node",
-        strict: true,
-        strictNullChecks: false,
-        jsx: "react",
-        target: "esnext",
-        experimentalDecorators: true,
-        skipLibCheck: true,
-        outDir: tsBuiltPath.dir,
-        lib: ["dom", "es5", "es6", "scripthost"]
+  pipeContent: () =>
+    JSON.stringify(
+      {
+        compilerOptions: {
+          module: "esnext",
+          moduleResolution: "node",
+          strict: true,
+          strictNullChecks: false,
+          jsx: "react",
+          target: "esnext",
+          experimentalDecorators: true,
+          skipLibCheck: true,
+          outDir: tsBuiltPath.dir,
+          lib: ["dom", "es5", "es6", "scripthost"]
+        },
+        exclude: ["node_modules", tsBuiltPath.dir, "lib"]
       },
-      exclude: ["node_modules", tsBuiltPath.dir, "lib"]
-    },
-    null,
-    2
-  )
+      null,
+      2
+    )
 })
 
 export const ensureTslint = (projectRootPath: string) => ({
   fileRelativePath: "tslint.json",
-  fileContentOrResolve: JSON.stringify(
-    {
-      extends: "tslint:latest",
-      defaultSeverity: "error",
-      rules: {
-        semicolon: [false],
-        "object-literal-sort-keys": false,
-        "max-classes-per-file": [true, 5],
-        "trailing-comma": [false],
-        "no-string-literal": false,
-        "max-line-length": [true, 200],
-        "arrow-parens": false,
-        "no-implicit-dependencies": false,
-        "no-object-literal-type-assertion": false,
-        "no-submodule-imports": false
-      }
-    },
-    null,
-    2
-  )
+  pipeContent: () =>
+    JSON.stringify(
+      {
+        extends: "tslint:latest",
+        defaultSeverity: "error",
+        rules: {
+          semicolon: [false],
+          "object-literal-sort-keys": false,
+          "max-classes-per-file": [true, 5],
+          "trailing-comma": [false],
+          "no-string-literal": false,
+          "max-line-length": [true, 200],
+          "arrow-parens": false,
+          "no-implicit-dependencies": false,
+          "no-object-literal-type-assertion": false,
+          "no-submodule-imports": false
+        }
+      },
+      null,
+      2
+    )
 })
 
 export const ensureVscode = (projectRootPath: string) => ({
   fileRelativePath: ".vscode/settings.json",
-  fileContentOrResolve: JSON.stringify(
-    {
-      "editor.formatOnPaste": true,
-      "editor.formatOnType": true,
-      "editor.formatOnSave": true,
-      "files.autoSave": "onFocusChange",
-      "typescript.tsdk": "node_modules/typescript/lib",
-      "editor.tabSize": 2,
-      "beautify.tabSize": 2,
-      "tslint.autoFixOnSave": true,
-      "tslint.ignoreDefinitionFiles": false,
-      "tslint.exclude": "**/node_modules/**/*",
-      "prettier.singleQuote": false,
-      "prettier.semi": false
-    },
-    null,
-    2
-  )
+  pipeContent: () =>
+    JSON.stringify(
+      {
+        "editor.formatOnPaste": true,
+        "editor.formatOnType": true,
+        "editor.formatOnSave": true,
+        "files.autoSave": "onFocusChange",
+        "typescript.tsdk": "node_modules/typescript/lib",
+        "editor.tabSize": 2,
+        "beautify.tabSize": 2,
+        "tslint.autoFixOnSave": true,
+        "tslint.ignoreDefinitionFiles": false,
+        "tslint.exclude": "**/node_modules/**/*",
+        "prettier.singleQuote": false,
+        "prettier.semi": false
+      },
+      null,
+      2
+    )
 })
 
 export const ensureGitignore = (projectConfig: IProjectConfig) => ({
   fileRelativePath: ".gitignore",
-  fileContentOrResolve: getGitignores(projectConfig).join("\n")
+  pipeContent: () => getGitignores(projectConfig).join("\n")
 })
 
 export default (instance: typeof pri) => {
@@ -126,8 +130,9 @@ export default (instance: typeof pri) => {
   if (!fs.existsSync(homePageAbsolutePath) && !fs.existsSync(homeMarkdownPageAbsolutePath)) {
     instance.project.addProjectFiles({
       fileRelativePath: homePagePath,
-      fileContentOrResolve: prettier.format(
-        `
+      pipeContent: () =>
+        prettier.format(
+          `
       import { env } from "pri/client"
       import * as React from "react"
 
@@ -157,17 +162,14 @@ export default (instance: typeof pri) => {
         }
       }
     `,
-        {
-          semi: false,
-          parser: "typescript"
-        }
-      )
+          { semi: false, parser: "typescript" }
+        )
     })
   }
 
   instance.project.addProjectFiles({
     fileRelativePath: "package.json",
-    fileContentOrResolve: prev => {
+    pipeContent: prev => {
       const prevJson = JSON.parse(prev)
       return JSON.stringify(
         _.merge({}, prevJson, {
@@ -186,15 +188,16 @@ export default (instance: typeof pri) => {
 
   instance.project.addProjectFiles({
     fileRelativePath: "tests/index.ts",
-    fileContentOrResolve: prettier.format(
-      `
+    pipeContent: () =>
+      prettier.format(
+        `
       import test from "ava"
 
       test("Example", t => {
         t.true(true)
       })
     `,
-      { semi: false, parser: "typescript" }
-    )
+        { semi: false, parser: "typescript" }
+      )
   })
 }
