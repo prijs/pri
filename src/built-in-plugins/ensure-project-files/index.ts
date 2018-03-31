@@ -106,7 +106,10 @@ export const ensureVscode = (projectRootPath: string) => ({
 
 export const ensureGitignore = (projectConfig: IProjectConfig) => ({
   fileName: ".gitignore",
-  pipeContent: () => getGitignores(projectConfig).join("\n")
+  pipeContent: () =>
+    getGitignores(projectConfig)
+      .map(name => `/${name}`)
+      .join("\n")
 })
 
 export default (instance: typeof pri) => {
