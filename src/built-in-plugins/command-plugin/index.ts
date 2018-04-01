@@ -80,7 +80,16 @@ function canExecuteInit(projectRootPath: string) {
     throw Error(`Can't execute pri plugin-init in non plugin type.`)
   }
 
-  fs.writeFileSync(packageJsonPath, JSON.stringify({ ...packageJson, pri: { type: "plugin" } }, null, 2) + "\n")
+  fs.writeFileSync(
+    packageJsonPath,
+    JSON.stringify(
+      _.merge({}, packageJson, {
+        pri: { type: "plugin" }
+      }),
+      null,
+      2
+    ) + "\n"
+  )
 }
 
 export default (instance: typeof pri) => {
