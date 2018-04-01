@@ -31,41 +31,41 @@ const CommandPlugin = async () => {
 const CommandPluginInit = (projectRootPath: string, projectConfig: IProjectConfig) => {
   canExecuteInit(projectRootPath)
 
-  ensureDeclares(projectRootPath)
+  // ensureDeclares(projectRootPath)
 
-  const ensurePrettierrcResult = ensurePrettierrc(projectRootPath)
-  ensureFile(projectRootPath, ensurePrettierrcResult.fileName, [ensurePrettierrcResult.pipeContent])
+  // const ensurePrettierrcResult = ensurePrettierrc(projectRootPath)
+  // ensureFile(projectRootPath, ensurePrettierrcResult.fileName, [ensurePrettierrcResult.pipeContent])
 
-  const ensureTsconfigResult = ensureTsconfig(projectRootPath)
-  ensureFile(projectRootPath, ensureTsconfigResult.fileName, [ensureTsconfigResult.pipeContent])
+  // const ensureTsconfigResult = ensureTsconfig(projectRootPath)
+  // ensureFile(projectRootPath, ensureTsconfigResult.fileName, [ensureTsconfigResult.pipeContent])
 
-  const ensureTslintResult = ensureTslint(projectRootPath)
-  ensureFile(projectRootPath, ensureTslintResult.fileName, [ensureTslintResult.pipeContent])
+  // const ensureTslintResult = ensureTslint(projectRootPath)
+  // ensureFile(projectRootPath, ensureTslintResult.fileName, [ensureTslintResult.pipeContent])
 
-  const ensureVscodeResult = ensureVscode(projectRootPath)
-  ensureFile(projectRootPath, ensureVscodeResult.fileName, [ensureVscodeResult.pipeContent])
+  // const ensureVscodeResult = ensureVscode(projectRootPath)
+  // ensureFile(projectRootPath, ensureVscodeResult.fileName, [ensureVscodeResult.pipeContent])
 
-  const ensureGitignoreResult = ensureGitignore(projectConfig)
-  ensureFile(projectRootPath, ensureGitignoreResult.fileName, [ensureGitignoreResult.pipeContent])
+  // const ensureGitignoreResult = ensureGitignore(projectConfig)
+  // ensureFile(projectRootPath, ensureGitignoreResult.fileName, [ensureGitignoreResult.pipeContent])
 
-  ensurePackageJson(projectRootPath)
-  ensureNpmIgnore(projectRootPath, projectConfig)
-  ensureEntry(projectRootPath)
-  ensureTest(projectRootPath)
+  // ensurePackageJson(projectRootPath)
+  // ensureNpmIgnore(projectRootPath, projectConfig)
+  // ensureEntry(projectRootPath)
+  // ensureTest(projectRootPath)
 
-  log("\n Success init pri plugin, you can run serval commands:\n")
+  // log("\n Success init pri plugin, you can run serval commands:\n")
 
-  log(colors.blue("  npm start"))
+  // log(colors.blue("  npm start"))
 
-  log(`    Run typescript watch.`)
+  // log(`    Run typescript watch.`)
 
-  log(colors.blue("  npm run release"))
+  // log(colors.blue("  npm run release"))
 
-  log(`    Publish this plugin.`)
+  // log(`    Publish this plugin.`)
 
-  log(colors.blue("  npm test"))
+  // log(colors.blue("  npm test"))
 
-  log(`    Run test.`)
+  // log(`    Run test.`)
 }
 
 const CommandPluginBuild = async (projectRootPath: string) => {
@@ -108,7 +108,7 @@ function canExecuteInit(projectRootPath: string) {
   const packageJsonPath = path.join(projectRootPath, "package.json")
   const packageJson = fs.readJsonSync(packageJsonPath, { throws: false })
   if (_.has(packageJson, "pri.type") && _.get(packageJson, "pri.type") !== "plugin") {
-    throw Error(`Can't execute pri init in non project type.`)
+    throw Error(`Can't execute pri plugin-init in non plugin type.`)
   }
 
   fs.writeFileSync(packageJsonPath, JSON.stringify({ ...packageJson, pri: { type: "plugin" } }, null, 2) + "\n")
