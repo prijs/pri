@@ -107,7 +107,7 @@ export default (instance: typeof pri) => {
 function canExecuteInit(projectRootPath: string) {
   const packageJsonPath = path.join(projectRootPath, "package.json")
   const packageJson = fs.readJsonSync(packageJsonPath, { throws: false })
-  if (_.has(packageJson, "pri.type") && _.get(packageJson, "pri.type") !== "project") {
+  if (_.has(packageJson, "pri.type") && _.get(packageJson, "pri.type") !== "plugin") {
     throw Error(`Can't execute pri init in non project type.`)
   }
 
