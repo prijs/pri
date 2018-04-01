@@ -2,17 +2,17 @@ export declare class IProjectConfig {
     /**
      * Title for html <title>.
      */
-    title?: string;
+    public title?: string;
     /**
      * Dist dir path.
      * Only take effect on `npm run build` | `pri build`.
      */
-    distDir?: string;
+    public distDir?: string;
     /**
      * Dist main file name.
      * Only take effect on `npm run build` | `pri build`.
      */
-    distFileName?: string;
+    public distFileName?: string;
     /**
      * Assets public path. `"//some.com"`, `"//some.com/somePath"`, `"/somePath"`.
      * If not set, result: `/<distPath>`.
@@ -21,27 +21,27 @@ export declare class IProjectConfig {
      * If set some.com/somePath for example, result: `//some.com/somePath/<distPath>`.
      * Only take effect on `npm run build` | `pri build`.
      */
-    publicPath?: string | null;
+    public publicPath?: string | null;
     /**
      * Base href for all pages.
      * For example, `/admin` is the root path after deploy, you should set baseHref to `/admin`.
      * There is no need to modify the code, routing `/` can automatically maps to `/admin`.
      * Only take effect on `npm run build` | `pri build`
      */
-    baseHref?: string;
+    public baseHref?: string;
     /**
      * Generate static index file for each route, when building.
      * Usefal for static service who don't serve fallback html, like github-pages.
      */
-    staticBuild: boolean;
+    public staticBuild: boolean;
     /**
      * Custom env.
      */
-    customEnv?: {
+    public customEnv?: {
         [key: string]: any;
     };
     /**
      * Using https for server.
      */
-    useHttps: boolean;
+    public useHttps: boolean;
 }

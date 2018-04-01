@@ -7,6 +7,14 @@ import { Entry } from "./create-entry"
 import { getDefault } from "./esModule"
 import { IProjectConfig } from "./project-config-interface"
 
+export interface IPluginPackageInfo {
+  name: string
+  version: string
+  instance: any
+}
+
+export const loadedPlugins = new Set<IPluginPackageInfo>()
+
 const getBuiltInPlugins = (projectRootPath: string) => {
   const plugins = [
     ["pri-plugin-command-dev", "../built-in-plugins/command-dev/index.js"],
@@ -81,13 +89,6 @@ export class IPluginConfig {
   public ensureProjectFilesQueue: IEnsureProjectFilesQueue[] = []
 }
 
-export interface IPluginPackageInfo {
-  name: string
-  version: string
-  instance: any
-}
-
-export const pluginPackages: IPluginPackageInfo[] = []
 export const plugin: IPluginConfig = new IPluginConfig()
 
 export const initPlugins = (projectRootPath: string) => {
@@ -100,17 +101,15 @@ export const initPlugins = (projectRootPath: string) => {
 
   const builtInPlugins = getBuiltInPlugins(projectRootPath)
 
-  getPriPlugins(path.join(projectRootPath, "package.json"), builtInPlugins).forEach(eachPlugin =>
-    pluginPackages.push(eachPlugin)
-  )
+  getPriPlugins(path.join(projectRootPath, "package.json"), builtInPlugins)
 
   // Init custom plugins
-  pluginPackages.forEach(pluginPackage => {
+  Array.from(loadedPlugins).forEach(pluginPackage => {
     pluginPackage.instance(pri)
   })
 }
 
-function getPriPlugins(packageJsonPath: string, extendPlugins: any = {}): IPluginPackageInfo[] {
+function getPriPlugins(packageJsonPath: string, extendPlugins: any = {}) {
   const projectRootPath = path.resolve(packageJsonPath, "..")
   const packageJsonExist = fs.existsSync(packageJsonPath)
 
@@ -123,40 +122,36 @@ function getPriPlugins(packageJsonPath: string, extendPlugins: any = {}): IPlugi
       }
     : extendPlugins
 
-  return flatten(
-    Object.keys(allDependencies)
-      .filter(subPackageName => subPackageName.startsWith("pri-plugin") || subPackageName.startsWith("@ali/pri-plugin"))
-      .map(subPackageName => {
-        const subPackageVersion = allDependencies[subPackageName]
-        const subPackageRealEntry = subPackageVersion.startsWith("file:")
-          ? path.join(projectRootPath, subPackageVersion.replace(/^file\:/g, ""))
-          : subPackageName
-        const subPackageRealEntryFilePath = require.resolve(subPackageRealEntry)
-        const hasPackageJson = fs.existsSync(path.join(subPackageRealEntry, "package.json"))
-        const subPackageAbsolutePath = hasPackageJson
-          ? require.resolve(path.join(subPackageRealEntry, "package.json"))
-          : null
-        const instance = getDefault(require(subPackageRealEntry))
+  Object.keys(allDependencies)
+    .filter(subPackageName => subPackageName.startsWith("pri-plugin") || subPackageName.startsWith("@ali/pri-plugin"))
+    .map(subPackageName => {
+      // Can't allowed same name plugins
+      if (Array.from(loadedPlugins).some(loadedPlugin => loadedPlugin.name === subPackageName)) {
+        throw Error(`There are two plugins named ${subPackageName}!`)
+      }
 
-        // TODO: For client dashboard plugin
-        // const subPackageClientAbsolutePath = path.resolve(subPackageRealEntryFilePath, "../client.js")
+      const subPackageVersion = allDependencies[subPackageName]
+      const subPackageRealEntry = subPackageVersion.startsWith("file:")
+        ? path.join(projectRootPath, subPackageVersion.replace(/^file\:/g, ""))
+        : subPackageName
+      const subPackageRealEntryFilePath = require.resolve(subPackageRealEntry)
+      const hasPackageJson = fs.existsSync(path.join(subPackageRealEntry, "package.json"))
+      const subPackageAbsolutePath = hasPackageJson
+        ? require.resolve(path.join(subPackageRealEntry, "package.json"))
+        : null
+      const instance = getDefault(require(subPackageRealEntry))
 
-        // if (fs.existsSync(subPackageClientAbsolutePath)) {
-        //   console.log("true", subPackageClientAbsolutePath)
-        // }
+      // TODO: For client dashboard plugin
+      // const subPackageClientAbsolutePath = path.resolve(subPackageRealEntryFilePath, "../client.js")
 
-        if (subPackageAbsolutePath) {
-          return [
-            {
-              instance,
-              name: subPackageName,
-              version: subPackageVersion
-            },
-            ...getPriPlugins(subPackageAbsolutePath)
-          ]
-        } else {
-          return [{ instance, name: subPackageName, version: subPackageVersion }]
-        }
-      })
-  )
+      // if (fs.existsSync(subPackageClientAbsolutePath)) {
+      //   console.log("true", subPackageClientAbsolutePath)
+      // }
+
+      loadedPlugins.add({ instance, name: subPackageName, version: subPackageVersion })
+
+      if (subPackageAbsolutePath) {
+        getPriPlugins(subPackageAbsolutePath)
+      }
+    })
 }

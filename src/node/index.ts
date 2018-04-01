@@ -1,5 +1,6 @@
 import * as build from "./build"
 import * as commands from "./commands"
+import * as context from "./context"
 import * as project from "./project/index"
 
 export const pri = {
@@ -14,7 +15,11 @@ export const pri = {
   /**
    * Project management
    */
-  project
+  project,
+  /**
+   * Context operate
+   */
+  context
 }
 
 export * from "../utils/structor-config"

@@ -9,7 +9,7 @@ import * as pkg from "../package.json"
 
 import * as semver from "semver"
 import { log } from "./utils/log"
-import { initPlugins, plugin, pluginPackages } from "./utils/plugins"
+import { initPlugins, plugin } from "./utils/plugins"
 import text from "./utils/text"
 
 import { pri } from "./node"

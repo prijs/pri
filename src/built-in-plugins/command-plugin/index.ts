@@ -7,7 +7,7 @@ import { pri } from "../../node"
 import { ensureFile } from "../../utils/ensure-files"
 import { log } from "../../utils/log"
 import { findNearestNodemodulesFile } from "../../utils/npm-finder"
-import { pluginPackages } from "../../utils/plugins"
+import { loadedPlugins } from "../../utils/plugins"
 import { IProjectConfig } from "../../utils/project-config-interface"
 import { tsBuiltPath } from "../../utils/structor-config"
 import {
@@ -23,7 +23,7 @@ import { pluginBuild } from "./plugin-build"
 import { CommandPluginWatch } from "./plugin-watch"
 
 const CommandPlugin = async () => {
-  pluginPackages.forEach(pluginPackage => {
+  Array.from(loadedPlugins).forEach(pluginPackage => {
     log(`${pluginPackage.name}@${pluginPackage.version}`)
   })
 }
@@ -31,41 +31,41 @@ const CommandPlugin = async () => {
 const CommandPluginInit = (projectRootPath: string, projectConfig: IProjectConfig) => {
   canExecuteInit(projectRootPath)
 
-  // ensureDeclares(projectRootPath)
+  ensureDeclares(projectRootPath)
 
-  // const ensurePrettierrcResult = ensurePrettierrc(projectRootPath)
-  // ensureFile(projectRootPath, ensurePrettierrcResult.fileName, [ensurePrettierrcResult.pipeContent])
+  const ensurePrettierrcResult = ensurePrettierrc(projectRootPath)
+  ensureFile(projectRootPath, ensurePrettierrcResult.fileName, [ensurePrettierrcResult.pipeContent])
 
-  // const ensureTsconfigResult = ensureTsconfig(projectRootPath)
-  // ensureFile(projectRootPath, ensureTsconfigResult.fileName, [ensureTsconfigResult.pipeContent])
+  const ensureTsconfigResult = ensureTsconfig(projectRootPath)
+  ensureFile(projectRootPath, ensureTsconfigResult.fileName, [ensureTsconfigResult.pipeContent])
 
-  // const ensureTslintResult = ensureTslint(projectRootPath)
-  // ensureFile(projectRootPath, ensureTslintResult.fileName, [ensureTslintResult.pipeContent])
+  const ensureTslintResult = ensureTslint(projectRootPath)
+  ensureFile(projectRootPath, ensureTslintResult.fileName, [ensureTslintResult.pipeContent])
 
-  // const ensureVscodeResult = ensureVscode(projectRootPath)
-  // ensureFile(projectRootPath, ensureVscodeResult.fileName, [ensureVscodeResult.pipeContent])
+  const ensureVscodeResult = ensureVscode(projectRootPath)
+  ensureFile(projectRootPath, ensureVscodeResult.fileName, [ensureVscodeResult.pipeContent])
 
-  // const ensureGitignoreResult = ensureGitignore(projectConfig)
-  // ensureFile(projectRootPath, ensureGitignoreResult.fileName, [ensureGitignoreResult.pipeContent])
+  const ensureGitignoreResult = ensureGitignore(projectConfig)
+  ensureFile(projectRootPath, ensureGitignoreResult.fileName, [ensureGitignoreResult.pipeContent])
 
-  // ensurePackageJson(projectRootPath)
-  // ensureNpmIgnore(projectRootPath, projectConfig)
-  // ensureEntry(projectRootPath)
-  // ensureTest(projectRootPath)
+  ensurePackageJson(projectRootPath)
+  ensureNpmIgnore(projectRootPath, projectConfig)
+  ensureEntry(projectRootPath)
+  ensureTest(projectRootPath)
 
-  // log("\n Success init pri plugin, you can run serval commands:\n")
+  log("\n Success init pri plugin, you can run serval commands:\n")
 
-  // log(colors.blue("  npm start"))
+  log(colors.blue("  npm start"))
 
-  // log(`    Run typescript watch.`)
+  log(`    Run typescript watch.`)
 
-  // log(colors.blue("  npm run release"))
+  log(colors.blue("  npm run release"))
 
-  // log(`    Publish this plugin.`)
+  log(`    Publish this plugin.`)
 
-  // log(colors.blue("  npm test"))
+  log(colors.blue("  npm test"))
 
-  // log(`    Run test.`)
+  log(`    Run test.`)
 }
 
 const CommandPluginBuild = async (projectRootPath: string) => {
