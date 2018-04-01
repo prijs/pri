@@ -11,6 +11,9 @@ export interface IPluginPackageInfo {
   name: string
   version: string
   instance: any
+  config: {
+    dependencies: string[]
+  }
 }
 
 export const loadedPlugins = new Set<IPluginPackageInfo>()
@@ -103,10 +106,9 @@ export const initPlugins = (projectRootPath: string) => {
 
   getPriPlugins(path.join(projectRootPath, "package.json"), builtInPlugins)
 
-  // Init custom plugins
-  Array.from(loadedPlugins).forEach(pluginPackage => {
-    pluginPackage.instance(pri)
-  })
+  if (loadedPlugins.size > 1) {
+    runPluginInstancesByOrder()
+  }
 }
 
 function getPriPlugins(packageJsonPath: string, extendPlugins: any = {}) {
@@ -139,6 +141,7 @@ function getPriPlugins(packageJsonPath: string, extendPlugins: any = {}) {
       const subPackageAbsolutePath = hasPackageJson
         ? require.resolve(path.join(subPackageRealEntry, "package.json"))
         : null
+      const subPackageJson = fs.readJsonSync(subPackageAbsolutePath, { throws: false })
       const instance = getDefault(require(subPackageRealEntry))
 
       // TODO: For client dashboard plugin
@@ -148,10 +151,63 @@ function getPriPlugins(packageJsonPath: string, extendPlugins: any = {}) {
       //   console.log("true", subPackageClientAbsolutePath)
       // }
 
-      loadedPlugins.add({ instance, name: subPackageName, version: subPackageVersion })
+      loadedPlugins.add({
+        instance,
+        name: subPackageName,
+        version: subPackageVersion,
+        config: subPackageJson && subPackageJson.pri
+      })
 
       if (subPackageAbsolutePath) {
         getPriPlugins(subPackageAbsolutePath)
       }
     })
+}
+
+function runPluginInstancesByOrder() {
+  const instantiatedPluginNames = new Set<string>()
+
+  // Init plugins
+  while (instantiatedPluginNames.size !== loadedPlugins.size) {
+    const currentInstantiatedPluginNames = runPluginWithPreloadDependences(Array.from(instantiatedPluginNames))
+
+    if (currentInstantiatedPluginNames.length === 0) {
+      throw Error("Plug-in loop dependency.")
+    }
+
+    currentInstantiatedPluginNames.forEach(pluginName => instantiatedPluginNames.add(pluginName))
+  }
+}
+
+function runPluginWithPreloadDependences(preInstantiatedDependences: string[]) {
+  return (
+    Array.from(loadedPlugins)
+      // Filter plugins who are not instantiated.
+      .filter(loadedPlugin => {
+        if (preInstantiatedDependences.length === 0) {
+          return true
+        }
+
+        return preInstantiatedDependences.findIndex(pluginName => loadedPlugin.name === pluginName) === -1
+      })
+      // Filter plugins who satisfied the dependence condition.
+      .filter(loadedPlugin => {
+        // No dependences obvious can pass.
+        if (!loadedPlugin.config || !loadedPlugin.config.dependencies) {
+          return true
+        }
+        if (
+          loadedPlugin.config.dependencies.every(
+            depPluginName => preInstantiatedDependences.indexOf(depPluginName) > -1
+          )
+        ) {
+          return true
+        }
+        return false
+      })
+      .map(loadedPlugin => {
+        loadedPlugin.instance(pri)
+        return loadedPlugin.name
+      })
+  )
 }

@@ -73,6 +73,16 @@ const CommandPluginBuild = async (projectRootPath: string) => {
   await pluginBuild(projectRootPath)
 }
 
+function canExecuteInit(projectRootPath: string) {
+  const packageJsonPath = path.join(projectRootPath, "package.json")
+  const packageJson = fs.readJsonSync(packageJsonPath, { throws: false })
+  if (_.has(packageJson, "pri.type") && _.get(packageJson, "pri.type") !== "plugin") {
+    throw Error(`Can't execute pri plugin-init in non plugin type.`)
+  }
+
+  fs.writeFileSync(packageJsonPath, JSON.stringify({ ...packageJson, pri: { type: "plugin" } }, null, 2) + "\n")
+}
+
 export default (instance: typeof pri) => {
   const projectRootPath = instance.project.getProjectRootPath()
   const projectConfig = instance.project.getProjectConfig("local")
@@ -102,14 +112,4 @@ export default (instance: typeof pri) => {
       CommandPluginBuild(projectRootPath)
     }
   })
-}
-
-function canExecuteInit(projectRootPath: string) {
-  const packageJsonPath = path.join(projectRootPath, "package.json")
-  const packageJson = fs.readJsonSync(packageJsonPath, { throws: false })
-  if (_.has(packageJson, "pri.type") && _.get(packageJson, "pri.type") !== "plugin") {
-    throw Error(`Can't execute pri plugin-init in non plugin type.`)
-  }
-
-  fs.writeFileSync(packageJsonPath, JSON.stringify({ ...packageJson, pri: { type: "plugin" } }, null, 2) + "\n")
 }

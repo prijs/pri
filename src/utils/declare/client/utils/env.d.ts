@@ -1,8 +1,8 @@
 export declare class GlobalEnv {
-    public isLocal: boolean;
-    public isProd: boolean;
-    public customEnv: any;
-    public get: (name: string) => any;
+    isLocal: boolean;
+    isProd: boolean;
+    customEnv: any;
+    get: (name: string) => any;
 }
 declare let env: GlobalEnv;
 export { env };
