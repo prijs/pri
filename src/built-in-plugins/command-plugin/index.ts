@@ -111,5 +111,5 @@ function canExecuteInit(projectRootPath: string) {
     throw Error(`Can't execute pri init in non project type.`)
   }
 
-  fs.writeFileSync(packageJsonPath, JSON.stringify({ ...packageJson, pri: { type: "plugin" } }, null, 2))
+  fs.writeFileSync(packageJsonPath, JSON.stringify({ ...packageJson, pri: { type: "plugin" } }, null, 2) + "\n")
 }

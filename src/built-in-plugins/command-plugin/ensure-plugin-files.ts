@@ -16,20 +16,22 @@ export function ensurePackageJson(projectRootPath: string) {
   ensureFile(projectRootPath, "package.json", [
     prev => {
       const prevJson = JSON.parse(prev)
-      return JSON.stringify(
-        _.merge({}, prevJson, {
-          types: "src/index.ts",
-          main: path.join(tsBuiltPath.dir, "index.js"),
-          scripts: {
-            start: "pri plugin-watch",
-            prepublishOnly: "pri plugin-build",
-            release: "npm publish",
-            test: "pri test"
-          },
-          dependencies: { pri: "*" }
-        }),
-        null,
-        2
+      return (
+        JSON.stringify(
+          _.merge({}, prevJson, {
+            types: "src/index.ts",
+            main: path.join(tsBuiltPath.dir, "index.js"),
+            scripts: {
+              start: "pri plugin-watch",
+              prepublishOnly: "pri plugin-build",
+              release: "npm publish",
+              test: "pri test"
+            },
+            dependencies: { pri: "*" }
+          }),
+          null,
+          2
+        ) + "\n"
       )
     }
   ])

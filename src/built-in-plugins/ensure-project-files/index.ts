@@ -29,7 +29,7 @@ export const ensurePrettierrc = (projectRootPath: string) => ({
       },
       null,
       2
-    )
+    ) + "\n"
 })
 
 export const ensureTsconfig = (projectRootPath: string) => ({
@@ -53,7 +53,7 @@ export const ensureTsconfig = (projectRootPath: string) => ({
       },
       null,
       2
-    )
+    ) + "\n"
 })
 
 export const ensureTslint = (projectRootPath: string) => ({
@@ -78,7 +78,7 @@ export const ensureTslint = (projectRootPath: string) => ({
       },
       null,
       2
-    )
+    ) + "\n"
 })
 
 export const ensureVscode = (projectRootPath: string) => ({
@@ -101,7 +101,7 @@ export const ensureVscode = (projectRootPath: string) => ({
       },
       null,
       2
-    )
+    ) + "\n"
 })
 
 export const ensureGitignore = (projectConfig: IProjectConfig) => ({
@@ -174,17 +174,19 @@ export default (instance: typeof pri) => {
     fileName: "package.json",
     pipeContent: prev => {
       const prevJson = JSON.parse(prev)
-      return JSON.stringify(
-        _.merge({}, prevJson, {
-          scripts: {
-            start: "pri",
-            build: "pri build",
-            preview: "pri preview",
-            test: "pri test"
-          }
-        }),
-        null,
-        2
+      return (
+        JSON.stringify(
+          _.merge({}, prevJson, {
+            scripts: {
+              start: "pri",
+              build: "pri build",
+              preview: "pri preview",
+              test: "pri test"
+            }
+          }),
+          null,
+          2
+        ) + "\n"
       )
     }
   })

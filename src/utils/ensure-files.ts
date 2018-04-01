@@ -38,7 +38,7 @@ export function ensureFile(
 
   let exitFileContent = ""
   try {
-    exitFileContent = fs.readFileSync(filePath).toString()
+    exitFileContent = fs.readFileSync(filePath, "utf8").toString()
   } catch (error) {
     //
   }
