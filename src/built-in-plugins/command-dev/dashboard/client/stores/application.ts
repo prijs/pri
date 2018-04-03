@@ -1,9 +1,15 @@
 import { message } from "antd"
 import { Action, inject, observable } from "dob"
+import * as React from "react"
 import * as io from "socket.io-client"
 import { IProjectStatus } from "../../server/project-status-interface"
 
 const serverPort = (window as any)["serverPort"]
+
+interface IPlugin {
+  position: string
+  view: any
+}
 
 @observable
 export class ApplciationStore {
@@ -15,6 +21,10 @@ export class ApplciationStore {
    * Selected key in left tree
    */
   public selectedTreeKey: string = "project-root"
+  /**
+   * Plugins
+   */
+  public plugins: IPlugin[] = []
 }
 
 export class ApplicationAction {
@@ -80,7 +90,14 @@ export class ApplicationAction {
   }
 
   @Action
-  public loadPluginsByPosition(position: string) {
-    // TODO:
+  public loadUiPlugins(plugins: IPlugin[]) {
+    plugins.forEach(plugin => this.applicationStore.plugins.push(plugin))
+  }
+
+  @Action
+  public loadPluginsByPosition(position: string, props?: any) {
+    return this.applicationStore.plugins.filter(plugin => plugin.position === position).map((plugin, index) => {
+      return React.createElement(plugin.view, { key: index, ...props })
+    })
   }
 }

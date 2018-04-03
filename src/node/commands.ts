@@ -6,6 +6,7 @@ export interface IRegisterCommand {
   description?: string
   action?: any
   isDefault?: boolean
+  options?: string[][]
 }
 
 export const registerCommand = (opts: IRegisterCommand) => {

@@ -1,9 +1,11 @@
 import { exec, execSync, fork } from "child_process"
 import * as colors from "colors"
 import * as fs from "fs-extra"
+import * as _ from "lodash"
 import * as open from "opn"
 import * as path from "path"
 import * as portfinder from "portfinder"
+import * as prettier from "prettier"
 import * as webpack from "webpack"
 import * as webpackDevServer from "webpack-dev-server"
 import { pri } from "../../node"
@@ -11,6 +13,7 @@ import { analyseProject } from "../../utils/analyse-project"
 import { createEntry } from "../../utils/create-entry"
 import { log, spinner } from "../../utils/log"
 import { findNearestNodemodulesFile } from "../../utils/npm-finder"
+import { getPluginsByOrder } from "../../utils/plugins"
 import { getConfig } from "../../utils/project-config"
 import { IProjectConfig } from "../../utils/project-config-interface"
 import { hasNodeModules, hasNodeModulesModified } from "../../utils/project-helper"
@@ -23,9 +26,7 @@ const dllMainfestName = "mainfest.json"
 const dllOutPath = path.join(projectRootPath, ".temp/static/dlls")
 const libraryStaticPath = "/dlls/" + dllFileName
 
-const dashboardBundleRootPath = path.join(__dirname, "../../bundle")
 const dashboardBundleFileName = "main"
-const hasDashboardBundle = fs.existsSync(path.join(dashboardBundleRootPath, dashboardBundleFileName + ".js"))
 
 export const CommandDev = async () => {
   const env = "local"
@@ -36,35 +37,40 @@ export const CommandDev = async () => {
     createEntry(projectRootPath, env, projectConfig)
   })
 
-  if (hasDashboardBundle && hasNodeModules(projectRootPath) && hasNodeModulesModified(projectRootPath)) {
-    log(colors.blue("\nCreate dlls\n"))
+  bundleDlls()
 
+  // Bundle dashboard
+  const dashboardDistDir = path.join(projectRootPath, tempPath.dir, "/static/dashboard-bundle")
+  if (
+    (hasNodeModules(projectRootPath) && hasNodeModulesModified(projectRootPath)) ||
+    !fs.existsSync(path.join(dashboardDistDir, dashboardBundleFileName + ".js"))
+  ) {
+    log(colors.blue("\nBundle dashboard\n"))
+    const dashboardEntryFilePath = createDashboardEntry()
     execSync(
       [
         `${findNearestNodemodulesFile("/.bin/webpack")}`,
-        `--mode development`,
         `--progress`,
-        `--config ${path.join(__dirname, "./webpack.dll.config.js")}`,
+        `--mode production`,
+        `--config ${path.join(__dirname, "../../utils/webpack-config.js")}`,
         `--env.projectRootPath ${projectRootPath}`,
-        `--env.dllOutPath ${dllOutPath}`,
-        `--env.dllFileName ${dllFileName}`,
-        `--env.dllMainfestName ${dllMainfestName}`
+        `--env.env ${env}`,
+        `--env.publicPath /bundle/`,
+        `--env.entryPath ${dashboardEntryFilePath}`,
+        `--env.distDir ${dashboardDistDir}`,
+        `--env.distFileName main`
       ].join(" "),
       {
         stdio: "inherit"
       }
     )
-
-    log(colors.blue("\nStart dev server.\n"))
   }
 
+  log(colors.blue("\nStart dev server.\n"))
+
   const freePort = await portfinder.getPortPromise()
-  const dashboardServerPort = await portfinder.getPortPromise({
-    port: freePort + 1
-  })
-  const dashboardClientPort = await portfinder.getPortPromise({
-    port: freePort + 2
-  })
+  const dashboardServerPort = await portfinder.getPortPromise({ port: freePort + 1 })
+  const dashboardClientPort = await portfinder.getPortPromise({ port: freePort + 2 })
 
   // Start dashboard server
   fork(path.join(__dirname, "dashboard/server/index.js"), [
@@ -76,95 +82,142 @@ export const CommandDev = async () => {
     env
   ])
 
-  // If has dashboard bundle, run project with dashboard prod in iframe.
-  // If has't dashboard bundle, run dashboard dev server only.
-  if (hasDashboardBundle) {
-    if (projectConfig.useHttps) {
-      log(`you should set chrome://flags/#allow-insecure-localhost, to trust local certificate.`)
-    }
-
-    // Start dashboard client production server
-    fork(path.join(__dirname, "dashboard/server/client-server.js"), [
-      "--serverPort",
-      dashboardServerPort.toString(),
-      "--clientPort",
-      dashboardClientPort.toString(),
-      "--projectRootPath",
-      projectRootPath,
-      "--dashboardBundleRootPath",
-      dashboardBundleRootPath,
-      "--dashboardBundleFileName",
-      dashboardBundleFileName
-    ])
-
-    // Serve project
-    execSync(
-      [
-        `${findNearestNodemodulesFile("/.bin/webpack-dev-server")}`,
-        `--mode development`,
-        `--progress`,
-        `--hot`,
-        `--hotOnly`,
-        `--config ${path.join(__dirname, "../../utils/webpack-config.js")}`,
-        `--env.projectRootPath ${projectRootPath}`,
-        `--env.env ${env}`,
-        `--env.publicPath /static/`,
-        `--env.entryPath ${path.join(projectRootPath, path.format(tempJsEntryPath))}`,
-        `--env.devServerPort ${freePort}`,
-        `--env.htmlTemplatePath ${path.join(__dirname, "../../../template-project.ejs")}`,
-        `--env.htmlTemplateArgs.dashboardServerPort ${dashboardServerPort}`,
-        `--env.htmlTemplateArgs.dashboardClientPort ${dashboardClientPort}`,
-        `--env.htmlTemplateArgs.libraryStaticPath ${libraryStaticPath}`
-      ].join(" "),
-      {
-        stdio: "inherit"
-      }
-    )
-  } else {
-    // Serve dashboard only
-    execSync(
-      [
-        `${findNearestNodemodulesFile("/.bin/webpack-dev-server")}`,
-        `--mode development`,
-        `--progress`,
-        `--hot`,
-        `--hotOnly`,
-        `--config ${path.join(__dirname, "../../utils/webpack-config.js")}`,
-        `--env.projectRootPath ${__dirname}`,
-        `--env.env ${env}`,
-        `--env.publicPath /static/`,
-        `--env.entryPath ${path.join(__dirname, "dashboard/client/index.js")}`,
-        `--env.distFileName main`,
-        `--env.devServerPort ${freePort}`,
-        `--env.htmlTemplatePath ${path.join(__dirname, "../../../template-dashboard.ejs")}`,
-        `--env.htmlTemplateArgs.dashboardServerPort ${dashboardServerPort}`,
-        `--env.htmlTemplateArgs.libraryStaticPath ${libraryStaticPath}`
-      ].join(" "),
-      {
-        stdio: "inherit"
-      }
-    )
+  if (projectConfig.useHttps) {
+    log(`you should set chrome://flags/#allow-insecure-localhost, to trust local certificate.`)
   }
+
+  // Start dashboard client production server
+  fork(path.join(__dirname, "dashboard/server/client-server.js"), [
+    "--serverPort",
+    dashboardServerPort.toString(),
+    "--clientPort",
+    dashboardClientPort.toString(),
+    "--projectRootPath",
+    projectRootPath,
+    "--staticRootPath",
+    path.join(projectRootPath, tempPath.dir, "static")
+  ])
+
+  // Serve project
+  execSync(
+    [
+      `${findNearestNodemodulesFile("/.bin/webpack-dev-server")}`,
+      `--mode development`,
+      `--progress`,
+      `--hot`,
+      `--hotOnly`,
+      `--config ${path.join(__dirname, "../../utils/webpack-config.js")}`,
+      `--env.projectRootPath ${projectRootPath}`,
+      `--env.env ${env}`,
+      `--env.publicPath /static/`,
+      `--env.entryPath ${path.join(projectRootPath, path.format(tempJsEntryPath))}`,
+      `--env.devServerPort ${freePort}`,
+      `--env.htmlTemplatePath ${path.join(__dirname, "../../../template-project.ejs")}`,
+      `--env.htmlTemplateArgs.dashboardServerPort ${dashboardServerPort}`,
+      `--env.htmlTemplateArgs.dashboardClientPort ${dashboardClientPort}`,
+      `--env.htmlTemplateArgs.libraryStaticPath ${libraryStaticPath}`
+    ].join(" "),
+    {
+      stdio: "inherit"
+    }
+  )
+}
+
+export const debugDashboard = async () => {
+  const env = "local"
+  const freePort = await portfinder.getPortPromise()
+  const dashboardServerPort = await portfinder.getPortPromise({ port: freePort + 1 })
+
+  bundleDlls()
+
+  // Start dashboard server
+  const server = fork(path.join(__dirname, "dashboard/server/index.js"), [
+    "--serverPort",
+    dashboardServerPort.toString(),
+    "--projectRootPath",
+    projectRootPath,
+    "--env",
+    env
+  ])
+
+  // Create dashboard entry
+  const dashboardEntryFilePath = createDashboardEntry()
+
+  // Serve dashboard
+  execSync(
+    [
+      `${findNearestNodemodulesFile("/.bin/webpack-dev-server")}`,
+      `--mode development`,
+      `--progress`,
+      `--hot`,
+      `--hotOnly`,
+      `--config ${path.join(__dirname, "../../utils/webpack-config.js")}`,
+      `--env.projectRootPath ${projectRootPath}`,
+      `--env.env ${env}`,
+      `--env.publicPath /static/`,
+      `--env.entryPath ${dashboardEntryFilePath}`,
+      `--env.distFileName main`,
+      `--env.devServerPort ${freePort}`,
+      `--env.htmlTemplatePath ${path.join(__dirname, "../../../template-dashboard.ejs")}`,
+      `--env.htmlTemplateArgs.dashboardServerPort ${dashboardServerPort}`,
+      `--env.htmlTemplateArgs.libraryStaticPath ${libraryStaticPath}`
+    ].join(" "),
+    {
+      stdio: "inherit"
+    }
+  )
+}
+
+function createDashboardEntry() {
+  const dashboardEntryMainPath = path.join(__dirname, "dashboard/client/index")
+  const dashboardEntryFilePath = path.join(projectRootPath, tempPath.dir, "dashboard", "main.tsx")
+
+  const webUiEntries: string[] = []
+
+  Array.from(getPluginsByOrder()).forEach(plugin => {
+    try {
+      const packageJsonPath = require.resolve(path.join(plugin.pathOrModuleName, "package.json"))
+      const packageJson = fs.readJsonSync(packageJsonPath, { throws: false })
+      const webEntry = _.get(packageJson, "pri.web-entry", null)
+      if (webEntry) {
+        const webEntryAbsolutePath = path.resolve(path.parse(packageJsonPath).dir, webEntry)
+        const parsedPath = path.parse(webEntryAbsolutePath)
+        const importPath = path.join(parsedPath.dir, parsedPath.name)
+        webUiEntries.push(`
+          // tslint:disable-next-line:no-var-requires
+          const plugin${webUiEntries.length} = require("${importPath}").default`)
+      }
+    } catch (error) {
+      //
+    }
+  })
+
+  fs.outputFileSync(
+    dashboardEntryFilePath,
+    prettier.format(
+      `
+      // tslint:disable-next-line:no-var-requires
+      const dashboard = require("${dashboardEntryMainPath}").default
+
+      ${
+        webUiEntries.length > 0
+          ? `
+          ${webUiEntries.join("\n")}
+          dashboard([${webUiEntries.map((each, index) => `plugin${index}`).join(",")}])
+        `
+          : `
+          dashboard()
+        `
+      }
+    `,
+      { semi: false, parser: "typescript" }
+    )
+  )
+
+  return dashboardEntryFilePath
 }
 
 export default (instance: typeof pri) => {
-  instance.build.pipeConfig((env, config) => {
-    if (env !== "local") {
-      return config
-    }
-
-    if (hasDashboardBundle) {
-      config.plugins.push(
-        new webpack.DllReferencePlugin({
-          context: ".",
-          manifest: require(path.join(dllOutPath, dllMainfestName))
-        })
-      )
-    }
-
-    return config
-  })
-
   instance.project.onCreateEntry((analyseInfo, entry, env, projectConfig) => {
     if (env === "local") {
       entry.pipeHeader(header => {
@@ -227,16 +280,62 @@ export default (instance: typeof pri) => {
     }
   })
 
+  instance.build.pipeConfig((env, config) => {
+    if (env !== "local") {
+      return config
+    }
+
+    config.plugins.push(
+      new webpack.DllReferencePlugin({
+        context: ".",
+        manifest: require(path.join(dllOutPath, dllMainfestName))
+      })
+    )
+
+    return config
+  })
+
   instance.commands.registerCommand({
     name: "dev",
+    options: [["-d, --debugDashboard", "Debug dashboard"]],
     description: text.commander.dev.description,
-    action: async () => {
+    action: async (options: any) => {
       const projectConfig = instance.project.getProjectConfig("local")
       instance.project.lint()
       await instance.project.ensureProjectFiles(projectConfig)
       await instance.project.checkProjectFiles(projectConfig)
-      await CommandDev()
+
+      if (options && options.debugDashboard) {
+        await debugDashboard()
+      } else {
+        await CommandDev()
+      }
     },
     isDefault: true
   })
+}
+
+function bundleDlls() {
+  if (
+    (hasNodeModules(projectRootPath) && hasNodeModulesModified(projectRootPath)) ||
+    !fs.existsSync(path.join(dllOutPath, dllFileName))
+  ) {
+    log(colors.blue("\nBundle dlls\n"))
+
+    execSync(
+      [
+        `${findNearestNodemodulesFile("/.bin/webpack")}`,
+        `--mode development`,
+        `--progress`,
+        `--config ${path.join(__dirname, "./webpack.dll.config.js")}`,
+        `--env.projectRootPath ${projectRootPath}`,
+        `--env.dllOutPath ${dllOutPath}`,
+        `--env.dllFileName ${dllFileName}`,
+        `--env.dllMainfestName ${dllMainfestName}`
+      ].join(" "),
+      {
+        stdio: "inherit"
+      }
+    )
+  }
 }

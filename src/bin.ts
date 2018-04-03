@@ -37,7 +37,7 @@ Object.keys(commandersGroupByName).forEach(commandName => {
 
   const mainCommand = commandDetails.find(commandDetail => !!commandDetail.action)
 
-  commander
+  const command = commander
     .command(commandName)
     .description(mainCommand.description)
     .action(async (...args: any[]) => {
@@ -55,22 +55,11 @@ Object.keys(commandersGroupByName).forEach(commandName => {
         }
       }
     })
-})
 
-// plugin.commands.forEach(command => {
-// commander
-//   .command(command.name)
-//   .description(command.description)
-//   .action((...args: any[]) => {
-//     if (command.beforeActions) {
-//       command.beforeActions.forEach(beforeAction => beforeAction.apply(null, args))
-//     }
-//     command.action.apply(null, args)
-//     if (command.afterActions) {
-//       command.afterActions.forEach(afterAction => afterAction.apply(null, args))
-//     }
-//   })
-// })
+  if (mainCommand.options) {
+    mainCommand.options.forEach(option => command.option(option[0], option[1]))
+  }
+})
 
 /**
  * Parse argv.
@@ -88,8 +77,3 @@ if (!commander.args.length) {
  * Update notify.
  */
 updateNotifier({ pkg }).notify()
-
-// Catch error.
-process.on("unhandledRejection", error => {
-  log(colors.red(error.toString()))
-})

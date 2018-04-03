@@ -1,14 +1,14 @@
 import * as koaCors from "@koa/cors"
 import { execSync } from "child_process"
 import * as chokidar from "chokidar"
-import * as fs from "fs"
+import * as fs from "fs-extra"
 import * as http from "http"
 import * as https from "https"
 import * as Koa from "koa"
 import * as koaCompress from "koa-compress"
 import * as koaMount from "koa-mount"
-import * as koaRoute from "koa-route"
 import * as koaStatic from "koa-static"
+import * as _ from "lodash"
 import * as path from "path"
 import * as socketIo from "socket.io"
 import * as yargs from "yargs"
@@ -18,7 +18,7 @@ import { createEntry } from "../../../../utils/create-entry"
 import { generateCertificate } from "../../../../utils/generate-certificate"
 import { log } from "../../../../utils/log"
 import { md5 } from "../../../../utils/md5"
-import { initPlugins } from "../../../../utils/plugins"
+import { getPluginsByOrder, initPlugins } from "../../../../utils/plugins"
 import { getConfig } from "../../../../utils/project-config"
 import * as projectManage from "../../../../utils/project-manager"
 
@@ -48,18 +48,10 @@ app.use(
   )
 )
 
-// app.use(koaRoute.get("/api/status", async ctx => {
-//   const analyseInfo = await analyseProject(projectRootPath)
-//   ctx.body = analyseInfo
-// }))
-
 const initProjectConfig = getConfig(projectRootPath, yargs.argv.env)
 
 const server = initProjectConfig.useHttps
-  ? https.createServer(
-      generateCertificate(path.join(projectRootPath, ".temp/dashboard-server")),
-      app.callback()
-    )
+  ? https.createServer(generateCertificate(path.join(projectRootPath, ".temp/dashboard-server")), app.callback())
   : http.createServer(app.callback())
 
 const io = socketIo(server)
@@ -70,11 +62,7 @@ io.on("connection", async socket => {
 
   function socketListen(
     name: string,
-    fn: (
-      data: any,
-      resolve: (data?: any) => void,
-      reject: (error?: Error) => void
-    ) => void
+    fn: (data: any, resolve: (data?: any) => void, reject: (error?: Error) => void) => void
   ) {
     socket.on(name, async (data, callback) => {
       fn(
@@ -139,6 +127,22 @@ io.on("connection", async socket => {
       reject(error)
     }
   })
+
+  // Load plugin's services
+  Array.from(getPluginsByOrder()).forEach(plugin => {
+    try {
+      const packageJsonPath = require.resolve(path.join(plugin.pathOrModuleName, "package.json"))
+      const packageJson = fs.readJsonSync(packageJsonPath, { throws: false })
+      const serviceEntry = _.get(packageJson, "pri.service-entry", null)
+      if (serviceEntry) {
+        const serviceEntryAbsolutePath = path.resolve(path.parse(packageJsonPath).dir, serviceEntry)
+        const serviceFactory = require(serviceEntryAbsolutePath).default
+        serviceFactory({ on: socketListen })
+      }
+    } catch (error) {
+      //
+    }
+  })
 })
 
 // Watch project file's change
@@ -186,11 +190,7 @@ async function fresh() {
 async function getProjectStatus() {
   const projectConfig = getConfig(projectRootPath, yargs.argv.env)
 
-  const analyseInfo = await analyseProject(
-    projectRootPath,
-    yargs.argv.env,
-    projectConfig
-  )
+  const analyseInfo = await analyseProject(projectRootPath, yargs.argv.env, projectConfig)
 
   return { projectConfig, analyseInfo }
 }

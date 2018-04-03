@@ -10,10 +10,14 @@ import "antd/dist/antd.css"
 
 useStrict()
 
-const Root = () => (
-  <Provider {...stores}>
-    <LayoutComponent />
-  </Provider>
-)
+export default (plugins?: any[]) => {
+  stores.ApplicationAction.loadUiPlugins(plugins)
 
-ReactDOM.render(<Root />, document.getElementById("root"))
+  const Root = () => (
+    <Provider {...stores}>
+      <LayoutComponent />
+    </Provider>
+  )
+
+  ReactDOM.render(<Root />, document.getElementById("root"))
+}

@@ -42,6 +42,7 @@ export const CommandPluginWatch = (projectRootPath: string) => {
 
   const watcher = gulp.watch(sourceBlob, build(projectRootPath, sourceBlob))
 
+  // TODO: On create delete?
   watcher.on("change", () => {
     build(projectRootPath, sourceBlob)
   })

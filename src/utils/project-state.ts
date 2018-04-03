@@ -18,5 +18,5 @@ export const get = (key: string) => {
 export const set = (key: string, value: any) => {
   const info = fs.existsSync(storeFilePath) ? fs.readJsonSync(storeFilePath) : {}
   const newInfo = { ...info, [key]: value }
-  fs.writeJsonSync(storeFilePath, newInfo)
+  fs.outputJsonSync(storeFilePath, newInfo)
 }

@@ -18,10 +18,9 @@ import { getConfig } from "../../../../utils/project-config"
 const app = new Koa()
 
 const projectRootPath = yargs.argv.projectRootPath
-const dashboardBundleRootPath = yargs.argv.dashboardBundleRootPath
+const staticRootPath = yargs.argv.staticRootPath
 const serverPort = yargs.argv.serverPort
 const clientPort = yargs.argv.clientPort
-const dashboardBundleFileName = yargs.argv.dashboardBundleFileName
 
 const staticPrefix = "/static"
 
@@ -38,7 +37,7 @@ app.use(
 app.use(
   koaMount(
     staticPrefix,
-    koaStatic(dashboardBundleRootPath, {
+    koaStatic(staticRootPath, {
       gzip: true
     })
   )
@@ -58,8 +57,6 @@ app.use(async ctx => {
           padding: 0;
         }
       </style>
-
-      <link href="${staticPrefix}/${dashboardBundleFileName}.css" media="all" rel="stylesheet" />
     </head>
 
     <body>
@@ -67,7 +64,8 @@ app.use(async ctx => {
       <script>
         window.serverPort = ${serverPort}
       </script>
-      <script src="${staticPrefix}/${dashboardBundleFileName}.js"></script>
+      <script src="${staticPrefix}/dlls/main.dll.js"></script>
+      <script src="${staticPrefix}/dashboard-bundle/main.js"></script>
     </body>
 
     </html>
@@ -76,12 +74,7 @@ app.use(async ctx => {
 
 if (projectConfig.useHttps) {
   https
-    .createServer(
-      generateCertificate(
-        path.join(projectRootPath, ".temp/dashboard-client-server")
-      ),
-      app.callback()
-    )
+    .createServer(generateCertificate(path.join(projectRootPath, ".temp/dashboard-client-server")), app.callback())
     .listen(clientPort)
 } else {
   http.createServer(app.callback()).listen(clientPort)

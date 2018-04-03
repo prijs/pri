@@ -1,3 +1,4 @@
+import * as colors from "colors"
 import * as fs from "fs-extra"
 import { flatten } from "lodash"
 import * as path from "path"
@@ -5,12 +6,14 @@ import * as webpack from "webpack"
 import { pri } from "../node/index"
 import { Entry } from "./create-entry"
 import { getDefault } from "./esModule"
+import { log } from "./log"
 import { IProjectConfig } from "./project-config-interface"
 
 export interface IPluginPackageInfo {
   name: string
   version: string
   instance: any
+  pathOrModuleName: string
   config: {
     dependencies: string[]
   }
@@ -50,6 +53,7 @@ export interface ICommand {
   action?: any
   afterAction?: any
   isDefault?: boolean
+  options?: string[][]
 }
 
 export type IAnalyseProject = (
@@ -107,7 +111,9 @@ export const initPlugins = (projectRootPath: string) => {
   getPriPlugins(path.join(projectRootPath, "package.json"), builtInPlugins)
 
   if (loadedPlugins.size > 1) {
-    runPluginInstancesByOrder()
+    getPluginsByOrder().forEach(eachPlugin => {
+      eachPlugin.instance(pri)
+    })
   }
 }
 
@@ -153,6 +159,7 @@ function getPriPlugins(packageJsonPath: string, extendPlugins: any = {}) {
 
       loadedPlugins.add({
         instance,
+        pathOrModuleName: subPackageRealEntry,
         name: subPackageName,
         version: subPackageVersion,
         config: subPackageJson && subPackageJson.pri
@@ -164,22 +171,38 @@ function getPriPlugins(packageJsonPath: string, extendPlugins: any = {}) {
     })
 }
 
-function runPluginInstancesByOrder() {
+export function getPluginsByOrder() {
   const instantiatedPluginNames = new Set<string>()
+  const outputPlugins: IPluginPackageInfo[] = []
+
+  // Check deps has been loaded
+  loadedPlugins.forEach(loadedPlugin => {
+    if (loadedPlugin.config && loadedPlugin.config.dependencies) {
+      loadedPlugin.config.dependencies.forEach(depPluginName => {
+        if (!Array.from(loadedPlugins).some(eachLoadedPlugin => eachLoadedPlugin.name === depPluginName)) {
+          log(colors.red(`No dependencies named ${depPluginName} in ${loadedPlugin.name}`))
+          process.exit(0)
+        }
+      })
+    }
+  })
 
   // Init plugins
   while (instantiatedPluginNames.size !== loadedPlugins.size) {
-    const currentInstantiatedPluginNames = runPluginWithPreloadDependences(Array.from(instantiatedPluginNames))
+    const currentInstantiatedPlugins = getPluginWithPreloadDependences(Array.from(instantiatedPluginNames))
+    currentInstantiatedPlugins.forEach(eachPlugin => outputPlugins.push(eachPlugin))
 
-    if (currentInstantiatedPluginNames.length === 0) {
+    if (currentInstantiatedPlugins.length === 0) {
       throw Error("Plug-in loop dependency.")
     }
 
-    currentInstantiatedPluginNames.forEach(pluginName => instantiatedPluginNames.add(pluginName))
+    currentInstantiatedPlugins.forEach(eachPlugin => instantiatedPluginNames.add(eachPlugin.name))
   }
+
+  return outputPlugins
 }
 
-function runPluginWithPreloadDependences(preInstantiatedDependences: string[]) {
+function getPluginWithPreloadDependences(preInstantiatedDependences: string[]) {
   return (
     Array.from(loadedPlugins)
       // Filter plugins who are not instantiated.
@@ -205,9 +228,6 @@ function runPluginWithPreloadDependences(preInstantiatedDependences: string[]) {
         }
         return false
       })
-      .map(loadedPlugin => {
-        loadedPlugin.instance(pri)
-        return loadedPlugin.name
-      })
+      .map(loadedPlugin => loadedPlugin)
   )
 }
