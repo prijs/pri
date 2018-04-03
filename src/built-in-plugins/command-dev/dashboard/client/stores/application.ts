@@ -91,6 +91,10 @@ export class ApplicationAction {
 
   @Action
   public loadUiPlugins(plugins: IPlugin[]) {
+    if (!plugins) {
+      return
+    }
+
     plugins.forEach(plugin => this.applicationStore.plugins.push(plugin))
   }
 
