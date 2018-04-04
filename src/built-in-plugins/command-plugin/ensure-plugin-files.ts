@@ -25,7 +25,7 @@ export function ensurePackageJson(projectRootPath: string) {
               start: "pri plugin-watch",
               prepublishOnly: "pri plugin-build",
               release: "npm publish",
-              test: "pri test"
+              test: "pri plugin-test"
             },
             dependencies: { pri: "*" }
           }),

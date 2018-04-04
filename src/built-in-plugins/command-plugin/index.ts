@@ -20,6 +20,7 @@ import {
 } from "../ensure-project-files"
 import { ensureEntry, ensureNpmIgnore, ensurePackageJson, ensureTest } from "./ensure-plugin-files"
 import { pluginBuild } from "./plugin-build"
+import { CommandPluginTest } from "./plugin-test"
 import { CommandPluginWatch } from "./plugin-watch"
 
 const CommandPlugin = async () => {
@@ -119,6 +120,14 @@ export default async (instance: typeof pri) => {
     name: "plugin-build",
     action: () => {
       CommandPluginBuild(projectRootPath)
+    }
+  })
+
+  instance.commands.registerCommand({
+    name: "plugin-test",
+    action: () => {
+      instance.project.lint()
+      CommandPluginTest(projectRootPath)
     }
   })
 }
