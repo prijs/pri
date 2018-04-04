@@ -53,5 +53,5 @@ export function ensureFile(
     log(`${colors.magenta(`⚠ ${fileRelativePath} not exist, created.`)}`)
   }
 
-  fs.outputFile(filePath, nextContent)
+  fs.outputFileSync(filePath, nextContent)
 }
