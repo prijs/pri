@@ -20,60 +20,64 @@ if (semver.lte(process.version, "8.0.0")) {
   process.exit(0)
 }
 
-initPlugins(process.cwd())
+async function main() {
+  await initPlugins(process.cwd())
 
-commander.version(pkg.version, "-v, --version")
+  commander.version(pkg.version, "-v, --version")
 
-const commandersGroupByName = _.groupBy(plugin.commands, "name")
-Object.keys(commandersGroupByName).forEach(commandName => {
-  const commandDetails = commandersGroupByName[commandName]
-  const actionCount = commandDetails.reduce((count, commandDetail) => count + (commandDetail.action ? 1 : 0), 0)
-  if (actionCount === 0) {
-    throw Error(`No command "${commandName}!"`)
-  }
-  if (actionCount > 1) {
-    throw Error(`Can't register "${commandName}" twice!`)
-  }
+  const commandersGroupByName = _.groupBy(plugin.commands, "name")
+  Object.keys(commandersGroupByName).forEach(commandName => {
+    const commandDetails = commandersGroupByName[commandName]
+    const actionCount = commandDetails.reduce((count, commandDetail) => count + (commandDetail.action ? 1 : 0), 0)
+    if (actionCount === 0) {
+      throw Error(`No command "${commandName}!"`)
+    }
+    if (actionCount > 1) {
+      throw Error(`Can't register "${commandName}" twice!`)
+    }
 
-  const mainCommand = commandDetails.find(commandDetail => !!commandDetail.action)
+    const mainCommand = commandDetails.find(commandDetail => !!commandDetail.action)
 
-  const command = commander
-    .command(commandName)
-    .description(mainCommand.description)
-    .action(async (...args: any[]) => {
-      for (const commandDetail of commandDetails) {
-        if (commandDetail.beforeAction) {
-          await commandDetail.beforeAction.apply(null, args)
+    const command = commander
+      .command(commandName)
+      .description(mainCommand.description)
+      .action(async (...args: any[]) => {
+        for (const commandDetail of commandDetails) {
+          if (commandDetail.beforeAction) {
+            await commandDetail.beforeAction.apply(null, args)
+          }
         }
-      }
 
-      await mainCommand.action.apply(null, args)
+        await mainCommand.action.apply(null, args)
 
-      for (const commandDetail of commandDetails) {
-        if (commandDetail.afterAction) {
-          await commandDetail.afterAction.apply(null, args)
+        for (const commandDetail of commandDetails) {
+          if (commandDetail.afterAction) {
+            await commandDetail.afterAction.apply(null, args)
+          }
         }
-      }
-    })
+      })
 
-  if (mainCommand.options) {
-    mainCommand.options.forEach(option => command.option(option[0], option[1]))
+    if (mainCommand.options) {
+      mainCommand.options.forEach(option => command.option(option[0], option[1]))
+    }
+  })
+
+  /**
+   * Parse argv.
+   */
+  commander.parse(process.argv)
+
+  /**
+   * When no args given, use dev command
+   */
+  if (!commander.args.length) {
+    plugin.commands.find(command => command.isDefault === true).action()
   }
-})
 
-/**
- * Parse argv.
- */
-commander.parse(process.argv)
-
-/**
- * When no args given, use dev command
- */
-if (!commander.args.length) {
-  plugin.commands.find(command => command.isDefault === true).action()
+  /**
+   * Update notify.
+   */
+  updateNotifier({ pkg }).notify()
 }
 
-/**
- * Update notify.
- */
-updateNotifier({ pkg }).notify()
+main()

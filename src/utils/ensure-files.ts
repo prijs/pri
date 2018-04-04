@@ -1,4 +1,3 @@
-import { execSync } from "child_process"
 import * as colors from "colors"
 import { FILE } from "dns"
 import * as fs from "fs-extra"

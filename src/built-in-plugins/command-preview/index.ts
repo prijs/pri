@@ -1,4 +1,3 @@
-import { execSync } from "child_process"
 import * as fs from "fs"
 import * as http from "http"
 import * as https from "https"
@@ -94,22 +93,17 @@ export const CommandPreview = async () => {
   if (projectConfig.useHttps) {
     await spinner("Create https server", async () =>
       https
-        .createServer(
-          generateCertificate(path.join(projectRootPath, ".temp/preview")),
-          app.callback()
-        )
+        .createServer(generateCertificate(path.join(projectRootPath, ".temp/preview")), app.callback())
         .listen(freePort)
     )
   } else {
-    await spinner("Create http server", async () =>
-      http.createServer(app.callback()).listen(freePort)
-    )
+    await spinner("Create http server", async () => http.createServer(app.callback()).listen(freePort))
   }
 
   open(`https://localhost:${freePort}`)
 }
 
-export default (instance: typeof pri) => {
+export default async (instance: typeof pri) => {
   instance.commands.registerCommand({
     name: "preview",
     description: text.commander.preview.description,

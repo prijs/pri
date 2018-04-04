@@ -2,6 +2,7 @@ import * as build from "./build"
 import * as commands from "./commands"
 import * as context from "./context"
 import * as project from "./project/index"
+import * as devService from './dev-service'
 
 export const pri = {
   /**
@@ -19,7 +20,11 @@ export const pri = {
   /**
    * Context operate
    */
-  context
+  context,
+  /**
+   * Register dev service
+   */
+  devService,
 }
 
 export * from "../utils/structor-config"

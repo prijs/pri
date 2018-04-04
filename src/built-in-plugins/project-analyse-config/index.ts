@@ -12,7 +12,7 @@ interface IResult {
   }
 }
 
-export default (instance: typeof pri) => {
+export default async (instance: typeof pri) => {
   const projectRootPath = instance.project.getProjectRootPath()
 
   // src/config/config.default|local|prod.ts

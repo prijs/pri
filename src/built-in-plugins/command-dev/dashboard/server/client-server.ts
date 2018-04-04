@@ -13,40 +13,31 @@ import * as yargs from "yargs"
 import * as zlib from "zlib"
 import { generateCertificate } from "../../../../utils/generate-certificate"
 import { log } from "../../../../utils/log"
-import { getConfig } from "../../../../utils/project-config"
+import { IProjectConfig } from "../../../../utils/project-config-interface"
 
 const app = new Koa()
 
-const projectRootPath = yargs.argv.projectRootPath
-const staticRootPath = yargs.argv.staticRootPath
-const serverPort = yargs.argv.serverPort
-const clientPort = yargs.argv.clientPort
-
 const staticPrefix = "/static"
 
-const projectConfig = getConfig(projectRootPath, "local")
+interface IOptions {
+  clientPort: number
+  serverPort: number
+  projectRootPath: string
+  staticRootPath: string
+  projectConfig: IProjectConfig
+}
 
-app.use(koaCors())
+export default (opts: IOptions) => {
+  app.use(koaCors())
 
-app.use(
-  koaCompress({
-    flush: zlib.Z_SYNC_FLUSH
-  })
-)
+  app.use(koaCompress({ flush: zlib.Z_SYNC_FLUSH }))
 
-app.use(
-  koaMount(
-    staticPrefix,
-    koaStatic(staticRootPath, {
-      gzip: true
-    })
-  )
-)
+  app.use(koaMount(staticPrefix, koaStatic(opts.staticRootPath, { gzip: true })))
 
-app.use(async ctx => {
-  ctx.set("Content-Type", "text/html; charset=utf-8")
+  app.use(async ctx => {
+    ctx.set("Content-Type", "text/html; charset=utf-8")
 
-  ctx.body = `
+    ctx.body = `
     <html>
 
     <head>
@@ -62,7 +53,7 @@ app.use(async ctx => {
     <body>
       <div id="root"></div>
       <script>
-        window.serverPort = ${serverPort}
+        window.serverPort = ${opts.serverPort}
       </script>
       <script src="${staticPrefix}/dlls/main.dll.js"></script>
       <script src="${staticPrefix}/dashboard-bundle/main.js"></script>
@@ -70,12 +61,16 @@ app.use(async ctx => {
 
     </html>
   `
-})
+  })
 
-if (projectConfig.useHttps) {
-  https
-    .createServer(generateCertificate(path.join(projectRootPath, ".temp/dashboard-client-server")), app.callback())
-    .listen(clientPort)
-} else {
-  http.createServer(app.callback()).listen(clientPort)
+  if (opts.projectConfig.useHttps) {
+    https
+      .createServer(
+        generateCertificate(path.join(opts.projectRootPath, ".temp/dashboard-client-server")),
+        app.callback()
+      )
+      .listen(opts.clientPort)
+  } else {
+    http.createServer(app.callback()).listen(opts.clientPort)
+  }
 }

@@ -18,7 +18,7 @@ interface IResult {
 
 const safeName = (str: string) => _.upperFirst(_.camelCase(str))
 
-export default (instance: typeof pri) => {
+export default async (instance: typeof pri) => {
   const projectRootPath = instance.project.getProjectRootPath()
 
   instance.project.whiteFileRules.add(file => {

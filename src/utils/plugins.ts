@@ -94,11 +94,18 @@ export class IPluginConfig {
   public whiteFileRules: IWhiteFile[] = []
 
   public ensureProjectFilesQueue: IEnsureProjectFilesQueue[] = []
+
+  public devServices: {
+    socketListeners: Array<{
+      name: string
+      callback: () => void
+    }>
+  } = { socketListeners: [] }
 }
 
 export const plugin: IPluginConfig = new IPluginConfig()
 
-export const initPlugins = (projectRootPath: string) => {
+export const initPlugins = async (projectRootPath: string) => {
   if (hasInitPlugins) {
     return
   }
@@ -111,9 +118,9 @@ export const initPlugins = (projectRootPath: string) => {
   getPriPlugins(path.join(projectRootPath, "package.json"), builtInPlugins)
 
   if (loadedPlugins.size > 1) {
-    getPluginsByOrder().forEach(eachPlugin => {
-      eachPlugin.instance(pri)
-    })
+    for (const eachPlugin of getPluginsByOrder()) {
+      await eachPlugin.instance(pri)
+    }
   }
 }
 

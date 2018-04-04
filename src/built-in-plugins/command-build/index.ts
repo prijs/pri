@@ -10,6 +10,7 @@ import { findNearestNodemodulesFile } from "../../utils/npm-finder"
 import { getConfig } from "../../utils/project-config"
 import { IProjectConfig } from "../../utils/project-config-interface"
 import text from "../../utils/text"
+import { runWebpack } from "../../utils/webpack"
 import { generateStaticHtml } from "./generate-static-html"
 
 const projectRootPath = process.cwd()
@@ -37,22 +38,14 @@ export const CommandBuild = async (
   })
 
   // Run webpack
-  execSync(
-    [
-      `${findNearestNodemodulesFile(".bin/webpack")}`,
-      `--progress`,
-      `--mode production`,
-      `--config ${path.join(__dirname, "../../utils/webpack-config.js")}`,
-      `--env.projectRootPath ${projectRootPath}`,
-      `--env.env ${env}`,
-      `--env.entryPath ${result.entryPath}`,
-      option.publicPath && `--env.publicPath ${option.publicPath}`
-    ].join(" "),
-    {
-      stdio: "inherit",
-      cwd: projectRootPath
-    }
-  )
+  await runWebpack({
+    mode: "production",
+    projectRootPath,
+    env,
+    publicPath: option.publicPath,
+    entryPath: result.entryPath,
+    projectConfig
+  })
 
   // If using staticBuild, generate index pages for all router.
   if (projectConfig.staticBuild) {
@@ -62,7 +55,7 @@ export const CommandBuild = async (
   }
 }
 
-export default (instance: typeof pri) => {
+export default async (instance: typeof pri) => {
   instance.project.onCreateEntry((analyseInfo, entry, env, projectConfig) => {
     if (env === "prod") {
       entry.pipeHeader(header => {

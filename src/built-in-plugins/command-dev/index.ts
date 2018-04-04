@@ -19,6 +19,10 @@ import { IProjectConfig } from "../../utils/project-config-interface"
 import { hasNodeModules, hasNodeModulesModified } from "../../utils/project-helper"
 import { tempJsEntryPath, tempPath } from "../../utils/structor-config"
 import text from "../../utils/text"
+import { runWebpack } from "../../utils/webpack"
+import { runWebpackDevServer } from "../../utils/webpack-dev-server"
+import dashboardClientServer from "./dashboard/server/client-server"
+import dashboardServer from "./dashboard/server/index"
 
 const projectRootPath = process.cwd()
 const dllFileName = "main.dll.js"
@@ -47,23 +51,17 @@ export const CommandDev = async () => {
   ) {
     log(colors.blue("\nBundle dashboard\n"))
     const dashboardEntryFilePath = createDashboardEntry()
-    execSync(
-      [
-        `${findNearestNodemodulesFile("/.bin/webpack")}`,
-        `--progress`,
-        `--mode production`,
-        `--config ${path.join(__dirname, "../../utils/webpack-config.js")}`,
-        `--env.projectRootPath ${projectRootPath}`,
-        `--env.env ${env}`,
-        `--env.publicPath /bundle/`,
-        `--env.entryPath ${dashboardEntryFilePath}`,
-        `--env.distDir ${dashboardDistDir}`,
-        `--env.distFileName main`
-      ].join(" "),
-      {
-        stdio: "inherit"
-      }
-    )
+
+    await runWebpack({
+      mode: "production",
+      projectRootPath,
+      env,
+      publicPath: "/bundle/",
+      entryPath: dashboardEntryFilePath,
+      distDir: dashboardDistDir,
+      distFileName: "main",
+      projectConfig
+    })
   }
 
   log(colors.blue("\nStart dev server.\n"))
@@ -73,57 +71,44 @@ export const CommandDev = async () => {
   const dashboardClientPort = await portfinder.getPortPromise({ port: freePort + 2 })
 
   // Start dashboard server
-  fork(path.join(__dirname, "dashboard/server/index.js"), [
-    "--serverPort",
-    dashboardServerPort.toString(),
-    "--projectRootPath",
+  dashboardServer({
+    serverPort: dashboardServerPort,
     projectRootPath,
-    "--env",
-    env
-  ])
+    env,
+    projectConfig
+  })
 
   if (projectConfig.useHttps) {
     log(`you should set chrome://flags/#allow-insecure-localhost, to trust local certificate.`)
   }
 
   // Start dashboard client production server
-  fork(path.join(__dirname, "dashboard/server/client-server.js"), [
-    "--serverPort",
-    dashboardServerPort.toString(),
-    "--clientPort",
-    dashboardClientPort.toString(),
-    "--projectRootPath",
+  dashboardClientServer({
     projectRootPath,
-    "--staticRootPath",
-    path.join(projectRootPath, tempPath.dir, "static")
-  ])
+    projectConfig,
+    serverPort: dashboardServerPort,
+    clientPort: dashboardClientPort,
+    staticRootPath: path.join(projectRootPath, tempPath.dir, "static")
+  })
 
   // Serve project
-  execSync(
-    [
-      `${findNearestNodemodulesFile("/.bin/webpack-dev-server")}`,
-      `--mode development`,
-      `--progress`,
-      `--hot`,
-      `--hotOnly`,
-      `--config ${path.join(__dirname, "../../utils/webpack-config.js")}`,
-      `--env.projectRootPath ${projectRootPath}`,
-      `--env.env ${env}`,
-      `--env.publicPath /static/`,
-      `--env.entryPath ${path.join(projectRootPath, path.format(tempJsEntryPath))}`,
-      `--env.devServerPort ${freePort}`,
-      `--env.htmlTemplatePath ${path.join(__dirname, "../../../template-project.ejs")}`,
-      `--env.htmlTemplateArgs.dashboardServerPort ${dashboardServerPort}`,
-      `--env.htmlTemplateArgs.dashboardClientPort ${dashboardClientPort}`,
-      `--env.htmlTemplateArgs.libraryStaticPath ${libraryStaticPath}`
-    ].join(" "),
-    {
-      stdio: "inherit"
-    }
-  )
+  await runWebpackDevServer({
+    projectRootPath,
+    env,
+    publicPath: "/static/",
+    entryPath: path.join(projectRootPath, path.format(tempJsEntryPath)),
+    devServerPort: freePort,
+    htmlTemplatePath: path.join(__dirname, "../../../template-project.ejs"),
+    htmlTemplateArgs: {
+      dashboardServerPort,
+      dashboardClientPort,
+      libraryStaticPath
+    },
+    projectConfig
+  })
 }
 
-export const debugDashboard = async () => {
+export const debugDashboard = async (projectConfig: IProjectConfig) => {
   const env = "local"
   const freePort = await portfinder.getPortPromise()
   const dashboardServerPort = await portfinder.getPortPromise({ port: freePort + 1 })
@@ -131,41 +116,26 @@ export const debugDashboard = async () => {
   bundleDlls()
 
   // Start dashboard server
-  const server = fork(path.join(__dirname, "dashboard/server/index.js"), [
-    "--serverPort",
-    dashboardServerPort.toString(),
-    "--projectRootPath",
-    projectRootPath,
-    "--env",
-    env
-  ])
+  dashboardServer({ serverPort: dashboardServerPort, projectRootPath, env, projectConfig })
 
   // Create dashboard entry
   const dashboardEntryFilePath = createDashboardEntry()
 
   // Serve dashboard
-  execSync(
-    [
-      `${findNearestNodemodulesFile("/.bin/webpack-dev-server")}`,
-      `--mode development`,
-      `--progress`,
-      `--hot`,
-      `--hotOnly`,
-      `--config ${path.join(__dirname, "../../utils/webpack-config.js")}`,
-      `--env.projectRootPath ${projectRootPath}`,
-      `--env.env ${env}`,
-      `--env.publicPath /static/`,
-      `--env.entryPath ${dashboardEntryFilePath}`,
-      `--env.distFileName main`,
-      `--env.devServerPort ${freePort}`,
-      `--env.htmlTemplatePath ${path.join(__dirname, "../../../template-dashboard.ejs")}`,
-      `--env.htmlTemplateArgs.dashboardServerPort ${dashboardServerPort}`,
-      `--env.htmlTemplateArgs.libraryStaticPath ${libraryStaticPath}`
-    ].join(" "),
-    {
-      stdio: "inherit"
-    }
-  )
+  await runWebpackDevServer({
+    projectRootPath,
+    env,
+    publicPath: "/static/",
+    entryPath: dashboardEntryFilePath,
+    distFileName: "main",
+    devServerPort: freePort,
+    htmlTemplatePath: path.join(__dirname, "../../../template-dashboard.ejs"),
+    htmlTemplateArgs: {
+      dashboardServerPort,
+      libraryStaticPath
+    },
+    projectConfig
+  })
 }
 
 function createDashboardEntry() {
@@ -217,7 +187,7 @@ function createDashboardEntry() {
   return dashboardEntryFilePath
 }
 
-export default (instance: typeof pri) => {
+export default async (instance: typeof pri) => {
   instance.project.onCreateEntry((analyseInfo, entry, env, projectConfig) => {
     if (env === "local") {
       entry.pipeHeader(header => {
@@ -306,7 +276,7 @@ export default (instance: typeof pri) => {
       await instance.project.checkProjectFiles(projectConfig)
 
       if (options && options.debugDashboard) {
-        await debugDashboard()
+        await debugDashboard(projectConfig)
       } else {
         await CommandDev()
       }

@@ -1,4 +1,3 @@
-import { execSync, fork } from "child_process"
 import * as colors from "colors"
 import * as fs from "fs-extra"
 import * as _ from "lodash"
@@ -10,7 +9,7 @@ import { log, spinner } from "../../utils/log"
 import { getConfig } from "../../utils/project-config"
 import text from "../../utils/text"
 
-export default (instance: typeof pri) => {
+export default async (instance: typeof pri) => {
   const projectRootPath = instance.project.getProjectRootPath()
 
   instance.commands.registerCommand({

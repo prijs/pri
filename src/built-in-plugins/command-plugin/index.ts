@@ -92,7 +92,7 @@ function canExecuteInit(projectRootPath: string) {
   )
 }
 
-export default (instance: typeof pri) => {
+export default async (instance: typeof pri) => {
   const projectRootPath = instance.project.getProjectRootPath()
   const projectConfig = instance.project.getProjectConfig("local")
 
