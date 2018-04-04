@@ -149,10 +149,13 @@ function getPriPlugins(packageJsonPath: string, extendPlugins: any = {}) {
       const subPackageRealEntry = subPackageVersion.startsWith("file:")
         ? path.join(projectRootPath, subPackageVersion.replace(/^file\:/g, ""))
         : subPackageName
-      const subPackageRealEntryFilePath = require.resolve(subPackageRealEntry)
+
+      const subPackageRealEntryFilePath = require.resolve(subPackageRealEntry, {
+        paths: [__dirname, projectRootPath]
+      })
       const hasPackageJson = fs.existsSync(path.join(subPackageRealEntry, "package.json"))
       const subPackageAbsolutePath = hasPackageJson
-        ? require.resolve(path.join(subPackageRealEntry, "package.json"))
+        ? require.resolve(path.join(subPackageRealEntry, "package.json"), { paths: [__dirname, projectRootPath] })
         : null
       const subPackageJson = fs.readJsonSync(subPackageAbsolutePath, { throws: false })
       const instance = getDefault(require(subPackageRealEntry))

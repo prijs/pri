@@ -20,6 +20,28 @@ if (semver.lte(process.version, "8.0.0")) {
   process.exit(0)
 }
 
+async function runCommandAction(commandDetails: any[], args: any[]) {
+  const mainCommand = commandDetails.find(commandDetail => !!commandDetail.action)
+
+  if (!mainCommand) {
+    throw Error(`No main command!`)
+  }
+
+  for (const commandDetail of commandDetails) {
+    if (commandDetail.beforeAction) {
+      await Promise.resolve(commandDetail.beforeAction.apply(null, args))
+    }
+  }
+
+  await Promise.resolve(mainCommand.action.apply(null, args))
+
+  for (const commandDetail of commandDetails) {
+    if (commandDetail.afterAction) {
+      await Promise.resolve(commandDetail.afterAction.apply(null, args))
+    }
+  }
+}
+
 async function main() {
   await initPlugins(process.cwd())
 
@@ -38,23 +60,15 @@ async function main() {
 
     const mainCommand = commandDetails.find(commandDetail => !!commandDetail.action)
 
+    if (!mainCommand) {
+      throw Error(`No main command!`)
+    }
+
     const command = commander
       .command(commandName)
       .description(mainCommand.description)
       .action(async (...args: any[]) => {
-        for (const commandDetail of commandDetails) {
-          if (commandDetail.beforeAction) {
-            await Promise.resolve(commandDetail.beforeAction.apply(null, args))
-          }
-        }
-
-        await Promise.resolve(mainCommand.action.apply(null, args))
-
-        for (const commandDetail of commandDetails) {
-          if (commandDetail.afterAction) {
-            await Promise.resolve(commandDetail.afterAction.apply(null, args))
-          }
-        }
+        await runCommandAction(commandDetails, args)
       })
 
     if (mainCommand.options) {
@@ -71,7 +85,11 @@ async function main() {
    * When no args given, use dev command
    */
   if (!commander.args.length) {
-    plugin.commands.find(command => command.isDefault === true).action()
+    const defaultCommand = plugin.commands.find(command => command.isDefault === true)
+
+    if (defaultCommand) {
+      await runCommandAction(commandersGroupByName[defaultCommand.name], commander.args)
+    }
   }
 
   /**
