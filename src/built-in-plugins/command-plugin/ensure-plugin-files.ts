@@ -9,7 +9,12 @@ import { IProjectConfig } from "../../utils/project-config-interface"
 import { getGitignores, getNpmignores, tsBuiltPath } from "../../utils/structor-config"
 
 export function ensureNpmIgnore(projectRootPath: string, projectConfig: IProjectConfig) {
-  ensureFile(projectRootPath, ".npmignore", [() => getNpmignores(projectConfig).join("\n")])
+  ensureFile(projectRootPath, ".npmignore", [
+    () =>
+      getNpmignores(projectConfig)
+        .map(name => `/${name}`)
+        .join("\n")
+  ])
 }
 
 export function ensurePackageJson(projectRootPath: string) {

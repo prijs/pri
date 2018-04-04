@@ -10,7 +10,6 @@ import * as koaStatic from "koa-static"
 import * as _ from "lodash"
 import * as path from "path"
 import * as socketIo from "socket.io"
-import * as yargs from "yargs"
 import * as zlib from "zlib"
 import { analyseProject } from "../../../../utils/analyse-project"
 import { createEntry } from "../../../../utils/create-entry"
@@ -27,6 +26,7 @@ interface IOptions {
   projectRootPath: string
   env: "local" | "prod"
   projectConfig: IProjectConfig
+  analyseInfo: any
 }
 
 export default (opts: IOptions) => {
@@ -45,8 +45,7 @@ export default (opts: IOptions) => {
   const io = socketIo(server)
 
   io.on("connection", async socket => {
-    const projectStatus = await getProjectStatus()
-    socket.emit("freshProjectStatus", projectStatus)
+    socket.emit("freshProjectStatus", { analyseInfo: opts.analyseInfo, projectConfig: opts.projectConfig })
 
     function socketListen(
       name: string,
@@ -68,15 +67,6 @@ export default (opts: IOptions) => {
     socketListen("addPage", async (data, resolve, reject) => {
       try {
         await projectManage.addPage(opts.projectRootPath, data)
-        resolve()
-      } catch (error) {
-        reject(error)
-      }
-    })
-
-    socketListen("addStore", async (data, resolve, reject) => {
-      try {
-        await projectManage.addStore(opts.projectRootPath, data)
         resolve()
       } catch (error) {
         reject(error)
@@ -148,14 +138,14 @@ export default (opts: IOptions) => {
 
   async function fresh() {
     const projectStatus = await getProjectStatus()
-    createEntry(opts.projectRootPath, yargs.argv.env, projectStatus.projectConfig)
+    createEntry(opts.projectRootPath, opts.env, projectStatus.projectConfig)
     io.emit("freshProjectStatus", projectStatus)
   }
 
   async function getProjectStatus() {
-    const projectConfig = getConfig(opts.projectRootPath, yargs.argv.env)
+    const projectConfig = getConfig(opts.projectRootPath, opts.env)
 
-    const analyseInfo = await analyseProject(opts.projectRootPath, yargs.argv.env, projectConfig)
+    const analyseInfo = await analyseProject(opts.projectRootPath, opts.env, projectConfig)
 
     return { projectConfig, analyseInfo }
   }

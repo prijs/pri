@@ -17,21 +17,22 @@ export class MainComponent extends PureComponent<Props, State> {
   public state = new State()
 
   public render() {
-    switch (this.props.ApplciationStore.selectedTreeKey) {
-      case "project-root":
-        return <ProjectRootComponent />
-      case "routes":
-        return <RoutesComponent />
-      case "layout":
-        return <LayoutComponent />
-      case "404":
-        return <NotFoundComponent />
-      case "config":
-        return <ConfigComponent />
-      case "stores":
-        return <StoresComponent />
-      default:
-        return null
-    }
+    return this.props.ApplicationAction.loadPluginsByPosition("tree-" + this.props.ApplciationStore.selectedTreeKey)
+    // switch (this.props.ApplciationStore.selectedTreeKey) {
+    //   case "project-root":
+    //     return <ProjectRootComponent />
+    //   case "routes":
+    //     return <RoutesComponent />
+    //   case "layout":
+    //     return <LayoutComponent />
+    //   case "404":
+    //     return <NotFoundComponent />
+    //   case "config":
+    //     return <ConfigComponent />
+    //   case "stores":
+    //     return <StoresComponent />
+    //   default:
+    //     return null
+    // }
   }
 }

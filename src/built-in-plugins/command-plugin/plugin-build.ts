@@ -1,3 +1,4 @@
+import transformRuntime from "@babel/plugin-transform-runtime"
 import babelEnv from "@babel/preset-env"
 import stage2 from "@babel/preset-stage-2"
 import * as fs from "fs-extra"
@@ -40,7 +41,7 @@ function runBabel(sourcePath: string) {
   return new Promise((resolve, reject) => {
     gulp
       .src(path.join(sourcePath, "**/*.js"))
-      .pipe(gulpBabel({ presets: [[babelEnv], [stage2]] }))
+      .pipe(gulpBabel({ presets: [[babelEnv], [stage2]], plugins: [[transformRuntime]] }))
       .pipe(gulp.dest(sourcePath))
       .on("end", resolve)
       .on("error", reject)

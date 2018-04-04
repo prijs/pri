@@ -6,7 +6,6 @@ import * as S from "./menu.style"
 import { Props, State } from "./menu.type"
 
 import { NewPageComponent } from "./new-page/new-page.component"
-import { NewStoreComponent } from "./new-store/new-store.component"
 
 @Connect
 export class MenuComponent extends PureComponent<Props, State> {
@@ -21,7 +20,6 @@ export class MenuComponent extends PureComponent<Props, State> {
     return (
       <S.Container>
         <NewPageComponent />
-        <NewStoreComponent />
       </S.Container>
     )
   }

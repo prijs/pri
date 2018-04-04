@@ -54,15 +54,14 @@ export class StructComponent extends PureComponent<Props, State> {
   public static defaultProps = new Props()
   public state = new State()
 
+  public componentDidMount() {
+    this.props.ApplicationAction.event.on("freshProjectStatus", this.setTreeData)
+  }
+
   public render() {
-    if (
-      this.props.ApplciationStore.status === null ||
-      this.props.ApplciationStore.status === undefined
-    ) {
+    if (this.props.ApplciationStore.status === null || this.props.ApplciationStore.status === undefined) {
       return null
     }
-
-    const treeData = this.getTreeData()
 
     return (
       <S.Container>
@@ -78,134 +77,93 @@ export class StructComponent extends PureComponent<Props, State> {
             onSelect={this.handleSelectTreeNode}
             selectedKeys={[this.props.ApplciationStore.selectedTreeKey]}
           >
-            {this.loop(treeData)}
+            {this.loop((this.props.ApplciationStore.treeData as any).$raw)}
           </Tree>
         </S.TreeContainer>
       </S.Container>
     )
   }
 
-  private getTreeData = () => {
-    const treeData: ITreeNode[] = [
-      {
-        title: "Project",
-        key: "project-root",
-        icon: <TreeIcon type="chrome" />,
-        children: []
-      }
-    ]
-
-    const pages = this.props.ApplciationStore.status.analyseInfo
-      .projectAnalysePages
+  private setTreeData = () => {
+    // Pages
+    const pages = this.props.ApplciationStore.status.analyseInfo.projectAnalysePages
       ? this.props.ApplciationStore.status.analyseInfo.projectAnalysePages.pages
       : []
-    const markdownPages = this.props.ApplciationStore.status.analyseInfo
-      .projectAnalyseMarkdownPages
-      ? this.props.ApplciationStore.status.analyseInfo
-          .projectAnalyseMarkdownPages.pages
+    const markdownPages = this.props.ApplciationStore.status.analyseInfo.projectAnalyseMarkdownPages
+      ? this.props.ApplciationStore.status.analyseInfo.projectAnalyseMarkdownPages.pages
       : []
     const allPages = [...pages, ...markdownPages]
-
-    // Pages
     if (allPages) {
-      treeData[0].children.push({
-        key: "routes",
-        title: `Routes (${allPages.length})`,
-        icon: <TreeIcon type="share-alt" />,
-        disabled: allPages.length === 0
+      this.props.ApplicationAction.pipeTreeNode(treeData => {
+        treeData[0].children.push({
+          key: "routes",
+          title: `Routes (${allPages.length})`,
+          icon: <TreeIcon type="share-alt" />,
+          disabled: allPages.length === 0
+        })
+        return treeData
       })
     }
-
-    // Stores
-    if (this.props.ApplciationStore.status.analyseInfo.projectAnalyseDob) {
-      treeData[0].children.push({
-        key: "stores",
-        title: `Stores (${
-          this.props.ApplciationStore.status.analyseInfo.projectAnalyseDob
-            .storeFiles.length
-        })`,
-        icon: <TreeIcon type="database" />,
-        disabled:
-          this.props.ApplciationStore.status.analyseInfo.projectAnalyseDob
-            .storeFiles.length === 0,
-        children: this.props.ApplciationStore.status.analyseInfo.projectAnalyseDob.storeFiles.map(
-          (storeFile: any, index: number) => {
-            return {
-              key: index,
-              title: storeFile.name,
-              icon: <TreeIcon type="database" />
-            }
-          }
-        )
-      })
-    }
-
-    // Components
-    treeData[0].children.push({
-      key: "components",
-      title: `Components`,
-      icon: <TreeIcon type="appstore-o" />,
-      disabled: true
-    })
 
     // Layout
-    const hasLayout = this.props.ApplciationStore.status.analyseInfo
-      .projectAnalyseLayout
-      ? this.props.ApplciationStore.status.analyseInfo.projectAnalyseLayout
-          .hasLayout
+    const hasLayout = this.props.ApplciationStore.status.analyseInfo.projectAnalyseLayout
+      ? this.props.ApplciationStore.status.analyseInfo.projectAnalyseLayout.hasLayout
       : false
-    treeData[0].children.push({
-      key: "layout",
-      title: `Layout`,
-      icon: hasLayout ? (
-        <TreeIcon type="layout" />
-      ) : (
-        <Tooltip title="Auto create layout files." placement="right">
-          <PlusIcon onClick={this.props.ApplicationAction.createLayout} />
-        </Tooltip>
-      ),
-      disabled: !hasLayout
+    this.props.ApplicationAction.pipeTreeNode(treeData => {
+      treeData[0].children.push({
+        key: "layout",
+        title: `Layout`,
+        icon: hasLayout ? (
+          <TreeIcon type="layout" />
+        ) : (
+          <Tooltip title="Auto create layout files." placement="right">
+            <PlusIcon onClick={this.props.ApplicationAction.createLayout} />
+          </Tooltip>
+        ),
+        disabled: !hasLayout
+      })
+      return treeData
     })
 
     // 404
-    const hasNotFound = this.props.ApplciationStore.status.analyseInfo
-      .projectAnalyseNotFound
-      ? this.props.ApplciationStore.status.analyseInfo.projectAnalyseNotFound
-          .hasNotFound
+    const hasNotFound = this.props.ApplciationStore.status.analyseInfo.projectAnalyseNotFound
+      ? this.props.ApplciationStore.status.analyseInfo.projectAnalyseNotFound.hasNotFound
       : false
-    treeData[0].children.push({
-      key: "404",
-      title: `404`,
-      icon: hasNotFound ? (
-        <TreeIcon type="file-unknown" />
-      ) : (
-        <Tooltip title="Auto create 404 page." placement="right">
-          <PlusIcon onClick={this.props.ApplicationAction.create404} />
-        </Tooltip>
-      ),
-      disabled: !hasNotFound
+    this.props.ApplicationAction.pipeTreeNode(treeData => {
+      treeData[0].children.push({
+        key: "404",
+        title: `404`,
+        icon: hasNotFound ? (
+          <TreeIcon type="file-unknown" />
+        ) : (
+          <Tooltip title="Auto create 404 page." placement="right">
+            <PlusIcon onClick={this.props.ApplicationAction.create404} />
+          </Tooltip>
+        ),
+        disabled: !hasNotFound
+      })
+      return treeData
     })
 
     // Config
-    const hasConfig = this.props.ApplciationStore.status.analyseInfo
-      .projectAnalyseConfig
-      ? this.props.ApplciationStore.status.analyseInfo.projectAnalyseConfig
-          .hasConfig
+    const hasConfig = this.props.ApplciationStore.status.analyseInfo.projectAnalyseConfig
+      ? this.props.ApplciationStore.status.analyseInfo.projectAnalyseConfig.hasConfig
       : false
-    treeData[0].children.push({
-      key: "config",
-      title: `Config`,
-      icon: hasConfig ? (
-        <TreeIcon type="setting" />
-      ) : (
-        <Tooltip title="Auto create config files." placement="right">
-          <PlusIcon onClick={this.props.ApplicationAction.createConfig} />
-        </Tooltip>
-      ),
-      disabled: !hasConfig
+    this.props.ApplicationAction.pipeTreeNode(treeData => {
+      treeData[0].children.push({
+        key: "config",
+        title: `Config`,
+        icon: hasConfig ? (
+          <TreeIcon type="setting" />
+        ) : (
+          <Tooltip title="Auto create config files." placement="right">
+            <PlusIcon onClick={this.props.ApplicationAction.createConfig} />
+          </Tooltip>
+        ),
+        disabled: !hasConfig
+      })
+      return treeData
     })
-
-    return treeData
   }
 
   private getFlatData = () => {
@@ -213,9 +171,6 @@ export class StructComponent extends PureComponent<Props, State> {
       key: string
       title: string
     }> = []
-
-    const treeData = this.getTreeData()
-
     function setFlatData(eachTreeData: ITreeNode[]) {
       eachTreeData.forEach(each => {
         dataList.push({ key: each.key, title: each.title })
@@ -225,7 +180,7 @@ export class StructComponent extends PureComponent<Props, State> {
       })
     }
 
-    setFlatData(treeData)
+    setFlatData(this.props.ApplciationStore.treeData)
     return dataList
   }
 
@@ -237,11 +192,9 @@ export class StructComponent extends PureComponent<Props, State> {
   }
 
   private onChange = (value: string) => {
-    const treeData = this.getTreeData()
-
     const expandedKeys = this.getFlatData().map(item => {
       if (item.title.indexOf(value) > -1) {
-        return getParentKey(item.key, treeData)
+        return getParentKey(item.key, this.props.ApplciationStore.treeData)
       }
       return null
     })

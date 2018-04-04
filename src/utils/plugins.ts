@@ -30,7 +30,6 @@ const getBuiltInPlugins = (projectRootPath: string) => {
     ["pri-plugin-command-plugin", "../built-in-plugins/command-plugin/index.js"],
     ["pri-plugin-command-test", "../built-in-plugins/command-test/index.js"],
     ["pri-plugin-project-analyse-config", "../built-in-plugins/project-analyse-config/index.js"],
-    ["pri-plugin-project-analyse-dob", "../built-in-plugins/project-analyse-dob/index.js"],
     ["pri-plugin-project-analyse-layouts", "../built-in-plugins/project-analyse-layouts/index.js"],
     ["pri-plugin-project-analyse-markdown-layouts", "../built-in-plugins/project-analyse-markdown-layouts/index.js"],
     ["pri-plugin-project-analyse-markdown-pages", "../built-in-plugins/project-analyse-markdown-pages/index.js"],
@@ -153,19 +152,11 @@ function getPriPlugins(packageJsonPath: string, extendPlugins: any = {}) {
       const subPackageRealEntryFilePath = require.resolve(subPackageRealEntry, {
         paths: [__dirname, projectRootPath]
       })
-      const hasPackageJson = fs.existsSync(path.join(subPackageRealEntry, "package.json"))
-      const subPackageAbsolutePath = hasPackageJson
-        ? require.resolve(path.join(subPackageRealEntry, "package.json"), { paths: [__dirname, projectRootPath] })
-        : null
+
+      const subPackageAbsolutePath = getPackageJsonPathByPathOrNpmName(subPackageName, projectRootPath)
+
       const subPackageJson = fs.readJsonSync(subPackageAbsolutePath, { throws: false })
-      const instance = getDefault(require(subPackageRealEntry))
-
-      // TODO: For client dashboard plugin
-      // const subPackageClientAbsolutePath = path.resolve(subPackageRealEntryFilePath, "../client.js")
-
-      // if (fs.existsSync(subPackageClientAbsolutePath)) {
-      //   console.log("true", subPackageClientAbsolutePath)
-      // }
+      const instance = getDefault(require(subPackageRealEntryFilePath))
 
       loadedPlugins.add({
         instance,
@@ -190,7 +181,8 @@ export function getPluginsByOrder() {
     if (loadedPlugin.config && loadedPlugin.config.dependencies) {
       loadedPlugin.config.dependencies.forEach(depPluginName => {
         if (!Array.from(loadedPlugins).some(eachLoadedPlugin => eachLoadedPlugin.name === depPluginName)) {
-          log(colors.red(`No dependencies named ${depPluginName} in ${loadedPlugin.name}`))
+          log(colors.red(`${loadedPlugin.name}: No dependent "${depPluginName}"`))
+          log(colors.blue(`Try: npm install ${depPluginName}.`))
           process.exit(0)
         }
       })
@@ -240,4 +232,12 @@ function getPluginWithPreloadDependences(preInstantiatedDependences: string[]) {
       })
       .map(loadedPlugin => loadedPlugin)
   )
+}
+
+function getPackageJsonPathByPathOrNpmName(pathOrNpmName: string, projectRootPath: string) {
+  try {
+    return require.resolve(path.join(pathOrNpmName, "package.json"), { paths: [__dirname, projectRootPath] })
+  } catch (error) {
+    return null
+  }
 }

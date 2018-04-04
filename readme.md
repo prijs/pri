@@ -45,7 +45,6 @@ Production deployment. By default the dist folder is `./dist`.
 * [Scss/Less/Css support.](https://prijs.github.io/pri-docs/features/scss-less-css)
 * [Layout support.](https://prijs.github.io/pri-docs/layout-support)
 * [Page not found.](https://prijs.github.io/pri-docs/features/page-not-found)
-* [Built in data stream.](https://prijs.github.io/pri-docs/features/built-in-data-stream)
 * [Environment variable.](https://prijs.github.io/pri-docs/features/environment-variable)
 * [Deploy to github pages.](https://prijs.github.io/pri-docs/features/deploy-to-github-pages)
 
@@ -89,6 +88,10 @@ Production deployment. By default the dist folder is `./dist`.
 * [typescript@2.7.1](https://github.com/Microsoft/TypeScript)
 * [gulp@3.9.1](https://github.com/gulpjs/gulp)
 * [ava@1.0.0](https://github.com/avajs/ava)
+
+## Plugins
+
+* [pri-plugin-dob](http://github.com/prijs/pri-plugin-dob). Using dob to manage store in your project!
 
 ## Inspired
 

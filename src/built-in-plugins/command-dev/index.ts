@@ -32,15 +32,7 @@ const libraryStaticPath = "/dlls/" + dllFileName
 
 const dashboardBundleFileName = "main"
 
-export const CommandDev = async () => {
-  const env = "local"
-  const projectConfig = getConfig(projectRootPath, env)
-
-  await spinner("Analyse project", async () => {
-    await analyseProject(projectRootPath, env, projectConfig)
-    createEntry(projectRootPath, env, projectConfig)
-  })
-
+export const CommandDev = async (projectConfig: IProjectConfig, analyseInfo: any, env: "local" | "prod") => {
   bundleDlls()
 
   // Bundle dashboard
@@ -71,12 +63,7 @@ export const CommandDev = async () => {
   const dashboardClientPort = await portfinder.getPortPromise({ port: freePort + 2 })
 
   // Start dashboard server
-  dashboardServer({
-    serverPort: dashboardServerPort,
-    projectRootPath,
-    env,
-    projectConfig
-  })
+  dashboardServer({ serverPort: dashboardServerPort, projectRootPath, env, projectConfig, analyseInfo })
 
   if (projectConfig.useHttps) {
     log(`you should set chrome://flags/#allow-insecure-localhost, to trust local certificate.`)
@@ -108,15 +95,14 @@ export const CommandDev = async () => {
   })
 }
 
-export const debugDashboard = async (projectConfig: IProjectConfig) => {
-  const env = "local"
+export const debugDashboard = async (projectConfig: IProjectConfig, analyseInfo: any, env: "local" | "prod") => {
   const freePort = await portfinder.getPortPromise()
   const dashboardServerPort = await portfinder.getPortPromise({ port: freePort + 1 })
 
   bundleDlls()
 
   // Start dashboard server
-  dashboardServer({ serverPort: dashboardServerPort, projectRootPath, env, projectConfig })
+  dashboardServer({ serverPort: dashboardServerPort, projectRootPath, env, projectConfig, analyseInfo })
 
   // Create dashboard entry
   const dashboardEntryFilePath = createDashboardEntry()
@@ -146,16 +132,23 @@ function createDashboardEntry() {
 
   Array.from(getPluginsByOrder()).forEach(plugin => {
     try {
-      const packageJsonPath = require.resolve(path.join(plugin.pathOrModuleName, "package.json"))
+      const packageJsonPath = require.resolve(path.join(plugin.pathOrModuleName, "package.json"), {
+        paths: [__dirname, projectRootPath]
+      })
       const packageJson = fs.readJsonSync(packageJsonPath, { throws: false })
       const webEntry = _.get(packageJson, "pri.web-entry", null)
+
       if (webEntry) {
-        const webEntryAbsolutePath = path.resolve(path.parse(packageJsonPath).dir, webEntry)
-        const parsedPath = path.parse(webEntryAbsolutePath)
-        const importPath = path.join(parsedPath.dir, parsedPath.name)
-        webUiEntries.push(`
+        const webEntrys: string[] = typeof webEntry === "string" ? [webEntry] : webEntry
+
+        webEntrys.forEach(eachWebEntry => {
+          const webEntryAbsolutePath = path.resolve(path.parse(packageJsonPath).dir, eachWebEntry)
+          const parsedPath = path.parse(webEntryAbsolutePath)
+          const importPath = path.join(parsedPath.dir, parsedPath.name)
+          webUiEntries.push(`
           // tslint:disable-next-line:no-var-requires
           const plugin${webUiEntries.length} = require("${importPath}").default`)
+        })
       }
     } catch (error) {
       //
@@ -270,15 +263,22 @@ export default async (instance: typeof pri) => {
     options: [["-d, --debugDashboard", "Debug dashboard"]],
     description: text.commander.dev.description,
     action: async (options: any) => {
-      const projectConfig = instance.project.getProjectConfig("local")
+      const env = "local"
+      const projectConfig = instance.project.getProjectConfig(env)
       instance.project.lint()
       await instance.project.ensureProjectFiles(projectConfig)
       await instance.project.checkProjectFiles(projectConfig)
 
+      const analyseInfo = await spinner("Analyse project", async () => {
+        const scopeAnalyseInfo = await analyseProject(projectRootPath, env, projectConfig)
+        createEntry(projectRootPath, env, projectConfig)
+        return scopeAnalyseInfo
+      })
+
       if (options && options.debugDashboard) {
-        await debugDashboard(projectConfig)
+        await debugDashboard(projectConfig, analyseInfo, env)
       } else {
-        await CommandDev()
+        await CommandDev(projectConfig, analyseInfo, env)
       }
     },
     isDefault: true
