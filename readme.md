@@ -74,13 +74,16 @@ Production deployment. By default the dist folder is `./dist`.
 * PWA support.
 * Code coverage.
 
+## Plugins
+
+* [pri-plugin-dob](http://github.com/prijs/pri-plugin-dob). Using dob to manage store in your project!
+
 ## Built-in packages in 0.x version
 
 * [react@16.2.0](https://www.npmjs.com/package/react)
 * [react-dom@16.2.0](https://www.npmjs.com/package/react-dom)
 * [react-router-dom@4.2.2](https://www.npmjs.com/package/react-router-dom)
 * [antd@3.2.1](https://www.npmjs.com/package/antd)
-* [dob@2.5.8](https://www.npmjs.com/package/dob)
 * [lodash@4.17.4](https://www.npmjs.com/package/lodash)
 * [react-loadable@5.3.1](https://www.npmjs.com/package/react-loadable)
 * [webpack@4.2.0](https://www.npmjs.com/package/parcel-bundler)
@@ -88,10 +91,6 @@ Production deployment. By default the dist folder is `./dist`.
 * [typescript@2.7.1](https://github.com/Microsoft/TypeScript)
 * [gulp@3.9.1](https://github.com/gulpjs/gulp)
 * [ava@1.0.0](https://github.com/avajs/ava)
-
-## Plugins
-
-* [pri-plugin-dob](http://github.com/prijs/pri-plugin-dob). Using dob to manage store in your project!
 
 ## Inspired
 
