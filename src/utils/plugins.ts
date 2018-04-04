@@ -119,7 +119,7 @@ export const initPlugins = async (projectRootPath: string) => {
 
   if (loadedPlugins.size > 1) {
     for (const eachPlugin of getPluginsByOrder()) {
-      await eachPlugin.instance(pri)
+      await Promise.resolve(eachPlugin.instance(pri))
     }
   }
 }

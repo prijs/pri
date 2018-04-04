@@ -44,17 +44,20 @@ async function main() {
       .action(async (...args: any[]) => {
         for (const commandDetail of commandDetails) {
           if (commandDetail.beforeAction) {
-            await commandDetail.beforeAction.apply(null, args)
+            await Promise.resolve(commandDetail.beforeAction.apply(null, args))
           }
         }
 
-        await mainCommand.action.apply(null, args)
+        await Promise.resolve(mainCommand.action.apply(null, args))
 
         for (const commandDetail of commandDetails) {
           if (commandDetail.afterAction) {
-            await commandDetail.afterAction.apply(null, args)
+            await Promise.resolve(commandDetail.afterAction.apply(null, args))
           }
         }
+
+        // For async register commander, process will be exit automatic.
+        process.exit(0)
       })
 
     if (mainCommand.options) {
