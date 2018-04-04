@@ -111,6 +111,10 @@ export const getGitignores = (projectConfig?: IProjectConfig) => {
 export const getNpmignores = (projectConfig: IProjectConfig) => {
   const npmIgnores = getGitignores(projectConfig)
   npmIgnores.push(testsPath.dir)
+
+  const builtPathIndex = npmIgnores.findIndex(name => name === tsBuiltPath.dir)
+  npmIgnores.splice(builtPathIndex, 1)
+
   return npmIgnores
 }
 
