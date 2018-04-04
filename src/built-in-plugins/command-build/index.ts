@@ -93,6 +93,9 @@ export default async (instance: typeof pri) => {
       await instance.project.ensureProjectFiles(projectConfig)
       await instance.project.checkProjectFiles(projectConfig)
       await CommandBuild()
+
+      // For async register commander, process will be exit automatic.
+      process.exit(0)
     }
   })
 }

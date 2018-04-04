@@ -56,7 +56,10 @@ export default async (instance: typeof pri) => {
       const projectConfig = instance.project.getProjectConfig("prod")
       instance.project.lint()
       await instance.project.checkProjectFiles(projectConfig)
-      CommandTest(projectRootPath)
+      await CommandTest(projectRootPath)
+
+      // For async register commander, process will be exit automatic.
+      process.exit(0)
     }
   })
 }

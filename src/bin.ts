@@ -55,9 +55,6 @@ async function main() {
             await Promise.resolve(commandDetail.afterAction.apply(null, args))
           }
         }
-
-        // For async register commander, process will be exit automatic.
-        process.exit(0)
       })
 
     if (mainCommand.options) {

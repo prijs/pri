@@ -99,13 +99,21 @@ export default async (instance: typeof pri) => {
 
   instance.commands.registerCommand({
     name: "plugin",
-    action: CommandPlugin
+    action: () => {
+      CommandPlugin()
+
+      // For async register commander, process will be exit automatic.
+      process.exit(0)
+    }
   })
 
   instance.commands.registerCommand({
     name: "plugin-init",
     action: () => {
       CommandPluginInit(projectRootPath, projectConfig)
+
+      // For async register commander, process will be exit automatic.
+      process.exit(0)
     }
   })
 
@@ -120,6 +128,9 @@ export default async (instance: typeof pri) => {
     name: "plugin-build",
     action: () => {
       CommandPluginBuild(projectRootPath)
+
+      // For async register commander, process will be exit automatic.
+      process.exit(0)
     }
   })
 
@@ -128,6 +139,9 @@ export default async (instance: typeof pri) => {
     action: () => {
       instance.project.lint()
       CommandPluginTest(projectRootPath)
+
+      // For async register commander, process will be exit automatic.
+      process.exit(0)
     }
   })
 }

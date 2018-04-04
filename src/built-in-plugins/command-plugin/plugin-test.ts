@@ -10,7 +10,9 @@ import text from "../../utils/text"
 
 export const CommandPluginTest = (projectRootPath: string) => {
   log(`Build typescript files`)
-  execSync(`${findNearestNodemodulesFile("/.bin/rimraf")} ${tsBuiltPath.dir}`, { stdio: "inherit" })
+  execSync(`${findNearestNodemodulesFile("/.bin/rimraf")} ${tsBuiltPath.dir}`, {
+    stdio: "inherit"
+  })
   execSync([findNearestNodemodulesFile("/.bin/tsc"), "--module CommonJS", "--sourceMap"].join(" "), {
     stdio: "inherit"
   })
@@ -37,6 +39,4 @@ export const CommandPluginTest = (projectRootPath: string) => {
 
   // Open test html in brower
   open(path.join(projectRootPath, "coverage/lcov-report/index.html"))
-
-  process.exit(0)
 }

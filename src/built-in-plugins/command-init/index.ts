@@ -37,6 +37,9 @@ export default async (instance: typeof pri) => {
       log("    Run tests.\n")
 
       log("\n Happy hacking!")
+
+      // For async register commander, process will be exit automatic.
+      process.exit(0)
     }
   })
 }
