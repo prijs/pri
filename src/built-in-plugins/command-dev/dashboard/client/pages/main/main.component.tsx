@@ -9,7 +9,6 @@ import { LayoutComponent } from "./layout/layout.component"
 import { NotFoundComponent } from "./not-found/not-found.component"
 import { ProjectRootComponent } from "./project-root/project-root.component"
 import { RoutesComponent } from "./routes/routes.component"
-import { StoresComponent } from "./stores/stores.component"
 
 @Connect
 export class MainComponent extends PureComponent<Props, State> {
@@ -17,22 +16,19 @@ export class MainComponent extends PureComponent<Props, State> {
   public state = new State()
 
   public render() {
-    return this.props.ApplicationAction.loadPluginsByPosition("tree-" + this.props.ApplciationStore.selectedTreeKey)
-    // switch (this.props.ApplciationStore.selectedTreeKey) {
-    //   case "project-root":
-    //     return <ProjectRootComponent />
-    //   case "routes":
-    //     return <RoutesComponent />
-    //   case "layout":
-    //     return <LayoutComponent />
-    //   case "404":
-    //     return <NotFoundComponent />
-    //   case "config":
-    //     return <ConfigComponent />
-    //   case "stores":
-    //     return <StoresComponent />
-    //   default:
-    //     return null
-    // }
+    switch (this.props.ApplciationStore.selectedTreeKey) {
+      case "project-root":
+        return <ProjectRootComponent />
+      case "routes":
+        return <RoutesComponent />
+      case "layout":
+        return <LayoutComponent />
+      case "404":
+        return <NotFoundComponent />
+      case "config":
+        return <ConfigComponent />
+      default:
+        return this.props.ApplicationAction.loadPluginsByPosition("tree-" + this.props.ApplciationStore.selectedTreeKey)
+    }
   }
 }
