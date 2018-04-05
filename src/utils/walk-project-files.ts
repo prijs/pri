@@ -1,9 +1,9 @@
+import { fstat } from "fs"
 import * as fs from "fs-extra"
 import * as path from "path"
 import * as walk from "walk"
 import { IProjectConfig } from "./project-config-interface"
 import { declarePath, getGitignores, ignoreScanSources, pagesPath, tempPath, tsBuiltPath } from "./structor-config"
-import { fstat } from "fs"
 
 type WalkStats = fs.Stats & {
   name: string
