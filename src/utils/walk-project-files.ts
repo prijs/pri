@@ -3,6 +3,7 @@ import * as path from "path"
 import * as walk from "walk"
 import { IProjectConfig } from "./project-config-interface"
 import { declarePath, getGitignores, ignoreScanSources, pagesPath, tempPath, tsBuiltPath } from "./structor-config"
+import { fstat } from "fs"
 
 type WalkStats = fs.Stats & {
   name: string
@@ -20,14 +21,18 @@ export function walkProjectFiles(projectRootPath: string, projectConfig: IProjec
     const files: ICustomParsedPath[] = []
 
     walker.on("directories", (root: string, dirStatsArray: WalkStats[], next: () => void) => {
-      if (root === projectRootPath) {
-        // Skip project's root.
-        next()
-        return
-      }
+      dirStatsArray.forEach(dirStats => {
+        const dirPath = path.join(root, dirStats.name)
 
-      files.push({ isDir: true, ...path.parse(root) })
-      next()
+        if (dirPath === projectRootPath) {
+          // Skip project's root.
+          next()
+          return
+        }
+
+        files.push({ isDir: true, ...path.parse(dirPath) })
+        next()
+      })
     })
 
     walker.on("file", (root: string, fileStats: WalkStats, next: () => void) => {

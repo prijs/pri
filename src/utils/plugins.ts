@@ -56,7 +56,7 @@ export interface ICommand {
 }
 
 export type IAnalyseProject = (
-  projectFilesParsedPaths?: path.ParsedPath[],
+  projectFilesParsedPaths?: Array<path.ParsedPath & { isDir: boolean }>,
   env?: "local" | "prod",
   projectConfig?: IProjectConfig
 ) => any
