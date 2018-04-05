@@ -16,7 +16,7 @@ import { findNearestNodemodulesFile } from "../../utils/npm-finder"
 import { getPluginsByOrder } from "../../utils/plugins"
 import { getConfig } from "../../utils/project-config"
 import { IProjectConfig } from "../../utils/project-config-interface"
-import { hasNodeModules, hasNodeModulesModified } from "../../utils/project-helper"
+import { hasNodeModules, hasNodeModulesModified, hasPluginsModified } from "../../utils/project-helper"
 import { tempJsEntryPath, tempPath } from "../../utils/structor-config"
 import text from "../../utils/text"
 import { runWebpack } from "../../utils/webpack"
@@ -35,10 +35,10 @@ const dashboardBundleFileName = "main"
 export const CommandDev = async (projectConfig: IProjectConfig, analyseInfo: any, env: "local" | "prod") => {
   bundleDlls()
 
-  // Bundle dashboard
+  // Bundle dashboard if plugins changed or dashboard bundle not exist.
   const dashboardDistDir = path.join(projectRootPath, tempPath.dir, "/static/dashboard-bundle")
   if (
-    (hasNodeModules(projectRootPath) && hasNodeModulesModified(projectRootPath)) ||
+    (await hasPluginsModified(projectRootPath)) ||
     !fs.existsSync(path.join(dashboardDistDir, dashboardBundleFileName + ".js"))
   ) {
     log(colors.blue("\nBundle dashboard\n"))
@@ -285,6 +285,9 @@ export default async (instance: typeof pri) => {
   })
 }
 
+/**
+ * Bundle dlls if node_modules changed, or dlls not exist.
+ */
 function bundleDlls() {
   if (
     (hasNodeModules(projectRootPath) && hasNodeModulesModified(projectRootPath)) ||
