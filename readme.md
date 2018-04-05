@@ -76,7 +76,7 @@ Production deployment. By default the dist folder is `./dist`.
 
 ## Plugins
 
-* [pri-plugin-dob](http://github.com/prijs/pri-plugin-dob). Using dob to manage store in your project!
+* [pri-plugin-dob](https://prijs.github.io/pri-docs/plugins/pri-plugin-dob). Using dob to manage store in your project!
 
 ## Built-in packages in 0.x version
 
