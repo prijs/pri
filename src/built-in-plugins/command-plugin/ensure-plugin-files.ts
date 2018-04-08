@@ -32,7 +32,7 @@ export function ensurePackageJson(projectRootPath: string) {
               release: "npm publish",
               test: "pri plugin-test"
             },
-            dependencies: { pri: "*" }
+            devDependencies: { pri: "*" }
           }),
           null,
           2
