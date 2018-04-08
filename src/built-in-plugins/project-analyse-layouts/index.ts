@@ -18,6 +18,12 @@ interface IResult {
 export default async (instance: typeof pri) => {
   const projectRootPath = instance.project.getProjectRootPath()
 
+  // src/layouts
+  const whiteList = ["src/layouts"]
+  instance.project.whiteFileRules.add(file => {
+    return whiteList.some(whiteName => path.format(file) === path.join(projectRootPath, whiteName))
+  })
+
   // src/layouts/markdown.tsx
   instance.project.whiteFileRules.add(file => {
     const relativePath = path.relative(projectRootPath, file.dir)

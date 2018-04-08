@@ -15,6 +15,12 @@ interface IResult {
 export default async (instance: typeof pri) => {
   const projectRootPath = instance.project.getProjectRootPath()
 
+  // src/config
+  const whiteList = ["src/config"]
+  instance.project.whiteFileRules.add(file => {
+    return whiteList.some(whiteName => path.format(file) === path.join(projectRootPath, whiteName))
+  })
+
   // src/config/config.default|local|prod.ts
   instance.project.whiteFileRules.add(file => {
     const relativePath = path.relative(projectRootPath, file.dir)
