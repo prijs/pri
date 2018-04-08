@@ -71,6 +71,7 @@ export const ensureTslint = (projectRootPath: string) => ({
           "no-string-literal": false,
           "max-line-length": [true, 200],
           "arrow-parens": false,
+          "prefer-conditional-expression": false,
           "no-implicit-dependencies": false,
           "no-object-literal-type-assertion": false,
           "no-submodule-imports": false
