@@ -56,7 +56,11 @@ function runCompiler(compiler: webpack.Compiler) {
 
         resolve()
       } else {
-        throw Error(err.message)
+        if (err && err.message) {
+          throw Error(err.message)
+        } else {
+          throw Error(status.toString())
+        }
       }
     })
   })

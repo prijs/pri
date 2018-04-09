@@ -89,7 +89,7 @@ export default async (instance: typeof pri) => {
     description: text.commander.build.description,
     action: async () => {
       const projectConfig = instance.project.getProjectConfig("prod")
-      instance.project.lint()
+      await instance.project.lint()
       await instance.project.ensureProjectFiles(projectConfig)
       await instance.project.checkProjectFiles(projectConfig)
       await CommandBuild()

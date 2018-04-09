@@ -265,7 +265,7 @@ export default async (instance: typeof pri) => {
     action: async (options: any) => {
       const env = "local"
       const projectConfig = instance.project.getProjectConfig(env)
-      instance.project.lint()
+      await instance.project.lint()
       await instance.project.ensureProjectFiles(projectConfig)
       await instance.project.checkProjectFiles(projectConfig)
 

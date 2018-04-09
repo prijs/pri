@@ -1,8 +1,10 @@
+import { exec, execSync } from "child_process"
 import * as colors from "colors"
 import { Configuration, Linter } from "tslint"
-import { log } from "./log"
+import { log, spinner } from "./log"
+import { findNearestNodemodulesFile } from "./npm-finder"
 
-export function lint(projectRootPath: string) {
+export async function lint(projectRootPath: string) {
   const configurationFilename = "tslint.json"
   const lintOptions = {
     fix: true,
