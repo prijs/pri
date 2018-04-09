@@ -126,6 +126,8 @@ export default async (instance: typeof pri) => {
 
   instance.project.addProjectFiles(ensurePrettierrc(projectRootPath))
 
+  instance.project.addProjectFiles(ensureTslint(projectRootPath))
+
   ensureDeclares(projectRootPath)
 
   const homePagePath = path.join(pagesPath.dir, "index.tsx")
