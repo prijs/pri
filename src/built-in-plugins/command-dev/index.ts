@@ -33,7 +33,7 @@ const libraryStaticPath = "/dlls/" + dllFileName
 const dashboardBundleFileName = "main"
 
 export const CommandDev = async (projectConfig: IProjectConfig, analyseInfo: any, env: "local" | "prod") => {
-  bundleDlls()
+  await bundleDlls()
 
   // Bundle dashboard if plugins changed or dashboard bundle not exist.
   const dashboardDistDir = path.join(projectRootPath, tempPath.dir, "/static/dashboard-bundle")
@@ -99,7 +99,7 @@ export const debugDashboard = async (projectConfig: IProjectConfig, analyseInfo:
   const freePort = await portfinder.getPortPromise()
   const dashboardServerPort = await portfinder.getPortPromise({ port: freePort + 1 })
 
-  bundleDlls()
+  await bundleDlls()
 
   // Start dashboard server
   dashboardServer({ serverPort: dashboardServerPort, projectRootPath, env, projectConfig, analyseInfo })
@@ -288,7 +288,7 @@ export default async (instance: typeof pri) => {
 /**
  * Bundle dlls if node_modules changed, or dlls not exist.
  */
-function bundleDlls() {
+async function bundleDlls() {
   if (
     (hasNodeModules(projectRootPath) && hasNodeModulesModified(projectRootPath)) ||
     !fs.existsSync(path.join(dllOutPath, dllFileName))

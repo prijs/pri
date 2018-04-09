@@ -1,4 +1,3 @@
-import { exec, execSync } from "child_process"
 import * as colors from "colors"
 import { Configuration, Linter } from "tslint"
 import { log, spinner } from "./log"

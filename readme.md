@@ -80,15 +80,15 @@ Production deployment. By default the dist folder is `./dist`.
 
 ## Built-in packages in 0.x version
 
-* [react@16.2.0](https://www.npmjs.com/package/react)
-* [react-dom@16.2.0](https://www.npmjs.com/package/react-dom)
+* [react@16.3.1](https://www.npmjs.com/package/react)
+* [react-dom@16.3.1](https://www.npmjs.com/package/react-dom)
 * [react-router-dom@4.2.2](https://www.npmjs.com/package/react-router-dom)
-* [antd@3.2.1](https://www.npmjs.com/package/antd)
+* [antd@3.4.1](https://www.npmjs.com/package/antd)
 * [lodash@4.17.4](https://www.npmjs.com/package/lodash)
 * [react-loadable@5.3.1](https://www.npmjs.com/package/react-loadable)
-* [webpack@4.2.0](https://www.npmjs.com/package/parcel-bundler)
+* [webpack@4.5.0](https://www.npmjs.com/package/parcel-bundler)
 * [babel@7.0.0](https://www.npmjs.com/package/babel-core)
-* [typescript@2.7.1](https://github.com/Microsoft/TypeScript)
+* [typescript@2.8.1](https://github.com/Microsoft/TypeScript)
 * [gulp@3.9.1](https://github.com/gulpjs/gulp)
 * [ava@1.0.0](https://github.com/avajs/ava)
 
