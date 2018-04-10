@@ -72,7 +72,7 @@ async function main() {
       })
 
     if (mainCommand.options) {
-      mainCommand.options.forEach(option => command.option.apply(null, option))
+      mainCommand.options.forEach(option => command.option.apply(command, option))
     }
   })
 
