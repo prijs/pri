@@ -76,6 +76,10 @@
 
   <script src="<%= htmlWebpackPlugin.options.htmlTemplateArgs.libraryStaticPath %>"></script>
   <script>
+    if (navigator.serviceWorker) {
+      navigator.serviceWorker.register('/sw.js', {scope: '/'})
+    }
+
     const priHelpButton = document.getElementById("pri-help-button")
     const priHelpIframe = document.getElementById("pri-help-iframe")
 

@@ -36,7 +36,8 @@ const getBuiltInPlugins = (projectRootPath: string) => {
     ["pri-plugin-project-analyse-not-found", "../built-in-plugins/project-analyse-not-found/index.js"],
     ["pri-plugin-project-analyse-pages", "../built-in-plugins/project-analyse-pages/index.js"],
     ["pri-plugin-white-files", "../built-in-plugins/white-files/index.js"],
-    ["pri-plugin-ensure-project-files", "../built-in-plugins/ensure-project-files/index.js"]
+    ["pri-plugin-ensure-project-files", "../built-in-plugins/ensure-project-files/index.js"],
+    ["pri-plugin-service-worker", "../built-in-plugins/service-worker/index.js"]
   ]
 
   return plugins.reduce((obj: any, right) => {

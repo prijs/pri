@@ -129,7 +129,7 @@ export default (opts: IOptions) => {
         //
       }
 
-      if (relativePath.startsWith("src/config")) {
+      if (relativePath.startsWith("config")) {
         await fresh()
       } else if (pathInfo.ext === ".md") {
         await fresh()

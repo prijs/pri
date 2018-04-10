@@ -51,7 +51,7 @@ Production deployment. By default the dist folder is `./dist`.
 #### TODO
 
 * Static file serving.
-* Testing.
+* Testing and code coverage.
 
 ## Features
 
@@ -72,7 +72,6 @@ Production deployment. By default the dist folder is `./dist`.
 ### TODO
 
 * PWA support.
-* Code coverage.
 
 ## Plugins
 

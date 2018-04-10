@@ -63,9 +63,7 @@ export const storesPath = {
   dir: path.join(srcPath.dir, `stores`)
 }
 
-export const configPath = {
-  dir: path.join(srcPath.dir, `config`)
-}
+export const configPath = { dir: "config" }
 
 export const configPaths = {
   default: {

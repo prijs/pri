@@ -15,17 +15,17 @@ interface IResult {
 export default async (instance: typeof pri) => {
   const projectRootPath = instance.project.getProjectRootPath()
 
-  // src/config
-  const whiteList = ["src/config"]
+  // config
+  const whiteList = ["config"]
   instance.project.whiteFileRules.add(file => {
     return whiteList.some(whiteName => path.format(file) === path.join(projectRootPath, whiteName))
   })
 
-  // src/config/config.default|local|prod.ts
+  // config/config.default|local|prod.ts
   instance.project.whiteFileRules.add(file => {
     const relativePath = path.relative(projectRootPath, file.dir)
     return (
-      relativePath === "src/config" &&
+      relativePath === "config" &&
       file.ext === ".ts" &&
       (file.name === "config.default" || file.name === "config.local" || file.name === "config.prod")
     )
