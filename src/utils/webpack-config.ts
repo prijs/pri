@@ -72,7 +72,9 @@ export const getWebpackConfig = (opts: IOptions) => {
 
   const tsLoader = {
     loader: "ts-loader",
-    options: plugin.buildConfigTsLoaderOptionsPipes.reduce((options, fn) => fn(opts.env, options), {})
+    options: plugin.buildConfigTsLoaderOptionsPipes.reduce((options, fn) => fn(opts.env, options), {
+      happyPackMode: true
+    })
   }
 
   const distDir = opts.distDir || path.join(opts.projectRootPath, opts.projectConfig.distDir)
