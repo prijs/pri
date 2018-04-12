@@ -23,44 +23,6 @@ interface IOptions {
 }
 
 /**
- * Mutilpe loaders
- */
-const styleLoader = {
-  loader: "style-loader",
-  options: plugin.buildConfigStyleLoaderOptionsPipes.reduce((options, fn) => fn(options), {})
-}
-
-const cssLoader = {
-  loader: "css-loader",
-  options: plugin.buildConfigCssLoaderOptionsPipes.reduce((options, fn) => fn(options), {})
-}
-
-const sassLoader = {
-  loader: "sass-loader",
-  options: plugin.buildConfigSassLoaderOptionsPipes.reduce((options, fn) => fn(options), {})
-}
-
-const lessLoader = {
-  loader: "less-loader",
-  options: plugin.buildConfigLessLoaderOptionsPipes.reduce((options, fn) => fn(options), {})
-}
-
-const babelLoader = {
-  loader: "babel-loader",
-  options: plugin.buildConfigBabelLoaderOptionsPipes.reduce((options, fn) => fn(options), {
-    babelrc: false,
-    presets: [["@babel/env", { modules: false }], ["@babel/stage-2"]],
-    plugins: [["@babel/plugin-transform-runtime"]],
-    comments: true
-  })
-}
-
-const tsLoader = {
-  loader: "ts-loader",
-  options: plugin.buildConfigTsLoaderOptionsPipes.reduce((options, fn) => fn(options), {})
-}
-
-/**
  * Get webpack config.
  */
 export const getWebpackConfig = (opts: IOptions) => {
@@ -73,6 +35,44 @@ export const getWebpackConfig = (opts: IOptions) => {
     } else {
       return ExtractTextPlugin.extract({ fallback: styleLoader, use: loaders })
     }
+  }
+
+  /**
+   * Mutilpe loaders
+   */
+  const styleLoader = {
+    loader: "style-loader",
+    options: plugin.buildConfigStyleLoaderOptionsPipes.reduce((options, fn) => fn(opts.env, options), {})
+  }
+
+  const cssLoader = {
+    loader: "css-loader",
+    options: plugin.buildConfigCssLoaderOptionsPipes.reduce((options, fn) => fn(opts.env, options), {})
+  }
+
+  const sassLoader = {
+    loader: "sass-loader",
+    options: plugin.buildConfigSassLoaderOptionsPipes.reduce((options, fn) => fn(opts.env, options), {})
+  }
+
+  const lessLoader = {
+    loader: "less-loader",
+    options: plugin.buildConfigLessLoaderOptionsPipes.reduce((options, fn) => fn(opts.env, options), {})
+  }
+
+  const babelLoader = {
+    loader: "babel-loader",
+    options: plugin.buildConfigBabelLoaderOptionsPipes.reduce((options, fn) => fn(opts.env, options), {
+      babelrc: false,
+      presets: [["@babel/env", { modules: false }], ["@babel/stage-2"]],
+      plugins: [["@babel/plugin-transform-runtime"]],
+      comments: true
+    })
+  }
+
+  const tsLoader = {
+    loader: "ts-loader",
+    options: plugin.buildConfigTsLoaderOptionsPipes.reduce((options, fn) => fn(opts.env, options), {})
   }
 
   const distDir = opts.distDir || path.join(opts.projectRootPath, opts.projectConfig.distDir)

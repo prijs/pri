@@ -72,7 +72,7 @@ export type ICreateEntry = (
 
 export type IBuildConfigPipe = (env: "local" | "prod", config: webpack.Configuration) => webpack.Configuration
 
-export type ILoaderOptionsPipe = (options: any) => any
+export type ILoaderOptionsPipe = (env: "local" | "prod", options: any) => any
 
 let hasInitPlugins = false
 
