@@ -1,9 +1,12 @@
 import * as colors from "colors"
+// tslint:disable-next-line:no-implicit-dependencies
+import * as express from "express"
 import * as fs from "fs"
 import * as normalizePath from "normalize-path"
 import * as open from "opn"
 import * as path from "path"
 import * as portfinder from "portfinder"
+import * as url from "url"
 import * as webpack from "webpack"
 import * as webpackDevServer from "webpack-dev-server"
 import { tempPath } from "../utils/structor-config"
@@ -25,6 +28,8 @@ interface IOptions {
     dashboardServerPort?: number
     dashboardClientPort?: number
     libraryStaticPath?: string
+    serviceWorkerPath?: string
+    serviceWorkerScope?: string
   }
 }
 
@@ -46,12 +51,14 @@ export const runWebpackDevServer = async (opts: IOptions) => {
 
   webpackConfig.plugins.push(new webpack.HotModuleReplacementPlugin())
 
-  const webpackDevServerConfig = {
+  const webpackDevServerConfig: webpackDevServer.Configuration = {
     host: "127.0.0.1",
     hot: true,
     hotOnly: true,
     publicPath: opts.publicPath,
-    contentBase: path.join(opts.projectRootPath, tempPath.dir, "static"),
+    before: app => {
+      app.use(opts.projectConfig.baseHref, express.static(path.join(opts.projectRootPath, tempPath.dir, "static")))
+    },
     compress: true,
     historyApiFallback: { rewrites: [{ from: "/", to: normalizePath(path.join(opts.publicPath, "index.html")) }] },
     https: opts.projectConfig.useHttps,
@@ -68,6 +75,11 @@ export const runWebpackDevServer = async (opts: IOptions) => {
   const devServer = new webpackDevServer(compiler, webpackDevServerConfig)
 
   devServer.listen(opts.devServerPort, "127.0.0.1", () => {
-    open(`${opts.projectConfig.useHttps ? "https" : "http"}://localhost:${opts.devServerPort}`)
+    open(
+      url.resolve(
+        `${opts.projectConfig.useHttps ? "https" : "http"}://localhost:${opts.devServerPort}`,
+        opts.projectConfig.baseHref
+      )
+    )
   })
 }

@@ -2,7 +2,7 @@ import { execSync } from "child_process"
 import * as colors from "colors"
 import * as fs from "fs-extra"
 import * as path from "path"
-import { pri } from "../../node"
+import { pri, tempPath } from "../../node"
 import { analyseProject } from "../../utils/analyse-project"
 import { createEntry } from "../../utils/create-entry"
 import { log, spinner } from "../../utils/log"
@@ -15,13 +15,7 @@ import { generateStaticHtml } from "./generate-static-html"
 
 const projectRootPath = process.cwd()
 
-export const CommandBuild = async (
-  option: {
-    publicPath: string
-  } = {
-    publicPath: null
-  }
-) => {
+export const CommandBuild = async () => {
   const env = "prod"
   const projectConfig = getConfig(projectRootPath, env)
 
@@ -37,21 +31,28 @@ export const CommandBuild = async (
     return { analyseInfo, entryPath }
   })
 
-  // Run webpack
+  // Build project
   await runWebpack({
     mode: "production",
     projectRootPath,
     env,
-    publicPath: option.publicPath,
     entryPath: result.entryPath,
     projectConfig
   })
 
-  // If using staticBuild, generate index pages for all router.
-  if (projectConfig.staticBuild) {
-    await spinner("Generate static files.", async () => {
-      await generateStaticHtml(projectRootPath, projectConfig, result.analyseInfo)
-    })
+  await spinner("Generate static files.", async () => {
+    await generateStaticHtml(
+      projectRootPath,
+      projectConfig,
+      result.analyseInfo
+    )
+  })
+
+  // Copy .temp/static/sw.js
+  const tempSwPath = path.join(projectRootPath, tempPath.dir, "static/sw.js")
+  const targetSwPath = path.join(projectRootPath, projectConfig.distDir, "sw.js")
+  if (fs.existsSync(tempSwPath)) {
+    fs.copyFileSync(tempSwPath, targetSwPath)
   }
 }
 

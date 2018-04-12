@@ -20,8 +20,8 @@ export const ensurePrettierrc = (projectRootPath: string) => ({
         printWidth: 120,
         proseWrap: "never",
         requirePragma: false,
-        semi: false,
-        singleQuote: false,
+        semi: true,
+        singleQuote: true,
         tabWidth: 2,
         trailingComma: "none",
         useTabs: false,
@@ -64,7 +64,7 @@ export const ensureTslint = (projectRootPath: string) => ({
         extends: "tslint:latest",
         defaultSeverity: "error",
         rules: {
-          semicolon: [false],
+          semicolon: [true],
           "object-literal-sort-keys": false,
           "max-classes-per-file": [true, 5],
           "trailing-comma": [false],
@@ -75,7 +75,8 @@ export const ensureTslint = (projectRootPath: string) => ({
           "prefer-conditional-expression": false,
           "no-implicit-dependencies": false,
           "no-object-literal-type-assertion": false,
-          "no-submodule-imports": false
+          "no-submodule-imports": false,
+          quotemark: [true, "single"]
         }
       },
       null,
@@ -169,7 +170,7 @@ export default async (instance: typeof pri) => {
         }
       }
     `,
-          { semi: false, parser: "typescript" }
+          { semi: true, singleQuote: true, parser: "typescript" }
         )
     })
   }
@@ -206,7 +207,7 @@ export default async (instance: typeof pri) => {
         t.true(true)
       })
     `,
-        { semi: false, parser: "typescript" }
+        { semi: true, singleQuote: true, parser: "typescript" }
       )
   })
 }

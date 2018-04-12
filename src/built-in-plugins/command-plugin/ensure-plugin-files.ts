@@ -100,10 +100,7 @@ export function ensureEntry(projectRootPath: string) {
       })
     }
   `,
-        {
-          semi: false,
-          parser: "typescript"
-        }
+        { semi: true, singleQuote: true, parser: "typescript" }
       )
   ])
 
@@ -135,10 +132,7 @@ function ensureEntryMethods(projectRootPath: string) {
       })
     }
   `,
-        {
-          semi: false,
-          parser: "typescript"
-        }
+        { semi: true, singleQuote: true, parser: "typescript" }
       )
   ])
 }
@@ -184,10 +178,7 @@ export function ensureTest(projectRootPath: string) {
       t.false(judgeHasComponents(testProjectRootPath, testFilePaths(relativeProjectFiles)))
     })
   `,
-        {
-          semi: false,
-          parser: "typescript"
-        }
+        { semi: true, singleQuote: true, parser: "typescript" }
       )
   ])
 }

@@ -11,6 +11,7 @@ import * as webpackDevServer from "webpack-dev-server"
 import { pri } from "../../node"
 import { analyseProject } from "../../utils/analyse-project"
 import { createEntry } from "../../utils/create-entry"
+import { ensureEndWithSlash } from "../../utils/functional"
 import { log, spinner } from "../../utils/log"
 import { findNearestNodemodulesFile } from "../../utils/npm-finder"
 import { getPluginsByOrder } from "../../utils/plugins"
@@ -89,7 +90,9 @@ export const CommandDev = async (projectConfig: IProjectConfig, analyseInfo: any
     htmlTemplateArgs: {
       dashboardServerPort,
       dashboardClientPort,
-      libraryStaticPath
+      libraryStaticPath: path.join(projectConfig.baseHref, libraryStaticPath),
+      serviceWorkerPath: path.join(projectConfig.baseHref, "sw.js"),
+      serviceWorkerScope: ensureEndWithSlash(projectConfig.baseHref)
     },
     projectConfig
   })
@@ -173,7 +176,7 @@ function createDashboardEntry() {
         `
       }
     `,
-      { semi: false, parser: "typescript" }
+      { semi: true, singleQuote: true, parser: "typescript" }
     )
   )
 
@@ -190,18 +193,6 @@ export default async (instance: typeof pri) => {
           setEnvLocal()
         `
       })
-
-      // Redirect to basename
-      if (projectConfig.baseHref !== "/") {
-        entry.pipeBody(body => {
-          return `
-            ${body}
-            if (location.pathname === "/") {
-              customHistory.push("/")
-            }
-          `
-        })
-      }
 
       // Set custom env
       if (projectConfig.customEnv) {

@@ -131,7 +131,9 @@ export default (opts: IOptions) => {
 
       if (relativePath.startsWith("config")) {
         await fresh()
-      } else if (pathInfo.ext === ".md") {
+      } else if (relativePath.startsWith("src") && pathInfo.ext === ".md") {
+        await fresh()
+      } else if (relativePath.startsWith("mocks") && pathInfo.ext === ".ts") {
         await fresh()
       }
     })

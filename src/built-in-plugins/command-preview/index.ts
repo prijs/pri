@@ -1,3 +1,4 @@
+import * as colors from "colors"
 import * as fs from "fs"
 import * as http from "http"
 import * as https from "https"
@@ -13,7 +14,7 @@ import * as zlib from "zlib"
 import { pri } from "../../node"
 import { ensureFiles } from "../../utils/ensure-files"
 import { generateCertificate } from "../../utils/generate-certificate"
-import { spinner } from "../../utils/log"
+import { log, spinner } from "../../utils/log"
 import { getConfig } from "../../utils/project-config"
 import text from "../../utils/text"
 import { CommandBuild } from "../command-build"
@@ -22,73 +23,34 @@ const app = new Koa()
 
 const projectRootPath = process.cwd()
 
-const publicPath = "/static/"
-
-export const CommandPreview = async () => {
+export const CommandPreview = async (instance: typeof pri) => {
   const env = "prod"
   const projectConfig = getConfig(projectRootPath, env)
   const distDir = path.join(projectRootPath, projectConfig.distDir)
 
-  await CommandBuild({
-    publicPath
-  })
+  await CommandBuild()
 
   const freePort = await portfinder.getPortPromise()
 
-  app.use(
-    koaCompress({
-      flush: zlib.Z_SYNC_FLUSH
-    })
-  )
+  app.use(koaCompress({ flush: zlib.Z_SYNC_FLUSH }))
 
   const previewDistPath = distDir
 
-  app.use(
-    koaMount(
-      publicPath,
-      koaStatic(previewDistPath, {
-        gzip: true
-      })
+  let previewStaticPrefix = projectConfig.publicPath
+
+  if (projectConfig.publicPath !== projectConfig.baseHref) {
+    log(
+      colors.yellow(
+        "publicPath is not equal to baseHref, in order to ensure preview, we use baseHref as static file prefix instead of publicPath."
+      )
     )
-  )
+    previewStaticPrefix = projectConfig.baseHref
+  }
+
+  app.use(koaMount(previewStaticPrefix, koaStatic(previewDistPath, { gzip: true })))
 
   const cssPath = path.join(previewDistPath, "main.css")
   const hasCssOutput = fs.existsSync(cssPath)
-
-  app.use(async (ctx, next) => {
-    await next()
-    ctx.response.type = "html"
-    ctx.response.body = `
-      <html>
-
-      <head>
-        <title>pri</title>
-
-        ${
-          hasCssOutput
-            ? `
-          <link rel="stylesheet" type="text/css" href="/static/main.css"/>
-        `
-            : ""
-        }
-
-        <style>
-          html,
-          body {
-            margin: 0;
-            padding: 0;
-          }
-        </style>
-      </head>
-
-      <body>
-        <div id="root"></div>
-        <script src="${publicPath}main.js"></script>
-      </body>
-
-      </html>
-    `
-  })
 
   if (projectConfig.useHttps) {
     await spinner("Create https server", async () =>
@@ -100,13 +62,13 @@ export const CommandPreview = async () => {
     await spinner("Create http server", async () => http.createServer(app.callback()).listen(freePort))
   }
 
-  open(`https://localhost:${freePort}`)
+  open(url.resolve(`https://localhost:${freePort}`, projectConfig.baseHref))
 }
 
 export default async (instance: typeof pri) => {
   instance.commands.registerCommand({
     name: "preview",
     description: text.commander.preview.description,
-    action: CommandPreview
+    action: () => CommandPreview(instance)
   })
 }

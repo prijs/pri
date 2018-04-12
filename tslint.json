@@ -12,6 +12,7 @@
     "no-implicit-dependencies": [true, "dev"],
     "no-submodule-imports": false,
     "object-literal-key-quotes": false,
-    "no-object-literal-type-assertion": false
+    "no-object-literal-type-assertion": false,
+    "prefer-conditional-expression": false
   }
 }

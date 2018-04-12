@@ -3,9 +3,11 @@ import * as path from "path"
 import * as React from "react"
 import { renderToString } from "react-dom/server"
 import StaticRouter from "react-router-dom/StaticRouter"
+import * as url from "url"
+import { ensureEndWithSlash } from "../../utils/functional"
 import { IProjectConfig } from "../../utils/project-config-interface"
 
-export async function generateStaticHtml(projectRootPath: string, projectConfig?: IProjectConfig, analyseInfo?: any) {
+export async function generateStaticHtml(projectRootPath: string, projectConfig: IProjectConfig, analyseInfo: any) {
   const pages = analyseInfo.projectAnalysePages ? analyseInfo.projectAnalysePages.pages : []
   const markdownPages = analyseInfo.projectAnalyseMarkdownPages ? analyseInfo.projectAnalyseMarkdownPages.pages : []
 
@@ -16,7 +18,7 @@ export async function generateStaticHtml(projectRootPath: string, projectConfig?
   })
 }
 
-export function generateHtmlByRouterPath(routerPath: string, projectRootPath: string, projectConfig?: IProjectConfig) {
+export function generateHtmlByRouterPath(routerPath: string, projectRootPath: string, projectConfig: IProjectConfig) {
   const relativePathWithSuffix = path.join(routerPath, "index.html")
   const htmlPath = path.join(projectRootPath, projectConfig.distDir, relativePathWithSuffix)
 
@@ -59,6 +61,16 @@ export function generateHtmlByRouterPath(routerPath: string, projectRootPath: st
 
     <body>
       <div id="root"></div>
+
+      <script>
+        if (navigator.serviceWorker) {
+          navigator.serviceWorker.register("${path.join(
+            projectConfig.baseHref,
+            "sw.js"
+          )}", {scope: "${ensureEndWithSlash(projectConfig.baseHref)}"})
+        }
+      </script>
+
       <script src="${getEntryPath(projectConfig, "main.js")}"></script>
     </body>
 
@@ -68,15 +80,15 @@ export function generateHtmlByRouterPath(routerPath: string, projectRootPath: st
 }
 
 function getEntryPath(projectConfig: IProjectConfig, entryFileName: string) {
+  const finalPublicPath = projectConfig.publicPath
+
   let entryPath = "/" + entryFileName
 
-  if (projectConfig.publicPath) {
-    // tslint:disable-next-line:prefer-conditional-expression
-    if (projectConfig.publicPath.startsWith("/")) {
-      entryPath = path.join(projectConfig.publicPath, entryFileName)
+  if (finalPublicPath) {
+    if (finalPublicPath.startsWith("/")) {
+      entryPath = path.join(finalPublicPath, entryFileName)
     } else {
-      const publicPathWithoutHead = projectConfig.publicPath.replace(/^\/\//g, "")
-      entryPath = "//" + path.join(publicPathWithoutHead, entryFileName)
+      entryPath = url.resolve(finalPublicPath, entryFileName)
     }
   }
 

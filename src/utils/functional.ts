@@ -3,3 +3,11 @@ export const pipeEvent = (func: any) => {
     return func(event.target.value, event)
   }
 }
+
+export function ensureEndWithSlash(str: string) {
+  if (str.endsWith("/")) {
+    return str
+  } else {
+    return str + "/"
+  }
+}

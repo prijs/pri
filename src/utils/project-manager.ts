@@ -51,10 +51,7 @@ export async function addPage(
         }
       }
     `,
-        {
-          semi: false,
-          parser: "typescript"
-        }
+        { semi: true, singleQuote: true, parser: "typescript" }
       )
     )
   } else {
@@ -89,10 +86,7 @@ export async function addPage(
         }
       }
     `,
-        {
-          semi: false,
-          parser: "typescript"
-        }
+        { semi: true, singleQuote: true, parser: "typescript" }
       )
     )
   }
@@ -132,10 +126,7 @@ export async function createLayout(projectRootPath: string) {
       }
     }
   `,
-      {
-        semi: false,
-        parser: "typescript"
-      }
+      { semi: true, singleQuote: true, parser: "typescript" }
     )
   )
 }
@@ -174,10 +165,7 @@ export async function create404(projectRootPath: string) {
       }
     }
   `,
-      {
-        semi: false,
-        parser: "typescript"
-      }
+      { semi: true, singleQuote: true, parser: "typescript" }
     )
   )
 }
@@ -199,10 +187,7 @@ export async function createConfig(projectRootPath: string) {
 
     } as ProjectConfig
   `,
-    {
-      semi: false,
-      parser: "typescript"
-    }
+    { semi: true, singleQuote: true, parser: "typescript" }
   )
 
   fs.outputFileSync(defaultFullPath, fileContent)
@@ -251,10 +236,7 @@ export async function addStore(
       }
     }
   `,
-      {
-        semi: false,
-        parser: "typescript"
-      }
+      { semi: true, singleQuote: true, parser: "typescript" }
     )
   )
 }

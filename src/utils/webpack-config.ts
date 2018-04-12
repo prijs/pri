@@ -22,7 +22,59 @@ interface IOptions {
   distFileName?: string
 }
 
+/**
+ * Mutilpe loaders
+ */
+const styleLoader = {
+  loader: "style-loader",
+  options: plugin.buildConfigStyleLoaderOptionsPipes.reduce((options, fn) => fn(options), {})
+}
+
+const cssLoader = {
+  loader: "css-loader",
+  options: plugin.buildConfigCssLoaderOptionsPipes.reduce((options, fn) => fn(options), {})
+}
+
+const sassLoader = {
+  loader: "sass-loader",
+  options: plugin.buildConfigSassLoaderOptionsPipes.reduce((options, fn) => fn(options), {})
+}
+
+const lessLoader = {
+  loader: "less-loader",
+  options: plugin.buildConfigLessLoaderOptionsPipes.reduce((options, fn) => fn(options), {})
+}
+
+const babelLoader = {
+  loader: "babel-loader",
+  options: plugin.buildConfigBabelLoaderOptionsPipes.reduce((options, fn) => fn(options), {
+    babelrc: false,
+    presets: [["@babel/env", { modules: false }], ["@babel/stage-2"]],
+    plugins: [["@babel/plugin-transform-runtime"]],
+    comments: true
+  })
+}
+
+const tsLoader = {
+  loader: "ts-loader",
+  options: plugin.buildConfigTsLoaderOptionsPipes.reduce((options, fn) => fn(options), {})
+}
+
+/**
+ * Get webpack config.
+ */
 export const getWebpackConfig = (opts: IOptions) => {
+  /**
+   * Helper
+   */
+  function extraCssInProd(...loaders: any[]) {
+    if (opts.env === "local") {
+      return loaders
+    } else {
+      return ExtractTextPlugin.extract({ fallback: styleLoader, use: loaders })
+    }
+  }
+
   const distDir = opts.distDir || path.join(opts.projectRootPath, opts.projectConfig.distDir)
   const distFileName = opts.distFileName || opts.projectConfig.distFileName
 
@@ -32,8 +84,6 @@ export const getWebpackConfig = (opts: IOptions) => {
   }
 
   const stats = { warnings: false, version: false, modules: false, entrypoints: false, hash: false }
-
-  const babelPlugins: any = [["@babel/plugin-transform-runtime"]]
 
   const config: webpack.Configuration = {
     mode: opts.mode,
@@ -46,72 +96,28 @@ export const getWebpackConfig = (opts: IOptions) => {
       hotUpdateChunkFilename: "hot~[id].[hash:4].chunk.js",
       hotUpdateMainFilename: "hot-update.[hash:4].json"
     },
+
     module: {
       rules: [
         {
           test: /\.(tsx|ts)?$/,
-          use: [
-            {
-              loader: "babel-loader",
-              options: {
-                babelrc: false,
-                presets: [["@babel/env", { modules: false }], ["@babel/stage-2"]],
-                plugins: babelPlugins,
-                comments: true
-              }
-            },
-            "ts-loader"
-          ]
+          use: [babelLoader, tsLoader]
         },
         {
           test: /\.css$/,
-          use:
-            opts.env === "local"
-              ? ["style-loader", "css-loader"]
-              : ExtractTextPlugin.extract({
-                  fallback: "style-loader",
-                  use: [
-                    {
-                      loader: "css-loader",
-                      options: { minimize: true }
-                    }
-                  ]
-                })
+          use: extraCssInProd(cssLoader)
         },
         {
           test: /\.scss$/,
-          use:
-            opts.env === "local"
-              ? ["style-loader", "css-loader", "sass-loader"]
-              : ExtractTextPlugin.extract({
-                  fallback: "style-loader",
-                  use: [
-                    {
-                      loader: "css-loader",
-                      options: { minimize: true }
-                    },
-                    "sass-loader"
-                  ]
-                })
+          use: extraCssInProd(cssLoader, sassLoader)
         },
         {
           test: /\.less$/,
-          use:
-            opts.env === "local"
-              ? ["style-loader", "css-loader", "less-loader"]
-              : ExtractTextPlugin.extract({
-                  fallback: "style-loader",
-                  use: [
-                    {
-                      loader: "css-loader",
-                      options: { minimize: true }
-                    },
-                    "less-loader"
-                  ]
-                })
+          use: extraCssInProd(cssLoader, lessLoader)
         }
       ]
     },
+
     resolve: {
       modules: [
         // From project node_modules
@@ -120,6 +126,7 @@ export const getWebpackConfig = (opts: IOptions) => {
       ],
       extensions: [".js", ".jsx", ".tsx", ".ts", ".scss", ".less", ".css"]
     },
+
     resolveLoader: {
       modules: [
         // From project node_modules
@@ -127,12 +134,15 @@ export const getWebpackConfig = (opts: IOptions) => {
         path.join(__dirname, "../../node_modules")
       ]
     },
+
     plugins: [
       // new PreloadWebpackPlugin({
       //   rel: "prefetch"
       // })
     ],
+
     optimization: { namedChunks: false },
+
     stats
   }
 
@@ -154,7 +164,8 @@ export const getWebpackConfig = (opts: IOptions) => {
   }
 
   if (opts.env === "prod") {
-    babelPlugins.push(["import", { libraryName: "antd" }])
+    babelLoader.options.plugins.push(["import", { libraryName: "antd" }])
+    cssLoader.options.minimize = true
   }
 
   return plugin.buildConfigPipes.reduce((newConfig, fn) => fn(opts.env, newConfig), config)

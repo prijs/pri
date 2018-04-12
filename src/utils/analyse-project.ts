@@ -25,10 +25,16 @@ export const analyseProject = async (projectRootPath: string, env: "local" | "pr
   // Clear analyseInfo
   plugin.analyseInfo = {}
 
+  // Clear pipe
+  pipe.clear()
+
   plugin.projectAnalyses.forEach(projectAnalyse => {
     const result = projectAnalyse(files, env, projectConfig)
     if (result && typeof result === "object") {
-      plugin.analyseInfo = { ...plugin.analyseInfo, ...result }
+      plugin.analyseInfo = {
+        ...plugin.analyseInfo,
+        ...result
+      }
     }
   })
 

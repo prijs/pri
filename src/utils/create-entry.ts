@@ -130,9 +130,6 @@ export class Entry {
 export function createEntry(projectRootPath: string, env: "local" | "prod", projectConfig: IProjectConfig) {
   const newEntryObject = new Entry(env, projectConfig)
 
-  // Clear pipe
-  pipe.clear()
-
   plugin.projectCreateEntrys.forEach(projectCreateEntry => {
     projectCreateEntry(plugin.analyseInfo, newEntryObject, env, projectConfig)
   })
@@ -143,7 +140,8 @@ export function createEntry(projectRootPath: string, env: "local" | "prod", proj
   fs.outputFileSync(
     entryPath,
     prettier.format(newEntryObject.getAll(), {
-      semi: false,
+      semi: true,
+      singleQuote: true,
       parser: "typescript"
     })
   )
