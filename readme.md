@@ -73,9 +73,9 @@ Happy hacking!
 
 ## Plugins
 
-[How to write a plugin.](https://prijs.github.io/pri-docs/development/write-a-plugin)
-
 * [pri-plugin-dob](https://prijs.github.io/pri-docs/plugins/pri-plugin-dob). Using dob to manage store in your project!
+
+Become a developer? [How to write a plugin.](https://prijs.github.io/pri-docs/development/write-a-plugin)
 
 ## Built-in packages in 0.x version
 
