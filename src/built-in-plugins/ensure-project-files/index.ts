@@ -92,15 +92,7 @@ export const ensureVscode = (projectRootPath: string) => ({
         "editor.formatOnPaste": true,
         "editor.formatOnType": true,
         "editor.formatOnSave": true,
-        "files.autoSave": "onFocusChange",
-        "typescript.tsdk": "node_modules/typescript/lib",
-        "editor.tabSize": 2,
-        "beautify.tabSize": 2,
-        "tslint.autoFixOnSave": true,
-        "tslint.ignoreDefinitionFiles": false,
-        "tslint.exclude": "**/node_modules/**/*",
-        "prettier.singleQuote": false,
-        "prettier.semi": false
+        "typescript.tsdk": "node_modules/typescript/lib"
       },
       null,
       2
