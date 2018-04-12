@@ -61,22 +61,19 @@ export const ensureTslint = (projectRootPath: string) => ({
   pipeContent: () =>
     JSON.stringify(
       {
-        extends: "tslint:latest",
+        extends: ["tslint:latest", "tslint-config-prettier"],
         defaultSeverity: "error",
         rules: {
-          semicolon: [true],
           "object-literal-sort-keys": false,
           "max-classes-per-file": [true, 5],
           "trailing-comma": [false],
           "no-string-literal": false,
-          "max-line-length": [true, 200],
           "arrow-parens": false,
           "no-var-requires": false,
           "prefer-conditional-expression": false,
           "no-implicit-dependencies": false,
           "no-object-literal-type-assertion": false,
-          "no-submodule-imports": false,
-          quotemark: [true, "single"]
+          "no-submodule-imports": false
         }
       },
       null,
