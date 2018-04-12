@@ -24,19 +24,20 @@ No `npx`? Run `./node_modules/.bin/pri init`.
 
 </details>
 
-### npm start
+```bash
+Success init your project, you can run serval commands:
 
-Run dev server in development mode with files watching and HMR.
+npm start
+  Starts the development server.
 
-> You should set `chrome://flags/#allow-insecure-localhost`, to trust local certificate
+npm run build
+  Bundles the app into static files for production.
 
-### npm run preview
+npm run preview
+  Starts the development server.
 
-Preview in production mode, won't watch files change.
-
-### npm run build
-
-Production deployment. By default the dist folder is `./dist`.
+Happy hacking!
+```
 
 ## Usage
 
@@ -46,12 +47,9 @@ Production deployment. By default the dist folder is `./dist`.
 * [Layout support.](https://prijs.github.io/pri-docs/layout-support)
 * [Page not found.](https://prijs.github.io/pri-docs/features/page-not-found)
 * [Environment variable.](https://prijs.github.io/pri-docs/features/environment-variable)
+* [Mock.](https://prijs.github.io/pri-docs/features/mock)
 * [Deploy to github pages.](https://prijs.github.io/pri-docs/features/deploy-to-github-pages)
-
-#### TODO
-
-* Static file serving.
-* Testing and code coverage.
+* [Test and code coverage.](https://prijs.github.io/pri-docs/features/test-and-code-coverage)
 
 ## Features
 
@@ -74,6 +72,8 @@ Production deployment. By default the dist folder is `./dist`.
 * PWA support.
 
 ## Plugins
+
+[How to write a plugin.](https://prijs.github.io/pri-docs/development/write-a-plugin)
 
 * [pri-plugin-dob](https://prijs.github.io/pri-docs/plugins/pri-plugin-dob). Using dob to manage store in your project!
 
