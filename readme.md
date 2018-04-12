@@ -10,14 +10,14 @@ First, create an empty folder:
 
 ```shell
 # test folder
-npm init
-npm i pri --save
+$ npm init
+$ npm i pri --save
 ```
 
 Then, init the pri project:
 
 ```shell
-npx pri init
+$ npx pri init
 ```
 
 No `npx`? Run `./node_modules/.bin/pri init`.
