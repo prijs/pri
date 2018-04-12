@@ -31,7 +31,7 @@ export const getWebpackConfig = (opts: IOptions) => {
    */
   function extraCssInProd(...loaders: any[]) {
     if (opts.env === "local") {
-      return loaders
+      return [styleLoader, ...loaders]
     } else {
       return ExtractTextPlugin.extract({ fallback: styleLoader, use: loaders })
     }
