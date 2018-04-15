@@ -29,7 +29,7 @@ interface IOptions {
 
 const stats = { warnings: false, version: false, modules: false, entrypoints: false, hash: false, colors: true }
 
-export const runWebpack = async (opts: IOptions) => {
+export const runWebpack = async (opts: IOptions): Promise<any> => {
   const webpackConfig = await getWebpackConfig({
     mode: opts.mode,
     projectRootPath: opts.projectRootPath,
@@ -45,7 +45,7 @@ export const runWebpack = async (opts: IOptions) => {
 
   const compiler = webpack(webpackConfig)
   compilerLogger(compiler as any)
-  await runCompiler(compiler)
+  return runCompiler(compiler)
 }
 
 function runCompiler(compiler: webpack.Compiler) {
@@ -54,7 +54,7 @@ function runCompiler(compiler: webpack.Compiler) {
       if (!err && !status.hasErrors()) {
         process.stdout.write(status.toString(stats) + "\n\n")
 
-        resolve()
+        resolve(status.toJson())
       } else {
         if (err && err.message) {
           throw Error(err.message)

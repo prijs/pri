@@ -25,6 +25,7 @@ interface IOptions {
   projectRootPath: string
   staticRootPath: string
   projectConfig: IProjectConfig
+  hash: string
 }
 
 export default (opts: IOptions) => {
@@ -56,7 +57,7 @@ export default (opts: IOptions) => {
         window.serverPort = ${opts.serverPort}
       </script>
       <script src="${staticPrefix}/dlls/main.dll.js"></script>
-      <script src="${staticPrefix}/dashboard-bundle/main.js"></script>
+      <script src="${staticPrefix}/dashboard-bundle/main.${opts.hash}.js"></script>
     </body>
 
     </html>

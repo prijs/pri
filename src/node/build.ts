@@ -1,5 +1,5 @@
 import * as webpack from "webpack"
-import { IBuildConfigPipe, ILoaderOptionsPipe, plugin } from "../utils/plugins"
+import { IBuildConfigPipe, ILoaderOptionsPipe, plugin, IAfterProdBuild } from "../utils/plugins"
 
 export const pipeConfig = (pipe: IBuildConfigPipe) => {
   plugin.buildConfigPipes.push(pipe)
@@ -27,4 +27,8 @@ export const pipeBabelLoaderOptions = (pipe: ILoaderOptionsPipe) => {
 
 export const pipeTsLoaderOptions = (pipe: ILoaderOptionsPipe) => {
   plugin.buildConfigTsLoaderOptionsPipes.push(pipe)
+}
+
+export const afterProdBuild = (callback: IAfterProdBuild) => {
+  plugin.buildAfterProdBuild.push(callback)
 }

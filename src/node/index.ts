@@ -5,6 +5,7 @@ import * as devService from "./dev-service"
 import * as pipe from "./pipe"
 import * as project from "./project/index"
 import * as self from "./self"
+import * as serviceWorker from "./service-worker"
 
 export const pri = {
   /**
@@ -31,6 +32,10 @@ export const pri = {
    * Pipe get or set
    */
   pipe,
+  /**
+   * Control service worker
+   */
+  serviceWorker,
   ...self
 }
 

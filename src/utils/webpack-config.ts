@@ -92,11 +92,12 @@ export const getWebpackConfig = (opts: IOptions) => {
     entry: opts.entryPath,
     output: {
       path: distDir,
-      filename: distFileName + ".js",
+      filename: distFileName + ".[hash].js",
       publicPath,
-      chunkFilename: "[name].chunk.js",
-      hotUpdateChunkFilename: "hot~[id].[hash:4].chunk.js",
-      hotUpdateMainFilename: "hot-update.[hash:4].json"
+      chunkFilename: "[name].[hash].chunk.js",
+      hotUpdateChunkFilename: "hot~[id].[hash].chunk.js",
+      hotUpdateMainFilename: "hot-update.[hash].json",
+      hashDigestLength: 4
     },
 
     module: {
@@ -162,7 +163,7 @@ export const getWebpackConfig = (opts: IOptions) => {
   }
 
   if (opts.env === "prod") {
-    config.plugins.push(new ExtractTextPlugin(distFileName + ".css"))
+    config.plugins.push(new ExtractTextPlugin(distFileName + ".[hash].css"))
   }
 
   if (opts.env === "prod") {

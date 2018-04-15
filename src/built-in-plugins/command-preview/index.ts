@@ -13,6 +13,7 @@ import * as url from "url"
 import * as zlib from "zlib"
 import { pri } from "../../node"
 import { ensureFiles } from "../../utils/ensure-files"
+import { ensureEndWithSlash } from "../../utils/functional"
 import { generateCertificate } from "../../utils/generate-certificate"
 import { log, spinner } from "../../utils/log"
 import { getConfig } from "../../utils/project-config"
@@ -28,7 +29,7 @@ export const CommandPreview = async (instance: typeof pri) => {
   const projectConfig = getConfig(projectRootPath, env)
   const distDir = path.join(projectRootPath, projectConfig.distDir)
 
-  await CommandBuild()
+  await CommandBuild(instance)
 
   const freePort = await portfinder.getPortPromise()
 
@@ -62,7 +63,7 @@ export const CommandPreview = async (instance: typeof pri) => {
     await spinner("Create http server", async () => http.createServer(app.callback()).listen(freePort))
   }
 
-  open(url.resolve(`https://localhost:${freePort}`, projectConfig.baseHref))
+  open(ensureEndWithSlash(url.resolve(`https://localhost:${freePort}`, projectConfig.baseHref)))
 }
 
 export default async (instance: typeof pri) => {

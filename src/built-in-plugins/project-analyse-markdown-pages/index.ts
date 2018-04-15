@@ -2,6 +2,7 @@ import * as fs from "fs-extra"
 import * as _ from "lodash"
 import * as normalizePath from "normalize-path"
 import * as path from "path"
+import * as url from "url"
 import { pri } from "../../node"
 import { md5 } from "../../utils/md5"
 import { markdownTempPath, pagesPath } from "../../utils/structor-config"
@@ -161,46 +162,6 @@ export default async (instance: typeof pri) => {
           .join("\n")}
         ${renderRoutes}
       `
-    })
-
-    // Set preload links
-    entry.pipeBody(body => {
-      return `
-        ${body}
-        function createMarkdownPagePreload(href: string, as: string) {
-          const link: any = document.createElement("link")
-          link.href = href
-          link.rel = "preload"
-          link.as = as
-          document.head.appendChild(link)
-        }
-      `
-    })
-
-    entry.pipeEntryClassDidMount(entryDidMount => {
-      return `
-          ${entryDidMount}
-          ${analyseInfo.projectAnalyseMarkdownPages.pages
-            .map(page => {
-              if (env === "local") {
-                return `createMarkdownPagePreload("${path.join("/static", page.chunkName + ".chunk.js")}", "script")`
-              } else if (env === "prod") {
-                let thunkPath = ""
-                if (projectConfig.publicPath) {
-                  // tslint:disable-next-line:prefer-conditional-expression
-                  if (projectConfig.publicPath.startsWith("/")) {
-                    thunkPath = path.join(projectConfig.publicPath, page.chunkName + ".chunk.js")
-                  } else {
-                    const publicPathWithoutHead = projectConfig.publicPath.replace(/^\/\//g, "")
-                    thunkPath = "//" + path.join(publicPathWithoutHead, page.chunkName + ".chunk.js")
-                  }
-                }
-
-                return `createMarkdownPagePreload("${thunkPath}", "script")`
-              }
-            })
-            .join("\n")}
-        `
     })
   })
 }

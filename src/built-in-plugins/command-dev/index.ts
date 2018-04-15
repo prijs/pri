@@ -18,6 +18,7 @@ import { getPluginsByOrder } from "../../utils/plugins"
 import { getConfig } from "../../utils/project-config"
 import { IProjectConfig } from "../../utils/project-config-interface"
 import { hasNodeModules, hasNodeModulesModified, hasPluginsModified } from "../../utils/project-helper"
+import * as projectState from "../../utils/project-state"
 import { tempJsEntryPath, tempPath } from "../../utils/structor-config"
 import text from "../../utils/text"
 import { runWebpack } from "../../utils/webpack"
@@ -45,7 +46,7 @@ export const CommandDev = async (projectConfig: IProjectConfig, analyseInfo: any
     log(colors.blue("\nBundle dashboard\n"))
     const dashboardEntryFilePath = createDashboardEntry()
 
-    await runWebpack({
+    const status = await runWebpack({
       mode: "production",
       projectRootPath,
       env,
@@ -55,6 +56,7 @@ export const CommandDev = async (projectConfig: IProjectConfig, analyseInfo: any
       distFileName: "main",
       projectConfig
     })
+    projectState.set("dashboardHash", status.hash)
   }
 
   log(colors.blue("\nStart dev server.\n"))
@@ -76,7 +78,8 @@ export const CommandDev = async (projectConfig: IProjectConfig, analyseInfo: any
     projectConfig,
     serverPort: dashboardServerPort,
     clientPort: dashboardClientPort,
-    staticRootPath: path.join(projectRootPath, tempPath.dir, "static")
+    staticRootPath: path.join(projectRootPath, tempPath.dir, "static"),
+    hash: projectState.get("dashboardHash")
   })
 
   // Serve project
@@ -121,7 +124,7 @@ export const debugDashboard = async (projectConfig: IProjectConfig, analyseInfo:
     htmlTemplatePath: path.join(__dirname, "../../../template-dashboard.ejs"),
     htmlTemplateArgs: {
       dashboardServerPort,
-      libraryStaticPath
+      libraryStaticPath: path.join(projectConfig.baseHref, libraryStaticPath)
     },
     projectConfig
   })

@@ -33,8 +33,7 @@ export default async (instance: typeof pri) => {
       module: ts.ModuleKind.CommonJS
     })
 
-    instance.pipe.set(
-      "serviceWorker",
+    instance.serviceWorker.pipe(
       text => `
       ${text}
       // Get mock list start

@@ -12,13 +12,18 @@ export default async (instance: typeof pri) => {
     fs.outputFileSync(
       path.join(projectRootPath, tempPath.dir, "static", "sw.js"),
       prettier.format(
-        `
-        self.addEventListener("install", event => {
-          self.skipWaiting()
-        })
+        entry.pipe.get(
+          "serviceWorker",
+          `
+          self.addEventListener("install", event => {
+            self.skipWaiting()
+          })
 
-        ${entry.pipe.get("serviceWorker", "")}
-        `,
+          self.addEventListener("activate", event => {
+            self.clients.claim()
+          });
+        `
+        ),
         { semi: true, singleQuote: true, parser: "babylon" }
       )
     )

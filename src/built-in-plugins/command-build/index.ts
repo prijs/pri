@@ -2,11 +2,13 @@ import { execSync } from "child_process"
 import * as colors from "colors"
 import * as fs from "fs-extra"
 import * as path from "path"
+import * as prettier from "prettier"
 import { pri, tempPath } from "../../node"
 import { analyseProject } from "../../utils/analyse-project"
 import { createEntry } from "../../utils/create-entry"
 import { log, spinner } from "../../utils/log"
 import { findNearestNodemodulesFile } from "../../utils/npm-finder"
+import { plugin } from "../../utils/plugins"
 import { getConfig } from "../../utils/project-config"
 import { IProjectConfig } from "../../utils/project-config-interface"
 import text from "../../utils/text"
@@ -15,7 +17,7 @@ import { generateStaticHtml } from "./generate-static-html"
 
 const projectRootPath = process.cwd()
 
-export const CommandBuild = async () => {
+export const CommandBuild = async (instance: typeof pri) => {
   const env = "prod"
   const projectConfig = getConfig(projectRootPath, env)
 
@@ -32,7 +34,7 @@ export const CommandBuild = async () => {
   })
 
   // Build project
-  await runWebpack({
+  const stats = await runWebpack({
     mode: "production",
     projectRootPath,
     env,
@@ -41,18 +43,26 @@ export const CommandBuild = async () => {
   })
 
   await spinner("Generate static files.", async () => {
-    await generateStaticHtml(
-      projectRootPath,
-      projectConfig,
-      result.analyseInfo
-    )
+    await generateStaticHtml(projectRootPath, projectConfig, result.analyseInfo, stats)
   })
 
-  // Copy .temp/static/sw.js
+  // Write .temp/static/sw.js
   const tempSwPath = path.join(projectRootPath, tempPath.dir, "static/sw.js")
   const targetSwPath = path.join(projectRootPath, projectConfig.distDir, "sw.js")
+
+  plugin.buildAfterProdBuild.forEach(afterProdBuild => afterProdBuild(stats))
+
   if (fs.existsSync(tempSwPath)) {
-    fs.copyFileSync(tempSwPath, targetSwPath)
+    const tempSwContent = fs.readFileSync(tempSwPath).toString()
+    const targetSwContent = instance.pipe.get("serviceWorkerAfterProdBuild", tempSwContent)
+    fs.outputFileSync(
+      targetSwPath,
+      prettier.format(targetSwContent, {
+        semi: true,
+        singleQuote: true,
+        parser: "babylon"
+      })
+    )
   }
 }
 
@@ -93,7 +103,7 @@ export default async (instance: typeof pri) => {
       await instance.project.lint()
       await instance.project.ensureProjectFiles(projectConfig)
       await instance.project.checkProjectFiles(projectConfig)
-      await CommandBuild()
+      await CommandBuild(instance)
 
       // For async register commander, process will be exit automatic.
       process.exit(0)

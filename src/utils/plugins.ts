@@ -38,7 +38,8 @@ const getBuiltInPlugins = (projectRootPath: string) => {
     ["pri-plugin-white-files", "../built-in-plugins/white-files/index.js"],
     ["pri-plugin-ensure-project-files", "../built-in-plugins/ensure-project-files/index.js"],
     ["pri-plugin-service-worker", "../built-in-plugins/service-worker/index.js"],
-    ["pri-plugin-mocks", "../built-in-plugins/mocks/index.js"]
+    ["pri-plugin-mocks", "../built-in-plugins/mocks/index.js"],
+    ["pri-plugin-cache-bundle-thunks", "../built-in-plugins/cache-bundle-thunks/index.js"]
   ]
 
   return plugins.reduce((obj: any, right) => {
@@ -74,6 +75,8 @@ export type IBuildConfigPipe = (env: "local" | "prod", config: webpack.Configura
 
 export type ILoaderOptionsPipe = (env: "local" | "prod", options: any) => any
 
+export type IAfterProdBuild = (stats?: any) => any
+
 let hasInitPlugins = false
 
 export type IWhiteFile = (file: path.ParsedPath & { isDir: boolean }) => boolean
@@ -95,6 +98,8 @@ export class IPluginConfig {
   public buildConfigLessLoaderOptionsPipes: ILoaderOptionsPipe[] = []
   public buildConfigBabelLoaderOptionsPipes: ILoaderOptionsPipe[] = []
   public buildConfigTsLoaderOptionsPipes: ILoaderOptionsPipe[] = []
+
+  public buildAfterProdBuild: IAfterProdBuild[] = []
 
   public projectAnalyses: IAnalyseProject[] = []
 

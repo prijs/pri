@@ -7,22 +7,32 @@ import * as url from "url"
 import { ensureEndWithSlash } from "../../utils/functional"
 import { IProjectConfig } from "../../utils/project-config-interface"
 
-export async function generateStaticHtml(projectRootPath: string, projectConfig: IProjectConfig, analyseInfo: any) {
+export async function generateStaticHtml(
+  projectRootPath: string,
+  projectConfig: IProjectConfig,
+  analyseInfo: any,
+  stats: any
+) {
   const pages = analyseInfo.projectAnalysePages ? analyseInfo.projectAnalysePages.pages : []
   const markdownPages = analyseInfo.projectAnalyseMarkdownPages ? analyseInfo.projectAnalyseMarkdownPages.pages : []
 
   const allPages = [...pages, ...markdownPages]
 
   allPages.forEach(page => {
-    generateHtmlByRouterPath(page.routerPath, projectRootPath, projectConfig)
+    generateHtmlByRouterPath(page.routerPath, projectRootPath, projectConfig, stats)
   })
 }
 
-export function generateHtmlByRouterPath(routerPath: string, projectRootPath: string, projectConfig: IProjectConfig) {
+export function generateHtmlByRouterPath(
+  routerPath: string,
+  projectRootPath: string,
+  projectConfig: IProjectConfig,
+  stats: any
+) {
   const relativePathWithSuffix = path.join(routerPath, "index.html")
   const htmlPath = path.join(projectRootPath, projectConfig.distDir, relativePathWithSuffix)
 
-  const cssPath = path.join(projectRootPath, projectConfig.distDir, "main.css")
+  const cssPath = path.join(projectRootPath, projectConfig.distDir, `main.${stats.hash}.css`)
   const hasCssOutput = fs.existsSync(cssPath)
 
   // TODO:
@@ -45,7 +55,7 @@ export function generateHtmlByRouterPath(routerPath: string, projectRootPath: st
       ${
         hasCssOutput
           ? `
-        <link rel="stylesheet" type="text/css" href="${getEntryPath(projectConfig, "main.css")}"/>
+        <link rel="stylesheet" type="text/css" href="${getEntryPath(projectConfig, `main.${stats.hash}.css`)}"/>
       `
           : ""
       }
@@ -71,7 +81,7 @@ export function generateHtmlByRouterPath(routerPath: string, projectRootPath: st
         }
       </script>
 
-      <script src="${getEntryPath(projectConfig, "main.js")}"></script>
+      <script src="${getEntryPath(projectConfig, `main.${stats.hash}.js`)}"></script>
     </body>
 
     </html>
