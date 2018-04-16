@@ -119,8 +119,8 @@ export default async (instance: typeof pri) => {
 
   instance.commands.registerCommand({
     name: "plugin-watch",
-    action: () => {
-      CommandPluginWatch(projectRootPath)
+    action: async () => {
+      await CommandPluginWatch(projectRootPath)
     }
   })
 

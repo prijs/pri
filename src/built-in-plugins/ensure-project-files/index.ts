@@ -49,6 +49,7 @@ export const ensureTsconfig = (projectRootPath: string) => ({
           outDir: tsBuiltPath.dir,
           lib: ["dom", "es5", "es6", "scripthost"]
         },
+        include: [".temp/**/*", "src/**/*", "config/**/*", "tests/**/*"],
         exclude: ["node_modules", tsBuiltPath.dir, "lib"]
       },
       null,
@@ -73,7 +74,8 @@ export const ensureTslint = (projectRootPath: string) => ({
           "prefer-conditional-expression": false,
           "no-implicit-dependencies": false,
           "no-object-literal-type-assertion": false,
-          "no-submodule-imports": false
+          "no-submodule-imports": false,
+          "no-empty": false
         }
       },
       null,

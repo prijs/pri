@@ -4,8 +4,9 @@ import * as normalizePath from "normalize-path"
 import * as path from "path"
 import * as url from "url"
 import { pri } from "../../node"
+import { ensureStartWithWebpackRelativePoint } from "../../utils/functional"
 import { md5 } from "../../utils/md5"
-import { markdownTempPath, pagesPath } from "../../utils/structor-config"
+import { markdownTempPath, pagesPath, tempPath } from "../../utils/structor-config"
 
 interface IResult {
   projectAnalyseMarkdownPages: {
@@ -13,6 +14,7 @@ interface IResult {
       routerPath: string
       file: path.ParsedPath
       chunkName: string
+      componentName: string
     }>
   }
 }
@@ -28,7 +30,7 @@ export default async (instance: typeof pri) => {
     return relativePath.startsWith("src/pages") && file.name === "index" && file.ext === ".md"
   })
 
-  instance.project.onAnalyseProject(files => {
+  instance.project.onAnalyseProject((files, env, projectConfig, setPipe) => {
     return {
       projectAnalyseMarkdownPages: {
         pages: files
@@ -54,7 +56,10 @@ export default async (instance: typeof pri) => {
             const routerPath = normalizePath("/" + path.relative(pagesPath.dir, relativePathWithoutIndex))
             const chunkName = _.camelCase(routerPath) || "index"
 
-            return { routerPath, file, chunkName }
+            const relativePageFilePath = path.relative(projectRootPath, file.dir + "/" + file.name)
+            const componentName = safeName(relativePageFilePath) + md5(relativePageFilePath).slice(0, 5)
+
+            return { routerPath, file, chunkName, componentName }
           })
       }
     } as IResult
@@ -65,7 +70,7 @@ export default async (instance: typeof pri) => {
       return
     }
 
-    entry.pipeHeader(header => {
+    entry.pipeAppHeader(header => {
       return `
           ${header}
           import * as highlight from "highlight.js"
@@ -74,7 +79,7 @@ export default async (instance: typeof pri) => {
         `
     })
 
-    entry.pipeBody(body => {
+    entry.pipeAppBody(body => {
       return `
           const markdown = markdownIt({
             html: true,
@@ -109,33 +114,36 @@ export default async (instance: typeof pri) => {
       `
     })
 
-    entry.pipeEntryComponent(entryComponent => {
+    entry.pipeAppComponent(entryComponent => {
       return `
         ${analyseInfo.projectAnalyseMarkdownPages.pages
           .map(page => {
-            const relativePageFilePath = path.relative(projectRootPath, page.file.dir + "/" + page.file.name)
-
-            const componentName = safeName(relativePageFilePath) + md5(relativePageFilePath).slice(0, 5)
-
             // Create esmodule file for markdown
             const fileContent = fs.readFileSync(path.format(page.file)).toString()
             const safeFileContent = fileContent.replace(/\`/g, `\\\``)
-            const markdownTsAbsolutePath = path.join(projectRootPath, markdownTempPath.dir, componentName + ".ts")
-            const markdownTsAbsolutePathWithoutExt = path.join(projectRootPath, markdownTempPath.dir, componentName)
+            const markdownTsAbsolutePath = path.join(projectRootPath, markdownTempPath.dir, page.componentName + ".ts")
+            const markdownTsAbsolutePathWithoutExt = path.join(
+              projectRootPath,
+              markdownTempPath.dir,
+              page.componentName
+            )
+            const markdownTsRelativePath = ensureStartWithWebpackRelativePoint(
+              normalizePath(path.relative(tempPath.dir, markdownTsAbsolutePathWithoutExt))
+            )
 
             fs.outputFileSync(markdownTsAbsolutePath, `export default \`${safeFileContent}\``)
 
             const markdownImportCode = `
-              import(/* webpackChunkName: "${page.chunkName}" */ "${normalizePath(
-              markdownTsAbsolutePathWithoutExt
-            )}").then(code => {
+              import(/* webpackChunkName: "${page.chunkName}" */ "${markdownTsRelativePath}").then(code => {
+                ${entry.pipe.get("afterPageLoad", "")}
                 return () => <${MARKDOWN_WRAPPER}>{code.default}</${MARKDOWN_WRAPPER}>
               })
             `
 
             return `
-              const ${componentName} = Loadable({
+              const ${page.componentName} = Loadable({
                 loader: () => ${markdownImportCode},
+                modules: ["${markdownTsRelativePath}"],
                 loading: (): any => null
               })\n
             `
@@ -145,18 +153,25 @@ export default async (instance: typeof pri) => {
       `
     })
 
-    entry.pipeRenderRoutes(renderRoutes => {
+    entry.pipeAppComponent(
+      str => `
+      ${str}
+      ${analyseInfo.projectAnalyseMarkdownPages.pages
+        .map(page => {
+          return `pageLoadableMap.set("${page.routerPath}", ${page.componentName})`
+        })
+        .join("\n")}
+    `
+    )
+
+    entry.pipeAppRoutes(renderRoutes => {
       return `
         ${analyseInfo.projectAnalyseMarkdownPages.pages
           .map(page => {
-            const relativePageFilePath = path.relative(projectRootPath, page.file.dir + "/" + page.file.name)
-
-            const componentName = safeName(relativePageFilePath) + md5(relativePageFilePath).slice(0, 5)
-
             return `
-              <${entry.pipe.get("markdownRoute", "Route")} exact path="${
-              page.routerPath
-            }" component={${componentName}} />\n
+              <${entry.pipe.get("markdownRoute", "Route")} exact path="${page.routerPath}" component={${
+              page.componentName
+            }} />\n
             `
           })
           .join("\n")}

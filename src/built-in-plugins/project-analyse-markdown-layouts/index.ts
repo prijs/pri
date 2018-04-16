@@ -58,7 +58,7 @@ export default async (instance: typeof pri) => {
       path.join(markdownLayoutPath.dir, markdownLayoutPath.name)
     )
 
-    entry.pipeHeader(header => {
+    entry.pipeAppHeader(header => {
       return `
         ${header}
         import ${entry.pipe.get("analyseMarkdownLayoutImportName", MARKDOWN_LAYOUT)} from "${normalizePath(
@@ -67,7 +67,7 @@ export default async (instance: typeof pri) => {
       `
     })
 
-    entry.pipeBody(body => {
+    entry.pipeAppBody(body => {
       return `
         ${body}
 

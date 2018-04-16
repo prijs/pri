@@ -9,13 +9,17 @@ export class GlobalEnv {
 
 let env = new GlobalEnv()
 
-declare const window: any
+declare var global: any
+
+const globalOrWindow: any =
+  (typeof self === "object" && self.self === self && self) ||
+  (typeof global === "object" && global.global === global && global)
 
 const tag = "priEnv"
-if (window[tag]) {
-  env = window[tag]
+if (globalOrWindow[tag]) {
+  env = globalOrWindow[tag]
 } else {
-  window[tag] = env
+  globalOrWindow[tag] = env
 }
 
 export { env }

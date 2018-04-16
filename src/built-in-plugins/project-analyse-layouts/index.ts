@@ -61,14 +61,14 @@ export default async (instance: typeof pri) => {
 
     const layoutEntryRelativePath = path.relative(tempJsEntryPath.dir, path.join(layoutPath.dir, layoutPath.name))
 
-    entry.pipeHeader(header => {
+    entry.pipeAppHeader(header => {
       return `
         ${header}
         import ${entry.pipe.get("analyseLayoutImportName", LAYOUT)} from "${normalizePath(layoutEntryRelativePath)}"
       `
     })
 
-    entry.pipeBody(body => {
+    entry.pipeAppBody(body => {
       return `
         ${body}
 

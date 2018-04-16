@@ -6,26 +6,23 @@ import * as prettier from "prettier"
 import { pri, tempPath } from "../../node"
 import { analyseProject } from "../../utils/analyse-project"
 import { createEntry } from "../../utils/create-entry"
+import { exec } from "../../utils/exec"
 import { log, spinner } from "../../utils/log"
 import { findNearestNodemodulesFile } from "../../utils/npm-finder"
 import { plugin } from "../../utils/plugins"
 import { getConfig } from "../../utils/project-config"
 import { IProjectConfig } from "../../utils/project-config-interface"
+import { tsBuiltPath } from "../../utils/structor-config"
 import text from "../../utils/text"
 import { runWebpack } from "../../utils/webpack"
 import { generateStaticHtml } from "./generate-static-html"
+import * as pipe from "../../node/pipe"
 
 const projectRootPath = process.cwd()
 
 export const CommandBuild = async (instance: typeof pri) => {
   const env = "prod"
   const projectConfig = getConfig(projectRootPath, env)
-
-  // Clean dist dir
-  execSync(`${findNearestNodemodulesFile(".bin/rimraf")} ${path.join(projectRootPath, projectConfig.distDir)}`)
-
-  // Clean .temp dir
-  execSync(`${findNearestNodemodulesFile(".bin/rimraf")} ${path.join(projectRootPath, ".temp")}`)
 
   const result = await spinner("Analyse project", async () => {
     const analyseInfo = await analyseProject(projectRootPath, env, projectConfig)
@@ -54,7 +51,7 @@ export const CommandBuild = async (instance: typeof pri) => {
 
   if (fs.existsSync(tempSwPath)) {
     const tempSwContent = fs.readFileSync(tempSwPath).toString()
-    const targetSwContent = instance.pipe.get("serviceWorkerAfterProdBuild", tempSwContent)
+    const targetSwContent = pipe.get("serviceWorkerAfterProdBuild", tempSwContent)
     fs.outputFileSync(
       targetSwPath,
       prettier.format(targetSwContent, {
@@ -69,7 +66,7 @@ export const CommandBuild = async (instance: typeof pri) => {
 export default async (instance: typeof pri) => {
   instance.project.onCreateEntry((analyseInfo, entry, env, projectConfig) => {
     if (env === "prod") {
-      entry.pipeHeader(header => {
+      entry.pipeAppHeader(header => {
         return `
           ${header}
           setEnvProd()
@@ -77,7 +74,7 @@ export default async (instance: typeof pri) => {
       })
 
       // Set prod env
-      entry.pipeBody(body => {
+      entry.pipeAppBody(body => {
         return `
           ${body}
         `
@@ -85,7 +82,7 @@ export default async (instance: typeof pri) => {
 
       // Set custom env
       if (projectConfig.customEnv) {
-        entry.pipeBody(body => {
+        entry.pipeAppBody(body => {
           return `
             ${body}
             setCustomEnv(${JSON.stringify(projectConfig.customEnv)})
@@ -100,8 +97,18 @@ export default async (instance: typeof pri) => {
     description: text.commander.build.description,
     action: async () => {
       const projectConfig = instance.project.getProjectConfig("prod")
-      await instance.project.lint()
+
+      await spinner("Clean project.", async () => {
+        // Clean dist dir
+        await exec(`${findNearestNodemodulesFile(".bin/rimraf")} ${path.join(projectRootPath, projectConfig.distDir)}`)
+        await exec(`${findNearestNodemodulesFile(".bin/rimraf")} ${path.join(projectRootPath, tsBuiltPath.dir)}`)
+
+        // Clean .temp dir
+        await exec(`${findNearestNodemodulesFile(".bin/rimraf")} ${path.join(projectRootPath, ".temp")}`)
+      })
+
       await instance.project.ensureProjectFiles(projectConfig)
+      await instance.project.lint()
       await instance.project.checkProjectFiles(projectConfig)
       await CommandBuild(instance)
 

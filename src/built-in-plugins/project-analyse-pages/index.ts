@@ -5,7 +5,7 @@ import * as path from "path"
 import * as url from "url"
 import { pri } from "../../node"
 import { md5 } from "../../utils/md5"
-import { markdownTempPath, pagesPath } from "../../utils/structor-config"
+import { markdownTempPath, pagesPath, tempPath } from "../../utils/structor-config"
 
 interface IResult {
   projectAnalysePages: {
@@ -13,6 +13,7 @@ interface IResult {
       routerPath: string
       file: path.ParsedPath
       chunkName: string
+      componentName: string
     }>
   }
 }
@@ -53,7 +54,10 @@ export default async (instance: typeof pri) => {
             const routerPath = normalizePath("/" + path.relative(pagesPath.dir, relativePathWithoutIndex))
             const chunkName = _.camelCase(routerPath) || "index"
 
-            return { routerPath, file, chunkName }
+            const relativePageFilePath = path.relative(projectRootPath, file.dir + "/" + file.name)
+            const componentName = safeName(relativePageFilePath) + md5(relativePageFilePath).slice(0, 5)
+
+            return { routerPath, file, chunkName, componentName }
           })
       }
     } as IResult
@@ -64,23 +68,21 @@ export default async (instance: typeof pri) => {
       return
     }
 
-    entry.pipeEntryComponent(entryComponent => {
+    entry.pipeAppComponent(entryComponent => {
       return `
         ${analyseInfo.projectAnalysePages.pages
           .map(page => {
-            const relativePageFilePath = path.relative(projectRootPath, page.file.dir + "/" + page.file.name)
+            const pageRequirePath = normalizePath(path.relative(tempPath.dir, path.join(page.file.dir, page.file.name)))
 
-            const componentName = safeName(relativePageFilePath) + md5(relativePageFilePath).slice(0, 5)
-
-            const pageRequirePath = normalizePath(path.join(page.file.dir, page.file.name))
-
-            const importCode = `import(/* webpackChunkName: "${
-              page.chunkName
-            }" */ "${pageRequirePath}")${entry.pipe.get("normalPagesImportEnd", "")}`
+            const importCode = `import(/* webpackChunkName: "${page.chunkName}" */ "${pageRequirePath}").then(code => {
+                ${entry.pipe.get("afterPageLoad", "")}
+                return code.default
+              })`
 
             return `
-              const ${componentName} = Loadable({
+              const ${page.componentName} = Loadable({
                 loader: () => ${importCode},
+                modules: ["${normalizePath(pageRequirePath)}"],
                 loading: (): any => null
               })\n
             `
@@ -90,18 +92,25 @@ export default async (instance: typeof pri) => {
       `
     })
 
-    entry.pipeRenderRoutes(renderRoutes => {
+    entry.pipeAppComponent(
+      str => `
+      ${str}
+      ${analyseInfo.projectAnalysePages.pages
+        .map(page => {
+          return `pageLoadableMap.set("${page.routerPath}", ${page.componentName})`
+        })
+        .join("\n")}
+    `
+    )
+
+    entry.pipeAppRoutes(renderRoutes => {
       return `
         ${analyseInfo.projectAnalysePages.pages
           .map(page => {
-            const relativePageFilePath = path.relative(projectRootPath, page.file.dir + "/" + page.file.name)
-
-            const componentName = safeName(relativePageFilePath) + md5(relativePageFilePath).slice(0, 5)
-
             return `
-              <${entry.pipe.get("commonRoute", "Route")} exact path="${
-              page.routerPath
-            }" component={${componentName}} />\n
+              <${entry.pipe.get("commonRoute", "Route")} exact path="${page.routerPath}" component={${
+              page.componentName
+            }} />\n
             `
           })
           .join("\n")}

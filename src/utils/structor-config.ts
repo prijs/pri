@@ -33,6 +33,8 @@ export const tempJsEntryPath = {
   ext: ".tsx"
 }
 
+export const tempJsAppPath = { dir: tempPath.dir, name: "app", ext: ".tsx" }
+
 export const utilPath = {
   dir: path.join(srcPath.dir, "utils")
 }
@@ -44,7 +46,7 @@ export const helperPath = {
 }
 
 export const declarePath = {
-  dir: path.join(utilPath.dir, "declare")
+  dir: path.join(tempPath.dir, "declare")
 }
 
 export const layoutPath = {

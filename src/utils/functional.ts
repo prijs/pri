@@ -11,3 +11,11 @@ export function ensureEndWithSlash(str: string) {
     return str + "/"
   }
 }
+
+export function ensureStartWithWebpackRelativePoint(str: string) {
+  if (!str.startsWith("./")) {
+    return "./" + str
+  } else {
+    return str
+  }
+}

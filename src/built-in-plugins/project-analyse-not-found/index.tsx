@@ -4,7 +4,7 @@ import * as normalizePath from "normalize-path"
 import * as path from "path"
 import { pri } from "../../node"
 import { md5 } from "../../utils/md5"
-import { notFoundPath } from "../../utils/structor-config"
+import { notFoundPath, tempPath } from "../../utils/structor-config"
 
 interface IResult {
   projectAnalyseNotFound: {
@@ -39,16 +39,16 @@ export default async (instance: typeof pri) => {
       return
     }
 
-    entry.pipeHeader(header => {
+    entry.pipeAppHeader(header => {
       return `
         ${header}
         import NotFoundComponent from "${normalizePath(
-          path.join(projectRootPath, path.join(notFoundPath.dir, notFoundPath.name))
+          path.relative(tempPath.dir, path.join(projectRootPath, path.join(notFoundPath.dir, notFoundPath.name)))
         )}"
       `
     })
 
-    entry.pipeRenderRoutes(renderRoutes => {
+    entry.pipeAppRoutes(renderRoutes => {
       return `
         ${renderRoutes}
         <Route component={NotFoundComponent} />

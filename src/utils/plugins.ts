@@ -4,6 +4,7 @@ import { flatten } from "lodash"
 import * as path from "path"
 import * as webpack from "webpack"
 import { pri } from "../node/index"
+import { set } from "../node/pipe"
 import { Entry } from "./create-entry"
 import { getDefault } from "./esModule"
 import { log } from "./log"
@@ -39,7 +40,8 @@ const getBuiltInPlugins = (projectRootPath: string) => {
     ["pri-plugin-ensure-project-files", "../built-in-plugins/ensure-project-files/index.js"],
     ["pri-plugin-service-worker", "../built-in-plugins/service-worker/index.js"],
     ["pri-plugin-mocks", "../built-in-plugins/mocks/index.js"],
-    ["pri-plugin-cache-bundle-thunks", "../built-in-plugins/cache-bundle-thunks/index.js"]
+    ["pri-plugin-cache-bundle-thunks", "../built-in-plugins/cache-bundle-thunks/index.js"],
+    ["pri-plugin-client-ssr", "../built-in-plugins/client-ssr/index.js"]
   ]
 
   return plugins.reduce((obj: any, right) => {
@@ -61,7 +63,8 @@ export interface ICommand {
 export type IAnalyseProject = (
   projectFilesParsedPaths?: Array<path.ParsedPath & { isDir: boolean }>,
   env?: "local" | "prod",
-  projectConfig?: IProjectConfig
+  projectConfig?: IProjectConfig,
+  setPipe?: typeof set
 ) => any
 
 export type ICreateEntry = (

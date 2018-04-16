@@ -48,7 +48,25 @@ export const CommandPreview = async (instance: typeof pri) => {
     previewStaticPrefix = projectConfig.baseHref
   }
 
-  app.use(koaMount(previewStaticPrefix, koaStatic(previewDistPath, { gzip: true })))
+  app.use(
+    koaMount(
+      previewStaticPrefix,
+      koaStatic(previewDistPath, {
+        gzip: true
+        // setHeaders: (res: any) => {
+        //   res.setHeader("access-control-allow-credentials", true)
+        //   res.setHeader(
+        //     "access-control-allow-headers",
+        //     "Access-Control-Allow-Headers,Origin,Accept,X-Requested-With,Content-Type,Content-Encoding,Access-Control-Request-Method,Access-Control-Request-Headers"
+        //   )
+        //   res.setHeader("access-control-allow-methods", "HEAD,GET,POST,OPTIONS,PUT,DELETE,PATCH")
+        //   res.setHeader("access-control-allow-origin", "*")
+        //   res.setHeader("status", 200)
+        //   res.setHeader("timing-allow-origin", "*")
+        // }
+      })
+    )
+  )
 
   const cssPath = path.join(previewDistPath, "main.css")
   const hasCssOutput = fs.existsSync(cssPath)

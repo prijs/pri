@@ -189,17 +189,16 @@ function createDashboardEntry() {
 export default async (instance: typeof pri) => {
   instance.project.onCreateEntry((analyseInfo, entry, env, projectConfig) => {
     if (env === "local") {
-      entry.pipeHeader(header => {
+      entry.pipeAppHeader(header => {
         return `
           ${header}
-          import { hot } from "react-hot-loader"
           setEnvLocal()
         `
       })
 
       // Set custom env
       if (projectConfig.customEnv) {
-        entry.pipeBody(body => {
+        entry.pipeAppBody(body => {
           return `
             ${body}
             setCustomEnv(${JSON.stringify(projectConfig.customEnv)})
@@ -208,7 +207,7 @@ export default async (instance: typeof pri) => {
       }
 
       // Jump page from iframe dashboard event.
-      entry.pipeEntryClassDidMount(entryDidMount => {
+      entry.pipeAppClassDidMount(entryDidMount => {
         return `
           ${entryDidMount}
           window.addEventListener("message", event => {
@@ -224,12 +223,19 @@ export default async (instance: typeof pri) => {
       })
 
       // React hot loader
-      entry.pipeFooter(footer => {
+      entry.pipeEntryHeader(
+        header => `
+        ${header}
+        import { hot } from "react-hot-loader"
+      `
+      )
+
+      entry.pipeEntryRender(() => {
         return `
-          const HotRoot = hot(module)(Root)
+          const HotApp = hot(module)(App)
 
           ReactDOM.render(
-            <HotRoot />,
+            <HotApp />,
             document.getElementById("root")
           )
           `

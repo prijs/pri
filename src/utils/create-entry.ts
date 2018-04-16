@@ -5,7 +5,7 @@ import * as pipe from "../node/pipe"
 import { IProjectInfo } from "./analyse-project-interface"
 import { plugin } from "./plugins"
 import { IProjectConfig } from "./project-config-interface"
-import { tempJsEntryPath } from "./structor-config"
+import { tempJsAppPath, tempJsEntryPath } from "./structor-config"
 
 export class Entry {
   private env: "local" | "prod"
@@ -16,45 +16,53 @@ export class Entry {
     this.projectConfig = projectConfig
   }
 
-  public getAll() {
-    return [this.getHeader(), this.getBody(), this.getEntryComponent(), this.getFooter()].join("\n")
+  public getApp() {
+    return [this.getAppHeader(), this.getAppBody(), this.getAppComponent()].join("\n")
+  }
+
+  public getEntry() {
+    return [this.getEntryHeader(), this.getEntryRender()].join("\n")
   }
 
   public get pipe() {
     return pipe
   }
 
-  public pipeHeader(fn: (header: string) => string) {
+  public pipeAppHeader(fn: (header: string) => string) {
+    pipe.set("appHeader", fn)
+  }
+
+  public pipeAppBody(fn: (body: string) => string) {
+    pipe.set("appBody", fn)
+  }
+
+  public pipeAppComponent(fn: (entryComponent: string) => string) {
+    pipe.set("appComponent", fn)
+  }
+
+  public pipeAppClassDidMount(fn: (renderRouter: string) => string) {
+    pipe.set("appClassDidMount", fn)
+  }
+
+  public pipeAppRoutes(fn: (renderRoutes: string) => string) {
+    pipe.set("appRoutes", fn)
+  }
+
+  public pipeAppRouter(fn: (renderRouter: string) => string) {
+    pipe.set("appRouter", fn)
+  }
+
+  public pipeEntryHeader(fn: (render: string) => string) {
     pipe.set("entryHeader", fn)
   }
 
-  public pipeBody(fn: (body: string) => string) {
-    pipe.set("entryBody", fn)
+  public pipeEntryRender(fn: (render: string) => string) {
+    pipe.set("entryRender", fn)
   }
 
-  public pipeEntryComponent(fn: (entryComponent: string) => string) {
-    pipe.set("entryEntryComponent", fn)
-  }
-
-  public pipeFooter(fn: (footer: string) => string) {
-    pipe.set("entryFooter", fn)
-  }
-
-  public pipeRenderRoutes(fn: (renderRoutes: string) => string) {
-    pipe.set("entryRenderRoutes", fn)
-  }
-
-  public pipeRenderRouter(fn: (renderRouter: string) => string) {
-    pipe.set("entryRenderRouter", fn)
-  }
-
-  public pipeEntryClassDidMount(fn: (renderRouter: string) => string) {
-    pipe.set("entryEntryClassDidMount", fn)
-  }
-
-  protected getHeader() {
+  protected getAppHeader() {
     return pipe.get(
-      "entryHeader",
+      "appHeader",
       `
       import createBrowserHistory from "history/createBrowserHistory"
       import { setCustomEnv, setEnvLocal, setEnvProd } from "pri/client"
@@ -66,29 +74,30 @@ export class Entry {
     )
   }
 
-  protected getBody() {
+  protected getAppBody() {
     return pipe.get(
-      "entryBody",
+      "appBody",
       `
-      const customHistory = createBrowserHistory({
+      export const pageLoadableMap = new Map<string, any>()
+      export const customHistory = createBrowserHistory({
         basename: "${this.projectConfig.baseHref}"
       })
     `
     )
   }
 
-  protected getEntryComponent() {
+  protected getAppComponent() {
     return pipe.get(
-      "entryEntryComponent",
+      "appComponent",
       `
-      class Root extends React.PureComponent<any, any> {
+      export default class App extends React.PureComponent<any, any> {
         public componentDidMount() {
-          ${this.getEntryClassDidMount()}
+          ${this.getAppClassDidMount()}
         }
 
         public render() {
           return (
-            ${this.getRenderRouter()}
+            ${this.getAppRouter()}
           )
         }
       }
@@ -96,34 +105,45 @@ export class Entry {
     )
   }
 
-  protected getFooter() {
-    return pipe.get(
-      "entryFooter",
-      `
-      ReactDOM.render(<Root />, document.getElementById("root"))
-    `
-    )
+  protected getAppRoutes() {
+    return pipe.get("appRoutes", "")
   }
 
-  protected getRenderRoutes() {
-    return pipe.get("entryRenderRoutes", "")
-  }
-
-  protected getRenderRouter() {
+  protected getAppRouter() {
     return pipe.get(
-      "entryRenderRouter",
+      "appRouter",
       `
       <Router history={customHistory}>
         <Switch>
-          ${this.getRenderRoutes()}
+          ${this.getAppRoutes()}
         </Switch>
       </Router>
     `
     )
   }
 
-  protected getEntryClassDidMount() {
-    return pipe.get("entryEntryClassDidMount", "")
+  protected getAppClassDidMount() {
+    return pipe.get("appClassDidMount", "")
+  }
+
+  protected getEntryHeader() {
+    return pipe.get(
+      "entryHeader",
+      `
+      import * as React from "react"
+      import * as ReactDOM from "react-dom"
+      import App, { pageLoadableMap } from "./app"
+    `
+    )
+  }
+
+  protected getEntryRender() {
+    return pipe.get(
+      "entryRender",
+      `
+      ReactDOM.render(<App />, document.getElementById("root"))
+    `
+    )
   }
 }
 
@@ -136,10 +156,20 @@ export function createEntry(projectRootPath: string, env: "local" | "prod", proj
 
   // Create entry tsx file
   const entryPath = path.join(projectRootPath, path.format(tempJsEntryPath))
+  const appPath = path.join(projectRootPath, path.format(tempJsAppPath))
+
+  fs.outputFileSync(
+    appPath,
+    prettier.format(newEntryObject.getApp(), {
+      semi: true,
+      singleQuote: true,
+      parser: "typescript"
+    })
+  )
 
   fs.outputFileSync(
     entryPath,
-    prettier.format(newEntryObject.getAll(), {
+    prettier.format(newEntryObject.getEntry(), {
       semi: true,
       singleQuote: true,
       parser: "typescript"
