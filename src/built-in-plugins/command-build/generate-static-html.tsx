@@ -1,8 +1,6 @@
 import * as fs from "fs-extra"
 import * as path from "path"
 import * as React from "react"
-// import { renderToString } from "react-dom/server"
-// import StaticRouter from "react-router-dom/StaticRouter"
 import * as url from "url"
 import { ensureEndWithSlash } from "../../utils/functional"
 import { IProjectConfig } from "../../utils/project-config-interface"
@@ -36,14 +34,6 @@ export function generateHtmlByRouterPath(
   const cssPath = path.join(projectRootPath, projectConfig.distDir, `main.${stats.hash}.css`)
   const hasCssOutput = fs.existsSync(cssPath)
 
-  // const content = renderToString(
-  //   <StaticRouter location="/" context={{}}>
-  //     <div>123</div>
-  //   </StaticRouter>
-  // )
-
-  // console.log("content", content)
-
   fs.outputFileSync(
     htmlPath,
     `
@@ -71,6 +61,8 @@ export function generateHtmlByRouterPath(
 
     <body>
       <div id="root"></div>
+
+      <script id="script-before"></script>
 
       <script>
         if (navigator.serviceWorker) {

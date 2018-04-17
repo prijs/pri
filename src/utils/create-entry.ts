@@ -141,7 +141,11 @@ export class Entry {
     return pipe.get(
       "entryRender",
       `
-      ReactDOM.render(<App />, document.getElementById("root"))
+      if ((window as any).enableSsr) {
+        ReactDOM.hydrate(<App />, document.getElementById("root"))
+      } else {
+        ReactDOM.render(<App />, document.getElementById("root"))
+      }
     `
     )
   }

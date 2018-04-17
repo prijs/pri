@@ -56,17 +56,19 @@ export default async (instance: typeof pri) => {
       })
 
       self.addEventListener("fetch", event => {
-        event.respondWith(
-          caches
-            .match(event.request)
-            .then(response => {
-              if (response) {
-                return response;
-              }
-              return fetch(event.request);
-            })
-            .catch(error => fetch(event.request))
-        );
+        if (event.request.destination === 'style' || event.request.destination === 'script') {
+          event.respondWith(
+            caches
+              .match(event.request)
+              .then(response => {
+                if (response) {
+                  return response;
+                }
+                return fetch(event.request);
+              })
+              .catch(error => fetch(event.request))
+          );
+        }
       });
     `
     )

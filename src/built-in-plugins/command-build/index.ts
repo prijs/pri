@@ -4,6 +4,7 @@ import * as fs from "fs-extra"
 import * as path from "path"
 import * as prettier from "prettier"
 import { pri, tempPath } from "../../node"
+import * as pipe from "../../node/pipe"
 import { analyseProject } from "../../utils/analyse-project"
 import { createEntry } from "../../utils/create-entry"
 import { exec } from "../../utils/exec"
@@ -16,7 +17,6 @@ import { tsBuiltPath } from "../../utils/structor-config"
 import text from "../../utils/text"
 import { runWebpack } from "../../utils/webpack"
 import { generateStaticHtml } from "./generate-static-html"
-import * as pipe from "../../node/pipe"
 
 const projectRootPath = process.cwd()
 
@@ -27,7 +27,10 @@ export const CommandBuild = async (instance: typeof pri) => {
   const result = await spinner("Analyse project", async () => {
     const analyseInfo = await analyseProject(projectRootPath, env, projectConfig)
     const entryPath = createEntry(projectRootPath, env, projectConfig)
-    return { analyseInfo, entryPath }
+    return {
+      analyseInfo,
+      entryPath
+    }
   })
 
   // Build project
