@@ -4,7 +4,7 @@ import * as path from "path"
 import { pri } from "../../node"
 import { getGitignores, getNpmignores } from "../../utils/structor-config"
 
-const whiteList = ["readme.md", "src", "src/pages", "src/utils", ".git"]
+const whiteList = ["readme.md", "src", `src${path.sep}pages`, `src${path.sep}utils`, ".git"]
 
 export default async (instance: typeof pri) => {
   const projectRootPath = instance.project.getProjectRootPath()
@@ -21,12 +21,12 @@ export default async (instance: typeof pri) => {
   // src/utils/declare/**
   instance.project.whiteFileRules.add(file => {
     const relativePath = path.relative(projectRootPath, file.dir)
-    return relativePath.startsWith("src/utils/declare")
+    return relativePath.startsWith(`src${path.sep}utils${path.sep}declare`)
   })
 
   // src/pages/[folder]
   instance.project.whiteFileRules.add(file => {
     const relativePath = path.relative(projectRootPath, file.dir)
-    return relativePath.startsWith("src/pages") && file.isDir
+    return relativePath.startsWith(`src${path.sep}pages`) && file.isDir
   })
 }

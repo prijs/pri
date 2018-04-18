@@ -21,19 +21,19 @@ export default async (instance: typeof pri) => {
   // src/layouts/markdown.tsx
   instance.project.whiteFileRules.add(file => {
     const relativePath = path.relative(projectRootPath, file.dir)
-    return relativePath === "src/layouts" && file.name === "markdown" && file.ext === ".tsx"
+    return relativePath === `src${path.sep}layouts` && file.name === "markdown" && file.ext === ".tsx"
   })
 
   // src/layouts/markdown.style.tsx
   instance.project.whiteFileRules.add(file => {
     const relativePath = path.relative(projectRootPath, file.dir)
-    return relativePath === "src/layouts" && file.name === "markdown.style" && file.ext === ".ts"
+    return relativePath === `src${path.sep}layouts` && file.name === "markdown.style" && file.ext === ".ts"
   })
 
   // src/layouts/markdown.css
   instance.project.whiteFileRules.add(file => {
     const relativePath = path.relative(projectRootPath, file.dir)
-    return relativePath === "src/layouts" && file.name === "markdown" && file.ext === ".css"
+    return relativePath === `src${path.sep}layouts` && file.name === "markdown" && file.ext === ".css"
   })
 
   instance.project.onAnalyseProject(files => {

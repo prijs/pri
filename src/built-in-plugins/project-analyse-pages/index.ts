@@ -25,7 +25,7 @@ export default async (instance: typeof pri) => {
 
   instance.project.whiteFileRules.add(file => {
     const relativePath = path.relative(projectRootPath, file.dir)
-    return relativePath.startsWith("src/pages") && file.name === "index" && file.ext === ".tsx"
+    return relativePath.startsWith(`src${path.sep}pages`) && file.name === "index" && file.ext === ".tsx"
   })
 
   instance.project.onAnalyseProject(files => {
