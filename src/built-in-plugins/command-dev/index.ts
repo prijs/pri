@@ -61,7 +61,7 @@ export const CommandDev = async (projectConfig: IProjectConfig, analyseInfo: any
 
   log(colors.blue("\nStart dev server.\n"))
 
-  const freePort = await portfinder.getPortPromise()
+  const freePort = projectConfig.devPort || (await portfinder.getPortPromise())
   const dashboardServerPort = await portfinder.getPortPromise({ port: freePort + 1 })
   const dashboardClientPort = await portfinder.getPortPromise({ port: freePort + 2 })
 

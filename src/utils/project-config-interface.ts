@@ -4,6 +4,10 @@ export class IProjectConfig {
    */
   public title?: string = "pri"
   /**
+   * Dev server port, when execute npm start.
+   */
+  public devPort?: number = null
+  /**
    * Dist dir path.
    * Only take effect on `npm run build` | `pri build`.
    */
