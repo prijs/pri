@@ -37,4 +37,19 @@ export class IProjectConfig {
    * Using https for server.
    */
   public useHttps = true
+  /**
+   * Use service worker
+   * Warning: if disable it, mocks, prefetch, serverRender will become invalid.
+   */
+  public useServiceWorker = false
+  /**
+   * Prefetch chunks
+   * Warning: depend on service worker, should set useServiceWorker=true first.
+   */
+  public prefetchChunks = false
+  /**
+   * Client server render
+   * Warning: depend on service worker, should set useServiceWorker=true first.
+   */
+  public clientServerRender = false
 }

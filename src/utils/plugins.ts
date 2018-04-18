@@ -78,7 +78,7 @@ export type IBuildConfigPipe = (env: "local" | "prod", config: webpack.Configura
 
 export type ILoaderOptionsPipe = (env: "local" | "prod", options: any) => any
 
-export type IAfterProdBuild = (stats?: any) => any
+export type IAfterProdBuild = (stats?: any, projectConfig?: IProjectConfig) => any
 
 let hasInitPlugins = false
 

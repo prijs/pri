@@ -76,10 +76,6 @@
 
   <script src="<%= htmlWebpackPlugin.options.htmlTemplateArgs.libraryStaticPath %>"></script>
   <script>
-    if (navigator.serviceWorker) {
-      navigator.serviceWorker.register("<%= htmlWebpackPlugin.options.htmlTemplateArgs.serviceWorkerPath %>", {scope: "<%= htmlWebpackPlugin.options.htmlTemplateArgs.serviceWorkerScope %>"})
-    }
-
     const priHelpButton = document.getElementById("pri-help-button")
     const priHelpIframe = document.getElementById("pri-help-iframe")
 

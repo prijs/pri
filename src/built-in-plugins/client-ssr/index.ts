@@ -6,9 +6,16 @@ import { pri } from "../../node"
 
 export default async (instance: typeof pri) => {
   const projectRootPath = instance.project.getProjectRootPath()
-  const projectConfig = instance.project.getProjectConfig("prod")
 
-  instance.project.onCreateEntry((analyseInfo, entry, env) => {
+  instance.project.onCreateEntry((analyseInfo, entry, env, projectConfig) => {
+    if (!projectConfig.useServiceWorker) {
+      return
+    }
+
+    if (!projectConfig.clientServerRender) {
+      return
+    }
+
     entry.pipeEntryHeader(header => {
       return `
         ${header}
@@ -51,13 +58,40 @@ export default async (instance: typeof pri) => {
     )
   })
 
-  instance.build.afterProdBuild(stats => {
+  instance.build.afterProdBuild((stats, projectConfig) => {
+    if (!projectConfig.useServiceWorker) {
+      return
+    }
+
+    if (!projectConfig.clientServerRender) {
+      return
+    }
+
     instance.serviceWorker.pipeAfterProdBuild(
       str => `
         ${str}
 
+        var SSR_BUNDLE_PREFIX = "__ssr_bundle__"
+        var SSR_BUNDLE_VERSION = SSR_BUNDLE_PREFIX + "${stats.hash}";
+
         var currentCacheSsrRequest = null
         var currentCacheSsrOriginHtml = null
+
+        /**
+         * Delete all bundle caches except current SSR_BUNDLE_VERSION.
+         */
+        self.addEventListener("activate", event => {
+          event.waitUntil(
+            caches.keys().then(cacheNames => {
+              return Promise.all(
+                cacheNames
+                  .filter(cacheName => cacheName.startsWith(SSR_BUNDLE_PREFIX))
+                  .filter(cacheName => cacheName !== SSR_BUNDLE_VERSION)
+                  .map(cacheName => caches.delete(cacheName))
+              )
+            })
+          )
+        })
 
         // Get ssr content from client, and save to cache.
         self.addEventListener('message', event => {
@@ -76,7 +110,7 @@ export default async (instance: typeof pri) => {
               responseInit
             );
 
-            caches.open(BUNDLE_VERSION).then(cache => {
+            caches.open(SSR_BUNDLE_VERSION).then(cache => {
               cache.put(currentCacheSsrRequest, ssrResponse);
             })
           }
@@ -90,7 +124,7 @@ export default async (instance: typeof pri) => {
             event.request.headers.get('accept').includes('text/html')
           ) {
             event.respondWith(
-              caches.open(BUNDLE_VERSION).then(cache => {
+              caches.open(SSR_BUNDLE_VERSION).then(cache => {
                 return cache.match(event.request).then(response => {
                   if (response) {
                     return response;

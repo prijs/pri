@@ -93,9 +93,7 @@ export const CommandDev = async (projectConfig: IProjectConfig, analyseInfo: any
     htmlTemplateArgs: {
       dashboardServerPort,
       dashboardClientPort,
-      libraryStaticPath: path.join(projectConfig.baseHref, libraryStaticPath),
-      serviceWorkerPath: path.join(projectConfig.baseHref, "sw.js"),
-      serviceWorkerScope: ensureEndWithSlash(projectConfig.baseHref)
+      libraryStaticPath: path.join(projectConfig.baseHref, libraryStaticPath)
     },
     projectConfig
   })

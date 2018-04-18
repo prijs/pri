@@ -2,7 +2,6 @@ import * as fs from "fs-extra"
 import * as path from "path"
 import * as React from "react"
 import * as url from "url"
-import { ensureEndWithSlash } from "../../utils/functional"
 import { IProjectConfig } from "../../utils/project-config-interface"
 import { tempJsAppPath, tempPath, tsBuiltPath } from "../../utils/structor-config"
 
@@ -63,15 +62,6 @@ export function generateHtmlByRouterPath(
       <div id="root"></div>
 
       <script id="script-before"></script>
-
-      <script>
-        if (navigator.serviceWorker) {
-          navigator.serviceWorker.register("${path.join(
-            projectConfig.baseHref,
-            "sw.js"
-          )}", {scope: "${ensureEndWithSlash(projectConfig.baseHref)}"})
-        }
-      </script>
 
       <script src="${getEntryPath(projectConfig, `main.${stats.hash}.js`)}"></script>
     </body>

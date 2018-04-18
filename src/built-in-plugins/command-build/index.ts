@@ -24,6 +24,19 @@ export const CommandBuild = async (instance: typeof pri) => {
   const env = "prod"
   const projectConfig = getConfig(projectRootPath, env)
 
+  await spinner("Clean project.", async () => {
+    // Clean dist dir
+    await exec(`${findNearestNodemodulesFile(".bin/rimraf")} ${path.join(projectRootPath, projectConfig.distDir)}`)
+    await exec(`${findNearestNodemodulesFile(".bin/rimraf")} ${path.join(projectRootPath, tsBuiltPath.dir)}`)
+
+    // Clean .temp dir
+    await exec(`${findNearestNodemodulesFile(".bin/rimraf")} ${path.join(projectRootPath, ".temp")}`)
+  })
+
+  await instance.project.ensureProjectFiles(projectConfig)
+  await instance.project.lint()
+  await instance.project.checkProjectFiles(projectConfig)
+
   const result = await spinner("Analyse project", async () => {
     const analyseInfo = await analyseProject(projectRootPath, env, projectConfig)
     const entryPath = createEntry(projectRootPath, env, projectConfig)
@@ -50,7 +63,7 @@ export const CommandBuild = async (instance: typeof pri) => {
   const tempSwPath = path.join(projectRootPath, tempPath.dir, "static/sw.js")
   const targetSwPath = path.join(projectRootPath, projectConfig.distDir, "sw.js")
 
-  plugin.buildAfterProdBuild.forEach(afterProdBuild => afterProdBuild(stats))
+  plugin.buildAfterProdBuild.forEach(afterProdBuild => afterProdBuild(stats, projectConfig))
 
   if (fs.existsSync(tempSwPath)) {
     const tempSwContent = fs.readFileSync(tempSwPath).toString()
@@ -99,20 +112,6 @@ export default async (instance: typeof pri) => {
     name: "build",
     description: text.commander.build.description,
     action: async () => {
-      const projectConfig = instance.project.getProjectConfig("prod")
-
-      await spinner("Clean project.", async () => {
-        // Clean dist dir
-        await exec(`${findNearestNodemodulesFile(".bin/rimraf")} ${path.join(projectRootPath, projectConfig.distDir)}`)
-        await exec(`${findNearestNodemodulesFile(".bin/rimraf")} ${path.join(projectRootPath, tsBuiltPath.dir)}`)
-
-        // Clean .temp dir
-        await exec(`${findNearestNodemodulesFile(".bin/rimraf")} ${path.join(projectRootPath, ".temp")}`)
-      })
-
-      await instance.project.ensureProjectFiles(projectConfig)
-      await instance.project.lint()
-      await instance.project.checkProjectFiles(projectConfig)
       await CommandBuild(instance)
 
       // For async register commander, process will be exit automatic.

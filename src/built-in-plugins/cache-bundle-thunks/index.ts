@@ -9,6 +9,14 @@ export default async (instance: typeof pri) => {
   const projectConfig = instance.project.getProjectConfig("prod")
 
   instance.build.afterProdBuild(stats => {
+    if (!projectConfig.useServiceWorker) {
+      return
+    }
+
+    if (!projectConfig.prefetchChunks) {
+      return
+    }
+
     const chunkFileNames: string[] = []
     Object.keys(stats.assetsByChunkName).forEach(chunkKey => {
       const chunkInfo = stats.assetsByChunkName[chunkKey]

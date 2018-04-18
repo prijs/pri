@@ -28,8 +28,6 @@ interface IOptions {
     dashboardServerPort?: number
     dashboardClientPort?: number
     libraryStaticPath?: string
-    serviceWorkerPath?: string
-    serviceWorkerScope?: string
   }
 }
 
