@@ -7,13 +7,13 @@ import { log } from "../../utils/log"
 import { findNearestNodemodulesFile } from "../../utils/npm-finder"
 import { testsPath, tsBuiltPath } from "../../utils/structor-config"
 import text from "../../utils/text"
+import { tsPlusBabel } from "../../utils/ts-plus-babel"
 
 export const CommandTest = async (projectRootPath: string) => {
   log(`Build typescript files`)
   execSync(`${findNearestNodemodulesFile("/.bin/rimraf")} ${tsBuiltPath.dir}`, { stdio: "inherit" })
-  execSync([findNearestNodemodulesFile("/.bin/tsc"), "--module CommonJS", "--sourceMap"].join(" "), {
-    stdio: "inherit"
-  })
+
+  await tsPlusBabel(projectRootPath, tsBuiltPath.dir)
 
   execSync(
     [

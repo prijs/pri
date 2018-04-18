@@ -138,7 +138,7 @@ export default async (instance: typeof pri) => {
     name: "plugin-test",
     action: async () => {
       await instance.project.lint()
-      CommandPluginTest(projectRootPath)
+      await CommandPluginTest(projectRootPath)
 
       // For async register commander, process will be exit automatic.
       process.exit(0)

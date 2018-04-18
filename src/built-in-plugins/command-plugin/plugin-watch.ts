@@ -10,12 +10,12 @@ export const CommandPluginWatch = async (projectRootPath: string) => {
   const sourceBlob = "src/**/*.{tsx,ts}"
   const watcher = gulp.watch(sourceBlob)
 
-  await tsPlusBabel(projectRootPath, sourceBlob, tsBuiltPath.dir)
+  await tsPlusBabel(projectRootPath, tsBuiltPath.dir)
 
   // TODO: On create delete?
   watcher.on("change", async () => {
     log(colors.blue(`Start rebuild.`))
-    await tsPlusBabel(projectRootPath, sourceBlob, tsBuiltPath.dir)
+    await tsPlusBabel(projectRootPath, tsBuiltPath.dir)
     log(colors.green(`End rebuild.`))
   })
 }

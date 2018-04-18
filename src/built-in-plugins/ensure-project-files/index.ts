@@ -47,6 +47,7 @@ export const ensureTsconfig = (projectRootPath: string) => ({
           experimentalDecorators: true,
           skipLibCheck: true,
           outDir: tsBuiltPath.dir,
+          rootDir: "./", // Make sure ./src structor. # https://github.com/Microsoft/TypeScript/issues/5134
           lib: ["dom", "es5", "es6", "scripthost"]
         },
         include: [".temp/**/*", "src/**/*", "config/**/*", "tests/**/*"],

@@ -25,7 +25,7 @@ export function ensurePackageJson(projectRootPath: string) {
         JSON.stringify(
           _.merge({}, prevJson, {
             types: "src/index.ts",
-            main: path.join(tsBuiltPath.dir, "index.js"),
+            main: path.join(tsBuiltPath.dir, "src/index.js"),
             scripts: {
               start: "pri plugin-watch",
               prepublishOnly: "pri plugin-build",
@@ -91,7 +91,7 @@ export function ensureEntry(projectRootPath: string) {
           return
         }
 
-        entry.pipeHeader(header => {
+        entry.pipeAppHeader(header => {
           return \`
             \${header}
             import "src/components/xxx"
