@@ -1,18 +1,17 @@
 {
   "name": "pri",
-  "version": "0.7.7",
+  "version": "0.7.8",
   "types": "src/node/index.ts",
   "main": "built/node/index.js",
   "scripts": {
     "start": "tsc -w",
-    "create-client-declaration": "tsc --lib dom,es5,es6,scripthost --declaration src/client/index --declarationDir declare/client --skipLibCheck --outDir declare/client && find declare/client -type f -name \"*.js\" -delete",
+    "create-client-declaration":
+      "tsc --lib dom,es5,es6,scripthost --declaration src/client/index --declarationDir declare/client --skipLibCheck --outDir declare/client && find declare/client -type f -name \"*.js\" -delete",
     "build": "rm -rf built && rm -rf .cache && tsc && npm run create-client-declaration",
     "prepublishOnly": "npm run build",
     "lint": "echo 'Pre-commit checks...' && tslint --fix './src/**/*.?(ts|tsx)'"
   },
-  "pre-commit": [
-    "lint"
-  ],
+  "pre-commit": ["lint"],
   "bin": {
     "pri": "built/bin.js"
   },
@@ -84,6 +83,7 @@
     "react-dom": "^16.3.1",
     "react-hot-loader": "^4.0.1",
     "react-loadable": "^5.3.1",
+    "react-markdown": "^3.3.0",
     "react-router-dom": "^4.2.2",
     "rimraf": "^2.6.2",
     "semver": "^5.5.0",
