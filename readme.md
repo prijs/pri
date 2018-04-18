@@ -46,3 +46,9 @@ Happy hacking!
 * [next.js](https://github.com/zeit/next.js)
 * [umi](https://github.com/umijs/umi)
 * [rekit](https://github.com/supnate/rekit)
+
+## Q&A
+
+### Using in windows
+
+[fedora](https://getfedora.org/). Using windows subsystem for Linux.
