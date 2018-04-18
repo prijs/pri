@@ -2,6 +2,8 @@
 
 Pri is a toolkit for building web applications with React. **Helps you deal with everything, and you can focus on business logic.**
 
+## Docs
+
 [Read docs](https://prijs.github.io/pri-docs/).
 
 ## Setup
@@ -38,58 +40,6 @@ npm run preview
 
 Happy hacking!
 ```
-
-## Usage
-
-* [Pages are routes.](https://prijs.github.io/pri-docs/pages-are-routes)
-* [Markdown support.](https://prijs.github.io/pri-docs/features/markdown-support)
-* [Scss/Less/Css support.](https://prijs.github.io/pri-docs/features/scss-less-css)
-* [Layout support.](https://prijs.github.io/pri-docs/layout-support)
-* [Page not found.](https://prijs.github.io/pri-docs/features/page-not-found)
-* [Environment variable.](https://prijs.github.io/pri-docs/features/environment-variable)
-* [Mock.](https://prijs.github.io/pri-docs/features/mock)
-* [Deploy to github pages.](https://prijs.github.io/pri-docs/features/deploy-to-github-pages)
-* [Test and code coverage.](https://prijs.github.io/pri-docs/features/test-and-code-coverage)
-
-## Features
-
-* [Project Dashboard.](https://prijs.github.io/pri-docs/features/project-dashboard)
-* [Typescript support.](https://prijs.github.io/pri-docs/automatic-optimization/typescript-support)
-* [Tslint support.](https://prijs.github.io/pri-docs/automatic-optimization/tslint-support)
-* [Dynamic import.](https://prijs.github.io/pri-docs/features/dynamic-import)
-* [Automatic HMR.](https://prijs.github.io/pri-docs/automatic-optimization/automatic-hmr)
-* [Automatic code splitting.](https://prijs.github.io/pri-docs/automatic-optimization/automatic-code-splitting)
-* [Import on demand.](https://prijs.github.io/pri-docs/automatic-optimization/import-on-demand)
-* [Auto create project files.](https://prijs.github.io/pri-docs/automatic-optimization/auto-create-project-files)
-* [Auto pick shared modules.](https://prijs.github.io/pri-docs/automatic-optimization/auto-pick-shared-modules)
-* [Tree Shaking.](https://prijs.github.io/pri-docs/automatic-optimization/tree-shaking)
-* [Scope Hoist.](https://prijs.github.io/pri-docs/automatic-optimization/scope-hoist)
-* [Auto dlls.](https://prijs.github.io/pri-docs/automatic-optimization/auto-dlls)
-* [Auto prefetch.](https://prijs.github.io/pri-docs/automatic-optimization/auto-prefetch)
-
-### TODO
-
-* PWA support.
-
-## Plugins
-
-* [pri-plugin-dob](https://prijs.github.io/pri-docs/plugins/pri-plugin-dob). Using dob to manage store in your project!
-
-Become a developer? [How to write a plugin.](https://prijs.github.io/pri-docs/development/write-a-plugin)
-
-## Built-in packages in 0.x version
-
-* [react@16.3.1](https://www.npmjs.com/package/react)
-* [react-dom@16.3.1](https://www.npmjs.com/package/react-dom)
-* [react-router-dom@4.2.2](https://www.npmjs.com/package/react-router-dom)
-* [antd@3.4.1](https://www.npmjs.com/package/antd)
-* [lodash@4.17.4](https://www.npmjs.com/package/lodash)
-* [react-loadable@5.3.1](https://www.npmjs.com/package/react-loadable)
-* [webpack@4.5.0](https://www.npmjs.com/package/parcel-bundler)
-* [babel@7.0.0](https://www.npmjs.com/package/babel-core)
-* [typescript@2.8.1](https://github.com/Microsoft/TypeScript)
-* [gulp@3.9.1](https://github.com/gulpjs/gulp)
-* [ava@1.0.0](https://github.com/avajs/ava)
 
 ## Inspired
 
