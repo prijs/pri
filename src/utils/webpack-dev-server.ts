@@ -28,12 +28,21 @@ interface IOptions {
     dashboardServerPort?: number
     libraryStaticPath?: string
   }
+  pipeConfig?: (config?: webpack.Configuration) => webpack.Configuration
 }
 
-const stats = { warnings: false, version: false, modules: false, entrypoints: false, hash: false, colors: true }
+const stats = {
+  warnings: false,
+  version: false,
+  modules: false,
+  entrypoints: false,
+  hash: false,
+  colors: true,
+  children: false
+}
 
 export const runWebpackDevServer = async (opts: IOptions) => {
-  const webpackConfig = await getWebpackConfig({
+  let webpackConfig = await getWebpackConfig({
     mode: "development",
     projectRootPath: opts.projectRootPath,
     entryPath: opts.entryPath,
@@ -45,6 +54,10 @@ export const runWebpackDevServer = async (opts: IOptions) => {
     distDir: opts.distDir,
     outFileName: opts.outFileName
   })
+
+  if (opts.pipeConfig) {
+    webpackConfig = opts.pipeConfig(webpackConfig)
+  }
 
   webpackConfig.plugins.push(new webpack.HotModuleReplacementPlugin())
 

@@ -1,6 +1,6 @@
+import * as _ from "lodash"
 import * as path from "path"
 import { IProjectConfig } from "./project-config-interface"
-import * as _ from "lodash"
 
 export const srcPath = {
   dir: "src"

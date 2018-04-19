@@ -140,11 +140,7 @@ export const getWebpackConfig = (opts: IOptions) => {
       ]
     },
 
-    plugins: [
-      // new PreloadWebpackPlugin({
-      //   rel: "prefetch"
-      // })
-    ],
+    plugins: [],
 
     optimization: { namedChunks: false },
 

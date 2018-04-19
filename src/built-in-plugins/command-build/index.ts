@@ -1,6 +1,7 @@
 import { execSync } from "child_process"
 import * as colors from "colors"
 import * as fs from "fs-extra"
+import * as HtmlWebpackPlugin from "html-webpack-plugin"
 import * as path from "path"
 import * as prettier from "prettier"
 import { pri, tempPath } from "../../node"
@@ -16,7 +17,7 @@ import { IProjectConfig } from "../../utils/project-config-interface"
 import { tsBuiltPath } from "../../utils/structor-config"
 import text from "../../utils/text"
 import { runWebpack } from "../../utils/webpack"
-import { generateStaticHtml } from "./generate-static-html"
+import { getStaticHtmlPaths } from "./generate-static-html"
 
 const projectRootPath = process.cwd()
 
@@ -46,17 +47,26 @@ export const CommandBuild = async (instance: typeof pri) => {
     }
   })
 
+  const staticHtmlPaths = getStaticHtmlPaths(projectRootPath, projectConfig, result.analyseInfo)
+
   // Build project
   const stats = await runWebpack({
     mode: "production",
     projectRootPath,
     env,
     entryPath: result.entryPath,
-    projectConfig
-  })
-
-  await spinner("Generate static files.", async () => {
-    await generateStaticHtml(projectRootPath, projectConfig, result.analyseInfo, stats)
+    projectConfig,
+    pipeConfig: config => {
+      staticHtmlPaths.forEach(staticHtmlPath => {
+        config.plugins.push(
+          new HtmlWebpackPlugin({
+            filename: staticHtmlPath,
+            template: path.join(__dirname, "../../../template-project.ejs")
+          })
+        )
+      })
+      return config
+    }
   })
 
   // Write .temp/static/sw.js

@@ -8,7 +8,9 @@
 </head>
 
 <body>
-  <script src="<%= htmlWebpackPlugin.options.htmlTemplateArgs.libraryStaticPath %>"></script>
+  <% if (htmlWebpackPlugin.options.htmlTemplateArgs && htmlWebpackPlugin.options.htmlTemplateArgs.libraryStaticPath) { %>
+    <script src="<%= htmlWebpackPlugin.options.htmlTemplateArgs.libraryStaticPath %>"></script>
+  <% } %>
 </body>
 
 </html>

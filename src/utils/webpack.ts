@@ -26,12 +26,21 @@ interface IOptions {
     dashboardClientPort?: number
     libraryStaticPath?: string
   }
+  pipeConfig?: (config?: webpack.Configuration) => webpack.Configuration
 }
 
-const stats = { warnings: false, version: false, modules: false, entrypoints: false, hash: false, colors: true }
+const stats = {
+  warnings: false,
+  version: false,
+  modules: false,
+  entrypoints: false,
+  hash: false,
+  colors: true,
+  children: false
+}
 
 export const runWebpack = async (opts: IOptions): Promise<any> => {
-  const webpackConfig = await getWebpackConfig({
+  let webpackConfig = await getWebpackConfig({
     mode: opts.mode,
     projectRootPath: opts.projectRootPath,
     entryPath: opts.entryPath,
@@ -44,6 +53,10 @@ export const runWebpack = async (opts: IOptions): Promise<any> => {
     outFileName: opts.outFileName,
     outCssFileName: opts.outCssFileName
   })
+
+  if (opts.pipeConfig) {
+    webpackConfig = opts.pipeConfig(webpackConfig)
+  }
 
   const compiler = webpack(webpackConfig)
   compilerLogger(compiler as any)
