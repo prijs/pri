@@ -26,7 +26,6 @@ interface IOptions {
   distFileName?: string
   htmlTemplateArgs: {
     dashboardServerPort?: number
-    dashboardClientPort?: number
     libraryStaticPath?: string
   }
 }

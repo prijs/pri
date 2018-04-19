@@ -48,21 +48,9 @@ export function generateHtmlByRouterPath(
       `
           : ""
       }
-
-      <style>
-        html,
-        body {
-          margin: 0;
-          padding: 0;
-        }
-      </style>
     </head>
 
     <body>
-      <div id="root"></div>
-
-      <script id="script-before"></script>
-
       <script src="${getEntryPath(projectConfig, `main.${stats.hash}.js`)}"></script>
     </body>
 

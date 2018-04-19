@@ -2,96 +2,13 @@
 <html lang="en">
 
 <head>
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
   <title>
     <%= htmlWebpackPlugin.options.title %>
   </title>
-
-  <style>
-    html,
-    body {
-      margin: 0;
-      padding: 0;
-      overflow-x: hidden;
-    }
-
-    #pri-help-button {
-      position: absolute;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      width: 140px;
-      height: 30px;
-      transform: rotate(90deg);
-      font-size: 14px;
-      right: -55px;
-      top: calc(50% - 15px);
-      border: 1px solid #ddd;
-      border-top: none;
-      border-bottom-left-radius: 5px;
-      border-bottom-right-radius: 5px;
-      color: #666;
-      z-index: 10001;
-      cursor: pointer;
-      transition: all .2s;
-      background-color: white;
-      user-select: none;
-    }
-
-    #pri-help-button.active {
-      right: 744px !important;
-    }
-
-    #pri-help-button:hover {
-      color: black;
-    }
-
-    #pri-help-iframe {
-      position: absolute;
-      right: -810px;
-      z-index: 10000;
-      background-color: white;
-      width: 800px;
-      top: 0;
-      height: 100%;
-      border: 0;
-      outline: 0;
-      box-shadow: -1px 0 1px #d4d4d4;
-      transition: right .2s;
-    }
-
-    #pri-help-iframe.active {
-      right: 0 !important;
-    }
-  </style>
 </head>
 
 <body>
-  <div id="root"></div>
-  <div id="pri-help-button" onclick="priToggleHelpIframe()">Toggle dashboard</div>
-
-  <iframe id="pri-help-iframe" src="//127.0.0.1:<%= htmlWebpackPlugin.options.htmlTemplateArgs.dashboardClientPort %>"></iframe>
-
   <script src="<%= htmlWebpackPlugin.options.htmlTemplateArgs.libraryStaticPath %>"></script>
-  <script>
-    const priHelpButton = document.getElementById("pri-help-button")
-    const priHelpIframe = document.getElementById("pri-help-iframe")
-
-    function priToggleHelpIframe() {
-      const activeClassName = "active"
-      const isShow = priHelpIframe.classList.contains(activeClassName)
-
-      if (isShow) {
-        priHelpIframe.classList.remove(activeClassName)
-        priHelpButton.classList.remove(activeClassName)
-      } else {
-        priHelpIframe.classList.add(activeClassName)
-        priHelpButton.classList.add(activeClassName)
-      }
-    }
-  </script>
 </body>
 
 </html>

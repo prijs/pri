@@ -102,11 +102,12 @@ export default async (instance: typeof pri) => {
               headers: { 'Content-Type': 'text/html;charset=utf-8' }
             };
 
-            var textAddContent = currentCacheSsrOriginHtml.replace(/(\\<div\\sid\\=\\"root\\"\\>)(\\<\\/div\\>)/g, \`$1\${event.data.content}$2\`)
-            var textAddScript = textAddContent.replace(/(\\<script\\sid\\=\\"script-before\\"\\>)(\\<\\/script\\>)/g, \`$1\\nwindow.enableSsr = true;\\n$2\`)
+            var ssrFlag = "<script>window.enableSsr = true;</script>"
+            var injectBodyContent = \`<div id="root">\${event.data.content}</div> \\n \${ssrFlag} \\n\`
+            var htmlAddContent = currentCacheSsrOriginHtml.replace(/(\\<body\\>)/g, \`$1\${injectBodyContent}\`)
 
             const ssrResponse = new Response(
-              textAddScript,
+              htmlAddContent,
               responseInit
             );
 

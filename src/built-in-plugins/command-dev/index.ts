@@ -34,7 +34,12 @@ const libraryStaticPath = "/dlls/" + dllFileName
 
 const dashboardBundleFileName = "main"
 
-export const CommandDev = async (projectConfig: IProjectConfig, analyseInfo: any, env: "local" | "prod") => {
+export const CommandDev = async (
+  projectConfig: IProjectConfig,
+  analyseInfo: any,
+  env: "local" | "prod",
+  portInfo: { freePort: number; dashboardServerPort: number; dashboardClientPort: number }
+) => {
   await bundleDlls()
 
   // Bundle dashboard if plugins changed or dashboard bundle not exist.
@@ -61,12 +66,8 @@ export const CommandDev = async (projectConfig: IProjectConfig, analyseInfo: any
 
   log(colors.blue("\nStart dev server.\n"))
 
-  const freePort = projectConfig.devPort || (await portfinder.getPortPromise())
-  const dashboardServerPort = await portfinder.getPortPromise({ port: freePort + 1 })
-  const dashboardClientPort = await portfinder.getPortPromise({ port: freePort + 2 })
-
   // Start dashboard server
-  dashboardServer({ serverPort: dashboardServerPort, projectRootPath, env, projectConfig, analyseInfo })
+  dashboardServer({ serverPort: portInfo.dashboardServerPort, projectRootPath, env, projectConfig, analyseInfo })
 
   if (projectConfig.useHttps) {
     log(`you should set chrome://flags/#allow-insecure-localhost, to trust local certificate.`)
@@ -76,8 +77,8 @@ export const CommandDev = async (projectConfig: IProjectConfig, analyseInfo: any
   dashboardClientServer({
     projectRootPath,
     projectConfig,
-    serverPort: dashboardServerPort,
-    clientPort: dashboardClientPort,
+    serverPort: portInfo.dashboardServerPort,
+    clientPort: portInfo.dashboardClientPort,
     staticRootPath: path.join(projectRootPath, tempPath.dir, "static"),
     hash: projectState.get("dashboardHash")
   })
@@ -88,11 +89,10 @@ export const CommandDev = async (projectConfig: IProjectConfig, analyseInfo: any
     env,
     publicPath: "/static/",
     entryPath: path.join(projectRootPath, path.format(tempJsEntryPath)),
-    devServerPort: freePort,
+    devServerPort: portInfo.freePort,
     htmlTemplatePath: path.join(__dirname, "../../../template-project.ejs"),
     htmlTemplateArgs: {
-      dashboardServerPort,
-      dashboardClientPort,
+      dashboardServerPort: portInfo.dashboardServerPort,
       libraryStaticPath: path.join(projectConfig.baseHref, libraryStaticPath)
     },
     projectConfig
@@ -185,6 +185,12 @@ function createDashboardEntry() {
 }
 
 export default async (instance: typeof pri) => {
+  const currentEnv = "local"
+  const currentProjectConfig = instance.project.getProjectConfig(currentEnv)
+  const freePort = currentProjectConfig.devPort || (await portfinder.getPortPromise())
+  const dashboardServerPort = await portfinder.getPortPromise({ port: freePort + 1 })
+  const dashboardClientPort = await portfinder.getPortPromise({ port: freePort + 2 })
+
   instance.project.onCreateEntry((analyseInfo, entry, env, projectConfig) => {
     if (env === "local") {
       entry.pipeAppHeader(header => {
@@ -228,16 +234,112 @@ export default async (instance: typeof pri) => {
       `
       )
 
-      entry.pipeEntryRender(() => {
-        return `
-          const HotApp = hot(module)(App)
+      entry.pipeEntryRender(
+        str => `
+        const HotApp = hot(module)(App)
+        ${str}
+      `
+      )
 
-          ReactDOM.render(
-            <HotApp />,
-            document.getElementById("root")
-          )
-          `
-      })
+      entry.pipe.set("entryRenderApp", () => `<HotApp />`)
+
+      // Load webui iframe
+      entry.pipeEntryRender(
+        str => `
+        ${str}
+        const webUICss = \`
+          html,
+          body {
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+          }
+
+          #pri-help-button {
+            position: fixed;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 140px;
+            height: 30px;
+            transform: rotate(90deg);
+            font-size: 14px;
+            right: -55px;
+            top: calc(50% - 15px);
+            border: 1px solid #ddd;
+            border-top: none;
+            border-bottom-left-radius: 5px;
+            border-bottom-right-radius: 5px;
+            color: #666;
+            z-index: 10001;
+            cursor: pointer;
+            transition: all .2s;
+            background-color: white;
+            user-select: none;
+          }
+
+          #pri-help-button.active {
+            right: 744px !important;
+          }
+
+          #pri-help-button:hover {
+            color: black;
+          }
+
+          #pri-help-iframe {
+            position: fixed;
+            right: -810px;
+            z-index: 10000;
+            background-color: white;
+            width: 800px;
+            top: 0;
+            height: 100%;
+            border: 0;
+            outline: 0;
+            box-shadow: -1px 0 1px #d4d4d4;
+            transition: right .2s;
+          }
+
+          #pri-help-iframe.active {
+            right: 0 !important;
+          }
+        \`
+        const webUIStyle = document.createElement('style')
+
+        webUIStyle.type = "text/css"
+        if (webUIStyle.styleSheet){
+          webUIStyle.styleSheet.cssText = webUICss
+        } else {
+          webUIStyle.appendChild(document.createTextNode(webUICss))
+        }
+
+        document.head.appendChild(webUIStyle)
+
+        // Add dashboard iframe
+        const dashboardIframe = document.createElement("iframe")
+        dashboardIframe.id = "pri-help-iframe"
+        dashboardIframe.src = "//127.0.0.1:${dashboardClientPort}"
+        document.body.appendChild(dashboardIframe)
+
+        // Add dashboard button
+        const dashboardButton = document.createElement("div")
+        dashboardButton.id = "pri-help-button"
+        dashboardButton.innerText = "Toggle dashboard"
+        dashboardButton.onclick = () => {
+          const activeClassName = "active"
+          const isShow = dashboardIframe.classList.contains(activeClassName)
+
+          if (isShow) {
+            dashboardIframe.classList.remove(activeClassName)
+            dashboardButton.classList.remove(activeClassName)
+          } else {
+            dashboardIframe.classList.add(activeClassName)
+            dashboardButton.classList.add(activeClassName)
+          }
+        }
+        document.body.appendChild(dashboardButton)
+      `
+      )
     }
   })
 
@@ -261,22 +363,24 @@ export default async (instance: typeof pri) => {
     options: [["-d, --debugDashboard", "Debug dashboard"]],
     description: text.commander.dev.description,
     action: async (options: any) => {
-      const env = "local"
-      const projectConfig = instance.project.getProjectConfig(env)
       await instance.project.lint()
-      await instance.project.ensureProjectFiles(projectConfig)
-      await instance.project.checkProjectFiles(projectConfig)
+      await instance.project.ensureProjectFiles(currentProjectConfig)
+      await instance.project.checkProjectFiles(currentProjectConfig)
 
       const analyseInfo = await spinner("Analyse project", async () => {
-        const scopeAnalyseInfo = await analyseProject(projectRootPath, env, projectConfig)
-        createEntry(projectRootPath, env, projectConfig)
+        const scopeAnalyseInfo = await analyseProject(projectRootPath, currentEnv, currentProjectConfig)
+        createEntry(projectRootPath, currentEnv, currentProjectConfig)
         return scopeAnalyseInfo
       })
 
       if (options && options.debugDashboard) {
-        await debugDashboard(projectConfig, analyseInfo, env)
+        await debugDashboard(currentProjectConfig, analyseInfo, currentEnv)
       } else {
-        await CommandDev(projectConfig, analyseInfo, env)
+        await CommandDev(currentProjectConfig, analyseInfo, currentEnv, {
+          freePort,
+          dashboardServerPort,
+          dashboardClientPort
+        })
       }
     },
     isDefault: true

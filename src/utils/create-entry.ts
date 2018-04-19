@@ -133,6 +133,8 @@ export class Entry {
       import * as React from "react"
       import * as ReactDOM from "react-dom"
       import App, { pageLoadableMap } from "./app"
+
+      const ROOT_ID = "root"
     `
     )
   }
@@ -141,10 +143,17 @@ export class Entry {
     return pipe.get(
       "entryRender",
       `
+      // Create entry div if not exist.
+      if (!document.getElementById(ROOT_ID)) {
+        const rootDiv = document.createElement("div")
+        rootDiv.id = ROOT_ID
+        document.body.appendChild(rootDiv)
+      }
+
       if ((window as any).enableSsr) {
-        ReactDOM.hydrate(<App />, document.getElementById("root"))
+        ReactDOM.hydrate(${pipe.get("entryRenderApp", "<App />")}, document.getElementById(ROOT_ID))
       } else {
-        ReactDOM.render(<App />, document.getElementById("root"))
+        ReactDOM.render(${pipe.get("entryRenderApp", "<App />")}, document.getElementById(ROOT_ID))
       }
     `
     )
