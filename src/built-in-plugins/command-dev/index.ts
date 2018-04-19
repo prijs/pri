@@ -2,7 +2,6 @@ import { exec, execSync, fork } from "child_process"
 import * as colors from "colors"
 import * as fs from "fs-extra"
 import * as _ from "lodash"
-import * as open from "opn"
 import * as path from "path"
 import * as portfinder from "portfinder"
 import * as prettier from "prettier"
@@ -58,7 +57,7 @@ export const CommandDev = async (
       publicPath: "/bundle/",
       entryPath: dashboardEntryFilePath,
       distDir: dashboardDistDir,
-      distFileName: "main",
+      outFileName: "main.[hash].js", // dashboard has no css file
       projectConfig
     })
     projectState.set("dashboardHash", status.hash)
@@ -87,7 +86,7 @@ export const CommandDev = async (
   await runWebpackDevServer({
     projectRootPath,
     env,
-    publicPath: "/static/",
+    publicPath: projectConfig.publicPath,
     entryPath: path.join(projectRootPath, path.format(tempJsEntryPath)),
     devServerPort: portInfo.freePort,
     htmlTemplatePath: path.join(__dirname, "../../../template-project.ejs"),
@@ -117,8 +116,8 @@ export const debugDashboard = async (projectConfig: IProjectConfig, analyseInfo:
     env,
     publicPath: "/static/",
     entryPath: dashboardEntryFilePath,
-    distFileName: "main",
     devServerPort: freePort,
+    outFileName: "main.[hash].js",
     htmlTemplatePath: path.join(__dirname, "../../../template-dashboard.ejs"),
     htmlTemplateArgs: {
       dashboardServerPort,
@@ -307,8 +306,8 @@ export default async (instance: typeof pri) => {
         const webUIStyle = document.createElement('style')
 
         webUIStyle.type = "text/css"
-        if (webUIStyle.styleSheet){
-          webUIStyle.styleSheet.cssText = webUICss
+        if ((webUIStyle as any).styleSheet){
+          (webUIStyle as any).styleSheet.cssText = webUICss
         } else {
           webUIStyle.appendChild(document.createTextNode(webUICss))
         }

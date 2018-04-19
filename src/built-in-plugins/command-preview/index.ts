@@ -31,7 +31,7 @@ export const CommandPreview = async (instance: typeof pri) => {
 
   await CommandBuild(instance)
 
-  const freePort = await portfinder.getPortPromise()
+  const freePort = projectConfig.devPort || (await portfinder.getPortPromise())
 
   app.use(koaCompress({ flush: zlib.Z_SYNC_FLUSH }))
 
@@ -53,17 +53,6 @@ export const CommandPreview = async (instance: typeof pri) => {
       previewStaticPrefix,
       koaStatic(previewDistPath, {
         gzip: true
-        // setHeaders: (res: any) => {
-        //   res.setHeader("access-control-allow-credentials", true)
-        //   res.setHeader(
-        //     "access-control-allow-headers",
-        //     "Access-Control-Allow-Headers,Origin,Accept,X-Requested-With,Content-Type,Content-Encoding,Access-Control-Request-Method,Access-Control-Request-Headers"
-        //   )
-        //   res.setHeader("access-control-allow-methods", "HEAD,GET,POST,OPTIONS,PUT,DELETE,PATCH")
-        //   res.setHeader("access-control-allow-origin", "*")
-        //   res.setHeader("status", 200)
-        //   res.setHeader("timing-allow-origin", "*")
-        // }
       })
     )
   )
@@ -81,7 +70,11 @@ export const CommandPreview = async (instance: typeof pri) => {
     await spinner("Create http server", async () => http.createServer(app.callback()).listen(freePort))
   }
 
-  open(ensureEndWithSlash(url.resolve(`https://localhost:${freePort}`, projectConfig.baseHref)))
+  open(
+    ensureEndWithSlash(
+      url.resolve(`${projectConfig.useHttps ? "https" : "http"}://localhost:${freePort}`, projectConfig.baseHref)
+    )
+  )
 }
 
 export default async (instance: typeof pri) => {

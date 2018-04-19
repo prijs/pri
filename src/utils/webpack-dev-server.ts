@@ -23,7 +23,7 @@ interface IOptions {
   projectConfig: IProjectConfig
   publicPath: string
   distDir?: string
-  distFileName?: string
+  outFileName?: string
   htmlTemplateArgs: {
     dashboardServerPort?: number
     libraryStaticPath?: string
@@ -43,7 +43,7 @@ export const runWebpackDevServer = async (opts: IOptions) => {
     projectConfig: opts.projectConfig,
     publicPath: opts.publicPath,
     distDir: opts.distDir,
-    distFileName: opts.distFileName
+    outFileName: opts.outFileName
   })
 
   webpackConfig.plugins.push(new webpack.HotModuleReplacementPlugin())
@@ -62,7 +62,10 @@ export const runWebpackDevServer = async (opts: IOptions) => {
     overlay: { warnings: true, errors: true },
     stats,
     watchOptions: { ignored: /node_modules/ },
-    clientLogLevel: "warning"
+    headers: { "Access-Control-Allow-Origin": "*" },
+    clientLogLevel: "warning",
+    disableHostCheck: true,
+    port: opts.devServerPort
   }
 
   webpackDevServer.addDevServerEntrypoints(webpackConfig, webpackDevServerConfig)

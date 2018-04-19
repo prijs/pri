@@ -19,7 +19,8 @@ interface IOptions {
   projectConfig: IProjectConfig
   publicPath?: string
   distDir?: string
-  distFileName?: string
+  outFileName?: string
+  outCssFileName?: string
 }
 
 /**
@@ -78,7 +79,8 @@ export const getWebpackConfig = (opts: IOptions) => {
   }
 
   const distDir = opts.distDir || path.join(opts.projectRootPath, opts.projectConfig.distDir)
-  const distFileName = opts.distFileName || opts.projectConfig.distFileName
+  const outFileName = opts.outFileName || opts.projectConfig.outFileName
+  const outCssFileName = opts.outCssFileName || opts.projectConfig.outCssFileName
 
   let publicPath: string = opts.publicPath || opts.projectConfig.publicPath || "/"
   if (!publicPath.endsWith("/")) {
@@ -92,7 +94,7 @@ export const getWebpackConfig = (opts: IOptions) => {
     entry: opts.entryPath,
     output: {
       path: distDir,
-      filename: distFileName + ".[hash].js",
+      filename: outFileName,
       publicPath,
       chunkFilename: "[name].[hash].chunk.js",
       hotUpdateChunkFilename: "hot~[id].[hash].chunk.js",
@@ -163,7 +165,7 @@ export const getWebpackConfig = (opts: IOptions) => {
   }
 
   if (opts.env === "prod") {
-    config.plugins.push(new ExtractTextPlugin(distFileName + ".[hash].css"))
+    config.plugins.push(new ExtractTextPlugin(outCssFileName))
   }
 
   if (opts.env === "prod") {

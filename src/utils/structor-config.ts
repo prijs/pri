@@ -1,5 +1,6 @@
 import * as path from "path"
 import { IProjectConfig } from "./project-config-interface"
+import * as _ from "lodash"
 
 export const srcPath = {
   dir: "src"
@@ -102,7 +103,20 @@ export const getGitignores = (projectConfig?: IProjectConfig) => {
   ]
 
   if (projectConfig) {
-    ignores.push(projectConfig.distDir)
+    // distDir.dir can be a/b/c
+    const trimedDistDir = _.trimEnd(projectConfig.distDir, "/")
+    const distPaths = trimedDistDir.split("/")
+
+    distPaths.reduce((prev, current) => {
+      if (prev === "") {
+        ignores.push(current)
+        return current
+      } else {
+        prev += "/" + current
+        ignores.push(prev)
+        return prev
+      }
+    }, "")
   }
 
   return ignores

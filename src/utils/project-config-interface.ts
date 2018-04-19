@@ -8,15 +8,18 @@ export class IProjectConfig {
    */
   public devPort?: number = null
   /**
+   * Output main file name.
+   */
+  public outFileName?: string = "main.[hash].js"
+  /**
+   * Output main css file name.
+   */
+  public outCssFileName?: string = "main.[hash].css"
+  /**
    * Dist dir path.
    * Only take effect on `npm run build` | `pri build`.
    */
   public distDir?: string = "dist"
-  /**
-   * Dist main file name.
-   * Only take effect on `npm run build` | `pri build`.
-   */
-  public distFileName?: string = "main"
   /**
    * Assets public path. `"https://www.some.com"`, `"https://www.some.com/somePath"`, `"/somePath"`.
    * If not set, result: `/<distPath>`.
@@ -25,7 +28,7 @@ export class IProjectConfig {
    * If set some.com/somePath for example, result: `https://www.some.com/somePath/<distPath>`.
    * Only take effect on `npm run build` | `pri build`.
    */
-  public publicPath?: string | null = null
+  public publicPath?: string = "/"
   /**
    * Base href for all pages.
    * For example, `/admin` is the root path after deploy, you should set baseHref to `/admin`.

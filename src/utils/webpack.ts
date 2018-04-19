@@ -19,7 +19,8 @@ interface IOptions {
   projectConfig: IProjectConfig
   publicPath?: string
   distDir?: string
-  distFileName?: string
+  outFileName?: string
+  outCssFileName?: string
   htmlTemplateArgs?: {
     dashboardServerPort?: number
     dashboardClientPort?: number
@@ -40,7 +41,8 @@ export const runWebpack = async (opts: IOptions): Promise<any> => {
     projectConfig: opts.projectConfig,
     publicPath: opts.publicPath,
     distDir: opts.distDir,
-    distFileName: opts.distFileName
+    outFileName: opts.outFileName,
+    outCssFileName: opts.outCssFileName
   })
 
   const compiler = webpack(webpackConfig)
