@@ -36,29 +36,19 @@ export const CommandPreview = async (instance: typeof pri) => {
 
   app.use(koaCompress({ flush: zlib.Z_SYNC_FLUSH }))
 
-  const previewDistPath = distDir
-
-  let previewStaticPrefix = projectConfig.publicPath
-
-  if (projectConfig.publicPath !== projectConfig.baseHref) {
-    log(
-      colors.yellow(
-        "publicPath is not equal to baseHref, in order to ensure preview, we use baseHref as static file prefix instead of publicPath."
-      )
-    )
-    previewStaticPrefix = projectConfig.baseHref
-  }
-
   app.use(
     koaMount(
-      previewStaticPrefix,
-      koaStatic(previewDistPath, {
-        gzip: true
+      url.parse(projectConfig.publicPath).pathname,
+      koaStatic(distDir, {
+        gzip: true,
+        setHeaders: (res: any) => {
+          res.setHeader("Access-Control-Allow-Origin", "*")
+        }
       })
     )
   )
 
-  const cssPath = path.join(previewDistPath, "main.css")
+  const cssPath = path.join(distDir, "main.css")
   const hasCssOutput = fs.existsSync(cssPath)
 
   if (projectConfig.useHttps) {
