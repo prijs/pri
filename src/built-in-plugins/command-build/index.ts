@@ -60,6 +60,7 @@ export const CommandBuild = async (instance: typeof pri) => {
       staticHtmlPaths.forEach(staticHtmlPath => {
         config.plugins.push(
           new HtmlWebpackPlugin({
+            title: projectConfig.title,
             filename: staticHtmlPath,
             template: path.join(__dirname, "../../../template-project.ejs")
           })
