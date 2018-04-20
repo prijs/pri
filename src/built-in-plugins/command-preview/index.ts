@@ -10,6 +10,7 @@ import * as open from "opn"
 import * as path from "path"
 import * as portfinder from "portfinder"
 import * as url from "url"
+import * as urlJoin from "url-join"
 import * as zlib from "zlib"
 import { pri } from "../../node"
 import { ensureFiles } from "../../utils/ensure-files"
@@ -72,7 +73,7 @@ export const CommandPreview = async (instance: typeof pri) => {
 
   open(
     ensureEndWithSlash(
-      url.resolve(`${projectConfig.useHttps ? "https" : "http"}://localhost:${freePort}`, projectConfig.baseHref)
+      urlJoin(`${projectConfig.useHttps ? "https" : "http"}://localhost:${freePort}`, projectConfig.baseHref)
     )
   )
 }

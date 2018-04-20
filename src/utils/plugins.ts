@@ -41,7 +41,8 @@ const getBuiltInPlugins = (projectRootPath: string) => {
     ["pri-plugin-service-worker", "../built-in-plugins/service-worker/index.js"],
     ["pri-plugin-mocks", "../built-in-plugins/mocks/index.js"],
     ["pri-plugin-cache-bundle-thunks", "../built-in-plugins/cache-bundle-thunks/index.js"],
-    ["pri-plugin-client-ssr", "../built-in-plugins/client-ssr/index.js"]
+    ["pri-plugin-client-ssr", "../built-in-plugins/client-ssr/index.js"],
+    ["pri-plugin-command-analyse", "../built-in-plugins/command-analyse/index.js"]
   ]
 
   return plugins.reduce((obj: any, right) => {

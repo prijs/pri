@@ -5,6 +5,8 @@ import * as _ from "lodash"
 import * as path from "path"
 import * as portfinder from "portfinder"
 import * as prettier from "prettier"
+import * as url from "url"
+import * as urlJoin from "url-join"
 import * as webpack from "webpack"
 import * as webpackDevServer from "webpack-dev-server"
 import { pri } from "../../node"
@@ -22,6 +24,7 @@ import { tempJsEntryPath, tempPath } from "../../utils/structor-config"
 import text from "../../utils/text"
 import { runWebpack } from "../../utils/webpack"
 import { runWebpackDevServer } from "../../utils/webpack-dev-server"
+import { WrapContent } from "../../utils/webpack-plugin-wrap-content"
 import dashboardClientServer from "./dashboard/server/client-server"
 import dashboardServer from "./dashboard/server/index"
 
@@ -91,10 +94,30 @@ export const CommandDev = async (
     devServerPort: portInfo.freePort,
     htmlTemplatePath: path.join(__dirname, "../../../template-project.ejs"),
     htmlTemplateArgs: {
-      dashboardServerPort: portInfo.dashboardServerPort,
-      libraryStaticPath: path.join(projectConfig.baseHref, libraryStaticPath)
+      dashboardServerPort: portInfo.dashboardServerPort
     },
-    projectConfig
+    projectConfig,
+    pipeConfig: config => {
+      const dllHttpPath = urlJoin(
+        `${projectConfig.useHttps ? "https" : "http"}://127.0.0.1:${portInfo.freePort}/static`,
+        libraryStaticPath
+      )
+
+      config.plugins.push(
+        new WrapContent(
+          `
+          var dllScript = document.createElement("script");
+          dllScript.src = "${dllHttpPath}";
+          dllScript.onload = runEntry;
+          document.body.appendChild(dllScript);
+
+          function runEntry() {
+        `,
+          `}`
+        )
+      )
+      return config
+    }
   })
 }
 
@@ -121,7 +144,7 @@ export const debugDashboard = async (projectConfig: IProjectConfig, analyseInfo:
     htmlTemplatePath: path.join(__dirname, "../../../template-dashboard.ejs"),
     htmlTemplateArgs: {
       dashboardServerPort,
-      libraryStaticPath: path.join(projectConfig.baseHref, libraryStaticPath)
+      libraryStaticPath: path.join("/static", libraryStaticPath)
     },
     projectConfig
   })

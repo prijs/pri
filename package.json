@@ -1,6 +1,6 @@
 {
   "name": "pri",
-  "version": "0.7.15",
+  "version": "0.7.17",
   "types": "src/node/index.ts",
   "main": "built/node/index.js",
   "scripts": {
@@ -97,10 +97,13 @@
     "tslint-config-prettier": "^1.10.0",
     "typescript": "^2.8.1",
     "update-notifier": "^2.4.0",
+    "url-join": "^4.0.0",
     "walk": "^2.3.13",
     "webpack": "^4.5.0",
+    "webpack-bundle-analyzer": "^2.11.1",
     "webpack-cli": "^2.0.14",
     "webpack-dev-server": "^3.1.3",
+    "webpack-sources": "^1.1.0",
     "yargs": "^11.0.0"
   }
 }

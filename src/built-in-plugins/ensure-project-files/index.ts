@@ -178,6 +178,7 @@ export default async (instance: typeof pri) => {
               start: "pri",
               build: "pri build",
               preview: "pri preview",
+              analyse: "pri analyse",
               test: "pri test"
             }
           }),

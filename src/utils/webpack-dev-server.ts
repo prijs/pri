@@ -7,6 +7,7 @@ import * as open from "opn"
 import * as path from "path"
 import * as portfinder from "portfinder"
 import * as url from "url"
+import * as urlJoin from "url-join"
 import * as webpack from "webpack"
 import * as webpackDevServer from "webpack-dev-server"
 import { tempPath } from "../utils/structor-config"
@@ -67,7 +68,7 @@ export const runWebpackDevServer = async (opts: IOptions) => {
     hotOnly: true,
     publicPath: opts.publicPath,
     before: app => {
-      app.use(opts.projectConfig.baseHref, express.static(path.join(opts.projectRootPath, tempPath.dir, "static")))
+      app.use("/static", express.static(path.join(opts.projectRootPath, tempPath.dir, "static")))
     },
     compress: true,
     historyApiFallback: { rewrites: [{ from: "/", to: normalizePath(path.join(opts.publicPath, "index.html")) }] },
@@ -89,7 +90,7 @@ export const runWebpackDevServer = async (opts: IOptions) => {
 
   devServer.listen(opts.devServerPort, "127.0.0.1", () => {
     open(
-      url.resolve(
+      urlJoin(
         `${opts.projectConfig.useHttps ? "https" : "http"}://localhost:${opts.devServerPort}`,
         opts.projectConfig.baseHref
       )
