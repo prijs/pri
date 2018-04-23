@@ -65,7 +65,7 @@ export const getWebpackConfig = (opts: IOptions) => {
     loader: "babel-loader",
     options: plugin.buildConfigBabelLoaderOptionsPipes.reduce((options, fn) => fn(opts.env, options), {
       babelrc: false,
-      presets: [["@babel/env", { modules: false }], ["@babel/stage-2"]],
+      presets: [["@babel/env", { modules: false }], ["@babel/stage-2", { decoratorsLegacy: true }]],
       plugins: [["@babel/plugin-transform-runtime"]],
       comments: true
     })

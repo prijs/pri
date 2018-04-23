@@ -32,7 +32,7 @@ export const tsPlusBabel = (projectRootPath: string, outDir: string, tsCompileOp
       .src()
       // .pipe(gulpSourcemaps.init())
       .pipe(tsProject())
-      .pipe(gulpBabel({ presets: [[babelEnv], [stage2]], plugins: [[transformRuntime]] }))
+      .pipe(gulpBabel({ presets: [[babelEnv], [stage2, { decoratorsLegacy: true }]], plugins: [[transformRuntime]] }))
       // .pipe(
       //   gulpSourcemaps.mapSources((sourcePath: string) => {
       //     return path.join("..", sourcePath)
