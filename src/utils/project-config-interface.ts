@@ -50,11 +50,6 @@ export class IProjectConfig {
    */
   public useServiceWorker = false
   /**
-   * Prefetch chunks
-   * Warning: depend on service worker, should set useServiceWorker=true first.
-   */
-  public prefetchChunks = false
-  /**
    * Client server render
    * Warning: depend on service worker, should set useServiceWorker=true first.
    */
