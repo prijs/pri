@@ -6,7 +6,7 @@ import * as webpack from "webpack"
 import { pri } from "../node/index"
 import { set } from "../node/pipe"
 import { Entry } from "./create-entry"
-import { getDefault } from "./esModule"
+import { getDefault } from "./es-module"
 import { log } from "./log"
 import { IProjectConfig } from "./project-config-interface"
 

@@ -1,5 +1,5 @@
 export const pipeEvent = (func: any) => {
-  return (event: React.ChangeEvent<HTMLInputElement>) => {
+  return (event: any) => {
     return func(event.target.value, event)
   }
 }
@@ -13,6 +13,10 @@ export function ensureEndWithSlash(str: string) {
 }
 
 export function ensureStartWithWebpackRelativePoint(str: string) {
+  if (str.startsWith("/")) {
+    throw Error(`${str} is an absolute path!`)
+  }
+
   if (!str.startsWith("./")) {
     return "./" + str
   } else {

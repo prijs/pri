@@ -134,7 +134,9 @@ export default async (instance: typeof pri) => {
             fs.outputFileSync(markdownTsAbsolutePath, `export default \`${safeFileContent}\``)
 
             const markdownImportCode = `
-              import(/* webpackChunkName: "${page.chunkName}" */ "${markdownTsRelativePath}").then(code => {
+              import(/* webpackChunkName: "${
+                page.chunkName
+              }", webpackPreload: true */ "${markdownTsRelativePath}").then(code => {
                 ${entry.pipe.get("afterPageLoad", "")}
                 return () => <${MARKDOWN_WRAPPER}>{code.default}</${MARKDOWN_WRAPPER}>
               })

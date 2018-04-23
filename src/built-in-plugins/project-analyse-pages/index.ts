@@ -74,7 +74,9 @@ export default async (instance: typeof pri) => {
           .map(page => {
             const pageRequirePath = normalizePath(path.relative(tempPath.dir, path.join(page.file.dir, page.file.name)))
 
-            const importCode = `import(/* webpackChunkName: "${page.chunkName}" */ "${pageRequirePath}").then(code => {
+            const importCode = `import(/* webpackChunkName: "${
+              page.chunkName
+            }", webpackPreload: true */ "${pageRequirePath}").then(code => {
                 ${entry.pipe.get("afterPageLoad", "")}
                 return code.default
               })`

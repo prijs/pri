@@ -2,3 +2,5 @@ node_modules
 dist
 .cache
 built
+coverage
+.nyc_output
