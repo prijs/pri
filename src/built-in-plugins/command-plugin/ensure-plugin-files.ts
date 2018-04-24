@@ -43,10 +43,16 @@ export function ensurePackageJson(projectRootPath: string) {
 }
 
 export function ensureEntry(projectRootPath: string) {
-  const fileName = "src/index.tsx"
+  const fileName = "src/index.ts"
+  const otherFileName = "src/index.tsx"
   const filePath = path.join(projectRootPath, fileName)
 
   if (fs.existsSync(filePath)) {
+    log(colors.green(`✔ Entry file already exist.`))
+    return
+  }
+
+  if (fs.existsSync(otherFileName)) {
     log(colors.green(`✔ Entry file already exist.`))
     return
   }

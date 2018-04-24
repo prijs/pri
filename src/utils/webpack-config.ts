@@ -169,5 +169,13 @@ export const getWebpackConfig = (opts: IOptions) => {
     cssLoader.options.minimize = true
   }
 
+  if (opts.env === "local") {
+    // Turn off performance hints during development.
+    if (!config.performance) {
+      config.performance = {}
+    }
+    config.performance.hints = false
+  }
+
   return plugin.buildConfigPipes.reduce((newConfig, fn) => fn(opts.env, newConfig), config)
 }
