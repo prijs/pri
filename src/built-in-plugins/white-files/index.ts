@@ -18,10 +18,10 @@ export default async (instance: typeof pri) => {
     return whiteList.concat(allIgnores).some(whiteName => path.format(file) === path.join(projectRootPath, whiteName))
   })
 
-  // src/utils/declare/**
+  // src/utils/**
   instance.project.whiteFileRules.add(file => {
     const relativePath = path.relative(projectRootPath, file.dir)
-    return relativePath.startsWith(`src${path.sep}utils${path.sep}declare`)
+    return relativePath.startsWith(`src${path.sep}utils`)
   })
 
   // src/pages/[folder]

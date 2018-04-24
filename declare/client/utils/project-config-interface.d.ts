@@ -52,11 +52,6 @@ export declare class IProjectConfig {
      */
     useServiceWorker: boolean;
     /**
-     * Prefetch chunks
-     * Warning: depend on service worker, should set useServiceWorker=true first.
-     */
-    prefetchChunks: boolean;
-    /**
      * Client server render
      * Warning: depend on service worker, should set useServiceWorker=true first.
      */
