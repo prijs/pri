@@ -132,6 +132,7 @@ export class Entry {
       `
       import * as React from "react"
       import * as ReactDOM from "react-dom"
+      import Loadable from "react-loadable"
       import App, { pageLoadableMap } from "./app"
 
       const ROOT_ID = "root"
@@ -151,7 +152,9 @@ export class Entry {
       }
 
       if ((window as any).enableSsr) {
-        ReactDOM.hydrate(${pipe.get("entryRenderApp", "<App />")}, document.getElementById(ROOT_ID))
+        Loadable.preloadAll().then(() => {
+          ReactDOM.hydrate(${pipe.get("entryRenderApp", "<App />")}, document.getElementById(ROOT_ID))
+        })
       } else {
         ReactDOM.render(${pipe.get("entryRenderApp", "<App />")}, document.getElementById(ROOT_ID))
       }
