@@ -86,7 +86,6 @@ export default async (instance: typeof pri) => {
             return `
               const ${page.componentName} = Loadable({
                 loader: () => ${importCode},
-                modules: ["${normalizePath(pageRequirePath)}"],
                 loading: (): any => null
               })\n
             `

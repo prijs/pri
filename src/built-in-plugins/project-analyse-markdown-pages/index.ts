@@ -1,5 +1,6 @@
 import * as fs from "fs-extra"
 import * as highlight from "highlight.js"
+import * as Htmltojsx from "htmltojsx"
 import * as _ from "lodash"
 import * as markdownIt from "markdown-it"
 import * as normalizePath from "normalize-path"
@@ -10,6 +11,10 @@ import { pri } from "../../node"
 import { ensureStartWithWebpackRelativePoint } from "../../utils/functional"
 import { md5 } from "../../utils/md5"
 import { markdownTempPath, pagesPath, tempPath } from "../../utils/structor-config"
+
+const htmlToJsxConverter = new Htmltojsx({
+  createClass: false
+})
 
 interface IResult {
   projectAnalyseMarkdownPages: {
@@ -51,6 +56,13 @@ const markdown = markdownIt({
 
 export default async (instance: typeof pri) => {
   const projectRootPath = instance.project.getProjectRootPath()
+
+  const markdownCache = new Map<
+    string,
+    {
+      lastContent: string
+    }
+  >()
 
   instance.project.whiteFileRules.add(file => {
     const relativePath = path.relative(projectRootPath, file.dir)
@@ -105,7 +117,6 @@ export default async (instance: typeof pri) => {
       return `
           ${header}
           import "highlight.js/styles/github.css"
-          import * as htmlReactParser from "html-react-parser"
         `
     })
 
@@ -116,11 +127,7 @@ export default async (instance: typeof pri) => {
             // Create esmodule file for markdown
             const fileContent = fs.readFileSync(path.format(page.file)).toString()
             const markedHTML = markdown.render(fileContent)
-            const markdownTsAbsolutePath = path.join(
-              projectRootPath,
-              markdownTempPath.dir,
-              page.componentName + ".html"
-            )
+            const markdownTsAbsolutePath = path.join(projectRootPath, markdownTempPath.dir, page.componentName + ".tsx")
             const markdownTsAbsolutePathWithoutExt = path.join(
               projectRootPath,
               markdownTempPath.dir,
@@ -130,20 +137,29 @@ export default async (instance: typeof pri) => {
               normalizePath(path.relative(tempPath.dir, markdownTsAbsolutePathWithoutExt))
             )
 
-            fs.outputFileSync(markdownTsAbsolutePath, markedHTML)
+            fs.outputFileSync(
+              markdownTsAbsolutePath,
+              `
+              import * as React from "react"
+              export default (
+                <div className="markdown-body">
+                  ${htmlToJsxConverter.convert(markedHTML)}
+                </div>
+              )
+            `
+            )
 
             // Add it's importer to app component.
             const markdownImportCode = `
-              import(/* webpackChunkName: "${page.chunkName}" */ "${markdownTsRelativePath}.html").then(code => {
+              import(/* webpackChunkName: "${page.chunkName}" */ "${markdownTsRelativePath}").then(code => {
                 ${entry.pipe.get("afterPageLoad", "")}
-                return () => <div className="markdown-body">{htmlReactParser(code.default)}</div>
+                return () => code.default
               })
             `
 
             return `
               const ${page.componentName} = Loadable({
                 loader: () => ${markdownImportCode},
-                modules: ["${markdownTsRelativePath}"],
                 loading: (): any => null
               })\n
             `
