@@ -124,7 +124,6 @@ export const initPlugins = async (projectRootPath: string) => {
   hasInitPlugins = true
 
   const projectPackageJsonPath = path.join(projectRootPath, "package.json")
-
   const builtInPlugins = getBuiltInPlugins(projectRootPath)
 
   getPriPlugins(path.join(projectRootPath, "package.json"), builtInPlugins)

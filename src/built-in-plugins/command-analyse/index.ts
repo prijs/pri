@@ -18,16 +18,16 @@ export default async (instance: typeof pri) => {
   const projectRootPath = instance.project.getProjectRootPath()
   const projectConfig = instance.project.getProjectConfig(env)
 
-  const result = await spinner("Analyse project", async () => {
-    const analyseInfo = await analyseProject(projectRootPath, env, projectConfig)
-    const entryPath = createEntry(projectRootPath, env, projectConfig)
-    return { analyseInfo, entryPath }
-  })
-
   instance.commands.registerCommand({
     name: "analyse",
     description: text.commander.init.description,
     action: async () => {
+      const result = await spinner("Analyse project", async () => {
+        const analyseInfo = await analyseProject(projectRootPath, env, projectConfig)
+        const entryPath = createEntry(projectRootPath, env, projectConfig)
+        return { analyseInfo, entryPath }
+      })
+
       // Build project
       const stats = await runWebpack({
         mode: "production",

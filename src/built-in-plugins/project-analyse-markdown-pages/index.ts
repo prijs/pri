@@ -148,29 +148,29 @@ export default async (instance: typeof pri) => {
               fs.outputFileSync(
                 markdownTsAbsolutePath,
                 `
-              import * as React from "react"
-              export default (
-                <div className="markdown-body">
-                  ${htmlToJsxConverter.convert(markedHTML)}
-                </div>
-              )
-            `
+                import * as React from "react"
+                export default (
+                  <div className="markdown-body">
+                    ${htmlToJsxConverter.convert(markedHTML)}
+                  </div>
+                )
+              `
               )
 
               // Add it's importer to app component.
               const markdownImportCode = `
-              import(/* webpackChunkName: "${page.chunkName}" */ "${markdownTsRelativePath}").then(code => {
-                ${entry.pipe.get("afterPageLoad", "")}
-                return () => code.default
-              })
-            `
+                import(/* webpackChunkName: "${page.chunkName}" */ "${markdownTsRelativePath}").then(code => {
+                  ${entry.pipe.get("afterPageLoad", "")}
+                  return () => code.default
+                })
+              `
 
               const pipeAppContent = `
-              const ${page.componentName} = Loadable({
-                loader: () => ${markdownImportCode},
-                loading: (): any => null
-              })\n
-            `
+                const ${page.componentName} = Loadable({
+                  loader: () => ${markdownImportCode},
+                  loading: (): any => null
+                })\n
+              `
 
               const markdownCache = {
                 originContent: fileContent,
