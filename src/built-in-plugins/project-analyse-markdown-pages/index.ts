@@ -57,12 +57,7 @@ const markdown = markdownIt({
 export default async (instance: typeof pri) => {
   const projectRootPath = instance.project.getProjectRootPath()
 
-  const markdownCache = new Map<
-    string,
-    {
-      lastContent: string
-    }
-  >()
+  const markdownCaches = new Map<string, { originContent: string; pipeAppContent: string }>()
 
   instance.project.whiteFileRules.add(file => {
     const relativePath = path.relative(projectRootPath, file.dir)
@@ -125,21 +120,34 @@ export default async (instance: typeof pri) => {
         ${analyseInfo.projectAnalyseMarkdownPages.pages
           .map(page => {
             // Create esmodule file for markdown
-            const fileContent = fs.readFileSync(path.format(page.file)).toString()
-            const markedHTML = markdown.render(fileContent)
-            const markdownTsAbsolutePath = path.join(projectRootPath, markdownTempPath.dir, page.componentName + ".tsx")
-            const markdownTsAbsolutePathWithoutExt = path.join(
-              projectRootPath,
-              markdownTempPath.dir,
-              page.componentName
-            )
-            const markdownTsRelativePath = ensureStartWithWebpackRelativePoint(
-              normalizePath(path.relative(tempPath.dir, markdownTsAbsolutePathWithoutExt))
-            )
+            const markdownFilePath = path.format(page.file)
+            const fileContent = fs.readFileSync(markdownFilePath).toString()
 
-            fs.outputFileSync(
-              markdownTsAbsolutePath,
-              `
+            if (
+              markdownCaches.has(markdownFilePath) &&
+              markdownCaches.get(markdownFilePath).originContent === fileContent
+            ) {
+              const markdownCache = markdownCaches.get(markdownFilePath)
+              return markdownCache.pipeAppContent
+            } else {
+              const markedHTML = markdown.render(fileContent)
+              const markdownTsAbsolutePath = path.join(
+                projectRootPath,
+                markdownTempPath.dir,
+                page.componentName + ".tsx"
+              )
+              const markdownTsAbsolutePathWithoutExt = path.join(
+                projectRootPath,
+                markdownTempPath.dir,
+                page.componentName
+              )
+              const markdownTsRelativePath = ensureStartWithWebpackRelativePoint(
+                normalizePath(path.relative(tempPath.dir, markdownTsAbsolutePathWithoutExt))
+              )
+
+              fs.outputFileSync(
+                markdownTsAbsolutePath,
+                `
               import * as React from "react"
               export default (
                 <div className="markdown-body">
@@ -147,22 +155,31 @@ export default async (instance: typeof pri) => {
                 </div>
               )
             `
-            )
+              )
 
-            // Add it's importer to app component.
-            const markdownImportCode = `
+              // Add it's importer to app component.
+              const markdownImportCode = `
               import(/* webpackChunkName: "${page.chunkName}" */ "${markdownTsRelativePath}").then(code => {
                 ${entry.pipe.get("afterPageLoad", "")}
                 return () => code.default
               })
             `
 
-            return `
+              const pipeAppContent = `
               const ${page.componentName} = Loadable({
                 loader: () => ${markdownImportCode},
                 loading: (): any => null
               })\n
             `
+
+              const markdownCache = {
+                originContent: fileContent,
+                pipeAppContent
+              }
+              markdownCaches.set(markdownFilePath, markdownCache)
+
+              return pipeAppContent
+            }
           })
           .join("\n")}
           ${entryComponent}
