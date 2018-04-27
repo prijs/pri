@@ -1,7 +1,10 @@
 import * as fs from "fs-extra"
+import * as highlight from "highlight.js"
 import * as _ from "lodash"
+import * as markdownIt from "markdown-it"
 import * as normalizePath from "normalize-path"
 import * as path from "path"
+import * as prettier from "prettier"
 import * as url from "url"
 import { pri } from "../../node"
 import { ensureStartWithWebpackRelativePoint } from "../../utils/functional"
@@ -20,14 +23,42 @@ interface IResult {
 }
 
 const safeName = (str: string) => _.upperFirst(_.camelCase(str))
-const MARKDOWN_WRAPPER = "MarkdownWrapper"
+
+const markdown = markdownIt({
+  html: true,
+  linkify: true,
+  typographer: true,
+  highlight: (str: string, lang: string) => {
+    if (lang === "tsx") {
+      lang = "jsx"
+    }
+
+    if (lang === "typescript") {
+      lang = "javascript"
+    }
+
+    if (lang && highlight.getLanguage(lang)) {
+      try {
+        return highlight.highlight(lang, str).value
+      } catch (__) {
+        //
+      }
+    }
+
+    return ""
+  }
+})
 
 export default async (instance: typeof pri) => {
   const projectRootPath = instance.project.getProjectRootPath()
 
   instance.project.whiteFileRules.add(file => {
     const relativePath = path.relative(projectRootPath, file.dir)
-    return relativePath.startsWith(`src${path.sep}pages`) && file.name === "index" && file.ext === ".md"
+    return (
+      relativePath.startsWith(`src${path.sep}pages`) &&
+      file.name === "index" &&
+      (file.ext === ".md" || file.ext === ".css" || file.ext === ".scss" || file.ext === ".less")
+    )
   })
 
   instance.project.onAnalyseProject((files, env, projectConfig, setPipe) => {
@@ -73,45 +104,9 @@ export default async (instance: typeof pri) => {
     entry.pipeAppHeader(header => {
       return `
           ${header}
-          import * as highlight from "highlight.js"
           import "highlight.js/styles/github.css"
-          import markdownIt from "markdown-it"
+          import * as htmlReactParser from "html-react-parser"
         `
-    })
-
-    entry.pipeAppBody(body => {
-      return `
-          const markdown = markdownIt({
-            html: true,
-            linkify: true,
-            typographer: true,
-            highlight: (str: string, lang: string) => {
-              if (lang === "tsx") {
-                lang = "jsx"
-              }
-
-              if (lang === "typescript") {
-                lang = "javascript"
-              }
-
-              if (lang && highlight.getLanguage(lang)) {
-                try {
-                  return highlight.highlight(lang, str).value;
-                } catch (__) {
-                  //
-                }
-              }
-
-              return ""
-            }
-          })
-
-          const ${MARKDOWN_WRAPPER} = ({ children }: any) => (
-            <div className="markdown-body" dangerouslySetInnerHTML={{ __html: markdown.render(children as string) }} />
-          )
-
-          ${body}
-      `
     })
 
     entry.pipeAppComponent(entryComponent => {
@@ -120,8 +115,12 @@ export default async (instance: typeof pri) => {
           .map(page => {
             // Create esmodule file for markdown
             const fileContent = fs.readFileSync(path.format(page.file)).toString()
-            const safeFileContent = fileContent.replace(/\`/g, `\\\``)
-            const markdownTsAbsolutePath = path.join(projectRootPath, markdownTempPath.dir, page.componentName + ".ts")
+            const markedHTML = markdown.render(fileContent)
+            const markdownTsAbsolutePath = path.join(
+              projectRootPath,
+              markdownTempPath.dir,
+              page.componentName + ".html"
+            )
             const markdownTsAbsolutePathWithoutExt = path.join(
               projectRootPath,
               markdownTempPath.dir,
@@ -131,12 +130,13 @@ export default async (instance: typeof pri) => {
               normalizePath(path.relative(tempPath.dir, markdownTsAbsolutePathWithoutExt))
             )
 
-            fs.outputFileSync(markdownTsAbsolutePath, `export default \`${safeFileContent}\``)
+            fs.outputFileSync(markdownTsAbsolutePath, markedHTML)
 
+            // Add it's importer to app component.
             const markdownImportCode = `
-              import(/* webpackChunkName: "${page.chunkName}" */ "${markdownTsRelativePath}").then(code => {
+              import(/* webpackChunkName: "${page.chunkName}" */ "${markdownTsRelativePath}.html").then(code => {
                 ${entry.pipe.get("afterPageLoad", "")}
-                return () => <${MARKDOWN_WRAPPER}>{code.default}</${MARKDOWN_WRAPPER}>
+                return () => <div className="markdown-body">{htmlReactParser(code.default)}</div>
               })
             `
 

@@ -101,49 +101,32 @@ export const getWebpackConfig = (opts: IOptions) => {
       hotUpdateMainFilename: "hot-update.[hash].json",
       hashDigestLength: 4
     },
-
     module: {
       rules: [
-        {
-          test: /\.(tsx|ts)?$/,
-          use: [babelLoader, tsLoader]
-        },
-        {
-          test: /\.css$/,
-          use: extraCssInProd(cssLoader)
-        },
-        {
-          test: /\.scss$/,
-          use: extraCssInProd(cssLoader, sassLoader)
-        },
-        {
-          test: /\.less$/,
-          use: extraCssInProd(cssLoader, lessLoader)
-        }
+        { test: /\.(tsx|ts)?$/, use: [babelLoader, tsLoader] },
+        { test: /\.css$/, use: extraCssInProd(cssLoader) },
+        { test: /\.scss$/, use: extraCssInProd(cssLoader, sassLoader) },
+        { test: /\.less$/, use: extraCssInProd(cssLoader, lessLoader) },
+        { test: /\.html$/, use: ["raw-loader"] }
       ]
     },
-
     resolve: {
       modules: [
         // From project node_modules
-        path.join(opts.projectRootPath, "node_modules"), // Self node_modules
+        path.join(opts.projectRootPath, "node_modules"),
         path.join(__dirname, "../../node_modules")
       ],
       extensions: [".js", ".jsx", ".tsx", ".ts", ".scss", ".less", ".css"]
-    },
-
+    }, // Self node_modules
     resolveLoader: {
       modules: [
         // From project node_modules
-        path.join(opts.projectRootPath, "node_modules"), // Self node_modules
+        path.join(opts.projectRootPath, "node_modules"),
         path.join(__dirname, "../../node_modules")
       ]
-    },
-
+    }, // Self node_modules
     plugins: [],
-
     optimization: { namedChunks: false },
-
     stats
   }
 
