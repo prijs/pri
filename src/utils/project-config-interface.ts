@@ -16,6 +16,12 @@ export class IProjectConfig {
    */
   public outCssFileName?: string = "main.[hash].css"
   /**
+   * Specify the development url, work both for `npm start` and `npm run preview`.
+   * In most scenes, it should not be configured.
+   * > Conflict with `devPort`
+   */
+  public devUrl?: string = null
+  /**
    * Dist dir path.
    * Only take effect on `npm run build` | `pri build`.
    */

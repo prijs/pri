@@ -61,11 +61,15 @@ export const CommandPreview = async (instance: typeof pri) => {
     await spinner("Create http server", async () => http.createServer(app.callback()).listen(freePort))
   }
 
-  open(
-    ensureEndWithSlash(
-      urlJoin(`${projectConfig.useHttps ? "https" : "http"}://localhost:${freePort}`, projectConfig.baseHref)
+  if (projectConfig.devUrl) {
+    open(projectConfig.devUrl)
+  } else {
+    open(
+      ensureEndWithSlash(
+        urlJoin(`${projectConfig.useHttps ? "https" : "http"}://localhost:${freePort}`, projectConfig.baseHref)
+      )
     )
-  )
+  }
 }
 
 export default async (instance: typeof pri) => {

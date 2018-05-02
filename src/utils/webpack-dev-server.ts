@@ -10,6 +10,7 @@ import * as url from "url"
 import * as urlJoin from "url-join"
 import * as webpack from "webpack"
 import * as webpackDevServer from "webpack-dev-server"
+import { ProjectConfig } from "../../client"
 import { tempPath } from "../utils/structor-config"
 import { IProjectConfig } from "./project-config-interface"
 import { compilerLogger } from "./webpack-compiler-log"
@@ -89,11 +90,15 @@ export const runWebpackDevServer = async (opts: IOptions) => {
   const devServer = new webpackDevServer(compiler, webpackDevServerConfig)
 
   devServer.listen(opts.devServerPort, "127.0.0.1", () => {
-    open(
-      urlJoin(
-        `${opts.projectConfig.useHttps ? "https" : "http"}://localhost:${opts.devServerPort}`,
-        opts.projectConfig.baseHref
+    if (opts.projectConfig.devUrl) {
+      open(opts.projectConfig.devUrl)
+    } else {
+      open(
+        urlJoin(
+          `${opts.projectConfig.useHttps ? "https" : "http"}://localhost:${opts.devServerPort}`,
+          opts.projectConfig.baseHref
+        )
       )
-    )
+    }
   })
 }

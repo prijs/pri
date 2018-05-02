@@ -192,7 +192,6 @@ export default async (instance: typeof pri) => {
       ${analyseInfo.projectAnalyseMarkdownPages.pages
         .map(page => {
           return `
-            ${page.componentName}.preload()
             pageLoadableMap.set("${page.routerPath}", ${page.componentName})
           `
         })
