@@ -1,5 +1,7 @@
 import * as colors from "colors"
+import * as path from "path"
 import { Configuration, Linter } from "tslint"
+import { tempPath } from "../utils/structor-config"
 import { log, spinner } from "./log"
 import { findNearestNodemodulesFile } from "./npm-finder"
 
@@ -12,11 +14,17 @@ export async function lint(projectRootPath: string) {
   const program = Linter.createProgram("tsconfig.json", projectRootPath)
   const linter = new Linter(lintOptions, program)
   const files = Linter.getFileNames(program)
-  files.forEach(file => {
-    const fileContents = program.getSourceFile(file).getFullText()
-    const configuration = Configuration.findConfiguration(configurationFilename, file).results
-    linter.lint(file, fileContents, configuration)
-  })
+
+  files
+    .filter(filePath => {
+      return !filePath.startsWith(path.join(projectRootPath, tempPath.dir))
+    })
+    .forEach(filePath => {
+      const fileContents = program.getSourceFile(filePath).getFullText()
+      const configuration = Configuration.findConfiguration(configurationFilename, filePath).results
+      linter.lint(filePath, fileContents, configuration)
+    })
+
   const results = linter.getResult()
   if (results.errorCount > 0) {
     log(colors.red(`Tslint errors:`))

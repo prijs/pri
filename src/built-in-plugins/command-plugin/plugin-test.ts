@@ -5,7 +5,7 @@ import * as path from "path"
 import { pri } from "../../node"
 import { log } from "../../utils/log"
 import { findNearestNodemodulesFile } from "../../utils/npm-finder"
-import { testsPath, tsBuiltPath } from "../../utils/structor-config"
+import { srcPath, testsPath, tsBuiltPath } from "../../utils/structor-config"
 import text from "../../utils/text"
 import { tsPlusBabel } from "../../utils/ts-plus-babel"
 
