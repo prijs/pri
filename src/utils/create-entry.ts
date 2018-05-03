@@ -113,7 +113,7 @@ export class Entry {
     return pipe.get(
       "appRouter",
       `
-      <Router history={customHistory}>
+      <Router history={${pipe.get("appRouterHistory", "customHistory")}}>
         <Switch>
           ${this.getAppRoutes()}
         </Switch>

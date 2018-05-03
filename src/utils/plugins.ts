@@ -77,6 +77,7 @@ export type ICreateEntry = (
 export type IBuildConfigPipe = (env: "local" | "prod", config: webpack.Configuration) => webpack.Configuration
 
 export type ILoaderOptionsPipe = (env: "local" | "prod", options: any) => any
+export type ILoaderIncludePipe = (env: "local" | "prod", options: any) => any
 
 export type IAfterProdBuild = (stats?: any, projectConfig?: IProjectConfig) => any
 
@@ -101,6 +102,10 @@ export class IPluginConfig {
   public buildConfigLessLoaderOptionsPipes: ILoaderOptionsPipe[] = []
   public buildConfigBabelLoaderOptionsPipes: ILoaderOptionsPipe[] = []
   public buildConfigTsLoaderOptionsPipes: ILoaderOptionsPipe[] = []
+
+  public buildConfigTsLoaderIncludePipes: ILoaderIncludePipe[] = []
+  public buildConfigSassLoaderIncludePipes: ILoaderIncludePipe[] = []
+  public buildConfigLessLoaderIncludePipes: ILoaderIncludePipe[] = []
 
   public buildAfterProdBuild: IAfterProdBuild[] = []
 
@@ -165,7 +170,9 @@ function getPriPlugins(packageJsonPath: string, extendPlugins: any = {}) {
         paths: [__dirname, projectRootPath]
       })
 
-      const subPackageAbsolutePath = getPackageJsonPathByPathOrNpmName(subPackageName, projectRootPath)
+      const subPackageAbsolutePath = !subPackageVersion.startsWith("file:")
+        ? getPackageJsonPathByPathOrNpmName(subPackageName, projectRootPath)
+        : path.resolve(projectRootPath, subPackageVersion.replace(/^file\:/g, ""), "package.json")
 
       const subPackageJson = fs.readJsonSync(subPackageAbsolutePath, { throws: false })
       const instance = getDefault(require(subPackageRealEntryFilePath))

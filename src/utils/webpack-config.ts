@@ -5,6 +5,7 @@ import * as path from "path"
 import * as webpack from "webpack"
 import { plugin } from "../utils/plugins"
 import { IProjectConfig } from "../utils/project-config-interface"
+import { srcPath, tempPath } from "../utils/structor-config"
 
 interface IOptions {
   mode: "development" | "production"
@@ -103,10 +104,31 @@ export const getWebpackConfig = (opts: IOptions) => {
     },
     module: {
       rules: [
-        { test: /\.(tsx|ts)?$/, use: [babelLoader, tsLoader] },
+        {
+          test: /\.(tsx|ts)?$/,
+          use: [babelLoader, tsLoader],
+          include: plugin.buildConfigTsLoaderIncludePipes.reduce((options, fn) => fn(opts.env, options), [
+            path.join(opts.projectRootPath, srcPath.dir),
+            path.join(opts.projectRootPath, tempPath.dir)
+          ])
+        },
         { test: /\.css$/, use: extraCssInProd(cssLoader) },
-        { test: /\.scss$/, use: extraCssInProd(cssLoader, sassLoader) },
-        { test: /\.less$/, use: extraCssInProd(cssLoader, lessLoader) },
+        {
+          test: /\.scss$/,
+          use: extraCssInProd(cssLoader, sassLoader),
+          include: plugin.buildConfigSassLoaderIncludePipes.reduce((options, fn) => fn(opts.env, options), [
+            path.join(opts.projectRootPath, srcPath.dir),
+            path.join(opts.projectRootPath, tempPath.dir)
+          ])
+        },
+        {
+          test: /\.less$/,
+          use: extraCssInProd(cssLoader, lessLoader),
+          include: plugin.buildConfigLessLoaderIncludePipes.reduce((options, fn) => fn(opts.env, options), [
+            path.join(opts.projectRootPath, srcPath.dir),
+            path.join(opts.projectRootPath, tempPath.dir)
+          ])
+        },
         { test: /\.html$/, use: ["raw-loader"] }
       ]
     },
@@ -117,18 +139,18 @@ export const getWebpackConfig = (opts: IOptions) => {
         path.join(__dirname, "../../node_modules")
       ],
       extensions: [".js", ".jsx", ".tsx", ".ts", ".scss", ".less", ".css"]
-    }, // Self node_modules
+    },
     resolveLoader: {
       modules: [
-        // From project node_modules
+        // From project node_modules // Self node_modules
         path.join(opts.projectRootPath, "node_modules"),
         path.join(__dirname, "../../node_modules")
       ]
-    }, // Self node_modules
+    },
     plugins: [],
     optimization: { namedChunks: false },
     stats
-  }
+  } // Self node_modules
 
   if (opts.env === "local") {
     if (opts.htmlTemplatePath) {
