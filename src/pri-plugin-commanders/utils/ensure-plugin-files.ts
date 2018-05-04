@@ -27,10 +27,10 @@ export function ensurePackageJson(projectRootPath: string) {
             types: "src/index.ts",
             main: path.join(tsBuiltPath.dir, "src/index.js"),
             scripts: {
-              start: "pri plugin-watch",
-              prepublishOnly: "pri plugin-build",
+              start: "pri plugin watch",
+              prepublishOnly: "pri plugin build",
               release: "npm publish",
-              test: "pri plugin-test"
+              test: "pri plugin test"
             },
             devDependencies: { pri: "*" }
           }),

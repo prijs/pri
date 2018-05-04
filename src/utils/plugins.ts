@@ -28,7 +28,6 @@ const getBuiltInPlugins = (projectRootPath: string) => {
     ["pri-plugin-command-build", "../built-in-plugins/command-build/index.js"],
     ["pri-plugin-command-init", "../built-in-plugins/command-init/index.js"],
     ["pri-plugin-command-preview", "../built-in-plugins/command-preview/index.js"],
-    ["pri-plugin-command-plugin", "../built-in-plugins/command-plugin/index.js"],
     ["pri-plugin-command-test", "../built-in-plugins/command-test/index.js"],
     ["pri-plugin-project-analyse-config", "../built-in-plugins/project-analyse-config/index.js"],
     ["pri-plugin-project-analyse-layouts", "../built-in-plugins/project-analyse-layouts/index.js"],

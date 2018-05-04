@@ -1,10 +1,10 @@
 import * as colors from "colors"
 import * as gulp from "gulp"
-import { log } from "../../utils/log"
-import { tsBuiltPath } from "../../utils/structor-config"
-import { tsPlusBabel } from "../../utils/ts-plus-babel"
+import { log } from "../utils/log"
+import { tsBuiltPath } from "../utils/structor-config"
+import { tsPlusBabel } from "../utils/ts-plus-babel"
 
-export const CommandPluginWatch = async (projectRootPath: string) => {
+export default async (projectRootPath: string) => {
   log("Watching plugin's files.")
 
   const sourceBlob = "src/**/*.{tsx,ts}"

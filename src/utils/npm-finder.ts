@@ -1,22 +1,27 @@
+import * as colors from "colors"
 import * as fs from "fs"
 import * as path from "path"
+import { log } from "./log"
 
 export const findNearestNodemodules = () => {
   return findNearestNodemodulesByPath(__dirname)
 }
 
 export const findNearestNodemodulesFile = (tryRelativeFilePath: string) => {
-  const nodemodulePath = findNearestNodemodulesByPath(
-    __dirname,
-    tryRelativeFilePath
-  )
-  return path.join(nodemodulePath, tryRelativeFilePath)
+  try {
+    const nodemodulePath = findNearestNodemodulesByPath(__dirname, tryRelativeFilePath)
+    return path.join(nodemodulePath, tryRelativeFilePath)
+  } catch (error) {
+    log(colors.red(`${tryRelativeFilePath} not found!`))
+    process.exit(0)
+  }
 }
 
-function findNearestNodemodulesByPath(
-  filePath: string,
-  tryRelativeFilePath?: string
-): string {
+function findNearestNodemodulesByPath(filePath: string, tryRelativeFilePath?: string): string {
+  if (filePath === "/") {
+    throw Error("Not found")
+  }
+
   const findPath = path.join(filePath, "node_modules")
 
   if (fs.existsSync(findPath)) {
@@ -31,8 +36,5 @@ function findNearestNodemodulesByPath(
   }
 
   // Find parent dir
-  return findNearestNodemodulesByPath(
-    path.resolve(filePath, ".."),
-    tryRelativeFilePath
-  )
+  return findNearestNodemodulesByPath(path.resolve(filePath, ".."), tryRelativeFilePath)
 }
