@@ -77,6 +77,7 @@ export type IBuildConfigPipe = (env: "local" | "prod", config: webpack.Configura
 
 export type ILoaderOptionsPipe = (env: "local" | "prod", options: any) => any
 export type ILoaderIncludePipe = (env: "local" | "prod", options: any) => any
+export type ILoaderExcludePipe = (env: "local" | "prod", options: any) => any
 
 export type IAfterProdBuild = (stats?: any, projectConfig?: IProjectConfig) => any
 
@@ -107,6 +108,10 @@ export class IPluginConfig {
   public buildConfigTsLoaderIncludePipes: ILoaderIncludePipe[] = []
   public buildConfigSassLoaderIncludePipes: ILoaderIncludePipe[] = []
   public buildConfigLessLoaderIncludePipes: ILoaderIncludePipe[] = []
+
+  public buildConfigTsLoaderExcludePipes: ILoaderExcludePipe[] = []
+  public buildConfigSassLoaderExcludePipes: ILoaderExcludePipe[] = []
+  public buildConfigLessLoaderExcludePipes: ILoaderExcludePipe[] = []
 
   public buildAfterProdBuild: IAfterProdBuild[] = []
 
@@ -150,10 +155,10 @@ function getPriPlugins(packageJsonPath: string, extendPlugins: any = {}) {
   const packageJson = packageJsonExist ? fs.readJsonSync(packageJsonPath) : null
   const allDependencies = packageJson
     ? {
-        ...packageJson.dependencies,
-        ...packageJson.devDependencies,
-        ...extendPlugins
-      }
+      ...packageJson.dependencies,
+      ...packageJson.devDependencies,
+      ...extendPlugins
+    }
     : extendPlugins
 
   Object.keys(allDependencies)

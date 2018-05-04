@@ -110,7 +110,8 @@ export const getWebpackConfig = (opts: IOptions) => {
           include: plugin.buildConfigTsLoaderIncludePipes.reduce((options, fn) => fn(opts.env, options), [
             path.join(opts.projectRootPath, srcPath.dir),
             path.join(opts.projectRootPath, tempPath.dir)
-          ])
+          ]),
+          exclude: plugin.buildConfigTsLoaderExcludePipes.reduce((options, fn) => fn(opts.env, options), [])
         },
         { test: /\.css$/, use: extraCssInProd(cssLoader) },
         {
@@ -119,7 +120,8 @@ export const getWebpackConfig = (opts: IOptions) => {
           include: plugin.buildConfigSassLoaderIncludePipes.reduce((options, fn) => fn(opts.env, options), [
             path.join(opts.projectRootPath, srcPath.dir),
             path.join(opts.projectRootPath, tempPath.dir)
-          ])
+          ]),
+          exclude: plugin.buildConfigSassLoaderExcludePipes.reduce((options, fn) => fn(opts.env, options), [])
         },
         {
           test: /\.less$/,
@@ -127,7 +129,8 @@ export const getWebpackConfig = (opts: IOptions) => {
           include: plugin.buildConfigLessLoaderIncludePipes.reduce((options, fn) => fn(opts.env, options), [
             path.join(opts.projectRootPath, srcPath.dir),
             path.join(opts.projectRootPath, tempPath.dir)
-          ])
+          ]),
+          exclude: plugin.buildConfigLessLoaderExcludePipes.reduce((options, fn) => fn(opts.env, options), [])
         },
         { test: /\.html$/, use: ["raw-loader"] }
       ]

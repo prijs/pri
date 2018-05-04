@@ -1,5 +1,12 @@
 import * as webpack from "webpack"
-import { IAfterProdBuild, IBuildConfigPipe, ILoaderIncludePipe, ILoaderOptionsPipe, plugin } from "../utils/plugins"
+import {
+  IAfterProdBuild,
+  IBuildConfigPipe,
+  ILoaderExcludePipe,
+  ILoaderIncludePipe,
+  ILoaderOptionsPipe,
+  plugin
+} from "../utils/plugins"
 
 export const pipeConfig = (pipe: IBuildConfigPipe) => {
   plugin.buildConfigPipes.push(pipe)
@@ -39,6 +46,18 @@ export const pipeSassInclude = (pipe: ILoaderIncludePipe) => {
 
 export const pipeLessInclude = (pipe: ILoaderIncludePipe) => {
   plugin.buildConfigLessLoaderIncludePipes.push(pipe)
+}
+
+export const pipeTsExclude = (pipe: ILoaderExcludePipe) => {
+  plugin.buildConfigTsLoaderExcludePipes.push(pipe)
+}
+
+export const pipeSassExclude = (pipe: ILoaderExcludePipe) => {
+  plugin.buildConfigSassLoaderExcludePipes.push(pipe)
+}
+
+export const pipeLessExclude = (pipe: ILoaderExcludePipe) => {
+  plugin.buildConfigLessLoaderExcludePipes.push(pipe)
 }
 
 export const afterProdBuild = (callback: IAfterProdBuild) => {
