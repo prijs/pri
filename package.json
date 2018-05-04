@@ -1,6 +1,6 @@
 {
   "name": "pri",
-  "version": "0.7.31",
+  "version": "0.7.32",
   "types": "src/node/index.ts",
   "main": "built/node/index.js",
   "scripts": {
@@ -14,7 +14,8 @@
   },
   "pre-commit": ["lint"],
   "bin": {
-    "pri": "built/bin.js"
+    "pri": "built/bin.js",
+    "pri-plugin": "built/bin-plugin.js"
   },
   "dependencies": {
     "@babel/core": "^7.0.0-beta.44",
