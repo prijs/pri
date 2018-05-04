@@ -1,6 +1,7 @@
 import * as colors from "colors"
 import * as path from "path"
 import { Configuration, Linter } from "tslint"
+import { plugin } from "../utils/plugins"
 import { tempPath } from "../utils/structor-config"
 import { log, spinner } from "./log"
 import { findNearestNodemodulesFile } from "./npm-finder"
@@ -18,6 +19,13 @@ export async function lint(projectRootPath: string) {
   files
     .filter(filePath => {
       return !filePath.startsWith(path.join(projectRootPath, tempPath.dir))
+    })
+    .filter(filePath => {
+      if (plugin.lintFilters.some(lintFilter => !lintFilter(filePath))) {
+        return false
+      }
+
+      return true
     })
     .forEach(filePath => {
       const fileContents = program.getSourceFile(filePath).getFullText()

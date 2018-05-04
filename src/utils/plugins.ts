@@ -89,6 +89,8 @@ export interface IEnsureProjectFilesQueue {
   pipeContent: (prev?: string) => string
 }
 
+export type ILintFilter = (filePath?: string) => boolean
+
 export class IPluginConfig {
   public analyseInfo?: any = {}
 
@@ -117,6 +119,8 @@ export class IPluginConfig {
   public ensureProjectFilesQueue: IEnsureProjectFilesQueue[] = []
 
   public devServices: { socketListeners: Array<{ name: string; callback: () => void }> } = { socketListeners: [] }
+
+  public lintFilters: ILintFilter[] = []
 }
 
 export const plugin: IPluginConfig = new IPluginConfig()

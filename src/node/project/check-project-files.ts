@@ -1,3 +1,4 @@
+import * as colors from "colors"
 import * as path from "path"
 import { log } from "../../utils/log"
 import { plugin } from "../../utils/plugins"
@@ -10,7 +11,8 @@ export const checkProjectFiles = async (projectConfig: IProjectConfig) => {
   const files = await walkProjectFiles(getProjectRootPath(), projectConfig)
   files.forEach(file => {
     if (!plugin.whiteFileRules.some(whiteFileRule => whiteFileRule(file))) {
-      throw Error(`Unexpected file or directory: ${path.format(file)}`)
+      log(colors.red(`Unexpected file or directory: ${path.format(file)}`))
+      process.exit(0)
     }
   })
 }
