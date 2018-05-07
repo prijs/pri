@@ -81,14 +81,9 @@ async function main() {
   commander.command("plugin", "Operator for pri plugin.")
 
   /**
-   * Parse argv.
-   */
-  commander.parse(process.argv)
-
-  /**
    * When no args given, use dev command
    */
-  if (!commander.args.length) {
+  if (!process.argv[2]) {
     const defaultCommand = plugin.commands.find(command => command.isDefault === true)
 
     if (defaultCommand) {
@@ -100,6 +95,11 @@ async function main() {
    * Update notify.
    */
   updateNotifier({ pkg }).notify()
+
+  /**
+   * Parse argv.
+   */
+  commander.parse(process.argv)
 }
 
 main()
