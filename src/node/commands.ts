@@ -17,6 +17,7 @@ interface IExpandCommand {
   name: string
   beforeAction?: any
   afterAction?: any
+  options?: any[][]
 }
 
 export const expandCommand = (opts: IExpandCommand) => {

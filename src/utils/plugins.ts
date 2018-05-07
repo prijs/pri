@@ -59,6 +59,8 @@ export interface ICommand {
   options?: string[][]
 }
 
+export type IDevDllList = (list: string[]) => string[]
+
 export type IAnalyseProject = (
   projectFilesParsedPaths?: Array<path.ParsedPath & { isDir: boolean }>,
   env?: "local" | "prod",
@@ -126,6 +128,8 @@ export class IPluginConfig {
   public devServices: { socketListeners: Array<{ name: string; callback: () => void }> } = { socketListeners: [] }
 
   public lintFilters: ILintFilter[] = []
+
+  public devDllPipes: IDevDllList[] = []
 }
 
 export const plugin: IPluginConfig = new IPluginConfig()
