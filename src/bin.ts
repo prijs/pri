@@ -45,6 +45,8 @@ async function runCommandAction(commandDetails: any[], args: any[]) {
 async function main() {
   if (process.argv[2] !== "plugin") {
     await initPlugins(process.cwd())
+  } else {
+    commander.command("plugin", "Operator for pri plugin.")
   }
 
   commander.version(pkg.version, "-v, --version")
@@ -77,8 +79,6 @@ async function main() {
       mainCommand.options.forEach(option => command.option.apply(command, option))
     }
   })
-
-  commander.command("plugin", "Operator for pri plugin.")
 
   /**
    * When no args given, use dev command
