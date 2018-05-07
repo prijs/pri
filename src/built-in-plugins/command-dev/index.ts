@@ -27,6 +27,7 @@ import { runWebpackDevServer } from "../../utils/webpack-dev-server"
 import { WrapContent } from "../../utils/webpack-plugin-wrap-content"
 import dashboardClientServer from "./dashboard/server/client-server"
 import dashboardServer from "./dashboard/server/index"
+import { runDllWebpack } from "./webpack"
 
 const projectRootPath = process.cwd()
 const dllFileName = "main.dll.js"
@@ -189,12 +190,12 @@ function createDashboardEntry() {
       const dashboard = require("${dashboardEntryMainPath}").default
 
       ${
-        webUiEntries.length > 0
-          ? `
+      webUiEntries.length > 0
+        ? `
           ${webUiEntries.join("\n")}
           dashboard([${webUiEntries.map((each, index) => `plugin${index}`).join(",")}])
         `
-          : `
+        : `
           dashboard()
         `
       }
@@ -419,20 +420,6 @@ async function bundleDlls() {
   ) {
     log(colors.blue("\nBundle dlls\n"))
 
-    execSync(
-      [
-        `${findNearestNodemodulesFile("/.bin/webpack")}`,
-        `--mode development`,
-        `--progress`,
-        `--config ${path.join(__dirname, "./webpack.dll.config.js")}`,
-        `--env.projectRootPath ${projectRootPath}`,
-        `--env.dllOutPath ${dllOutPath}`,
-        `--env.dllFileName ${dllFileName}`,
-        `--env.dllMainfestName ${dllMainfestName}`
-      ].join(" "),
-      {
-        stdio: "inherit"
-      }
-    )
+    await runDllWebpack({ projectRootPath, dllOutPath, dllFileName, dllMainfestName })
   }
 }

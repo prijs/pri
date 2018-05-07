@@ -3,11 +3,12 @@ import * as path from "path"
 import * as webpack from "webpack"
 import * as yargs from "yargs"
 import { plugin } from "../../utils/plugins"
-
-const projectRootPath = yargs.argv.env.projectRootPath
-const dllOutPath = yargs.argv.env.dllOutPath
-const dllFileName = yargs.argv.env.dllFileName
-const dllMainfestName = yargs.argv.env.dllMainfestName
+interface IOptions {
+  projectRootPath: string
+  dllOutPath: string
+  dllFileName: string
+  dllMainfestName: string
+}
 
 const stats = {
   warnings: false,
@@ -17,73 +18,76 @@ const stats = {
   hash: false
 }
 
-export default {
-  entry: {
-    library: plugin.devDllPipes.reduce((all, fn) => fn(all), [
-      "react",
-      "react-dom",
-      "lodash",
-      "dob",
-      "dob-react",
-      "antd",
-      "antd/dist/antd.css",
-      "highlight.js",
-      "markdown-it",
-      "react-loadable",
-      "react-router",
-      "styled-components",
-      "history",
-      "@ali/pri/client",
+export default (opts: IOptions) =>
+  ({
+    mode: "development",
 
-      /** include this will make hot load invaild! */
-      // "react-hot-loader",
+    entry: {
+      library: plugin.devDllPipes.reduce((all, fn) => fn(all), [
+        "react",
+        "react-dom",
+        "lodash",
+        "dob",
+        "dob-react",
+        "antd",
+        "antd/dist/antd.css",
+        "highlight.js",
+        "markdown-it",
+        "react-loadable",
+        "react-router",
+        "styled-components",
+        "history",
+        "@ali/pri/client",
 
-      // /** webpack */
-      "sockjs-client/dist/sockjs.js",
-      "html-entities"
-    ])
-  },
+        /** include this will make hot load invaild! */
+        // "react-hot-loader",
 
-  output: {
-    filename: dllFileName,
-    path: dllOutPath,
-    library: "library"
-  },
+        // /** webpack */
+        "sockjs-client/dist/sockjs.js",
+        "html-entities"
+      ])
+    },
 
-  plugins: [
-    new webpack.DllPlugin({
-      path: path.join(dllOutPath, dllMainfestName),
-      name: "library"
-    })
-  ],
+    output: {
+      filename: opts.dllFileName,
+      path: opts.dllOutPath,
+      library: "library"
+    },
 
-  module: {
-    rules: [
-      {
-        test: /\.css/,
-        use: ["style-loader", "css-loader"]
-      }
-    ]
-  },
-
-  resolve: {
-    modules: [
-      // From project node_modules
-      path.join(projectRootPath, "node_modules"),
-      // Self node_modules
-      path.join(__dirname, "../../../node_modules")
+    plugins: [
+      new webpack.DllPlugin({
+        path: path.join(opts.dllOutPath, opts.dllMainfestName),
+        name: "library"
+      })
     ],
-    extensions: [".js", ".jsx", ".tsx", ".ts", ".scss", ".less", ".css"]
-  },
 
-  resolveLoader: {
-    modules: [
-      // From project node_modules
-      path.join(projectRootPath, "node_modules"),
-      // Self node_modules
-      path.join(__dirname, "../../../node_modules")
-    ]
-  },
+    module: {
+      rules: [
+        {
+          test: /\.css/,
+          use: ["style-loader", "css-loader"]
+        }
+      ]
+    },
 
-  stats
-}
+    resolve: {
+      modules: [
+        // From project node_modules
+        path.join(opts.projectRootPath, "node_modules"),
+        // Self node_modules
+        path.join(__dirname, "../../../node_modules")
+      ],
+      extensions: [".js", ".jsx", ".tsx", ".ts", ".scss", ".less", ".css"]
+    },
+
+    resolveLoader: {
+      modules: [
+        // From project node_modules
+        path.join(opts.projectRootPath, "node_modules"),
+        // Self node_modules
+        path.join(__dirname, "../../../node_modules")
+      ]
+    },
+
+    stats
+  } as webpack.Configuration)
