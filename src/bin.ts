@@ -75,9 +75,12 @@ async function main() {
         await runCommandAction(commandDetails, args)
       })
 
-    if (mainCommand.options) {
-      mainCommand.options.forEach(option => command.option.apply(command, option))
-    }
+    // Set options
+    commandDetails.forEach(commandDetail => {
+      if (commandDetail.options) {
+        commandDetail.options.forEach(option => command.option.apply(command, option))
+      }
+    })
   })
 
   /**
