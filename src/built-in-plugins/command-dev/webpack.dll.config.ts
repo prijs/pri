@@ -2,6 +2,7 @@ import * as crypto from "crypto"
 import * as path from "path"
 import * as webpack from "webpack"
 import * as yargs from "yargs"
+import { plugin } from "../../utils/plugins"
 
 const projectRootPath = yargs.argv.env.projectRootPath
 const dllOutPath = yargs.argv.env.dllOutPath
@@ -18,7 +19,7 @@ const stats = {
 
 export default {
   entry: {
-    library: [
+    library: plugin.devDllPipes.reduce((all, fn) => fn(all), [
       "react",
       "react-dom",
       "lodash",
@@ -29,10 +30,10 @@ export default {
       "highlight.js",
       "markdown-it",
       "react-loadable",
-      "react-router-dom",
+      "react-router",
       "styled-components",
-      "history/createBrowserHistory",
-      "pri/client",
+      "history",
+      "@ali/pri/client",
 
       /** include this will make hot load invaild! */
       // "react-hot-loader",
@@ -40,7 +41,7 @@ export default {
       // /** webpack */
       "sockjs-client/dist/sockjs.js",
       "html-entities"
-    ]
+    ])
   },
 
   output: {
