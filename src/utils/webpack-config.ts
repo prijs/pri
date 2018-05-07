@@ -169,7 +169,12 @@ export const getWebpackConfig = (opts: IOptions) => {
   }
 
   if (opts.env === "prod") {
-    config.plugins.push(new ExtractTextPlugin(outCssFileName))
+    config.plugins.push(
+      new ExtractTextPlugin({
+        filename: outCssFileName,
+        allChunks: true
+      })
+    )
   }
 
   if (opts.env === "prod") {
