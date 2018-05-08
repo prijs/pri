@@ -175,7 +175,7 @@ export default async (instance: typeof pri) => {
         JSON.stringify(
           _.merge({}, prevJson, {
             scripts: {
-              start: "pri",
+              start: "pri dev",
               build: "pri build",
               preview: "pri preview",
               analyse: "pri analyse",
