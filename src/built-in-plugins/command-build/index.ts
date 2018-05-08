@@ -122,6 +122,7 @@ export default async (instance: typeof pri) => {
   instance.commands.registerCommand({
     name: "build",
     description: text.commander.build.description,
+    options: [["-c, --cloud", "Cloud build tag"]],
     action: async () => {
       await CommandBuild(instance)
 

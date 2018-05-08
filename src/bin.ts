@@ -16,7 +16,7 @@ import { pri } from "./node"
 
 // Check node version
 if (semver.lte(process.version, "8.0.0")) {
-  log(`nodejs version should be greater than 8, current is ${process.version}`)
+  log(colors.red(`nodejs version should be greater than 8, current is ${process.version}`))
   process.exit(0)
 }
 
