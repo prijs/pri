@@ -6,8 +6,6 @@ import * as project from "./project/index"
 import * as self from "./self"
 import * as serviceWorker from "./service-worker"
 
-import { generateCertificate } from "../utils/generate-certificate"
-
 export const pri = {
   /**
    * Operate cli commands
@@ -34,7 +32,6 @@ export const pri = {
    */
   serviceWorker,
 
-  generateCertificate,
   ...self
 }
 

@@ -37,7 +37,7 @@ export default (opts: IOptions) =>
         "react-router",
         "styled-components",
         "history",
-        "@ali/pri/client",
+        "pri/client",
 
         /** include this will make hot load invaild! */
         // "react-hot-loader",
