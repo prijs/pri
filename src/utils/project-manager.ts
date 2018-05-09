@@ -23,11 +23,10 @@ export async function addPage(
     throw Error(`${options.path} already exist!`)
   }
 
-  if (plugin.analyseInfo.projectAnalyseDob.storeFiles.length === 0) {
-    fs.outputFileSync(
-      fileFullPath,
-      prettier.format(
-        `
+  fs.outputFileSync(
+    fileFullPath,
+    prettier.format(
+      `
       import * as React from "react"
 
       class Props {
@@ -51,45 +50,9 @@ export async function addPage(
         }
       }
     `,
-        { semi: true, singleQuote: true, parser: "typescript" }
-      )
+      { semi: true, singleQuote: true, parser: "typescript" }
     )
-  } else {
-    const helperAbsolutePath = path.join(projectRootPath, helperPath.dir, helperPath.name)
-    const fileAbsoluteDirPath = path.parse(fileFullPath).dir
-    const relativeToHelperPath = path.relative(fileAbsoluteDirPath, helperAbsolutePath)
-    fs.outputFileSync(
-      fileFullPath,
-      prettier.format(
-        `
-      import * as React from "react"
-      import { stores } from "${normalizePath(relativeToHelperPath)}"
-
-      class Props {
-
-      }
-
-      class State {
-
-      }
-
-      export default class Page extends React.PureComponent<Props & typeof stores, State> {
-        public static defaultProps = new Props()
-        public state = new State()
-
-        public render() {
-          return (
-            <div>
-              New page for ${options.path}
-            </div>
-          )
-        }
-      }
-    `,
-        { semi: true, singleQuote: true, parser: "typescript" }
-      )
-    )
-  }
+  )
 }
 
 export async function createLayout(projectRootPath: string) {
