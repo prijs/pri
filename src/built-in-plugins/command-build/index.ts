@@ -21,7 +21,12 @@ import { getStaticHtmlPaths } from "./generate-static-html"
 
 const projectRootPath = process.cwd()
 
-export const CommandBuild = async (instance: typeof pri) => {
+export const CommandBuild = async (
+  instance: typeof pri,
+  opts?: {
+    publicPath?: string
+  }
+) => {
   const env = "prod"
   const projectConfig = getConfig(projectRootPath, env)
 
@@ -55,6 +60,7 @@ export const CommandBuild = async (instance: typeof pri) => {
     projectRootPath,
     env,
     entryPath: result.entryPath,
+    publicPath: opts.publicPath, // If unset, use config value.
     projectConfig,
     pipeConfig: config => {
       staticHtmlPaths.forEach(staticHtmlPath => {
@@ -121,10 +127,10 @@ export default async (instance: typeof pri) => {
 
   instance.commands.registerCommand({
     name: "build",
+    options: [["-c, --cloud", "Cloud build tag"], ["-p, --publicPath <pathname>", "rewrite publicPath"]],
     description: text.commander.build.description,
-    options: [["-c, --cloud", "Cloud build tag"]],
-    action: async () => {
-      await CommandBuild(instance)
+    action: async (options: any) => {
+      await CommandBuild(instance, { publicPath: options.publicPath })
 
       // For async register commander, process will be exit automatic.
       process.exit(0)
