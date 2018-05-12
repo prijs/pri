@@ -47,11 +47,10 @@ export const ensureTsconfig = (projectRootPath: string) => ({
           experimentalDecorators: true,
           skipLibCheck: true,
           outDir: tsBuiltPath.dir,
-          rootDir: "./", // Make sure ./src structor. # https://github.com/Microsoft/TypeScript/issues/5134
+          rootDir: "./",
+          baseUrl: ".",
           lib: ["dom", "es5", "es6", "scripthost"],
-          paths: {
-            "pri/*": ["pri", ".temp/types/*"]
-          }
+          paths: { "pri/*": ["pri", ".temp/types/*"] }
         },
         include: [".temp/**/*", "src/**/*", "config/**/*", "tests/**/*"],
         exclude: ["node_modules", tsBuiltPath.dir, "lib"]
@@ -59,7 +58,7 @@ export const ensureTsconfig = (projectRootPath: string) => ({
       null,
       2
     ) + "\n"
-})
+}) // Make sure ./src structor. # https://github.com/Microsoft/TypeScript/issues/5134
 
 export const ensureTslint = (projectRootPath: string) => ({
   fileName: "tslint.json",
