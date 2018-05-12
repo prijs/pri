@@ -17,7 +17,7 @@ export function ensureStartWithWebpackRelativePoint(str: string) {
     throw Error(`${str} is an absolute path!`)
   }
 
-  if (!str.startsWith("./")) {
+  if (!str.startsWith("./") && !str.startsWith("../")) {
     return "./" + str
   } else {
     return str

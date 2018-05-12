@@ -10,6 +10,10 @@ export const tempPath = {
   dir: ".temp"
 }
 
+export const tempTypesPath = {
+  dir: path.join(tempPath.dir, "types")
+}
+
 export const testsPath = {
   dir: "tests"
 }

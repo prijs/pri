@@ -4,7 +4,7 @@ import * as path from "path"
 import * as prettier from "prettier"
 import { pri } from "../../node"
 import { IProjectConfig } from "../../utils/project-config-interface"
-import { declarePath, getGitignores, pagesPath, tsBuiltPath } from "../../utils/structor-config"
+import { declarePath, getGitignores, pagesPath, tempTypesPath, tsBuiltPath } from "../../utils/structor-config"
 
 export function ensureDeclares(projectRootPath: string) {
   const declareAbsolutePath = path.join(projectRootPath, declarePath.dir)
@@ -50,7 +50,7 @@ export const ensureTsconfig = (projectRootPath: string) => ({
           rootDir: "./",
           baseUrl: ".",
           lib: ["dom", "es5", "es6", "scripthost"],
-          paths: { "pri/*": ["pri", ".temp/types/*"] }
+          paths: { "pri/*": ["pri", path.join(tempTypesPath.dir, "*")] }
         },
         include: [".temp/**/*", "src/**/*", "config/**/*", "tests/**/*"],
         exclude: ["node_modules", tsBuiltPath.dir, "lib"]
