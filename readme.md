@@ -41,6 +41,10 @@ npm run preview
 Happy hacking!
 ```
 
+## Plugins
+
+* [pri-plugin-dob](https://github.com/prijs/pri-plugin-dob)
+
 ## Inspired
 
 * [next.js](https://github.com/zeit/next.js)
