@@ -47,57 +47,28 @@ export default (opts: IOptions) => {
   io.on("connection", async socket => {
     socket.emit("freshProjectStatus", { analyseInfo: opts.analyseInfo, projectConfig: opts.projectConfig })
 
-    function socketListen(
-      name: string,
-      fn: (data: any, resolve: (data?: any) => void, reject: (error?: Error) => void) => void
-    ) {
-      socket.on(name, async (data, callback) => {
-        fn(
-          data,
-          resData => {
-            callback({ success: true, data: resData })
-          },
-          error => {
-            callback({ success: false, data: error.toString() })
-          }
-        )
+    function socketListen(name: string, fn: (data: any) => any) {
+      socket.on(name, (data, callback) => {
+        Promise.resolve(fn(data))
+          .then(res => callback({ success: true, data: res }))
+          .catch(err => callback({ success: false, data: err.toString() }))
       })
     }
 
-    socketListen("addPage", async (data, resolve, reject) => {
-      try {
-        await projectManage.addPage(opts.projectRootPath, data)
-        resolve()
-      } catch (error) {
-        reject(error)
-      }
+    socketListen("addPage", async data => {
+      await projectManage.addPage(opts.projectRootPath, data)
     })
 
-    socketListen("createLayout", async (data, resolve, reject) => {
-      try {
-        await projectManage.createLayout(opts.projectRootPath)
-        resolve()
-      } catch (error) {
-        reject(error)
-      }
+    socketListen("createLayout", async data => {
+      await projectManage.createLayout(opts.projectRootPath)
     })
 
-    socketListen("create404", async (data, resolve, reject) => {
-      try {
-        await projectManage.create404(opts.projectRootPath)
-        resolve()
-      } catch (error) {
-        reject(error)
-      }
+    socketListen("create404", async data => {
+      await projectManage.create404(opts.projectRootPath)
     })
 
-    socketListen("createConfig", async (data, resolve, reject) => {
-      try {
-        await projectManage.createConfig(opts.projectRootPath)
-        resolve()
-      } catch (error) {
-        reject(error)
-      }
+    socketListen("createConfig", async data => {
+      await projectManage.createConfig(opts.projectRootPath)
     })
 
     // Load plugin's services
