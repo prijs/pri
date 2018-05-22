@@ -46,7 +46,7 @@ export const CommandDev = async (
   await bundleDlls()
 
   // Bundle dashboard if plugins changed or dashboard bundle not exist.
-  const dashboardDistDir = path.join(projectRootPath, tempPath.dir, "/static/dashboard-bundle")
+  const dashboardDistDir = path.join(projectRootPath, tempPath.dir, "/dashboard-bundle")
   if (
     (await hasPluginsModified(projectRootPath)) ||
     !fs.existsSync(path.join(dashboardDistDir, dashboardBundleFileName + ".js"))
@@ -100,7 +100,7 @@ export const CommandDev = async (
     projectConfig,
     pipeConfig: config => {
       const dllHttpPath = urlJoin(
-        `${projectConfig.useHttps ? "https" : "http"}://127.0.0.1:${portInfo.freePort}/static`,
+        `${projectConfig.useHttps ? "https" : "http"}://127.0.0.1:${portInfo.freePort}`,
         libraryStaticPath
       )
 
@@ -145,7 +145,7 @@ export const debugDashboard = async (projectConfig: IProjectConfig, analyseInfo:
     htmlTemplatePath: path.join(__dirname, "../../../template-dashboard.ejs"),
     htmlTemplateArgs: {
       dashboardServerPort,
-      libraryStaticPath: path.join("/static", libraryStaticPath)
+      libraryStaticPath
     },
     projectConfig
   })
@@ -190,12 +190,12 @@ function createDashboardEntry() {
       const dashboard = require("${dashboardEntryMainPath}").default
 
       ${
-      webUiEntries.length > 0
-        ? `
+        webUiEntries.length > 0
+          ? `
           ${webUiEntries.join("\n")}
           dashboard([${webUiEntries.map((each, index) => `plugin${index}`).join(",")}])
         `
-        : `
+          : `
           dashboard()
         `
       }

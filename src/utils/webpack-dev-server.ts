@@ -69,7 +69,7 @@ export const runWebpackDevServer = async (opts: IOptions) => {
     hotOnly: true,
     publicPath: opts.publicPath,
     before: app => {
-      app.use("/static", express.static(path.join(opts.projectRootPath, tempPath.dir, "static")))
+      app.use("/", express.static(path.join(opts.projectRootPath, tempPath.dir, "static")))
     },
     compress: true,
     historyApiFallback: { rewrites: [{ from: "/", to: normalizePath(path.join(opts.publicPath, "index.html")) }] },
