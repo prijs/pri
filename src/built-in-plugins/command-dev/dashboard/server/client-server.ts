@@ -17,8 +17,6 @@ import { IProjectConfig } from "../../../../utils/project-config-interface"
 
 const app = new Koa()
 
-const staticPrefix = "/"
-
 interface IOptions {
   clientPort: number
   serverPort: number
@@ -33,7 +31,7 @@ export default (opts: IOptions) => {
 
   app.use(koaCompress({ flush: zlib.Z_SYNC_FLUSH }))
 
-  app.use(koaMount(staticPrefix, koaStatic(opts.staticRootPath, { gzip: true })))
+  app.use(koaMount("/", koaStatic(opts.staticRootPath, { gzip: true })))
 
   app.use(async ctx => {
     ctx.set("Content-Type", "text/html; charset=utf-8")
@@ -56,8 +54,8 @@ export default (opts: IOptions) => {
       <script>
         window.serverPort = ${opts.serverPort}
       </script>
-      <script src="${staticPrefix}/dlls/main.dll.js"></script>
-      <script src="${staticPrefix}/dashboard-bundle/main.${opts.hash}.js"></script>
+      <script src="/dlls/main.dll.js"></script>
+      <script src="/dashboard-bundle/main.${opts.hash}.js"></script>
     </body>
 
     </html>
