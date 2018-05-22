@@ -17,7 +17,7 @@ import { IProjectConfig } from "../../../../utils/project-config-interface"
 
 const app = new Koa()
 
-const staticPrefix = "/static"
+const staticPrefix = "/"
 
 interface IOptions {
   clientPort: number
