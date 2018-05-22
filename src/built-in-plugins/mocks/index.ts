@@ -60,11 +60,17 @@ export default async (instance: typeof pri) => {
         if (mockInfo) {
           var responseInit = { status: 200, statusText: "OK", headers: { "Content-Type": "application/json" } }
 
-          var responseBody = typeof mockInfo.value === "function" ? mockInfo.value() : mockInfo.value
-
-          var mockResponse = new Response(JSON.stringify(responseBody), responseInit)
-
-          event.respondWith(mockResponse)
+          if (typeof mockInfo.value === 'function') {
+            event.respondWith(
+              Promise.resolve(mockInfo.value()).then(responseBody => {
+                return new Response(JSON.stringify(responseBody), responseInit);
+              })
+            );
+          } else {
+            var responseBody = mockInfo.value;
+            var mockResponse = new Response(JSON.stringify(responseBody), responseInit);
+            event.respondWith(mockResponse);
+          }
         }
       })
     `
