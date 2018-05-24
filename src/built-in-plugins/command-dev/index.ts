@@ -46,7 +46,7 @@ export const CommandDev = async (
   await bundleDlls()
 
   // Bundle dashboard if plugins changed or dashboard bundle not exist.
-  const dashboardDistDir = path.join(projectRootPath, tempPath.dir, "/dashboard-bundle")
+  const dashboardDistDir = path.join(projectRootPath, tempPath.dir, "static/dashboard-bundle")
   if (
     (await hasPluginsModified(projectRootPath)) ||
     !fs.existsSync(path.join(dashboardDistDir, dashboardBundleFileName + ".js"))

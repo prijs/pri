@@ -45,7 +45,9 @@ export default (opts: IOptions) => {
   const io = socketIo(server)
 
   io.on("connection", async socket => {
-    socket.emit("freshProjectStatus", { analyseInfo: opts.analyseInfo, projectConfig: opts.projectConfig })
+    const projectStatus = { analyseInfo: opts.analyseInfo, projectConfig: opts.projectConfig }
+    socket.emit("freshProjectStatus", projectStatus)
+    socket.emit("initProjectStatus", projectStatus)
 
     function socketListen(name: string, fn: (data: any) => any) {
       socket.on(name, (data, callback) => {
