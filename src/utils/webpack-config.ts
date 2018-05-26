@@ -1,6 +1,6 @@
-import * as ExtractTextPlugin from "extract-text-webpack-plugin"
 import * as fs from "fs-extra"
 import * as HtmlWebpackPlugin from "html-webpack-plugin"
+import * as MiniCssExtractPlugin from "mini-css-extract-plugin"
 import * as path from "path"
 import * as webpack from "webpack"
 import { plugin } from "../utils/plugins"
@@ -28,17 +28,6 @@ interface IOptions {
  * Get webpack config.
  */
 export const getWebpackConfig = (opts: IOptions) => {
-  /**
-   * Helper
-   */
-  function extraCssInProd(...loaders: any[]) {
-    if (opts.env === "local") {
-      return [styleLoader, ...loaders]
-    } else {
-      return ExtractTextPlugin.extract({ fallback: styleLoader, use: loaders })
-    }
-  }
-
   /**
    * Mutilpe loaders
    */
@@ -77,6 +66,17 @@ export const getWebpackConfig = (opts: IOptions) => {
     options: plugin.buildConfigTsLoaderOptionsPipes.reduce((options, fn) => fn(opts.env, options), {
       happyPackMode: true
     })
+  }
+
+  /**
+   * Helper
+   */
+  function extraCssInProd(...loaders: any[]) {
+    if (opts.env === "local") {
+      return [styleLoader, ...loaders]
+    } else if (opts.env === "prod") {
+      return [MiniCssExtractPlugin.loader, ...loaders]
+    }
   }
 
   const distDir = opts.distDir || path.join(opts.projectRootPath, opts.projectConfig.distDir)
@@ -150,8 +150,11 @@ export const getWebpackConfig = (opts: IOptions) => {
         path.join(__dirname, "../../node_modules")
       ]
     },
-    plugins: [],
-    optimization: { namedChunks: false },
+    plugins: [
+    ],
+    optimization: {
+      namedChunks: false,
+    },
     stats
   } // Self node_modules
 
@@ -169,10 +172,21 @@ export const getWebpackConfig = (opts: IOptions) => {
   }
 
   if (opts.env === "prod") {
+    config.optimization.splitChunks = {
+      ...config.optimization.splitChunks,
+      cacheGroups: {
+        styles: {
+          name: outCssFileName,
+          test: /\.css$/,
+          chunks: "all",
+          enforce: true
+        }
+      }
+    }
+
     config.plugins.push(
-      new ExtractTextPlugin({
-        filename: outCssFileName,
-        allChunks: true
+      new MiniCssExtractPlugin({
+        filename: outCssFileName
       })
     )
   }
