@@ -8,20 +8,20 @@ import { IProjectConfig } from "../utils/project-config-interface"
 import { srcPath, tempPath } from "../utils/structor-config"
 
 interface IOptions {
-  mode: "development" | "production"
-  projectRootPath: string
-  entryPath: string | string[]
-  env: "local" | "prod"
-  htmlTemplatePath?: string
+  mode: 'development' | 'production';
+  projectRootPath: string;
+  entryPath: string | string[];
+  env: 'local' | 'prod';
+  htmlTemplatePath?: string;
   htmlTemplateArgs?: {
-    dashboardServerPort?: number
-    libraryStaticPath?: string
-  }
-  projectConfig: IProjectConfig
-  publicPath?: string
-  distDir?: string
-  outFileName?: string
-  outCssFileName?: string
+    dashboardServerPort?: number;
+    libraryStaticPath?: string;
+  };
+  projectConfig: IProjectConfig;
+  publicPath?: string;
+  distDir?: string;
+  outFileName?: string;
+  outCssFileName?: string;
 }
 
 /**
@@ -29,44 +29,55 @@ interface IOptions {
  */
 export const getWebpackConfig = (opts: IOptions) => {
   /**
+   * Helper
+   */
+  function extraCssInProd(...loaders: any[]) {
+    if (opts.env === 'local') {
+      return [styleLoader, ...loaders];
+    } else {
+      return ExtractTextPlugin.extract({ fallback: styleLoader, use: loaders });
+    }
+  }
+
+  /**
    * Mutilpe loaders
    */
   const styleLoader = {
-    loader: "style-loader",
+    loader: 'style-loader',
     options: plugin.buildConfigStyleLoaderOptionsPipes.reduce((options, fn) => fn(opts.env, options), {})
-  }
+  };
 
   const cssLoader = {
-    loader: "css-loader",
+    loader: 'css-loader',
     options: plugin.buildConfigCssLoaderOptionsPipes.reduce((options, fn) => fn(opts.env, options), {})
-  }
+  };
 
   const sassLoader = {
-    loader: "sass-loader",
+    loader: 'sass-loader',
     options: plugin.buildConfigSassLoaderOptionsPipes.reduce((options, fn) => fn(opts.env, options), {})
-  }
+  };
 
   const lessLoader = {
-    loader: "less-loader",
+    loader: 'less-loader',
     options: plugin.buildConfigLessLoaderOptionsPipes.reduce((options, fn) => fn(opts.env, options), {})
-  }
+  };
 
   const babelLoader = {
-    loader: "babel-loader",
+    loader: 'babel-loader',
     options: plugin.buildConfigBabelLoaderOptionsPipes.reduce((options, fn) => fn(opts.env, options), {
       babelrc: false,
-      presets: [["@babel/env", { modules: false }], ["@babel/stage-2", { decoratorsLegacy: true }]],
-      plugins: [["@babel/plugin-transform-runtime"]],
+      presets: [['@babel/env', { modules: false }], ['@babel/stage-2', { decoratorsLegacy: true }]],
+      plugins: [['@babel/plugin-transform-runtime']],
       comments: true
     })
-  }
+  };
 
   const tsLoader = {
-    loader: "ts-loader",
+    loader: 'ts-loader',
     options: plugin.buildConfigTsLoaderOptionsPipes.reduce((options, fn) => fn(opts.env, options), {
       happyPackMode: true
     })
-  }
+  };
 
   /**
    * Helper
@@ -83,12 +94,12 @@ export const getWebpackConfig = (opts: IOptions) => {
   const outFileName = opts.outFileName || opts.projectConfig.outFileName
   const outCssFileName = opts.outCssFileName || opts.projectConfig.outCssFileName
 
-  let publicPath: string = opts.publicPath || opts.projectConfig.publicPath || "/"
-  if (!publicPath.endsWith("/")) {
-    publicPath += "/"
+  let publicPath: string = opts.publicPath || opts.projectConfig.publicPath || '/';
+  if (!publicPath.endsWith('/')) {
+    publicPath += '/';
   }
 
-  const stats = { warnings: false, version: false, modules: false, entrypoints: false, hash: false }
+  const stats = { warnings: false, version: false, modules: false, entrypoints: false, hash: false };
 
   const config: webpack.Configuration = {
     mode: opts.mode,
@@ -97,9 +108,9 @@ export const getWebpackConfig = (opts: IOptions) => {
       path: distDir,
       filename: outFileName,
       publicPath,
-      chunkFilename: "[name].[hash].chunk.js",
-      hotUpdateChunkFilename: "hot~[id].[hash].chunk.js",
-      hotUpdateMainFilename: "hot-update.[hash].json",
+      chunkFilename: '[name].[hash].chunk.js',
+      hotUpdateChunkFilename: 'hot~[id].[hash].chunk.js',
+      hotUpdateMainFilename: 'hot-update.[hash].json',
       hashDigestLength: 4
     },
     module: {
@@ -132,22 +143,22 @@ export const getWebpackConfig = (opts: IOptions) => {
           ]),
           exclude: plugin.buildConfigLessLoaderExcludePipes.reduce((options, fn) => fn(opts.env, options), [])
         },
-        { test: /\.html$/, use: ["raw-loader"] }
+        { test: /\.html$/, use: ['raw-loader'] }
       ]
     },
     resolve: {
       modules: [
         // From project node_modules
-        path.join(opts.projectRootPath, "node_modules"),
-        path.join(__dirname, "../../node_modules")
+        path.join(opts.projectRootPath, 'node_modules'),
+        path.join(__dirname, '../../node_modules')
       ],
-      extensions: [".js", ".jsx", ".tsx", ".ts", ".scss", ".less", ".css"]
+      extensions: ['.js', '.jsx', '.tsx', '.ts', '.scss', '.less', '.css']
     },
     resolveLoader: {
       modules: [
         // From project node_modules // Self node_modules
-        path.join(opts.projectRootPath, "node_modules"),
-        path.join(__dirname, "../../node_modules")
+        path.join(opts.projectRootPath, 'node_modules'),
+        path.join(__dirname, '../../node_modules')
       ]
     },
     plugins: [
@@ -156,18 +167,18 @@ export const getWebpackConfig = (opts: IOptions) => {
       namedChunks: false,
     },
     stats
-  } // Self node_modules
+  }; // Self node_modules
 
-  if (opts.env === "local") {
+  if (opts.env === 'local') {
     if (opts.htmlTemplatePath) {
       config.plugins.push(
         new HtmlWebpackPlugin({
-          title: "Pre Dev",
-          filename: "index.html",
+          title: 'Pre Dev',
+          filename: 'index.html',
           template: opts.htmlTemplatePath,
           htmlTemplateArgs: opts.htmlTemplateArgs
         })
-      )
+      );
     }
   }
 
@@ -183,26 +194,25 @@ export const getWebpackConfig = (opts: IOptions) => {
         }
       }
     }
-
     config.plugins.push(
       new MiniCssExtractPlugin({
         filename: outCssFileName
       })
-    )
+    );
   }
 
-  if (opts.env === "prod") {
-    babelLoader.options.plugins.push(["import", { libraryName: "antd" }])
-    cssLoader.options.minimize = true
+  if (opts.env === 'prod') {
+    babelLoader.options.plugins.push(['import', { libraryName: 'antd' }]);
+    cssLoader.options.minimize = true;
   }
 
-  if (opts.env === "local") {
+  if (opts.env === 'local') {
     // Turn off performance hints during development.
     if (!config.performance) {
-      config.performance = {}
+      config.performance = {};
     }
-    config.performance.hints = false
+    config.performance.hints = false;
   }
 
-  return plugin.buildConfigPipes.reduce((newConfig, fn) => fn(opts.env, newConfig), config)
-}
+  return plugin.buildConfigPipes.reduce((newConfig, fn) => fn(opts.env, newConfig), config);
+};

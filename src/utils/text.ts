@@ -1,19 +1,19 @@
 export default {
   commander: {
     init: {
-      description: "Init project."
+      description: 'Init project.'
     },
     dev: {
-      description: "Starts the development server."
+      description: 'Starts the development server.'
     },
     build: {
-      description: "Bundles the app into static files for production."
+      description: 'Bundles the app into static files for production.'
     },
     preview: {
-      description: "Preview the app in production mode."
+      description: 'Preview the app in production mode.'
     },
     test: {
-      description: "Run all tests"
+      description: 'Run all tests'
     }
   }
-}
+};

@@ -1,79 +1,79 @@
-import { exec, execSync, fork } from "child_process"
-import * as colors from "colors"
-import * as fs from "fs-extra"
-import * as _ from "lodash"
-import * as path from "path"
-import * as portfinder from "portfinder"
-import * as prettier from "prettier"
-import * as url from "url"
-import * as urlJoin from "url-join"
-import * as webpack from "webpack"
-import * as webpackDevServer from "webpack-dev-server"
-import { pri } from "../../node"
-import { analyseProject } from "../../utils/analyse-project"
-import { createEntry } from "../../utils/create-entry"
-import { ensureEndWithSlash } from "../../utils/functional"
-import { log, spinner } from "../../utils/log"
-import { findNearestNodemodulesFile } from "../../utils/npm-finder"
-import { getPluginsByOrder } from "../../utils/plugins"
-import { getConfig } from "../../utils/project-config"
-import { IProjectConfig } from "../../utils/project-config-interface"
-import { hasNodeModules, hasNodeModulesModified, hasPluginsModified } from "../../utils/project-helper"
-import * as projectState from "../../utils/project-state"
-import { tempJsEntryPath, tempPath } from "../../utils/structor-config"
-import text from "../../utils/text"
-import { runWebpack } from "../../utils/webpack"
-import { runWebpackDevServer } from "../../utils/webpack-dev-server"
-import { WrapContent } from "../../utils/webpack-plugin-wrap-content"
-import dashboardClientServer from "./dashboard/server/client-server"
-import dashboardServer from "./dashboard/server/index"
-import { runDllWebpack } from "./webpack"
+import { exec, execSync, fork } from 'child_process';
+import * as colors from 'colors';
+import * as fs from 'fs-extra';
+import * as _ from 'lodash';
+import * as path from 'path';
+import * as portfinder from 'portfinder';
+import * as prettier from 'prettier';
+import * as url from 'url';
+import * as urlJoin from 'url-join';
+import * as webpack from 'webpack';
+import * as webpackDevServer from 'webpack-dev-server';
+import { pri } from '../../node';
+import { analyseProject } from '../../utils/analyse-project';
+import { createEntry } from '../../utils/create-entry';
+import { ensureEndWithSlash } from '../../utils/functional';
+import { log, spinner } from '../../utils/log';
+import { findNearestNodemodulesFile } from '../../utils/npm-finder';
+import { getPluginsByOrder } from '../../utils/plugins';
+import { getConfig } from '../../utils/project-config';
+import { IProjectConfig } from '../../utils/project-config-interface';
+import { hasNodeModules, hasNodeModulesModified, hasPluginsModified } from '../../utils/project-helper';
+import * as projectState from '../../utils/project-state';
+import { tempJsEntryPath, tempPath } from '../../utils/structor-config';
+import text from '../../utils/text';
+import { runWebpack } from '../../utils/webpack';
+import { runWebpackDevServer } from '../../utils/webpack-dev-server';
+import { WrapContent } from '../../utils/webpack-plugin-wrap-content';
+import dashboardClientServer from './dashboard/server/client-server';
+import dashboardServer from './dashboard/server/index';
+import { runDllWebpack } from './webpack';
 
-const projectRootPath = process.cwd()
-const dllFileName = "main.dll.js"
-const dllMainfestName = "mainfest.json"
-const dllOutPath = path.join(projectRootPath, ".temp/static/dlls")
-const libraryStaticPath = "/dlls/" + dllFileName
+const projectRootPath = process.cwd();
+const dllFileName = 'main.dll.js';
+const dllMainfestName = 'mainfest.json';
+const dllOutPath = path.join(projectRootPath, '.temp/static/dlls');
+const libraryStaticPath = '/dlls/' + dllFileName;
 
-const dashboardBundleFileName = "main"
+const dashboardBundleFileName = 'main';
 
 export const CommandDev = async (
   projectConfig: IProjectConfig,
   analyseInfo: any,
-  env: "local" | "prod",
+  env: 'local' | 'prod',
   portInfo: { freePort: number; dashboardServerPort: number; dashboardClientPort: number }
 ) => {
-  await bundleDlls()
+  await bundleDlls();
 
   // Bundle dashboard if plugins changed or dashboard bundle not exist.
-  const dashboardDistDir = path.join(projectRootPath, tempPath.dir, "static/dashboard-bundle")
+  const dashboardDistDir = path.join(projectRootPath, tempPath.dir, 'static/dashboard-bundle');
   if (
     (await hasPluginsModified(projectRootPath)) ||
-    !fs.existsSync(path.join(dashboardDistDir, dashboardBundleFileName + ".js"))
+    !fs.existsSync(path.join(dashboardDistDir, dashboardBundleFileName + '.js'))
   ) {
-    log(colors.blue("\nBundle dashboard\n"))
-    const dashboardEntryFilePath = createDashboardEntry()
+    log(colors.blue('\nBundle dashboard\n'));
+    const dashboardEntryFilePath = createDashboardEntry();
 
     const status = await runWebpack({
-      mode: "production",
+      mode: 'production',
       projectRootPath,
       env,
-      publicPath: "/bundle/",
+      publicPath: '/bundle/',
       entryPath: dashboardEntryFilePath,
       distDir: dashboardDistDir,
-      outFileName: "main.[hash].js", // dashboard has no css file
+      outFileName: 'main.[hash].js', // dashboard has no css file
       projectConfig
-    })
-    projectState.set("dashboardHash", status.hash)
+    });
+    projectState.set('dashboardHash', status.hash);
   }
 
-  log(colors.blue("\nStart dev server.\n"))
+  log(colors.blue('\nStart dev server.\n'));
 
   // Start dashboard server
-  dashboardServer({ serverPort: portInfo.dashboardServerPort, projectRootPath, env, projectConfig, analyseInfo })
+  dashboardServer({ serverPort: portInfo.dashboardServerPort, projectRootPath, env, projectConfig, analyseInfo });
 
   if (projectConfig.useHttps) {
-    log(`you should set chrome://flags/#allow-insecure-localhost, to trust local certificate.`)
+    log(`you should set chrome://flags/#allow-insecure-localhost, to trust local certificate.`);
   }
 
   // Start dashboard client production server
@@ -82,9 +82,9 @@ export const CommandDev = async (
     projectConfig,
     serverPort: portInfo.dashboardServerPort,
     clientPort: portInfo.dashboardClientPort,
-    staticRootPath: path.join(projectRootPath, tempPath.dir, "static"),
-    hash: projectState.get("dashboardHash")
-  })
+    staticRootPath: path.join(projectRootPath, tempPath.dir, 'static'),
+    hash: projectState.get('dashboardHash')
+  });
 
   // Serve project
   await runWebpackDevServer({
@@ -93,16 +93,16 @@ export const CommandDev = async (
     publicPath: projectConfig.publicPath,
     entryPath: path.join(projectRootPath, path.format(tempJsEntryPath)),
     devServerPort: portInfo.freePort,
-    htmlTemplatePath: path.join(__dirname, "../../../template-project.ejs"),
+    htmlTemplatePath: path.join(__dirname, '../../../template-project.ejs'),
     htmlTemplateArgs: {
       dashboardServerPort: portInfo.dashboardServerPort
     },
     projectConfig,
     pipeConfig: config => {
       const dllHttpPath = urlJoin(
-        `${projectConfig.useHttps ? "https" : "http"}://127.0.0.1:${portInfo.freePort}`,
+        `${projectConfig.useHttps ? 'https' : 'http'}://127.0.0.1:${portInfo.freePort}`,
         libraryStaticPath
-      )
+      );
 
       config.plugins.push(
         new WrapContent(
@@ -116,71 +116,71 @@ export const CommandDev = async (
         `,
           `}`
         )
-      )
-      return config
+      );
+      return config;
     }
-  })
-}
+  });
+};
 
-export const debugDashboard = async (projectConfig: IProjectConfig, analyseInfo: any, env: "local" | "prod") => {
-  const freePort = await portfinder.getPortPromise()
-  const dashboardServerPort = await portfinder.getPortPromise({ port: freePort + 1 })
+export const debugDashboard = async (projectConfig: IProjectConfig, analyseInfo: any, env: 'local' | 'prod') => {
+  const freePort = await portfinder.getPortPromise();
+  const dashboardServerPort = await portfinder.getPortPromise({ port: freePort + 1 });
 
-  await bundleDlls()
+  await bundleDlls();
 
   // Start dashboard server
-  dashboardServer({ serverPort: dashboardServerPort, projectRootPath, env, projectConfig, analyseInfo })
+  dashboardServer({ serverPort: dashboardServerPort, projectRootPath, env, projectConfig, analyseInfo });
 
   // Create dashboard entry
-  const dashboardEntryFilePath = createDashboardEntry()
+  const dashboardEntryFilePath = createDashboardEntry();
 
   // Serve dashboard
   await runWebpackDevServer({
     projectRootPath,
     env,
-    publicPath: "/static/",
+    publicPath: '/static/',
     entryPath: dashboardEntryFilePath,
     devServerPort: freePort,
-    outFileName: "main.[hash].js",
-    htmlTemplatePath: path.join(__dirname, "../../../template-dashboard.ejs"),
+    outFileName: 'main.[hash].js',
+    htmlTemplatePath: path.join(__dirname, '../../../template-dashboard.ejs'),
     htmlTemplateArgs: {
       dashboardServerPort,
       libraryStaticPath
     },
     projectConfig
-  })
-}
+  });
+};
 
 function createDashboardEntry() {
-  const dashboardEntryMainPath = path.join(__dirname, "dashboard/client/index")
-  const dashboardEntryFilePath = path.join(projectRootPath, tempPath.dir, "dashboard", "main.tsx")
+  const dashboardEntryMainPath = path.join(__dirname, 'dashboard/client/index');
+  const dashboardEntryFilePath = path.join(projectRootPath, tempPath.dir, 'dashboard', 'main.tsx');
 
-  const webUiEntries: string[] = []
+  const webUiEntries: string[] = [];
 
   Array.from(getPluginsByOrder()).forEach(plugin => {
     try {
-      const packageJsonPath = require.resolve(path.join(plugin.pathOrModuleName, "package.json"), {
+      const packageJsonPath = require.resolve(path.join(plugin.pathOrModuleName, 'package.json'), {
         paths: [__dirname, projectRootPath]
-      })
-      const packageJson = fs.readJsonSync(packageJsonPath, { throws: false })
-      const webEntry = _.get(packageJson, "pri.web-entry", null)
+      });
+      const packageJson = fs.readJsonSync(packageJsonPath, { throws: false });
+      const webEntry = _.get(packageJson, 'pri.web-entry', null);
 
       if (webEntry) {
-        const webEntrys: string[] = typeof webEntry === "string" ? [webEntry] : webEntry
+        const webEntrys: string[] = typeof webEntry === 'string' ? [webEntry] : webEntry;
 
         webEntrys.forEach(eachWebEntry => {
-          const webEntryAbsolutePath = path.resolve(path.parse(packageJsonPath).dir, eachWebEntry)
-          const parsedPath = path.parse(webEntryAbsolutePath)
-          const importPath = path.join(parsedPath.dir, parsedPath.name)
+          const webEntryAbsolutePath = path.resolve(path.parse(packageJsonPath).dir, eachWebEntry);
+          const parsedPath = path.parse(webEntryAbsolutePath);
+          const importPath = path.join(parsedPath.dir, parsedPath.name);
           webUiEntries.push(`
           // tslint:disable-next-line:no-var-requires
-          const plugin${webUiEntries.length} = require("${importPath}").default`)
-        })
+          const plugin${webUiEntries.length} = require("${importPath}").default`);
+        });
       }
     } catch (error) {
       //
     }
-  })
+  });
 
   fs.outputFileSync(
     dashboardEntryFilePath,
@@ -192,36 +192,36 @@ function createDashboardEntry() {
       ${
         webUiEntries.length > 0
           ? `
-          ${webUiEntries.join("\n")}
-          dashboard([${webUiEntries.map((each, index) => `plugin${index}`).join(",")}])
+          ${webUiEntries.join('\n')}
+          dashboard([${webUiEntries.map((each, index) => `plugin${index}`).join(',')}])
         `
           : `
           dashboard()
         `
       }
     `,
-      { semi: true, singleQuote: true, parser: "typescript" }
+      { semi: true, singleQuote: true, parser: 'typescript' }
     )
-  )
+  );
 
-  return dashboardEntryFilePath
+  return dashboardEntryFilePath;
 }
 
 export default async (instance: typeof pri) => {
-  const currentEnv = "local"
-  const currentProjectConfig = instance.project.getProjectConfig(currentEnv)
-  const freePort = currentProjectConfig.devPort || (await portfinder.getPortPromise())
-  const dashboardServerPort = await portfinder.getPortPromise({ port: freePort + 1 })
-  const dashboardClientPort = await portfinder.getPortPromise({ port: freePort + 2 })
+  const currentEnv = 'local';
+  const currentProjectConfig = instance.project.getProjectConfig(currentEnv);
+  const freePort = currentProjectConfig.devPort || (await portfinder.getPortPromise());
+  const dashboardServerPort = await portfinder.getPortPromise({ port: freePort + 1 });
+  const dashboardClientPort = await portfinder.getPortPromise({ port: freePort + 2 });
 
   instance.project.onCreateEntry((analyseInfo, entry, env, projectConfig) => {
-    if (env === "local") {
+    if (env === 'local') {
       entry.pipeAppHeader(header => {
         return `
           ${header}
           setEnvLocal()
-        `
-      })
+        `;
+      });
 
       // Set custom env
       if (projectConfig.customEnv) {
@@ -229,8 +229,8 @@ export default async (instance: typeof pri) => {
           return `
             ${body}
             setCustomEnv(${JSON.stringify(projectConfig.customEnv)})
-          `
-        })
+          `;
+        });
       }
 
       // Jump page from iframe dashboard event.
@@ -246,8 +246,8 @@ export default async (instance: typeof pri) => {
               default:
             }
           }, false)
-        `
-      })
+        `;
+      });
 
       // React hot loader
       entry.pipeEntryHeader(
@@ -255,16 +255,16 @@ export default async (instance: typeof pri) => {
         ${header}
         import { hot } from "react-hot-loader"
       `
-      )
+      );
 
       entry.pipeEntryRender(
         str => `
         const HotApp = hot(module)(App)
         ${str}
       `
-      )
+      );
 
-      entry.pipe.set("entryRenderApp", () => `<HotApp />`)
+      entry.pipe.set('entryRenderApp', () => `<HotApp />`);
 
       // Load webui iframe
       entry.pipeEntryRender(
@@ -362,53 +362,53 @@ export default async (instance: typeof pri) => {
         }
         document.body.appendChild(dashboardButton)
       `
-      )
+      );
     }
-  })
+  });
 
   instance.build.pipeConfig((env, config) => {
-    if (env !== "local") {
-      return config
+    if (env !== 'local') {
+      return config;
     }
 
     config.plugins.push(
       new webpack.DllReferencePlugin({
-        context: ".",
+        context: '.',
         manifest: require(path.join(dllOutPath, dllMainfestName))
       })
-    )
+    );
 
-    return config
-  })
+    return config;
+  });
 
   instance.commands.registerCommand({
-    name: "dev",
-    options: [["-d, --debugDashboard", "Debug dashboard"]],
+    name: 'dev',
+    options: [['-d, --debugDashboard', 'Debug dashboard']],
     description: text.commander.dev.description,
     action: async (options: any) => {
-      await instance.project.lint()
-      await instance.project.ensureProjectFiles(currentProjectConfig)
-      await instance.project.checkProjectFiles(currentProjectConfig)
+      await instance.project.lint();
+      await instance.project.ensureProjectFiles(currentProjectConfig);
+      await instance.project.checkProjectFiles(currentProjectConfig);
 
-      const analyseInfo = await spinner("Analyse project", async () => {
-        const scopeAnalyseInfo = await analyseProject(projectRootPath, currentEnv, currentProjectConfig)
-        createEntry(projectRootPath, currentEnv, currentProjectConfig)
-        return scopeAnalyseInfo
-      })
+      const analyseInfo = await spinner('Analyse project', async () => {
+        const scopeAnalyseInfo = await analyseProject(projectRootPath, currentEnv, currentProjectConfig);
+        createEntry(projectRootPath, currentEnv, currentProjectConfig);
+        return scopeAnalyseInfo;
+      });
 
       if (options && options.debugDashboard) {
-        await debugDashboard(currentProjectConfig, analyseInfo, currentEnv)
+        await debugDashboard(currentProjectConfig, analyseInfo, currentEnv);
       } else {
         await CommandDev(currentProjectConfig, analyseInfo, currentEnv, {
           freePort,
           dashboardServerPort,
           dashboardClientPort
-        })
+        });
       }
     },
     isDefault: true
-  })
-}
+  });
+};
 
 /**
  * Bundle dlls if node_modules changed, or dlls not exist.
@@ -418,8 +418,8 @@ async function bundleDlls() {
     (hasNodeModules(projectRootPath) && hasNodeModulesModified(projectRootPath)) ||
     !fs.existsSync(path.join(dllOutPath, dllFileName))
   ) {
-    log(colors.blue("\nBundle dlls\n"))
+    log(colors.blue('\nBundle dlls\n'));
 
-    await runDllWebpack({ projectRootPath, dllOutPath, dllFileName, dllMainfestName })
+    await runDllWebpack({ projectRootPath, dllOutPath, dllFileName, dllMainfestName });
   }
 }

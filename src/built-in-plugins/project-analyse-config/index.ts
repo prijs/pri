@@ -1,35 +1,35 @@
-import * as fs from "fs-extra"
-import * as _ from "lodash"
-import * as normalizePath from "normalize-path"
-import * as path from "path"
-import { pri } from "../../node"
-import { md5 } from "../../utils/md5"
-import { configPaths } from "../../utils/structor-config"
+import * as fs from 'fs-extra';
+import * as _ from 'lodash';
+import * as normalizePath from 'normalize-path';
+import * as path from 'path';
+import { pri } from '../../node';
+import { md5 } from '../../utils/md5';
+import { configPaths } from '../../utils/structor-config';
 
 interface IResult {
   projectAnalyseConfig: {
-    hasConfig: boolean
-  }
+    hasConfig: boolean;
+  };
 }
 
 export default async (instance: typeof pri) => {
-  const projectRootPath = instance.project.getProjectRootPath()
+  const projectRootPath = instance.project.getProjectRootPath();
 
   // config
-  const whiteList = ["config"]
+  const whiteList = ['config'];
   instance.project.whiteFileRules.add(file => {
-    return whiteList.some(whiteName => path.format(file) === path.join(projectRootPath, whiteName))
-  })
+    return whiteList.some(whiteName => path.format(file) === path.join(projectRootPath, whiteName));
+  });
 
   // config/config.default|local|prod.ts
   instance.project.whiteFileRules.add(file => {
-    const relativePath = path.relative(projectRootPath, file.dir)
+    const relativePath = path.relative(projectRootPath, file.dir);
     return (
-      relativePath === "config" &&
-      file.ext === ".ts" &&
-      (file.name === "config.default" || file.name === "config.local" || file.name === "config.prod")
-    )
-  })
+      relativePath === 'config' &&
+      file.ext === '.ts' &&
+      (file.name === 'config.default' || file.name === 'config.local' || file.name === 'config.prod')
+    );
+  });
 
   instance.project.onAnalyseProject(files => {
     return {
@@ -39,6 +39,6 @@ export default async (instance: typeof pri) => {
           fs.existsSync(path.join(projectRootPath, path.format(configPaths.local))) ||
           fs.existsSync(path.join(projectRootPath, path.format(configPaths.prod)))
       }
-    } as IResult
-  })
-}
+    } as IResult;
+  });
+};

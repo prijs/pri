@@ -1,4 +1,4 @@
-import styled from "styled-components"
+import styled from 'styled-components';
 
 export const Container = styled.div`
   display: flex;
@@ -9,8 +9,8 @@ export const Container = styled.div`
   padding-right: 10px;
   font-weight: bold;
   color: #999;
-`
+`;
 
 export const Link = styled.a`
   margin-left: 5px;
-`
+`;

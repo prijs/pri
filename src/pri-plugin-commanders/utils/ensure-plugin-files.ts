@@ -1,60 +1,60 @@
-import * as colors from "colors"
-import * as fs from "fs-extra"
-import * as _ from "lodash"
-import * as path from "path"
-import * as prettier from "prettier"
-import { ensureFile } from "../../utils/ensure-files"
-import { log } from "../../utils/log"
-import { IProjectConfig } from "../../utils/project-config-interface"
-import { getGitignores, getNpmignores, tsBuiltPath } from "../../utils/structor-config"
+import * as colors from 'colors';
+import * as fs from 'fs-extra';
+import * as _ from 'lodash';
+import * as path from 'path';
+import * as prettier from 'prettier';
+import { ensureFile } from '../../utils/ensure-files';
+import { log } from '../../utils/log';
+import { IProjectConfig } from '../../utils/project-config-interface';
+import { getGitignores, getNpmignores, tsBuiltPath } from '../../utils/structor-config';
 
 export function ensureNpmIgnore(projectRootPath: string, projectConfig: IProjectConfig) {
-  ensureFile(projectRootPath, ".npmignore", [
+  ensureFile(projectRootPath, '.npmignore', [
     () =>
       getNpmignores(projectConfig)
         .map(name => `/${name}`)
-        .join("\n")
-  ])
+        .join('\n')
+  ]);
 }
 
 export function ensurePackageJson(projectRootPath: string) {
-  ensureFile(projectRootPath, "package.json", [
+  ensureFile(projectRootPath, 'package.json', [
     prev => {
-      const prevJson = JSON.parse(prev)
+      const prevJson = JSON.parse(prev);
       return (
         JSON.stringify(
           _.merge({}, prevJson, {
-            types: "src/index.ts",
-            main: path.join(tsBuiltPath.dir, "src/index.js"),
+            types: 'src/index.ts',
+            main: path.join(tsBuiltPath.dir, 'src/index.js'),
             scripts: {
-              start: "pri plugin watch",
-              prepublishOnly: "pri plugin build",
-              release: "npm publish",
-              test: "pri plugin test"
+              start: 'pri plugin watch',
+              prepublishOnly: 'pri plugin build',
+              release: 'npm publish',
+              test: 'pri plugin test'
             },
-            devDependencies: { pri: "*" }
+            devDependencies: { pri: '*' }
           }),
           null,
           2
-        ) + "\n"
-      )
+        ) + '\n'
+      );
     }
-  ])
+  ]);
 }
 
 export function ensureEntry(projectRootPath: string) {
-  const fileName = "src/index.ts"
-  const otherFileName = "src/index.tsx"
-  const filePath = path.join(projectRootPath, fileName)
+  const fileName = 'src/index.ts';
+  const otherFileName = 'src/index.tsx';
+  const filePath = path.join(projectRootPath, fileName);
 
   if (fs.existsSync(filePath)) {
-    log(colors.green(`✔ Entry file already exist.`))
-    return
+    log(colors.green(`✔ Entry file already exist.`));
+    return;
   }
 
   if (fs.existsSync(otherFileName)) {
-    log(colors.green(`✔ Entry file already exist.`))
-    return
+    log(colors.green(`✔ Entry file already exist.`));
+    return;
   }
 
   ensureFile(projectRootPath, fileName, [
@@ -106,20 +106,20 @@ export function ensureEntry(projectRootPath: string) {
       })
     }
   `,
-        { semi: true, singleQuote: true, parser: "typescript" }
+        { semi: true, singleQuote: true, parser: 'typescript' }
       )
-  ])
+  ]);
 
-  ensureEntryMethods(projectRootPath)
+  ensureEntryMethods(projectRootPath);
 }
 
 function ensureEntryMethods(projectRootPath: string) {
-  const fileName = "src/methods.ts"
-  const filePath = path.join(projectRootPath, fileName)
+  const fileName = 'src/methods.ts';
+  const filePath = path.join(projectRootPath, fileName);
 
   if (fs.existsSync(filePath)) {
-    log(colors.green(`✔ Methods file already exist.`))
-    return
+    log(colors.green(`✔ Methods file already exist.`));
+    return;
   }
 
   ensureFile(projectRootPath, fileName, [
@@ -138,18 +138,18 @@ function ensureEntryMethods(projectRootPath: string) {
       })
     }
   `,
-        { semi: true, singleQuote: true, parser: "typescript" }
+        { semi: true, singleQuote: true, parser: 'typescript' }
       )
-  ])
+  ]);
 }
 
 export function ensureTest(projectRootPath: string) {
-  const fileName = "tests/index.ts"
-  const filePath = path.join(projectRootPath, fileName)
+  const fileName = 'tests/index.ts';
+  const filePath = path.join(projectRootPath, fileName);
 
   if (fs.existsSync(filePath)) {
-    log(colors.green(`✔ Test file already exist.`))
-    return
+    log(colors.green(`✔ Test file already exist.`));
+    return;
   }
 
   ensureFile(projectRootPath, fileName, [
@@ -184,7 +184,7 @@ export function ensureTest(projectRootPath: string) {
       t.false(judgeHasComponents(testProjectRootPath, testFilePaths(relativeProjectFiles)))
     })
   `,
-        { semi: true, singleQuote: true, parser: "typescript" }
+        { semi: true, singleQuote: true, parser: 'typescript' }
       )
-  ])
+  ]);
 }

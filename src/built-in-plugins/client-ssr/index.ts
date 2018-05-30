@@ -1,19 +1,19 @@
-import * as fs from "fs-extra"
-import * as _ from "lodash"
-import * as path from "path"
-import * as ts from "typescript"
-import { pri } from "../../node"
+import * as fs from 'fs-extra';
+import * as _ from 'lodash';
+import * as path from 'path';
+import * as ts from 'typescript';
+import { pri } from '../../node';
 
 export default async (instance: typeof pri) => {
-  const projectRootPath = instance.project.getProjectRootPath()
+  const projectRootPath = instance.project.getProjectRootPath();
 
   instance.project.onCreateEntry((analyseInfo, entry, env, projectConfig) => {
     if (!projectConfig.useServiceWorker) {
-      return
+      return;
     }
 
     if (!projectConfig.clientServerRender) {
-      return
+      return;
     }
 
     entry.pipeEntryHeader(header => {
@@ -22,8 +22,8 @@ export default async (instance: typeof pri) => {
         import { renderToString } from "react-dom/server"
         import StaticRouter from "react-router-dom/StaticRouter"
         import { escapeRegExp, trimEnd } from "lodash"
-      `
-    })
+      `;
+    });
 
     entry.pipeEntryRender(
       render => `
@@ -55,16 +55,16 @@ export default async (instance: typeof pri) => {
         })
       }
     `
-    )
-  })
+    );
+  });
 
   instance.build.afterProdBuild((stats, projectConfig) => {
     if (!projectConfig.useServiceWorker) {
-      return
+      return;
     }
 
     if (!projectConfig.clientServerRender) {
-      return
+      return;
     }
 
     instance.serviceWorker.pipeAfterProdBuild(
@@ -163,6 +163,6 @@ export default async (instance: typeof pri) => {
           }
         });
       `
-    )
-  })
-}
+    );
+  });
+};

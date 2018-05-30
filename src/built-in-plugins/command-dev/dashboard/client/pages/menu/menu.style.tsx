@@ -1,14 +1,12 @@
-import { Icon } from "antd"
-import * as React from "react"
-import styled from "styled-components"
+import { Icon } from 'antd';
+import * as React from 'react';
+import styled from 'styled-components';
 
-export const MenuIcon = (props: any) => (
-  <Icon style={{ fontSize: 15, marginRight: 10 }} {...props} />
-)
+export const MenuIcon = (props: any) => <Icon style={{ fontSize: 15, marginRight: 10 }} {...props} />;
 
 export const Container = styled.div`
   display: flex;
-`
+`;
 
 export const Button = styled.div`
   display: flex;
@@ -23,4 +21,4 @@ export const Button = styled.div`
   &:hover {
     background-color: whitesmoke;
   }
-`
+`;

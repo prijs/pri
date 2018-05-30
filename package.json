@@ -9,6 +9,8 @@
     "build": "rm -rf built && rm -rf .cache && tsc && npm run create-client-declaration",
     "prepublishOnly": "npm run build",
     "lint": "echo 'Pre-commit checks...' && tslint --fix './src/**/*.?(ts|tsx)'",
+    "prettier": "prettier --write './src/**/*.?(ts|tsx)'",
+    "reformat": "npm run lint && npm run prettier",
     "test": "rm -rf built && tsc && ava --files ./built/tests/**/*.js --failFast"
   },
   "pre-commit": [

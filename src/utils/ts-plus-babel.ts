@@ -1,17 +1,17 @@
-import transformRuntime from "@babel/plugin-transform-runtime"
-import babelEnv from "@babel/preset-env"
-import stage2 from "@babel/preset-stage-2"
-import * as fs from "fs-extra"
-import * as gulp from "gulp"
-import * as gulpBabel from "gulp-babel"
+import transformRuntime from '@babel/plugin-transform-runtime';
+import babelEnv from '@babel/preset-env';
+import stage2 from '@babel/preset-stage-2';
+import * as fs from 'fs-extra';
+import * as gulp from 'gulp';
+import * as gulpBabel from 'gulp-babel';
 // import * as gulpSourcemaps from "gulp-sourcemaps"
-import * as tsGulp from "gulp-typescript"
-import * as _ from "lodash"
-import * as path from "path"
-import { CompilerOptions } from "typescript"
+import * as tsGulp from 'gulp-typescript';
+import * as _ from 'lodash';
+import * as path from 'path';
+import { CompilerOptions } from 'typescript';
 
 export const tsPlusBabel = (projectRootPath: string, outDir: string, tsCompileOptions: CompilerOptions = {}) => {
-  const tsConfigPath = path.join(projectRootPath, "tsconfig.json")
+  const tsConfigPath = path.join(projectRootPath, 'tsconfig.json');
 
   // Fix babel's bug.
   // Babel couldn't handle esnext module, so in typescript:
@@ -23,9 +23,9 @@ export const tsPlusBabel = (projectRootPath: string, outDir: string, tsCompileOp
   // So, babel can only handle require and import.
   // But couldn't handle import * as.
   const tsProject = tsGulp.createProject(tsConfigPath, {
-    module: "commonjs",
+    module: 'commonjs',
     ...tsCompileOptions
-  })
+  });
 
   return new Promise((resolve, reject) => {
     tsProject
@@ -44,7 +44,7 @@ export const tsPlusBabel = (projectRootPath: string, outDir: string, tsCompileOp
       //   })
       // )
       .pipe(gulp.dest(path.join(projectRootPath, outDir)))
-      .on("end", resolve)
-      .on("error", reject)
-  })
-}
+      .on('end', resolve)
+      .on('error', reject);
+  });
+};

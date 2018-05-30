@@ -1,3 +1,3 @@
-const projectRootPath = process.cwd()
+const projectRootPath = process.cwd();
 
-export const getProjectRootPath = () => projectRootPath
+export const getProjectRootPath = () => projectRootPath;
