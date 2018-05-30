@@ -2,7 +2,7 @@
   "extends": "tslint:latest",
   "defaultSeverity": "error",
   "rules": {
-    "semicolon": [false],
+    "semicolon": [true],
     "object-literal-sort-keys": false,
     "max-classes-per-file": [true, 5],
     "trailing-comma": [false],
@@ -13,6 +13,7 @@
     "no-submodule-imports": false,
     "object-literal-key-quotes": false,
     "no-object-literal-type-assertion": false,
-    "prefer-conditional-expression": false
+    "prefer-conditional-expression": false,
+    "quotemark": [true, "single", "jsx-double"]
   }
 }

@@ -1,6 +1,6 @@
-import styled from "styled-components"
+import styled from 'styled-components';
 
-export const Container = styled.div``
+export const Container = styled.div``;
 
 export const PathLink = styled.div`
   color: #1890ff;
@@ -8,4 +8,4 @@ export const PathLink = styled.div`
   &:hover {
     color: #40a9ff;
   }
-`
+`;

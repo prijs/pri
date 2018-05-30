@@ -1,78 +1,78 @@
-import * as fs from "fs-extra"
-import * as _ from "lodash"
-import * as normalizePath from "normalize-path"
-import * as path from "path"
-import { pri } from "../../node"
-import { md5 } from "../../utils/md5"
-import { layoutPath, tempJsEntryPath } from "../../utils/structor-config"
+import * as fs from 'fs-extra';
+import * as _ from 'lodash';
+import * as normalizePath from 'normalize-path';
+import * as path from 'path';
+import { pri } from '../../node';
+import { md5 } from '../../utils/md5';
+import { layoutPath, tempJsEntryPath } from '../../utils/structor-config';
 
-const LAYOUT = "LayoutComponent"
-const LAYOUT_ROUTE = "LayoutRoute"
+const LAYOUT = 'LayoutComponent';
+const LAYOUT_ROUTE = 'LayoutRoute';
 
 interface IResult {
   projectAnalyseLayout: {
-    hasLayout: boolean
-  }
+    hasLayout: boolean;
+  };
 }
 
 export default async (instance: typeof pri) => {
-  const projectRootPath = instance.project.getProjectRootPath()
+  const projectRootPath = instance.project.getProjectRootPath();
 
   // src/layouts
-  const whiteList = [`src${path.sep}layouts`]
+  const whiteList = [`src${path.sep}layouts`];
   instance.project.whiteFileRules.add(file => {
-    return whiteList.some(whiteName => path.format(file) === path.join(projectRootPath, whiteName))
-  })
+    return whiteList.some(whiteName => path.format(file) === path.join(projectRootPath, whiteName));
+  });
 
   // src/layouts/markdown.tsx
   instance.project.whiteFileRules.add(file => {
-    const relativePath = path.relative(projectRootPath, file.dir)
-    return relativePath === `src${path.sep}layouts` && file.name === "index" && file.ext === ".tsx"
-  })
+    const relativePath = path.relative(projectRootPath, file.dir);
+    return relativePath === `src${path.sep}layouts` && file.name === 'index' && file.ext === '.tsx';
+  });
 
   // src/layouts/markdown.style.tsx
   instance.project.whiteFileRules.add(file => {
-    const relativePath = path.relative(projectRootPath, file.dir)
-    return relativePath === `src${path.sep}layouts` && file.name === "index.style" && file.ext === ".ts"
-  })
+    const relativePath = path.relative(projectRootPath, file.dir);
+    return relativePath === `src${path.sep}layouts` && file.name === 'index.style' && file.ext === '.ts';
+  });
 
   instance.project.onAnalyseProject(files => {
     return {
       projectAnalyseLayout: {
         hasLayout: files
           .filter(file => {
-            const relativePath = path.relative(projectRootPath, path.join(file.dir, file.name))
+            const relativePath = path.relative(projectRootPath, path.join(file.dir, file.name));
 
             if (!relativePath.startsWith(layoutPath.dir)) {
-              return false
+              return false;
             }
 
-            return true
+            return true;
           })
-          .some(file => file.name === "index")
+          .some(file => file.name === 'index')
       }
-    } as IResult
-  })
+    } as IResult;
+  });
 
   instance.project.onCreateEntry((analyseInfo: IResult, entry, env, projectConfig) => {
     if (!analyseInfo.projectAnalyseLayout.hasLayout) {
-      return
+      return;
     }
 
-    const layoutEntryRelativePath = path.relative(tempJsEntryPath.dir, path.join(layoutPath.dir, layoutPath.name))
+    const layoutEntryRelativePath = path.relative(tempJsEntryPath.dir, path.join(layoutPath.dir, layoutPath.name));
 
     entry.pipeAppHeader(header => {
       return `
         ${header}
-        import ${entry.pipe.get("analyseLayoutImportName", LAYOUT)} from "${normalizePath(layoutEntryRelativePath)}"
-      `
-    })
+        import ${entry.pipe.get('analyseLayoutImportName', LAYOUT)} from "${normalizePath(layoutEntryRelativePath)}"
+      `;
+    });
 
     entry.pipeAppBody(body => {
       return `
         ${body}
 
-        ${entry.pipe.get("analyseLayoutBody", "")}
+        ${entry.pipe.get('analyseLayoutBody', '')}
 
         const ${LAYOUT_ROUTE} = ({ component: Component, ...rest }: any) => {
           return (
@@ -83,11 +83,11 @@ export default async (instance: typeof pri) => {
             )} />
           )
         }
-      `
-    })
+      `;
+    });
 
-    entry.pipe.set("commonRoute", route => {
-      return LAYOUT_ROUTE
-    })
-  })
-}
+    entry.pipe.set('commonRoute', route => {
+      return LAYOUT_ROUTE;
+    });
+  });
+};

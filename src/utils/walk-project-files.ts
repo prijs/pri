@@ -1,56 +1,56 @@
-import { fstat } from "fs"
-import * as fs from "fs-extra"
-import * as path from "path"
-import * as walk from "walk"
-import { IProjectConfig } from "./project-config-interface"
-import { declarePath, getGitignores, ignoreScanSources, pagesPath, tempPath, tsBuiltPath } from "./structor-config"
+import { fstat } from 'fs';
+import * as fs from 'fs-extra';
+import * as path from 'path';
+import * as walk from 'walk';
+import { IProjectConfig } from './project-config-interface';
+import { declarePath, getGitignores, ignoreScanSources, pagesPath, tempPath, tsBuiltPath } from './structor-config';
 
 type WalkStats = fs.Stats & {
-  name: string
-}
+  name: string;
+};
 
-type ICustomParsedPath = path.ParsedPath & { isDir: boolean }
+type ICustomParsedPath = path.ParsedPath & { isDir: boolean };
 
 export function walkProjectFiles(projectRootPath: string, projectConfig: IProjectConfig): Promise<ICustomParsedPath[]> {
   return new Promise((resolve, reject) => {
-    const gitIgnores = getGitignores(projectConfig).map(dir => path.join(projectRootPath, dir))
-    const scanIgnores = ignoreScanSources.map(addon => path.join(projectRootPath, addon))
+    const gitIgnores = getGitignores(projectConfig).map(dir => path.join(projectRootPath, dir));
+    const scanIgnores = ignoreScanSources.map(addon => path.join(projectRootPath, addon));
 
-    const walker = walk.walk(projectRootPath, { filters: [...gitIgnores, ...scanIgnores] })
+    const walker = walk.walk(projectRootPath, { filters: [...gitIgnores, ...scanIgnores] });
 
-    const files: ICustomParsedPath[] = []
+    const files: ICustomParsedPath[] = [];
 
-    walker.on("directories", (root: string, dirStatsArray: WalkStats[], next: () => void) => {
+    walker.on('directories', (root: string, dirStatsArray: WalkStats[], next: () => void) => {
       dirStatsArray.forEach(dirStats => {
-        const dirPath = path.join(root, dirStats.name)
+        const dirPath = path.join(root, dirStats.name);
 
         if (dirPath === projectRootPath) {
           // Skip project's root.
-          next()
-          return
+          next();
+          return;
         }
 
-        files.push({ isDir: true, ...path.parse(dirPath) })
-        next()
-      })
-    })
+        files.push({ isDir: true, ...path.parse(dirPath) });
+        next();
+      });
+    });
 
-    walker.on("file", (root: string, fileStats: WalkStats, next: () => void) => {
+    walker.on('file', (root: string, fileStats: WalkStats, next: () => void) => {
       if (gitIgnores.concat(scanIgnores).some(ignorePath => ignorePath === path.join(root, fileStats.name))) {
-        next()
-        return
+        next();
+        return;
       }
 
-      files.push({ isDir: false, ...path.parse(path.join(root, fileStats.name)) })
-      next()
-    })
+      files.push({ isDir: false, ...path.parse(path.join(root, fileStats.name)) });
+      next();
+    });
 
-    walker.on("errors", (root: string, nodeStatsArray: WalkStats, next: () => void) => {
-      next()
-    })
+    walker.on('errors', (root: string, nodeStatsArray: WalkStats, next: () => void) => {
+      next();
+    });
 
-    walker.on("end", () => {
-      resolve(files)
-    })
-  })
+    walker.on('end', () => {
+      resolve(files);
+    });
+  });
 }

@@ -1,21 +1,21 @@
-import { Connect } from "dob-react"
-import * as React from "react"
-import * as S from "./layout.style"
-import { Props, State } from "./layout.type"
+import { Connect } from 'dob-react';
+import * as React from 'react';
+import * as S from './layout.style';
+import { Props, State } from './layout.type';
 
-import { PureComponent } from "../../utils/react-helper"
-import { MainComponent } from "../main/main.component"
-import { MenuComponent } from "../menu/menu.component"
-import { NavComponent } from "../nav/nav.component"
-import { StructComponent } from "../struct/struct.component"
+import { PureComponent } from '../../utils/react-helper';
+import { MainComponent } from '../main/main.component';
+import { MenuComponent } from '../menu/menu.component';
+import { NavComponent } from '../nav/nav.component';
+import { StructComponent } from '../struct/struct.component';
 
 @Connect
 export class LayoutComponent extends PureComponent<Props, State> {
-  public static defaultProps = new Props()
-  public state = new State()
+  public static defaultProps = new Props();
+  public state = new State();
 
   public componentDidMount() {
-    this.props.ApplicationAction.initSocket()
+    this.props.ApplicationAction.initSocket();
   }
 
   public render() {
@@ -34,7 +34,7 @@ export class LayoutComponent extends PureComponent<Props, State> {
         <S.ContainerRight>
           <S.TopContainer>
             <MenuComponent />
-            {this.props.ApplicationAction.loadPluginsByPosition("menu")}
+            {this.props.ApplicationAction.loadPluginsByPosition('menu')}
           </S.TopContainer>
 
           <S.BottomContainer>
@@ -42,6 +42,6 @@ export class LayoutComponent extends PureComponent<Props, State> {
           </S.BottomContainer>
         </S.ContainerRight>
       </S.Container>
-    )
+    );
   }
 }

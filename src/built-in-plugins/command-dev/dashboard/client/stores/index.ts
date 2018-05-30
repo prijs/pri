@@ -1,8 +1,8 @@
-import { combineStores } from "dob"
+import { combineStores } from 'dob';
 
-import { ApplciationStore, ApplicationAction } from "./application"
+import { ApplciationStore, ApplicationAction } from './application';
 
 export default combineStores({
   ApplicationAction,
   ApplciationStore
-})
+});

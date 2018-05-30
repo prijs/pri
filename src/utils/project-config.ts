@@ -1,24 +1,24 @@
-import * as fs from "fs-extra"
-import * as _ from "lodash"
-import * as path from "path"
-import * as ts from "typescript"
-import { exec } from "./exec"
-import { IProjectConfig } from "./project-config-interface"
-import { configPaths } from "./structor-config"
+import * as fs from 'fs-extra';
+import * as _ from 'lodash';
+import * as path from 'path';
+import * as ts from 'typescript';
+import { exec } from './exec';
+import { IProjectConfig } from './project-config-interface';
+import { configPaths } from './structor-config';
 
-export const getConfig = (projectRootPath: string, env: "local" | "prod" | null) => {
-  const defaultConfig = new IProjectConfig()
+export const getConfig = (projectRootPath: string, env: 'local' | 'prod' | null) => {
+  const defaultConfig = new IProjectConfig();
 
-  const projectDefaultConfig = execTsByPath(path.join(projectRootPath, path.format(configPaths.default)))
-  let projectEnvConfig = null
+  const projectDefaultConfig = execTsByPath(path.join(projectRootPath, path.format(configPaths.default)));
+  let projectEnvConfig = null;
 
   switch (env) {
-    case "local":
-      projectEnvConfig = execTsByPath(path.join(projectRootPath, path.format(configPaths.local)))
-      break
-    case "prod":
-      projectEnvConfig = execTsByPath(path.join(projectRootPath, path.format(configPaths.prod)))
-      break
+    case 'local':
+      projectEnvConfig = execTsByPath(path.join(projectRootPath, path.format(configPaths.local)));
+      break;
+    case 'prod':
+      projectEnvConfig = execTsByPath(path.join(projectRootPath, path.format(configPaths.prod)));
+      break;
     default:
   }
 
@@ -26,32 +26,32 @@ export const getConfig = (projectRootPath: string, env: "local" | "prod" | null)
     ...defaultConfig,
     ...projectDefaultConfig,
     ...projectEnvConfig
-  }
+  };
 
   // Inspection legality
-  if (!finalConfig.baseHref.startsWith("/")) {
-    throw Error(`baseHref should startsWith /. Current: ${finalConfig.baseHref}`)
+  if (!finalConfig.baseHref.startsWith('/')) {
+    throw Error(`baseHref should startsWith /. Current: ${finalConfig.baseHref}`);
   }
 
-  if (finalConfig.baseHref !== "/" && finalConfig.baseHref.endsWith("/")) {
-    throw Error(`baseHref shouldn't endsWith /. Current: ${finalConfig.baseHref}`)
+  if (finalConfig.baseHref !== '/' && finalConfig.baseHref.endsWith('/')) {
+    throw Error(`baseHref shouldn't endsWith /. Current: ${finalConfig.baseHref}`);
   }
 
-  return finalConfig
-}
+  return finalConfig;
+};
 
 function execTsByPath(filePath: string) {
   if (!fs.existsSync(filePath)) {
-    return null
+    return null;
   }
 
-  const fileContent = fs.readFileSync(filePath).toString()
-  const jsTransferContent = ts.transpile(fileContent)
+  const fileContent = fs.readFileSync(filePath).toString();
+  const jsTransferContent = ts.transpile(fileContent);
 
   try {
     // tslint:disable-next-line:no-eval
-    return eval(jsTransferContent)
+    return eval(jsTransferContent);
   } catch (error) {
-    throw Error(`Parse file ${error.toString()} in ${filePath}`)
+    throw Error(`Parse file ${error.toString()} in ${filePath}`);
   }
 }

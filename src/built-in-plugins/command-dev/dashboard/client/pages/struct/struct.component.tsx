@@ -1,66 +1,66 @@
-import { Icon, Input, Tooltip, Tree } from "antd"
-import { Connect } from "dob-react"
-import * as React from "react"
-import { pipeEvent } from "../../../../../../utils/functional"
-import { PureComponent } from "../../utils/react-helper"
-import * as S from "./struct.style"
-import { Props, State } from "./struct.type"
+import { Icon, Input, Tooltip, Tree } from 'antd';
+import { Connect } from 'dob-react';
+import * as React from 'react';
+import { pipeEvent } from '../../../../../../utils/functional';
+import { PureComponent } from '../../utils/react-helper';
+import * as S from './struct.style';
+import { Props, State } from './struct.type';
 
 interface ITreeNode {
-  children?: ITreeNode[]
-  key: string
-  title: string
-  icon?: React.ReactElement<any>
-  disabled?: boolean
+  children?: ITreeNode[];
+  key: string;
+  title: string;
+  icon?: React.ReactElement<any>;
+  disabled?: boolean;
 }
 
-const TreeNode = Tree.TreeNode
-const Search = Input.Search
+const TreeNode = Tree.TreeNode;
+const Search = Input.Search;
 
 const getParentKey = (key: string, tree: ITreeNode[]): string => {
-  let parentKey: string
+  let parentKey: string;
   // tslint:disable-next-line:prefer-for-of
   for (let i = 0; i < tree.length; i++) {
-    const node = tree[i]
+    const node = tree[i];
     if (node.children) {
       if (node.children.some((item: any) => item.key === key)) {
-        parentKey = node.key
+        parentKey = node.key;
       } else if (getParentKey(key, node.children)) {
-        parentKey = getParentKey(key, node.children)
+        parentKey = getParentKey(key, node.children);
       }
     }
   }
-  return parentKey
-}
+  return parentKey;
+};
 
-const TreeIcon = (props: any) => <Icon style={{ marginRight: 5 }} {...props} />
+const TreeIcon = (props: any) => <Icon style={{ marginRight: 5 }} {...props} />;
 
 const PlusIcon = (props: any) => (
   <S.PlusIconContainer>
     <Icon
       style={{
-        color: "#369",
-        cursor: "pointer",
-        fontWeight: "bold"
+        color: '#369',
+        cursor: 'pointer',
+        fontWeight: 'bold'
       }}
       type="plus"
       {...props}
     />
   </S.PlusIconContainer>
-)
+);
 
 @Connect
 export class StructComponent extends PureComponent<Props, State> {
-  public static defaultProps = new Props()
-  public state = new State()
+  public static defaultProps = new Props();
+  public state = new State();
 
   public componentDidMount() {
-    this.props.ApplicationAction.event.on("freshProjectStatus", this.setTreeData)
+    this.props.ApplicationAction.event.on('freshProjectStatus', this.setTreeData);
   }
 
   public render() {
     if (this.props.ApplciationStore.status === null || this.props.ApplciationStore.status === undefined) {
-      return null
+      return null;
     }
 
     return (
@@ -81,37 +81,37 @@ export class StructComponent extends PureComponent<Props, State> {
           </Tree>
         </S.TreeContainer>
       </S.Container>
-    )
+    );
   }
 
   private setTreeData = () => {
     // Pages
     const pages = this.props.ApplciationStore.status.analyseInfo.projectAnalysePages
       ? this.props.ApplciationStore.status.analyseInfo.projectAnalysePages.pages
-      : []
+      : [];
     const markdownPages = this.props.ApplciationStore.status.analyseInfo.projectAnalyseMarkdownPages
       ? this.props.ApplciationStore.status.analyseInfo.projectAnalyseMarkdownPages.pages
-      : []
-    const allPages = [...pages, ...markdownPages]
+      : [];
+    const allPages = [...pages, ...markdownPages];
     if (allPages) {
       this.props.ApplicationAction.pipeTreeNode(treeData => {
         treeData[0].children.push({
-          key: "routes",
+          key: 'routes',
           title: `Routes (${allPages.length})`,
           icon: <TreeIcon type="share-alt" />,
           disabled: allPages.length === 0
-        })
-        return treeData
-      })
+        });
+        return treeData;
+      });
     }
 
     // Layout
     const hasLayout = this.props.ApplciationStore.status.analyseInfo.projectAnalyseLayout
       ? this.props.ApplciationStore.status.analyseInfo.projectAnalyseLayout.hasLayout
-      : false
+      : false;
     this.props.ApplicationAction.pipeTreeNode(treeData => {
       treeData[0].children.push({
-        key: "layout",
+        key: 'layout',
         title: `Layout`,
         icon: hasLayout ? (
           <TreeIcon type="layout" />
@@ -121,17 +121,17 @@ export class StructComponent extends PureComponent<Props, State> {
           </Tooltip>
         ),
         disabled: !hasLayout
-      })
-      return treeData
-    })
+      });
+      return treeData;
+    });
 
     // 404
     const hasNotFound = this.props.ApplciationStore.status.analyseInfo.projectAnalyseNotFound
       ? this.props.ApplciationStore.status.analyseInfo.projectAnalyseNotFound.hasNotFound
-      : false
+      : false;
     this.props.ApplicationAction.pipeTreeNode(treeData => {
       treeData[0].children.push({
-        key: "404",
+        key: '404',
         title: `404`,
         icon: hasNotFound ? (
           <TreeIcon type="file-unknown" />
@@ -141,17 +141,17 @@ export class StructComponent extends PureComponent<Props, State> {
           </Tooltip>
         ),
         disabled: !hasNotFound
-      })
-      return treeData
-    })
+      });
+      return treeData;
+    });
 
     // Config
     const hasConfig = this.props.ApplciationStore.status.analyseInfo.projectAnalyseConfig
       ? this.props.ApplciationStore.status.analyseInfo.projectAnalyseConfig.hasConfig
-      : false
+      : false;
     this.props.ApplicationAction.pipeTreeNode(treeData => {
       treeData[0].children.push({
-        key: "config",
+        key: 'config',
         title: `Config`,
         icon: hasConfig ? (
           <TreeIcon type="setting" />
@@ -161,63 +161,63 @@ export class StructComponent extends PureComponent<Props, State> {
           </Tooltip>
         ),
         disabled: !hasConfig
-      })
-      return treeData
-    })
-  }
+      });
+      return treeData;
+    });
+  };
 
   private getFlatData = () => {
     const dataList: Array<{
-      key: string
-      title: string
-    }> = []
+      key: string;
+      title: string;
+    }> = [];
     function setFlatData(eachTreeData: ITreeNode[]) {
       eachTreeData.forEach(each => {
-        dataList.push({ key: each.key, title: each.title })
+        dataList.push({ key: each.key, title: each.title });
         if (each.children) {
-          setFlatData(each.children)
+          setFlatData(each.children);
         }
-      })
+      });
     }
 
-    setFlatData(this.props.ApplciationStore.treeData)
-    return dataList
-  }
+    setFlatData(this.props.ApplciationStore.treeData);
+    return dataList;
+  };
 
   private onExpand = (expandedKeys: string[]) => {
     this.setState({
       expandedKeys,
       autoExpandParent: false
-    })
-  }
+    });
+  };
 
   private onChange = (value: string) => {
     const expandedKeys = this.getFlatData().map(item => {
       if (item.title.indexOf(value) > -1) {
-        return getParentKey(item.key, this.props.ApplciationStore.treeData)
+        return getParentKey(item.key, this.props.ApplciationStore.treeData);
       }
-      return null
-    })
+      return null;
+    });
 
     this.setState({
       expandedKeys,
       searchValue: value,
       autoExpandParent: true
-    })
-  }
+    });
+  };
 
   private loop = (data: ITreeNode[]): Array<React.ReactElement<any>> =>
     data.map(item => {
-      const index = item.title.indexOf(this.state.searchValue)
-      const beforeStr = item.title.substr(0, index)
-      const afterStr = item.title.substr(index + this.state.searchValue.length)
+      const index = item.title.indexOf(this.state.searchValue);
+      const beforeStr = item.title.substr(0, index);
+      const afterStr = item.title.substr(index + this.state.searchValue.length);
 
       const title =
         index > -1 ? (
           <span>
             {item.icon}
             {beforeStr}
-            <span style={{ color: "#f50" }}>{this.state.searchValue}</span>
+            <span style={{ color: '#f50' }}>{this.state.searchValue}</span>
             {afterStr}
           </span>
         ) : (
@@ -225,22 +225,22 @@ export class StructComponent extends PureComponent<Props, State> {
             {item.icon}
             {item.title}
           </span>
-        )
+        );
 
       const treeProps = {
         key: item.key,
         title,
         disabled: item.disabled === undefined ? false : item.disabled
-      }
+      };
 
       if (item.children) {
-        return <TreeNode {...treeProps}>{this.loop(item.children)}</TreeNode>
+        return <TreeNode {...treeProps}>{this.loop(item.children)}</TreeNode>;
       }
-      return <TreeNode {...treeProps} />
-    })
+      return <TreeNode {...treeProps} />;
+    });
 
   private handleSelectTreeNode = (selectedKeys: string[]) => {
-    const selectKey = selectedKeys[0]
-    this.props.ApplicationAction.setSelectedTreeKey(selectKey)
-  }
+    const selectKey = selectedKeys[0];
+    this.props.ApplicationAction.setSelectedTreeKey(selectKey);
+  };
 }
