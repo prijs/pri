@@ -23,9 +23,9 @@ const projectRootPath = process.cwd();
 
 export const CommandBuild = async (
   instance: typeof pri,
-  opts?: {
+  opts: {
     publicPath?: string;
-  }
+  } = {}
 ) => {
   const env = 'prod';
   const projectConfig = getConfig(projectRootPath, env);

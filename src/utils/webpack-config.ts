@@ -1,11 +1,11 @@
-import * as fs from "fs-extra"
-import * as HtmlWebpackPlugin from "html-webpack-plugin"
-import * as MiniCssExtractPlugin from "mini-css-extract-plugin"
-import * as path from "path"
-import * as webpack from "webpack"
-import { plugin } from "../utils/plugins"
-import { IProjectConfig } from "../utils/project-config-interface"
-import { srcPath, tempPath } from "../utils/structor-config"
+import * as fs from 'fs-extra';
+import * as HtmlWebpackPlugin from 'html-webpack-plugin';
+import * as MiniCssExtractPlugin from 'mini-css-extract-plugin';
+import * as path from 'path';
+import * as webpack from 'webpack';
+import { plugin } from '../utils/plugins';
+import { IProjectConfig } from '../utils/project-config-interface';
+import { srcPath, tempPath } from '../utils/structor-config';
 
 interface IOptions {
   mode: 'development' | 'production';
@@ -28,17 +28,6 @@ interface IOptions {
  * Get webpack config.
  */
 export const getWebpackConfig = (opts: IOptions) => {
-  /**
-   * Helper
-   */
-  function extraCssInProd(...loaders: any[]) {
-    if (opts.env === 'local') {
-      return [styleLoader, ...loaders];
-    } else {
-      return ExtractTextPlugin.extract({ fallback: styleLoader, use: loaders });
-    }
-  }
-
   /**
    * Mutilpe loaders
    */
@@ -83,16 +72,16 @@ export const getWebpackConfig = (opts: IOptions) => {
    * Helper
    */
   function extraCssInProd(...loaders: any[]) {
-    if (opts.env === "local") {
-      return [styleLoader, ...loaders]
-    } else if (opts.env === "prod") {
-      return [MiniCssExtractPlugin.loader, ...loaders]
+    if (opts.env === 'local') {
+      return [styleLoader, ...loaders];
+    } else if (opts.env === 'prod') {
+      return [MiniCssExtractPlugin.loader, ...loaders];
     }
   }
 
-  const distDir = opts.distDir || path.join(opts.projectRootPath, opts.projectConfig.distDir)
-  const outFileName = opts.outFileName || opts.projectConfig.outFileName
-  const outCssFileName = opts.outCssFileName || opts.projectConfig.outCssFileName
+  const distDir = opts.distDir || path.join(opts.projectRootPath, opts.projectConfig.distDir);
+  const outFileName = opts.outFileName || opts.projectConfig.outFileName;
+  const outCssFileName = opts.outCssFileName || opts.projectConfig.outCssFileName;
 
   let publicPath: string = opts.publicPath || opts.projectConfig.publicPath || '/';
   if (!publicPath.endsWith('/')) {
@@ -161,10 +150,9 @@ export const getWebpackConfig = (opts: IOptions) => {
         path.join(__dirname, '../../node_modules')
       ]
     },
-    plugins: [
-    ],
+    plugins: [],
     optimization: {
-      namedChunks: false,
+      namedChunks: false
     },
     stats
   }; // Self node_modules
@@ -182,18 +170,18 @@ export const getWebpackConfig = (opts: IOptions) => {
     }
   }
 
-  if (opts.env === "prod") {
+  if (opts.env === 'prod') {
     config.optimization.splitChunks = {
       ...config.optimization.splitChunks,
       cacheGroups: {
         styles: {
           name: outCssFileName,
           test: /\.css$/,
-          chunks: "all",
+          chunks: 'all',
           enforce: true
         }
       }
-    }
+    };
     config.plugins.push(
       new MiniCssExtractPlugin({
         filename: outCssFileName
