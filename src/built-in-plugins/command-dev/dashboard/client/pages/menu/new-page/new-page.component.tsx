@@ -37,15 +37,15 @@ export class NewPageComponent extends PureComponent<Props, State> {
     this.setState({
       visible: true
     });
-  };
+  }
   private handleOk = () => {
     this.setState({
       visible: false
     });
-  };
+  }
   private handleCancel = () => {
     this.setState({
       visible: false
     });
-  };
+  }
 }

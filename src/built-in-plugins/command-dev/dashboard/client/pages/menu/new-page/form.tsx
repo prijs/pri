@@ -72,7 +72,7 @@ class FormComponent extends PureComponent<Props, State> {
     e.preventDefault();
     await this.props.ApplicationAction.addPage(this.props.form.getFieldsValue());
     this.props.onSuccess();
-  };
+  }
 }
 
 export default Form.create()(FormComponent as any) as any;

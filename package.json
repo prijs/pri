@@ -5,8 +5,7 @@
   "main": "built/node/index.js",
   "scripts": {
     "start": "tsc -w",
-    "create-client-declaration":
-      "tsc --lib dom,es5,es6,scripthost --declaration src/client/index --declarationDir declare/client --skipLibCheck --outDir declare/client && find declare/client -type f -name \"*.js\" -delete",
+    "create-client-declaration": "tsc --lib dom,es5,es6,scripthost --declaration src/client/index --declarationDir declare/client --skipLibCheck --outDir declare/client && find declare/client -type f -name \"*.js\" -delete",
     "build": "rm -rf built && rm -rf .cache && tsc && npm run create-client-declaration",
     "prepublishOnly": "npm run build",
     "lint": "echo 'Pre-commit checks...' && tslint --fix './src/**/*.?(ts|tsx)'",
@@ -14,7 +13,9 @@
     "reformat": "npm run lint && npm run prettier",
     "test": "rm -rf built && tsc && ava --files ./built/tests/**/*.js --failFast"
   },
-  "pre-commit": ["lint"],
+  "pre-commit": [
+    "lint"
+  ],
   "bin": {
     "pri": "built/bin.js",
     "pri-plugin": "built/bin-plugin.js"
@@ -57,8 +58,8 @@
     "commander": "^2.15.1",
     "cors": "^2.8.4",
     "css-loader": "^0.28.11",
-    "dob": "^2.5.8",
-    "dob-react": "^2.4.13",
+    "dob": "^2.5.9",
+    "dob-react": "^2.4.15",
     "folder-hash": "^1.1.2",
     "fs-extra": "^5.0.0",
     "gulp": "^3.9.1",

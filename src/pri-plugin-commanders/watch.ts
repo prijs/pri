@@ -5,7 +5,7 @@ import { tsBuiltPath } from '../utils/structor-config';
 import { tsPlusBabel } from '../utils/ts-plus-babel';
 
 export default async (projectRootPath: string) => {
-  log("Watching plugin's files.");
+  log('Watching plugin\'s files.');
 
   const sourceBlob = 'src/**/*.{tsx,ts}';
   const watcher = gulp.watch(sourceBlob);

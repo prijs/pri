@@ -4,7 +4,7 @@ export class GlobalEnv {
   public customEnv: any = {};
   public get = (name: string) => {
     return this.customEnv[name];
-  };
+  }
 }
 
 let env = new GlobalEnv();
