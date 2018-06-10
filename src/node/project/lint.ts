@@ -1,8 +1,5 @@
 import { ILintFilter, plugin } from '../../utils/plugins';
-import { lint as basicLint } from '../../utils/tslint';
-import { getProjectRootPath } from './get-project-root-path';
-
-const lint = basicLint.bind(null, getProjectRootPath());
+import { lint } from '../../utils/tslint';
 
 export { lint };
 

@@ -7,19 +7,17 @@ import { ensureEndWithSlash } from '../../utils/functional';
 import { tempPath } from '../../utils/structor-config';
 
 export default async (instance: typeof pri) => {
-  const projectRootPath = instance.project.getProjectRootPath();
-
-  instance.project.onCreateEntry((analyseInfo, entry, env, projectConfig) => {
+  instance.project.onCreateEntry((analyseInfo, entry) => {
     entry.pipeEntryRender(
       text => `
       ${
-        projectConfig.useServiceWorker
+        instance.projectConfig.useServiceWorker
           ? `
         if (navigator.serviceWorker) {
           navigator.serviceWorker.register("${path.join(
-            projectConfig.baseHref,
+            instance.projectConfig.baseHref,
             'sw.js'
-          )}", {scope: "${ensureEndWithSlash(projectConfig.baseHref)}"})
+          )}", {scope: "${ensureEndWithSlash(instance.projectConfig.baseHref)}"})
         }
       `
           : ''
@@ -30,7 +28,7 @@ export default async (instance: typeof pri) => {
     );
 
     fs.outputFileSync(
-      path.join(projectRootPath, tempPath.dir, 'static', 'sw.js'),
+      path.join(instance.projectRootPath, tempPath.dir, 'static', 'sw.js'),
       prettier.format(
         entry.pipe.get(
           'serviceWorker',

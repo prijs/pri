@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import * as path from 'path';
-import { IProjectConfig } from './project-config-interface';
+import { globalState } from './global-state';
 
 export const srcPath = {
   dir: 'src'
@@ -70,73 +70,46 @@ export const storesPath = {
   dir: path.join(srcPath.dir, `stores`)
 };
 
-export const configPath = { dir: 'config' };
-
-export const configPaths = {
-  default: {
-    dir: configPath.dir,
-    name: 'config.default',
-    ext: '.ts'
-  },
-  local: {
-    dir: configPath.dir,
-    name: 'config.local',
-    ext: '.ts'
-  },
-  prod: {
-    dir: configPath.dir,
-    name: 'config.prod',
-    ext: '.ts'
-  }
-};
-
 export const markdownTempPath = {
   dir: path.join(tempPath.dir, 'markdowns')
 };
 
-export const getGitignores = (projectConfig?: IProjectConfig) => {
-  const ignores = [
-    'node_modules',
-    '.cache',
-    '.vscode',
-    tempPath.dir,
-    tsBuiltPath.dir,
-    '.DS_Store',
-    'coverage',
-    '.nyc_output'
-  ];
-
-  if (projectConfig) {
-    // distDir.dir can be a/b/c
-    const trimedDistDir = _.trimEnd(projectConfig.distDir, '/');
-    const distPaths = trimedDistDir.split('/');
-
-    distPaths.reduce((prev, current) => {
-      if (prev === '') {
-        ignores.push(current);
-        return current;
-      } else {
-        prev += '/' + current;
-        ignores.push(prev);
-        return prev;
-      }
-    }, '');
+const gitIgnores: string[] = [
+  'node_modules',
+  '.cache',
+  '.vscode',
+  tempPath.dir,
+  tsBuiltPath.dir,
+  '.DS_Store',
+  'coverage',
+  '.nyc_output'
+];
+// Add distDir to gitIgnore
+// EG: /dist -> '/dist'
+// EG: /a/b/c -> ['/a', '/a/b', '/a/b/c']
+const trimedDistDir = _.trimEnd(globalState.projectConfig.distDir, '/');
+const distPaths = trimedDistDir.split('/');
+distPaths.reduce((prev, current) => {
+  if (prev === '') {
+    gitIgnores.push(current);
+    return current;
+  } else {
+    prev += '/' + current;
+    gitIgnores.push(prev);
+    return prev;
   }
+}, '');
+export { gitIgnores };
 
-  return ignores;
-};
+const npmIgnores = gitIgnores.slice();
+// Npm ignore test path
+npmIgnores.push(testsPath.dir);
+// Npm do not ignore built path!
+const builtPathIndex = npmIgnores.findIndex(name => name === tsBuiltPath.dir);
+npmIgnores.splice(builtPathIndex, 1);
+export { npmIgnores };
 
-export const getNpmignores = (projectConfig: IProjectConfig) => {
-  const npmIgnores = getGitignores(projectConfig);
-  npmIgnores.push(testsPath.dir);
-
-  const builtPathIndex = npmIgnores.findIndex(name => name === tsBuiltPath.dir);
-  npmIgnores.splice(builtPathIndex, 1);
-
-  return npmIgnores;
-};
-
-export const ignoreScanSources = [
+export const ignoreScanFiles = [
   '.gitignore',
   '.npmignore',
   '.prettierrc',

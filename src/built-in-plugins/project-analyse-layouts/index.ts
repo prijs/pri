@@ -16,23 +16,21 @@ interface IResult {
 }
 
 export default async (instance: typeof pri) => {
-  const projectRootPath = instance.project.getProjectRootPath();
-
   // src/layouts
   const whiteList = [`src${path.sep}layouts`];
   instance.project.whiteFileRules.add(file => {
-    return whiteList.some(whiteName => path.format(file) === path.join(projectRootPath, whiteName));
+    return whiteList.some(whiteName => path.format(file) === path.join(instance.projectRootPath, whiteName));
   });
 
   // src/layouts/markdown.tsx
   instance.project.whiteFileRules.add(file => {
-    const relativePath = path.relative(projectRootPath, file.dir);
+    const relativePath = path.relative(instance.projectRootPath, file.dir);
     return relativePath === `src${path.sep}layouts` && file.name === 'index' && file.ext === '.tsx';
   });
 
   // src/layouts/markdown.style.tsx
   instance.project.whiteFileRules.add(file => {
-    const relativePath = path.relative(projectRootPath, file.dir);
+    const relativePath = path.relative(instance.projectRootPath, file.dir);
     return relativePath === `src${path.sep}layouts` && file.name === 'index.style' && file.ext === '.ts';
   });
 
@@ -41,7 +39,7 @@ export default async (instance: typeof pri) => {
       projectAnalyseLayout: {
         hasLayout: files
           .filter(file => {
-            const relativePath = path.relative(projectRootPath, path.join(file.dir, file.name));
+            const relativePath = path.relative(instance.projectRootPath, path.join(file.dir, file.name));
 
             if (!relativePath.startsWith(layoutPath.dir)) {
               return false;
@@ -54,7 +52,7 @@ export default async (instance: typeof pri) => {
     } as IResult;
   });
 
-  instance.project.onCreateEntry((analyseInfo: IResult, entry, env, projectConfig) => {
+  instance.project.onCreateEntry((analyseInfo: IResult, entry) => {
     if (!analyseInfo.projectAnalyseLayout.hasLayout) {
       return;
     }

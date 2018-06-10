@@ -3,15 +3,15 @@ import * as _ from 'lodash';
 import * as path from 'path';
 import * as prettier from 'prettier';
 import { pri } from '../../node';
-import { IProjectConfig } from '../../utils/project-config-interface';
-import { declarePath, getGitignores, pagesPath, tempTypesPath, tsBuiltPath } from '../../utils/structor-config';
+import { ProjectConfig } from '../../utils/project-config-interface';
+import { declarePath, gitIgnores, pagesPath, srcPath, tempTypesPath, tsBuiltPath } from '../../utils/structor-config';
 
 export function ensureDeclares(projectRootPath: string) {
   const declareAbsolutePath = path.join(projectRootPath, declarePath.dir);
   fs.copySync(path.join(__dirname, '../../../declare'), declareAbsolutePath);
 }
 
-export const ensurePrettierrc = (projectRootPath: string) => ({
+export const ensurePrettierrc = () => ({
   fileName: '.prettierrc',
   pipeContent: () =>
     JSON.stringify(
@@ -32,7 +32,7 @@ export const ensurePrettierrc = (projectRootPath: string) => ({
     ) + '\n'
 });
 
-export const ensureTsconfig = (projectRootPath: string) => ({
+export const ensureTsconfig = () => ({
   fileName: 'tsconfig.json',
   pipeContent: () =>
     JSON.stringify(
@@ -60,7 +60,7 @@ export const ensureTsconfig = (projectRootPath: string) => ({
     ) + '\n'
 }); // Make sure ./src structor. # https://github.com/Microsoft/TypeScript/issues/5134
 
-export const ensureTslint = (projectRootPath: string) => ({
+export const ensureTslint = () => ({
   fileName: 'tslint.json',
   pipeContent: () =>
     JSON.stringify(
@@ -86,7 +86,7 @@ export const ensureTslint = (projectRootPath: string) => ({
     ) + '\n'
 });
 
-export const ensureVscode = (projectRootPath: string) => ({
+export const ensureVscode = () => ({
   fileName: '.vscode/settings.json',
   pipeContent: () =>
     JSON.stringify(
@@ -101,40 +101,79 @@ export const ensureVscode = (projectRootPath: string) => ({
     ) + '\n'
 });
 
-export const ensureGitignore = (projectConfig: IProjectConfig) => ({
+export const ensureGitignore = () => ({
   fileName: '.gitignore',
-  pipeContent: () =>
-    getGitignores(projectConfig)
-      .map(name => `/${name}`)
-      .join('\n')
+  pipeContent: () => gitIgnores.map(name => `/${name}`).join('\n')
+});
+
+export const ensurePackageJson = () => ({
+  fileName: 'package.json',
+  pipeContent: (prev: string) => {
+    const prevJson = JSON.parse(prev);
+    return (
+      JSON.stringify(
+        _.merge({}, prevJson, {
+          scripts: {
+            start: 'pri dev',
+            build: 'pri build',
+            preview: 'pri preview',
+            analyse: 'pri analyse',
+            test: 'pri test'
+          }
+        }),
+        null,
+        2
+      ) + '\n'
+    );
+  }
+});
+
+export const ensureTest = () => ({
+  fileName: 'tests/index.ts',
+  pipeContent: (prev: string) =>
+    prev
+      ? prev
+      : prettier.format(
+          `
+      import test from "ava"
+
+      test("Example", t => {
+        t.true(true)
+      })
+    `,
+          { semi: true, singleQuote: true, parser: 'typescript' }
+        )
 });
 
 export default async (instance: typeof pri) => {
-  const projectRootPath = instance.project.getProjectRootPath();
-  const projectConfig = instance.project.getProjectConfig('local');
+  instance.project.addProjectFiles(ensureGitignore());
 
-  instance.project.addProjectFiles(ensureGitignore(projectConfig));
+  instance.project.addProjectFiles(ensureTsconfig());
 
-  instance.project.addProjectFiles(ensureTsconfig(projectRootPath));
+  instance.project.addProjectFiles(ensureVscode());
 
-  instance.project.addProjectFiles(ensureVscode(projectRootPath));
+  instance.project.addProjectFiles(ensurePrettierrc());
 
-  instance.project.addProjectFiles(ensurePrettierrc(projectRootPath));
+  instance.project.addProjectFiles(ensureTslint());
 
-  instance.project.addProjectFiles(ensureTslint(projectRootPath));
+  instance.project.addProjectFiles(ensurePackageJson());
 
-  ensureDeclares(projectRootPath);
+  instance.project.addProjectFiles(ensureTest());
 
-  const homePagePath = path.join(pagesPath.dir, 'index.tsx');
-  const homePageAbsolutePath = path.join(projectRootPath, homePagePath);
-  const homeMarkdownPagePath = path.join(pagesPath.dir, 'index.md');
-  const homeMarkdownPageAbsolutePath = path.join(projectRootPath, homeMarkdownPagePath);
-  if (!fs.existsSync(homePageAbsolutePath) && !fs.existsSync(homeMarkdownPageAbsolutePath)) {
-    instance.project.addProjectFiles({
-      fileName: homePagePath,
-      pipeContent: () =>
-        prettier.format(
-          `
+  ensureDeclares(instance.projectRootPath);
+
+  if (!instance.projectConfig.isComponentProject) {
+    const homePagePath = path.join(pagesPath.dir, 'index.tsx');
+    const homePageAbsolutePath = path.join(instance.projectRootPath, homePagePath);
+    const homeMarkdownPagePath = path.join(pagesPath.dir, 'index.md');
+    const homeMarkdownPageAbsolutePath = path.join(instance.projectRootPath, homeMarkdownPagePath);
+
+    if (!fs.existsSync(homePageAbsolutePath) && !fs.existsSync(homeMarkdownPageAbsolutePath)) {
+      instance.project.addProjectFiles({
+        fileName: homePagePath,
+        pipeContent: () =>
+          prettier.format(
+            `
       import { env } from "pri/client"
       import * as React from "react"
 
@@ -164,45 +203,41 @@ export default async (instance: typeof pri) => {
         }
       }
     `,
-          { semi: true, singleQuote: true, parser: 'typescript' }
-        )
+            { semi: true, singleQuote: true, parser: 'typescript' }
+          )
+      });
+    }
+  } else {
+    instance.project.addProjectFiles({
+      fileName: 'package.json',
+      pipeContent: prev => {
+        const prevJson = JSON.parse(prev);
+        return (
+          JSON.stringify(
+            _.merge({}, prevJson, {
+              main: `${instance.projectConfig.distDir}/${srcPath.dir}/index.js`,
+              types: `${srcPath.dir}/index.tsx`
+            }),
+            null,
+            2
+          ) + '\n'
+        );
+      }
+    });
+
+    instance.project.addProjectFiles({
+      fileName: `${srcPath.dir}/index.tsx`,
+      pipeContent: text =>
+        text
+          ? text
+          : prettier.format(
+              `
+          import * as React from 'react'
+
+          export default () => <div />
+    `,
+              { semi: true, singleQuote: true, parser: 'typescript' }
+            )
     });
   }
-
-  instance.project.addProjectFiles({
-    fileName: 'package.json',
-    pipeContent: prev => {
-      const prevJson = JSON.parse(prev);
-      return (
-        JSON.stringify(
-          _.merge({}, prevJson, {
-            scripts: {
-              start: 'pri dev',
-              build: 'pri build',
-              preview: 'pri preview',
-              analyse: 'pri analyse',
-              test: 'pri test'
-            }
-          }),
-          null,
-          2
-        ) + '\n'
-      );
-    }
-  });
-
-  instance.project.addProjectFiles({
-    fileName: 'tests/index.ts',
-    pipeContent: () =>
-      prettier.format(
-        `
-      import test from "ava"
-
-      test("Example", t => {
-        t.true(true)
-      })
-    `,
-        { semi: true, singleQuote: true, parser: 'typescript' }
-      )
-  });
 };

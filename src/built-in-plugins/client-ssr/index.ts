@@ -5,14 +5,12 @@ import * as ts from 'typescript';
 import { pri } from '../../node';
 
 export default async (instance: typeof pri) => {
-  const projectRootPath = instance.project.getProjectRootPath();
-
-  instance.project.onCreateEntry((analyseInfo, entry, env, projectConfig) => {
-    if (!projectConfig.useServiceWorker) {
+  instance.project.onCreateEntry((analyseInfo, entry) => {
+    if (!instance.projectConfig.useServiceWorker) {
       return;
     }
 
-    if (!projectConfig.clientServerRender) {
+    if (!instance.projectConfig.clientServerRender) {
       return;
     }
 
@@ -31,7 +29,7 @@ export default async (instance: typeof pri) => {
       if (navigator.serviceWorker) {
         navigator.serviceWorker.addEventListener("message", event => {
           if (event.data.type === "getServerRenderContent") {
-            const baseHrefRegex = new RegExp(escapeRegExp("${projectConfig.baseHref}"), "g")
+            const baseHrefRegex = new RegExp(escapeRegExp("${instance.projectConfig.baseHref}"), "g")
             const matchRouterPath = event.data.pathname.replace(baseHrefRegex, "")
             const loadableMap = pageLoadableMap.get(matchRouterPath === "/" ? "/" : trimEnd(matchRouterPath, "/"))
             if (loadableMap) {
@@ -58,12 +56,12 @@ export default async (instance: typeof pri) => {
     );
   });
 
-  instance.build.afterProdBuild((stats, projectConfig) => {
-    if (!projectConfig.useServiceWorker) {
+  instance.build.afterProdBuild(stats => {
+    if (!instance.projectConfig.useServiceWorker) {
       return;
     }
 
-    if (!projectConfig.clientServerRender) {
+    if (!instance.projectConfig.clientServerRender) {
       return;
     }
 

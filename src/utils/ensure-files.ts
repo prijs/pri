@@ -4,13 +4,13 @@ import * as fs from 'fs-extra';
 import * as _ from 'lodash';
 import * as path from 'path';
 import * as walk from 'walk';
+import { globalState } from './global-state';
 import { log } from './log';
 import { plugin } from './plugins';
-import { IProjectConfig } from './project-config-interface';
-import { declarePath, getGitignores, pagesPath, tempPath, tsBuiltPath } from './structor-config';
+import { declarePath, pagesPath, tempPath, tsBuiltPath } from './structor-config';
 import { walkProjectFiles } from './walk-project-files';
 
-export const ensureFiles = async (projectRootPath: string, projectConfig: IProjectConfig) => {
+export const ensureFiles = async () => {
   log('Ensure project files.\n');
 
   const ensureProjectFilesQueueGroupByPath = _.groupBy(plugin.ensureProjectFilesQueue, 'fileName');
@@ -18,20 +18,12 @@ export const ensureFiles = async (projectRootPath: string, projectConfig: IProje
   Object.keys(ensureProjectFilesQueueGroupByPath).forEach(fileRelativePath => {
     const ensureProjectFilesQueue = ensureProjectFilesQueueGroupByPath[fileRelativePath];
 
-    ensureFile(
-      projectRootPath,
-      fileRelativePath,
-      ensureProjectFilesQueue.map(ensureProjectFiles => ensureProjectFiles.pipeContent)
-    );
+    ensureFile(fileRelativePath, ensureProjectFilesQueue.map(ensureProjectFiles => ensureProjectFiles.pipeContent));
   });
 };
 
-export function ensureFile(
-  projectRootPath: string,
-  fileRelativePath: string,
-  pipeContents: Array<((prev: string) => string)>
-) {
-  const filePath = path.join(projectRootPath, fileRelativePath);
+export function ensureFile(fileRelativePath: string, pipeContents: Array<((prev: string) => string)>) {
+  const filePath = path.join(globalState.projectRootPath, fileRelativePath);
   const fileExist = fs.existsSync(filePath);
 
   let exitFileContent = '';

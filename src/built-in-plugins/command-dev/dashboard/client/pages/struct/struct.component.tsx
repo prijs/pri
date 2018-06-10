@@ -1,7 +1,7 @@
 import { Icon, Input, Tooltip, Tree } from 'antd';
 import { Connect } from 'dob-react';
 import * as React from 'react';
-import { pipeEvent } from '../../../../../../utils/functional';
+import { pipeEvent } from '../../utils/functional';
 import { PureComponent } from '../../utils/react-helper';
 import * as S from './struct.style';
 import { Props, State } from './struct.type';
@@ -164,7 +164,7 @@ export class StructComponent extends PureComponent<Props, State> {
       });
       return treeData;
     });
-  }
+  };
 
   private getFlatData = () => {
     const dataList: Array<{
@@ -182,14 +182,14 @@ export class StructComponent extends PureComponent<Props, State> {
 
     setFlatData(this.props.ApplciationStore.treeData);
     return dataList;
-  }
+  };
 
   private onExpand = (expandedKeys: string[]) => {
     this.setState({
       expandedKeys,
       autoExpandParent: false
     });
-  }
+  };
 
   private onChange = (value: string) => {
     const expandedKeys = this.getFlatData().map(item => {
@@ -204,7 +204,7 @@ export class StructComponent extends PureComponent<Props, State> {
       searchValue: value,
       autoExpandParent: true
     });
-  }
+  };
 
   private loop = (data: ITreeNode[]): Array<React.ReactElement<any>> =>
     data.map(item => {
@@ -237,10 +237,10 @@ export class StructComponent extends PureComponent<Props, State> {
         return <TreeNode {...treeProps}>{this.loop(item.children)}</TreeNode>;
       }
       return <TreeNode {...treeProps} />;
-    })
+    });
 
   private handleSelectTreeNode = (selectedKeys: string[]) => {
     const selectKey = selectedKeys[0];
     this.props.ApplicationAction.setSelectedTreeKey(selectKey);
-  }
+  };
 }

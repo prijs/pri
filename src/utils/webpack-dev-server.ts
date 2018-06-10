@@ -10,19 +10,15 @@ import * as url from 'url';
 import * as urlJoin from 'url-join';
 import * as webpack from 'webpack';
 import * as webpackDevServer from 'webpack-dev-server';
-import { ProjectConfig } from '../../client';
+import { globalState } from '../utils/global-state';
 import { tempPath } from '../utils/structor-config';
-import { IProjectConfig } from './project-config-interface';
 import { compilerLogger } from './webpack-compiler-log';
 import { getWebpackConfig } from './webpack-config';
 
 interface IOptions {
-  projectRootPath: string;
   entryPath: string;
-  env: 'local' | 'prod';
   htmlTemplatePath: string;
   devServerPort: number;
-  projectConfig: IProjectConfig;
   publicPath: string;
   distDir?: string;
   outFileName?: string;
@@ -46,12 +42,9 @@ const stats = {
 export const runWebpackDevServer = async (opts: IOptions) => {
   let webpackConfig = await getWebpackConfig({
     mode: 'development',
-    projectRootPath: opts.projectRootPath,
     entryPath: opts.entryPath,
-    env: opts.env,
     htmlTemplatePath: opts.htmlTemplatePath,
     htmlTemplateArgs: opts.htmlTemplateArgs,
-    projectConfig: opts.projectConfig,
     publicPath: opts.publicPath,
     distDir: opts.distDir,
     outFileName: opts.outFileName
@@ -69,11 +62,11 @@ export const runWebpackDevServer = async (opts: IOptions) => {
     hotOnly: true,
     publicPath: opts.publicPath,
     before: app => {
-      app.use('/', express.static(path.join(opts.projectRootPath, tempPath.dir, 'static')));
+      app.use('/', express.static(path.join(globalState.projectRootPath, tempPath.dir, 'static')));
     },
     compress: true,
     historyApiFallback: { rewrites: [{ from: '/', to: normalizePath(path.join(opts.publicPath, 'index.html')) }] },
-    https: opts.projectConfig.useHttps,
+    https: globalState.projectConfig.useHttps,
     overlay: { warnings: true, errors: true },
     stats,
     watchOptions: { ignored: /node_modules/ },
@@ -90,13 +83,13 @@ export const runWebpackDevServer = async (opts: IOptions) => {
   const devServer = new webpackDevServer(compiler, webpackDevServerConfig);
 
   devServer.listen(opts.devServerPort, '127.0.0.1', () => {
-    if (opts.projectConfig.devUrl) {
-      open(opts.projectConfig.devUrl);
+    if (globalState.projectConfig.devUrl) {
+      open(globalState.projectConfig.devUrl);
     } else {
       open(
         urlJoin(
-          `${opts.projectConfig.useHttps ? 'https' : 'http'}://localhost:${opts.devServerPort}`,
-          opts.projectConfig.baseHref
+          `${globalState.projectConfig.useHttps ? 'https' : 'http'}://localhost:${opts.devServerPort}`,
+          globalState.projectConfig.baseHref
         )
       );
     }

@@ -1,3 +1,4 @@
+import { globalState } from '../utils/global-state';
 import * as build from './build';
 import * as commands from './commands';
 import * as context from './context';
@@ -32,7 +33,8 @@ export const pri = {
    */
   serviceWorker,
 
-  ...self
+  ...self,
+  ...globalState
 };
 
 export * from '../utils/structor-config';

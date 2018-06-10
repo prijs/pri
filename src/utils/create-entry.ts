@@ -3,19 +3,11 @@ import * as path from 'path';
 import * as prettier from 'prettier';
 import * as pipe from '../node/pipe';
 import { IProjectInfo } from './analyse-project-interface';
+import { globalState } from './global-state';
 import { plugin } from './plugins';
-import { IProjectConfig } from './project-config-interface';
 import { tempJsAppPath, tempJsEntryPath } from './structor-config';
 
 export class Entry {
-  private env: 'local' | 'prod';
-  private projectConfig: IProjectConfig;
-
-  constructor(env: 'local' | 'prod', projectConfig: IProjectConfig) {
-    this.env = env;
-    this.projectConfig = projectConfig;
-  }
-
   public getApp() {
     return [this.getAppHeader(), this.getAppBody(), this.getAppComponent()].join('\n');
   }
@@ -80,7 +72,7 @@ export class Entry {
       `
       export const pageLoadableMap = new Map<string, any>()
       export const customHistory = createBrowserHistory({
-        basename: "${this.projectConfig.baseHref}"
+        basename: "${globalState.projectConfig.baseHref}"
       })
     `
     );
@@ -166,16 +158,16 @@ export class Entry {
   }
 }
 
-export function createEntry(projectRootPath: string, env: 'local' | 'prod', projectConfig: IProjectConfig) {
-  const newEntryObject = new Entry(env, projectConfig);
+export function createEntry() {
+  const newEntryObject = new Entry();
 
   plugin.projectCreateEntrys.forEach(projectCreateEntry => {
-    projectCreateEntry(plugin.analyseInfo, newEntryObject, env, projectConfig);
+    projectCreateEntry(plugin.analyseInfo, newEntryObject);
   });
 
   // Create entry tsx file
-  const entryPath = path.join(projectRootPath, path.format(tempJsEntryPath));
-  const appPath = path.join(projectRootPath, path.format(tempJsAppPath));
+  const entryPath = path.join(globalState.projectRootPath, path.format(tempJsEntryPath));
+  const appPath = path.join(globalState.projectRootPath, path.format(tempJsAppPath));
 
   fs.outputFileSync(
     appPath,

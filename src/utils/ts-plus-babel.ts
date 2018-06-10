@@ -9,9 +9,10 @@ import * as tsGulp from 'gulp-typescript';
 import * as _ from 'lodash';
 import * as path from 'path';
 import { CompilerOptions } from 'typescript';
+import { globalState } from './global-state';
 
-export const tsPlusBabel = (projectRootPath: string, outDir: string, tsCompileOptions: CompilerOptions = {}) => {
-  const tsConfigPath = path.join(projectRootPath, 'tsconfig.json');
+export const tsPlusBabel = (outDir: string, tsCompileOptions: CompilerOptions = {}) => {
+  const tsConfigPath = path.join(globalState.projectRootPath, 'tsconfig.json');
 
   // Fix babel's bug.
   // Babel couldn't handle esnext module, so in typescript:
@@ -43,7 +44,7 @@ export const tsPlusBabel = (projectRootPath: string, outDir: string, tsCompileOp
       //     includeContent: false
       //   })
       // )
-      .pipe(gulp.dest(path.join(projectRootPath, outDir)))
+      .pipe(gulp.dest(path.join(globalState.projectRootPath, outDir)))
       .on('end', resolve)
       .on('error', reject);
   });

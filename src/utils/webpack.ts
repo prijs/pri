@@ -6,17 +6,14 @@ import * as path from 'path';
 import * as portfinder from 'portfinder';
 import * as webpack from 'webpack';
 import { tempPath } from '../utils/structor-config';
-import { IProjectConfig } from './project-config-interface';
+import { globalState} from './global-state'
 import { compilerLogger } from './webpack-compiler-log';
 import { getWebpackConfig } from './webpack-config';
 
 interface IOptions {
   mode: 'production' | 'development';
-  projectRootPath: string;
   entryPath: string;
-  env: 'local' | 'prod';
   htmlTemplatePath?: string;
-  projectConfig: IProjectConfig;
   publicPath?: string;
   distDir?: string;
   outFileName?: string;
@@ -42,12 +39,9 @@ const stats = {
 export const runWebpack = async (opts: IOptions): Promise<any> => {
   let webpackConfig = await getWebpackConfig({
     mode: opts.mode,
-    projectRootPath: opts.projectRootPath,
     entryPath: opts.entryPath,
-    env: opts.env,
     htmlTemplatePath: opts.htmlTemplatePath,
     htmlTemplateArgs: opts.htmlTemplateArgs,
-    projectConfig: opts.projectConfig,
     publicPath: opts.publicPath,
     distDir: opts.distDir,
     outFileName: opts.outFileName,

@@ -9,11 +9,11 @@ import { testsPath, tsBuiltPath } from '../../utils/structor-config';
 import text from '../../utils/text';
 import { tsPlusBabel } from '../../utils/ts-plus-babel';
 
-export const CommandTest = async (projectRootPath: string) => {
+export const CommandTest = async (instance: typeof pri) => {
   log(`Build typescript files`);
   execSync(`${findNearestNodemodulesFile('/.bin/rimraf')} ${tsBuiltPath.dir}`, { stdio: 'inherit' });
 
-  await tsPlusBabel(projectRootPath, tsBuiltPath.dir);
+  await tsPlusBabel(tsBuiltPath.dir);
 
   execSync(
     [
@@ -23,29 +23,27 @@ export const CommandTest = async (projectRootPath: string) => {
       `--reporter json`,
       `--exclude ${tsBuiltPath.dir}/${testsPath.dir}/**/*.js`,
       `${findNearestNodemodulesFile('/.bin/ava')}`,
-      `--files ${path.join(projectRootPath, `${tsBuiltPath.dir}/${testsPath.dir}/**/*.js`)}`,
+      `--files ${path.join(instance.projectRootPath, `${tsBuiltPath.dir}/${testsPath.dir}/**/*.js`)}`,
       `--failFast`
     ].join(' '),
     {
       stdio: 'inherit',
-      cwd: projectRootPath
+      cwd: instance.projectRootPath
     }
   );
 
   // remove .nyc_output
-  execSync(`${findNearestNodemodulesFile('.bin/rimraf')} ${path.join(projectRootPath, '.nyc_output')}`);
+  execSync(`${findNearestNodemodulesFile('.bin/rimraf')} ${path.join(instance.projectRootPath, '.nyc_output')}`);
 
   // Open test html in brower
-  open(path.join(projectRootPath, 'coverage/lcov-report/index.html'));
+  open(path.join(instance.projectRootPath, 'coverage/lcov-report/index.html'));
 
   process.exit(0);
 };
 
 export default async (instance: typeof pri) => {
-  const projectRootPath = instance.project.getProjectRootPath();
-
   instance.project.whiteFileRules.add(file => {
-    const relativePath = path.relative(projectRootPath, file.dir);
+    const relativePath = path.relative(instance.projectRootPath, file.dir);
     return relativePath.startsWith(testsPath.dir);
   });
 
@@ -53,10 +51,9 @@ export default async (instance: typeof pri) => {
     name: 'test',
     description: text.commander.init.description,
     action: async () => {
-      const projectConfig = instance.project.getProjectConfig('prod');
       await instance.project.lint();
-      await instance.project.checkProjectFiles(projectConfig);
-      await CommandTest(projectRootPath);
+      await instance.project.checkProjectFiles();
+      await CommandTest(instance);
 
       // For async register commander, process will be exit automatic.
       process.exit(0);

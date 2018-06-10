@@ -1,3 +1,6 @@
+import * as fs from 'fs-extra';
+import * as ts from 'typescript';
+
 export const pipeEvent = (func: any) => {
   return (event: any) => {
     return func(event.target.value, event);
@@ -21,5 +24,21 @@ export function ensureStartWithWebpackRelativePoint(str: string) {
     return './' + str;
   } else {
     return str;
+  }
+}
+
+export function execTsByPath(filePath: string) {
+  if (!fs.existsSync(filePath)) {
+    return null;
+  }
+
+  const fileContent = fs.readFileSync(filePath).toString();
+  const jsTransferContent = ts.transpile(fileContent);
+
+  try {
+    // tslint:disable-next-line:no-eval
+    return eval(jsTransferContent);
+  } catch (error) {
+    throw Error(`Parse file ${error.toString()} in ${filePath}`);
   }
 }

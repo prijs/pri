@@ -12,37 +12,38 @@ import {
   ensureVscode
 } from '../built-in-plugins/ensure-project-files';
 import { ensureFile } from '../utils/ensure-files';
+import { globalState } from '../utils/global-state';
 import { log } from '../utils/log';
 import { findNearestNodemodulesFile } from '../utils/npm-finder';
 import { loadedPlugins } from '../utils/plugins';
-import { IProjectConfig } from '../utils/project-config-interface';
+import { ProjectConfig } from '../utils/project-config-interface';
 import { tsBuiltPath } from '../utils/structor-config';
 import { ensureEntry, ensureNpmIgnore, ensurePackageJson, ensureTest } from './utils/ensure-plugin-files';
 
-export default async (projectRootPath: string, projectConfig: IProjectConfig) => {
-  canExecuteInit(projectRootPath);
+export default async () => {
+  canExecuteInit();
 
-  ensureDeclares(projectRootPath);
+  ensureDeclares(globalState.projectRootPath);
 
-  const ensurePrettierrcResult = ensurePrettierrc(projectRootPath);
-  ensureFile(projectRootPath, ensurePrettierrcResult.fileName, [ensurePrettierrcResult.pipeContent]);
+  const ensurePrettierrcResult = ensurePrettierrc();
+  ensureFile(ensurePrettierrcResult.fileName, [ensurePrettierrcResult.pipeContent]);
 
-  const ensureTsconfigResult = ensureTsconfig(projectRootPath);
-  ensureFile(projectRootPath, ensureTsconfigResult.fileName, [ensureTsconfigResult.pipeContent]);
+  const ensureTsconfigResult = ensureTsconfig();
+  ensureFile(ensureTsconfigResult.fileName, [ensureTsconfigResult.pipeContent]);
 
-  const ensureTslintResult = ensureTslint(projectRootPath);
-  ensureFile(projectRootPath, ensureTslintResult.fileName, [ensureTslintResult.pipeContent]);
+  const ensureTslintResult = ensureTslint();
+  ensureFile(ensureTslintResult.fileName, [ensureTslintResult.pipeContent]);
 
-  const ensureVscodeResult = ensureVscode(projectRootPath);
-  ensureFile(projectRootPath, ensureVscodeResult.fileName, [ensureVscodeResult.pipeContent]);
+  const ensureVscodeResult = ensureVscode();
+  ensureFile(ensureVscodeResult.fileName, [ensureVscodeResult.pipeContent]);
 
-  const ensureGitignoreResult = ensureGitignore(projectConfig);
-  ensureFile(projectRootPath, ensureGitignoreResult.fileName, [ensureGitignoreResult.pipeContent]);
+  const ensureGitignoreResult = ensureGitignore();
+  ensureFile(ensureGitignoreResult.fileName, [ensureGitignoreResult.pipeContent]);
 
-  ensurePackageJson(projectRootPath);
-  ensureNpmIgnore(projectRootPath, projectConfig);
-  ensureEntry(projectRootPath);
-  ensureTest(projectRootPath);
+  ensurePackageJson();
+  ensureNpmIgnore();
+  ensureEntry();
+  ensureTest();
 
   log('\n Success init pri plugin, you can run serval commands:\n');
 
@@ -59,8 +60,8 @@ export default async (projectRootPath: string, projectConfig: IProjectConfig) =>
   log(`    Run test.`);
 };
 
-function canExecuteInit(projectRootPath: string) {
-  const packageJsonPath = path.join(projectRootPath, 'package.json');
+function canExecuteInit() {
+  const packageJsonPath = path.join(globalState.projectRootPath, 'package.json');
   const packageJson = fs.readJsonSync(packageJsonPath, { throws: false });
   if (_.has(packageJson, 'pri.type') && _.get(packageJson, 'pri.type') !== 'plugin') {
     throw Error(`Can't execute pri plugin-init in non plugin type.`);

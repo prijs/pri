@@ -1,7 +1,7 @@
 import { IProjectInfo } from '../../../../utils/analyse-project-interface';
-import { IProjectConfig } from '../../../../utils/project-config-interface';
+import { ProjectConfig } from '../../../../utils/project-config-interface';
 
 export interface IProjectStatus {
-  projectConfig: IProjectConfig;
+  projectConfig: ProjectConfig;
   analyseInfo: any;
 }

@@ -12,8 +12,7 @@ import { exec } from '../../utils/exec';
 import { log, spinner } from '../../utils/log';
 import { findNearestNodemodulesFile } from '../../utils/npm-finder';
 import { plugin } from '../../utils/plugins';
-import { getConfig } from '../../utils/project-config';
-import { IProjectConfig } from '../../utils/project-config-interface';
+import { ProjectConfig } from '../../utils/project-config-interface';
 import { tsBuiltPath } from '../../utils/structor-config';
 import text from '../../utils/text';
 import { runWebpack } from '../../utils/webpack';
@@ -27,46 +26,42 @@ export const CommandBuild = async (
     publicPath?: string;
   } = {}
 ) => {
-  const env = 'prod';
-  const projectConfig = getConfig(projectRootPath, env);
-
   await spinner('Clean project.', async () => {
     // Clean dist dir
-    await exec(`${findNearestNodemodulesFile('.bin/rimraf')} ${path.join(projectRootPath, projectConfig.distDir)}`);
+    await exec(
+      `${findNearestNodemodulesFile('.bin/rimraf')} ${path.join(projectRootPath, instance.projectConfig.distDir)}`
+    );
     await exec(`${findNearestNodemodulesFile('.bin/rimraf')} ${path.join(projectRootPath, tsBuiltPath.dir)}`);
 
     // Clean .temp dir
     await exec(`${findNearestNodemodulesFile('.bin/rimraf')} ${path.join(projectRootPath, '.temp')}`);
   });
 
-  await instance.project.ensureProjectFiles(projectConfig);
+  await instance.project.ensureProjectFiles();
   await instance.project.lint();
-  await instance.project.checkProjectFiles(projectConfig);
+  await instance.project.checkProjectFiles();
 
   const result = await spinner('Analyse project', async () => {
-    const analyseInfo = await analyseProject(projectRootPath, env, projectConfig);
-    const entryPath = createEntry(projectRootPath, env, projectConfig);
+    const analyseInfo = await analyseProject();
+    const entryPath = createEntry();
     return {
       analyseInfo,
       entryPath
     };
   });
 
-  const staticHtmlPaths = getStaticHtmlPaths(projectRootPath, projectConfig, result.analyseInfo);
+  const staticHtmlPaths = getStaticHtmlPaths(result.analyseInfo);
 
   // Build project
   const stats = await runWebpack({
     mode: 'production',
-    projectRootPath,
-    env,
     entryPath: result.entryPath,
     publicPath: opts.publicPath, // If unset, use config value.
-    projectConfig,
     pipeConfig: config => {
       staticHtmlPaths.forEach(staticHtmlPath => {
         config.plugins.push(
           new HtmlWebpackPlugin({
-            title: projectConfig.title,
+            title: instance.projectConfig.title,
             filename: staticHtmlPath,
             template: path.join(__dirname, '../../../template-project.ejs')
           })
@@ -78,9 +73,9 @@ export const CommandBuild = async (
 
   // Write .temp/static/sw.js
   const tempSwPath = path.join(projectRootPath, tempPath.dir, 'static/sw.js');
-  const targetSwPath = path.join(projectRootPath, projectConfig.distDir, 'sw.js');
+  const targetSwPath = path.join(projectRootPath, instance.projectConfig.distDir, 'sw.js');
 
-  plugin.buildAfterProdBuild.forEach(afterProdBuild => afterProdBuild(stats, projectConfig));
+  plugin.buildAfterProdBuild.forEach(afterProdBuild => afterProdBuild(stats));
 
   if (fs.existsSync(tempSwPath)) {
     const tempSwContent = fs.readFileSync(tempSwPath).toString();
@@ -97,8 +92,8 @@ export const CommandBuild = async (
 };
 
 export default async (instance: typeof pri) => {
-  instance.project.onCreateEntry((analyseInfo, entry, env, projectConfig) => {
-    if (env === 'prod') {
+  instance.project.onCreateEntry((analyseInfo, entry) => {
+    if (!instance.isDevelopment) {
       entry.pipeAppHeader(header => {
         return `
           ${header}
@@ -114,11 +109,11 @@ export default async (instance: typeof pri) => {
       });
 
       // Set custom env
-      if (projectConfig.customEnv) {
+      if (instance.projectConfig.customEnv) {
         entry.pipeAppBody(body => {
           return `
             ${body}
-            setCustomEnv(${JSON.stringify(projectConfig.customEnv)})
+            setCustomEnv(${JSON.stringify(instance.projectConfig.customEnv)})
           `;
         });
       }

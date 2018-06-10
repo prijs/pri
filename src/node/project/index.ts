@@ -1,7 +1,5 @@
 import { IAnalyseProject, ICreateEntry, plugin } from '../../utils/plugins';
 import { checkProjectFiles } from './check-project-files';
-import { getProjectConfig } from './get-project-config';
-import { getProjectRootPath } from './get-project-root-path';
 import { lint, lintFilter } from './lint';
 import * as whiteFileRules from './white-file-rules';
 
@@ -20,6 +18,4 @@ export const onCreateEntry = (fn: ICreateEntry) => {
 
 export { whiteFileRules };
 export { lint, lintFilter };
-export { getProjectRootPath };
-export { getProjectConfig };
 export { checkProjectFiles };

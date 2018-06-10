@@ -17,28 +17,23 @@ import { ensureFiles } from '../../utils/ensure-files';
 import { ensureEndWithSlash } from '../../utils/functional';
 import { generateCertificate } from '../../utils/generate-certificate';
 import { log, spinner } from '../../utils/log';
-import { getConfig } from '../../utils/project-config';
 import text from '../../utils/text';
 import { CommandBuild } from '../command-build';
 
 const app = new Koa();
 
-const projectRootPath = process.cwd();
-
 export const CommandPreview = async (instance: typeof pri) => {
-  const env = 'prod';
-  const projectConfig = getConfig(projectRootPath, env);
-  const distDir = path.join(projectRootPath, projectConfig.distDir);
+  const distDir = path.join(instance.projectRootPath, instance.projectConfig.distDir);
 
   await CommandBuild(instance);
 
-  const freePort = projectConfig.devPort || (await portfinder.getPortPromise());
+  const freePort = instance.projectConfig.devPort || (await portfinder.getPortPromise());
 
   app.use(koaCompress({ flush: zlib.Z_SYNC_FLUSH }));
 
   app.use(
     koaMount(
-      url.parse(projectConfig.publicPath).pathname,
+      url.parse(instance.projectConfig.publicPath).pathname,
       koaStatic(distDir, {
         gzip: true,
         setHeaders: (res: any) => {
@@ -51,22 +46,25 @@ export const CommandPreview = async (instance: typeof pri) => {
   const cssPath = path.join(distDir, 'main.css');
   const hasCssOutput = fs.existsSync(cssPath);
 
-  if (projectConfig.useHttps) {
+  if (instance.projectConfig.useHttps) {
     await spinner('Create https server', async () =>
       https
-        .createServer(generateCertificate(path.join(projectRootPath, '.temp/preview')), app.callback())
+        .createServer(generateCertificate(path.join(instance.projectRootPath, '.temp/preview')), app.callback())
         .listen(freePort)
     );
   } else {
     await spinner('Create http server', async () => http.createServer(app.callback()).listen(freePort));
   }
 
-  if (projectConfig.devUrl) {
-    open(projectConfig.devUrl);
+  if (instance.projectConfig.devUrl) {
+    open(instance.projectConfig.devUrl);
   } else {
     open(
       ensureEndWithSlash(
-        urlJoin(`${projectConfig.useHttps ? 'https' : 'http'}://localhost:${freePort}`, projectConfig.baseHref)
+        urlJoin(
+          `${instance.projectConfig.useHttps ? 'https' : 'http'}://localhost:${freePort}`,
+          instance.projectConfig.baseHref
+        )
       )
     );
   }

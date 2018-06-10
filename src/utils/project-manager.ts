@@ -4,20 +4,14 @@ import * as normalizePath from 'normalize-path';
 import * as path from 'path';
 import * as prettier from 'prettier';
 import { analyseProject } from './analyse-project';
+import { CONFIG_FILE } from './constants';
+import { globalState } from './global-state';
 import { plugin } from './plugins';
-import { getConfig } from './project-config';
-import { configPaths, helperPath, layoutPath, notFoundPath, pagesPath, storesPath } from './structor-config';
+import { helperPath, layoutPath, notFoundPath, pagesPath, storesPath } from './structor-config';
 
-export async function addPage(
-  projectRootPath: string,
-  options: {
-    path: string;
-  }
-) {
-  const env = 'local';
-  const projectConfig = getConfig(projectRootPath, env);
-  const projectInfo = await analyseProject(projectRootPath, env, projectConfig);
-  const fileFullPath = path.join(projectRootPath, pagesPath.dir, options.path, 'index') + '.tsx';
+export async function addPage(options: { path: string }) {
+  const projectInfo = await analyseProject();
+  const fileFullPath = path.join(globalState.projectRootPath, pagesPath.dir, options.path, 'index') + '.tsx';
 
   if (fs.existsSync(fileFullPath)) {
     throw Error(`${options.path} already exist!`);
@@ -55,8 +49,8 @@ export async function addPage(
   );
 }
 
-export async function createLayout(projectRootPath: string) {
-  const pathFullPath = path.join(projectRootPath, path.format(layoutPath));
+export async function createLayout() {
+  const pathFullPath = path.join(globalState.projectRootPath, path.format(layoutPath));
 
   if (fs.existsSync(pathFullPath)) {
     throw Error(`layout already exist!`);
@@ -94,8 +88,8 @@ export async function createLayout(projectRootPath: string) {
   );
 }
 
-export async function create404(projectRootPath: string) {
-  const pathFullPath = path.join(projectRootPath, path.format(notFoundPath));
+export async function create404() {
+  const pathFullPath = path.join(globalState.projectRootPath, path.format(notFoundPath));
 
   if (fs.existsSync(pathFullPath)) {
     throw Error(`404 page already exist!`);
@@ -133,13 +127,11 @@ export async function create404(projectRootPath: string) {
   );
 }
 
-export async function createConfig(projectRootPath: string) {
-  const defaultFullPath = path.join(projectRootPath, path.format(configPaths.default));
-  const localFullPath = path.join(projectRootPath, path.format(configPaths.local));
-  const prodFullPath = path.join(projectRootPath, path.format(configPaths.prod));
+export async function createConfig() {
+  const configFilePath = path.join(globalState.projectRootPath, CONFIG_FILE);
 
-  if (fs.existsSync(defaultFullPath)) {
-    throw Error(`layout already exist!`);
+  if (fs.existsSync(configFilePath)) {
+    throw Error(`config already exist!`);
   }
 
   const fileContent = prettier.format(
@@ -153,22 +145,14 @@ export async function createConfig(projectRootPath: string) {
     { semi: true, singleQuote: true, parser: 'typescript' }
   );
 
-  fs.outputFileSync(defaultFullPath, fileContent);
-  fs.outputFileSync(localFullPath, fileContent);
-  fs.outputFileSync(prodFullPath, fileContent);
+  fs.outputFileSync(configFilePath, fileContent);
 }
 
-export async function addStore(
-  projectRootPath: string,
-  options: {
-    name: string;
-    withDemo: boolean;
-  }
-) {
+export async function addStore(options: { name: string; withDemo: boolean }) {
   const camelName = _.camelCase(options.name);
   const camelUpperFirstName = _.upperFirst(camelName);
   const kebabName = _.kebabCase(options.name);
-  const fileFullPath = path.join(projectRootPath, storesPath.dir, kebabName) + '.tsx';
+  const fileFullPath = path.join(globalState.projectRootPath, storesPath.dir, kebabName) + '.tsx';
 
   if (fs.existsSync(fileFullPath)) {
     throw Error(`${kebabName} already exist!`);

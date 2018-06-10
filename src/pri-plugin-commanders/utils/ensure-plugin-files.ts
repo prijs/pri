@@ -4,21 +4,16 @@ import * as _ from 'lodash';
 import * as path from 'path';
 import * as prettier from 'prettier';
 import { ensureFile } from '../../utils/ensure-files';
+import { globalState } from '../../utils/global-state';
 import { log } from '../../utils/log';
-import { IProjectConfig } from '../../utils/project-config-interface';
-import { getGitignores, getNpmignores, tsBuiltPath } from '../../utils/structor-config';
+import { gitIgnores, npmIgnores, tsBuiltPath } from '../../utils/structor-config';
 
-export function ensureNpmIgnore(projectRootPath: string, projectConfig: IProjectConfig) {
-  ensureFile(projectRootPath, '.npmignore', [
-    () =>
-      getNpmignores(projectConfig)
-        .map(name => `/${name}`)
-        .join('\n')
-  ]);
+export function ensureNpmIgnore() {
+  ensureFile('.npmignore', [() => npmIgnores.map(name => `/${name}`).join('\n')]);
 }
 
-export function ensurePackageJson(projectRootPath: string) {
-  ensureFile(projectRootPath, 'package.json', [
+export function ensurePackageJson() {
+  ensureFile('package.json', [
     prev => {
       const prevJson = JSON.parse(prev);
       return (
@@ -42,10 +37,10 @@ export function ensurePackageJson(projectRootPath: string) {
   ]);
 }
 
-export function ensureEntry(projectRootPath: string) {
+export function ensureEntry() {
   const fileName = 'src/index.ts';
   const otherFileName = 'src/index.tsx';
-  const filePath = path.join(projectRootPath, fileName);
+  const filePath = path.join(globalState.projectRootPath, fileName);
 
   if (fs.existsSync(filePath)) {
     log(colors.green(`✔ Entry file already exist.`));
@@ -57,10 +52,7 @@ export function ensureEntry(projectRootPath: string) {
     return;
   }
 
-  ensureFile(projectRootPath, fileName, [
-    () =>
-      prettier.format(
-        `
+  ensureFile(fileName, [() => prettier.format(`
     import * as path from "path"
     import { pri } from "pri"
     import { judgeHasComponents } from "./methods"
@@ -72,8 +64,6 @@ export function ensureEntry(projectRootPath: string) {
     }
 
     export default async (instance: typeof pri) => {
-      const projectRootPath = instance.project.getProjectRootPath()
-
       instance.commands.registerCommand({
         name: "deploy",
         action: async () => {
@@ -89,10 +79,10 @@ export function ensureEntry(projectRootPath: string) {
       })
 
       instance.project.onAnalyseProject(files => {
-        return { customPlugin: { hasComponents: judgeHasComponents(projectRootPath, files) } } as IResult
+        return { customPlugin: { hasComponents: judgeHasComponents(instance.projectRootPath, files) } } as IResult
       })
 
-      instance.project.onCreateEntry((analyseInfo: IResult, entry, env, projectConfig) => {
+      instance.project.onCreateEntry((analyseInfo: IResult, entry) => {
         if (!analyseInfo.customPlugin.hasComponents) {
           return
         }
@@ -105,24 +95,19 @@ export function ensureEntry(projectRootPath: string) {
         })
       })
     }
-  `,
-        { semi: true, singleQuote: true, parser: 'typescript' }
-      )
-  ]);
-
-  ensureEntryMethods(projectRootPath);
+  `, { semi: true, singleQuote: true, parser: 'typescript' })]);
 }
 
-function ensureEntryMethods(projectRootPath: string) {
+function ensureEntryMethods() {
   const fileName = 'src/methods.ts';
-  const filePath = path.join(projectRootPath, fileName);
+  const filePath = path.join(globalState.projectRootPath, fileName);
 
   if (fs.existsSync(filePath)) {
     log(colors.green(`✔ Methods file already exist.`));
     return;
   }
 
-  ensureFile(projectRootPath, fileName, [
+  ensureFile(fileName, [
     () =>
       prettier.format(
         `
@@ -143,16 +128,16 @@ function ensureEntryMethods(projectRootPath: string) {
   ]);
 }
 
-export function ensureTest(projectRootPath: string) {
+export function ensureTest() {
   const fileName = 'tests/index.ts';
-  const filePath = path.join(projectRootPath, fileName);
+  const filePath = path.join(globalState.projectRootPath, fileName);
 
   if (fs.existsSync(filePath)) {
     log(colors.green(`✔ Test file already exist.`));
     return;
   }
 
-  ensureFile(projectRootPath, fileName, [
+  ensureFile(fileName, [
     () =>
       prettier.format(
         `

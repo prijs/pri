@@ -12,17 +12,16 @@ import * as socketIo from 'socket.io';
 import * as yargs from 'yargs';
 import * as zlib from 'zlib';
 import { generateCertificate } from '../../../../utils/generate-certificate';
+import { globalState } from '../../../../utils/global-state';
 import { log } from '../../../../utils/log';
-import { IProjectConfig } from '../../../../utils/project-config-interface';
+import { ProjectConfig } from '../../../../utils/project-config-interface';
 
 const app = new Koa();
 
 interface IOptions {
   clientPort: number;
   serverPort: number;
-  projectRootPath: string;
   staticRootPath: string;
-  projectConfig: IProjectConfig;
   hash: string;
 }
 
@@ -62,10 +61,10 @@ export default (opts: IOptions) => {
   `;
   });
 
-  if (opts.projectConfig.useHttps) {
+  if (globalState.projectConfig.useHttps) {
     https
       .createServer(
-        generateCertificate(path.join(opts.projectRootPath, '.temp/dashboard-client-server')),
+        generateCertificate(path.join(globalState.projectRootPath, '.temp/dashboard-client-server')),
         app.callback()
       )
       .listen(opts.clientPort);

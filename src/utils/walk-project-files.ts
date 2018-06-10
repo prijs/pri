@@ -2,8 +2,15 @@ import { fstat } from 'fs';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as walk from 'walk';
-import { IProjectConfig } from './project-config-interface';
-import { declarePath, getGitignores, ignoreScanSources, pagesPath, tempPath, tsBuiltPath } from './structor-config';
+import { globalState } from './global-state';
+import {
+  declarePath,
+  gitIgnores as gitIgnoreNames,
+  ignoreScanFiles,
+  pagesPath,
+  tempPath,
+  tsBuiltPath
+} from './structor-config';
 
 type WalkStats = fs.Stats & {
   name: string;
@@ -11,12 +18,12 @@ type WalkStats = fs.Stats & {
 
 type ICustomParsedPath = path.ParsedPath & { isDir: boolean };
 
-export function walkProjectFiles(projectRootPath: string, projectConfig: IProjectConfig): Promise<ICustomParsedPath[]> {
+export function walkProjectFiles(): Promise<ICustomParsedPath[]> {
   return new Promise((resolve, reject) => {
-    const gitIgnores = getGitignores(projectConfig).map(dir => path.join(projectRootPath, dir));
-    const scanIgnores = ignoreScanSources.map(addon => path.join(projectRootPath, addon));
+    const gitIgnores = gitIgnoreNames.map(dir => path.join(globalState.projectRootPath, dir));
+    const scanIgnores = ignoreScanFiles.map(addon => path.join(globalState.projectRootPath, addon));
 
-    const walker = walk.walk(projectRootPath, { filters: [...gitIgnores, ...scanIgnores] });
+    const walker = walk.walk(globalState.projectRootPath, { filters: [...gitIgnores, ...scanIgnores] });
 
     const files: ICustomParsedPath[] = [];
 
@@ -24,7 +31,7 @@ export function walkProjectFiles(projectRootPath: string, projectConfig: IProjec
       dirStatsArray.forEach(dirStats => {
         const dirPath = path.join(root, dirStats.name);
 
-        if (dirPath === projectRootPath) {
+        if (dirPath === globalState.projectRootPath) {
           // Skip project's root.
           next();
           return;

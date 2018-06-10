@@ -1,4 +1,4 @@
-export class IProjectConfig {
+export class ProjectConfig {
   /**
    * Title for html <title>.
    */
@@ -49,15 +49,21 @@ export class IProjectConfig {
   /**
    * Using https for server.
    */
-  public useHttps = true;
+  public useHttps?: boolean = true;
   /**
    * Use service worker
    * Warning: if disable it, mocks, prefetch, serverRender will become invalid.
    */
-  public useServiceWorker = false;
+  public useServiceWorker?: boolean = false;
   /**
    * Client server render
    * Warning: depend on service worker, should set useServiceWorker=true first.
    */
-  public clientServerRender = false;
+  public clientServerRender?: boolean = false;
+  /**
+   * Enable it when current project is a component.
+   * After enable it, the white list will takes effect for the entire `src` directory.
+   * And set `src/index.tsx` up as entry file.
+   */
+  public isComponentProject?: boolean = false;
 }

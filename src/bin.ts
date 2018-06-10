@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+import './utils/global-state';
+
 import * as colors from 'colors';
 import * as commander from 'commander';
 import * as _ from 'lodash';
@@ -44,7 +46,7 @@ async function runCommandAction(commandDetails: any[], args: any[]) {
 
 async function main() {
   if (process.argv[2] !== 'plugin') {
-    await initPlugins(process.cwd());
+    await initPlugins();
   } else {
     commander.command('plugin', 'Operator for pri plugin.');
   }

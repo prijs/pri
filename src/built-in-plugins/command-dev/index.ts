@@ -13,11 +13,11 @@ import { pri } from '../../node';
 import { analyseProject } from '../../utils/analyse-project';
 import { createEntry } from '../../utils/create-entry';
 import { ensureEndWithSlash } from '../../utils/functional';
+import { globalState } from '../../utils/global-state';
 import { log, spinner } from '../../utils/log';
 import { findNearestNodemodulesFile } from '../../utils/npm-finder';
 import { getPluginsByOrder } from '../../utils/plugins';
-import { getConfig } from '../../utils/project-config';
-import { IProjectConfig } from '../../utils/project-config-interface';
+import { ProjectConfig } from '../../utils/project-config-interface';
 import { hasNodeModules, hasNodeModulesModified, hasPluginsModified } from '../../utils/project-helper';
 import * as projectState from '../../utils/project-state';
 import { tempJsEntryPath, tempPath } from '../../utils/structor-config';
@@ -38,31 +38,23 @@ const libraryStaticPath = '/dlls/' + dllFileName;
 const dashboardBundleFileName = 'main';
 
 export const CommandDev = async (
-  projectConfig: IProjectConfig,
   analyseInfo: any,
-  env: 'local' | 'prod',
   portInfo: { freePort: number; dashboardServerPort: number; dashboardClientPort: number }
 ) => {
   await bundleDlls();
 
   // Bundle dashboard if plugins changed or dashboard bundle not exist.
   const dashboardDistDir = path.join(projectRootPath, tempPath.dir, 'static/dashboard-bundle');
-  if (
-    (await hasPluginsModified(projectRootPath)) ||
-    !fs.existsSync(path.join(dashboardDistDir, dashboardBundleFileName + '.js'))
-  ) {
+  if ((await hasPluginsModified()) || !fs.existsSync(path.join(dashboardDistDir, dashboardBundleFileName + '.js'))) {
     log(colors.blue('\nBundle dashboard\n'));
     const dashboardEntryFilePath = createDashboardEntry();
 
     const status = await runWebpack({
       mode: 'production',
-      projectRootPath,
-      env,
       publicPath: '/bundle/',
       entryPath: dashboardEntryFilePath,
       distDir: dashboardDistDir,
-      outFileName: 'main.[hash].js', // dashboard has no css file
-      projectConfig
+      outFileName: 'main.[hash].js' // dashboard has no css file
     });
     projectState.set('dashboardHash', status.hash);
   }
@@ -70,16 +62,14 @@ export const CommandDev = async (
   log(colors.blue('\nStart dev server.\n'));
 
   // Start dashboard server
-  dashboardServer({ serverPort: portInfo.dashboardServerPort, projectRootPath, env, projectConfig, analyseInfo });
+  dashboardServer({ serverPort: portInfo.dashboardServerPort, analyseInfo });
 
-  if (projectConfig.useHttps) {
+  if (globalState.projectConfig.useHttps) {
     log(`you should set chrome://flags/#allow-insecure-localhost, to trust local certificate.`);
   }
 
   // Start dashboard client production server
   dashboardClientServer({
-    projectRootPath,
-    projectConfig,
     serverPort: portInfo.dashboardServerPort,
     clientPort: portInfo.dashboardClientPort,
     staticRootPath: path.join(projectRootPath, tempPath.dir, 'static'),
@@ -88,19 +78,16 @@ export const CommandDev = async (
 
   // Serve project
   await runWebpackDevServer({
-    projectRootPath,
-    env,
-    publicPath: projectConfig.publicPath,
+    publicPath: globalState.projectConfig.publicPath,
     entryPath: path.join(projectRootPath, path.format(tempJsEntryPath)),
     devServerPort: portInfo.freePort,
     htmlTemplatePath: path.join(__dirname, '../../../template-project.ejs'),
     htmlTemplateArgs: {
       dashboardServerPort: portInfo.dashboardServerPort
     },
-    projectConfig,
     pipeConfig: config => {
       const dllHttpPath = urlJoin(
-        `${projectConfig.useHttps ? 'https' : 'http'}://127.0.0.1:${portInfo.freePort}`,
+        `${globalState.projectConfig.useHttps ? 'https' : 'http'}://127.0.0.1:${portInfo.freePort}`,
         libraryStaticPath
       );
 
@@ -122,22 +109,20 @@ export const CommandDev = async (
   });
 };
 
-export const debugDashboard = async (projectConfig: IProjectConfig, analyseInfo: any, env: 'local' | 'prod') => {
+export const debugDashboard = async (analyseInfo: any) => {
   const freePort = await portfinder.getPortPromise();
   const dashboardServerPort = await portfinder.getPortPromise({ port: freePort + 1 });
 
   await bundleDlls();
 
   // Start dashboard server
-  dashboardServer({ serverPort: dashboardServerPort, projectRootPath, env, projectConfig, analyseInfo });
+  dashboardServer({ serverPort: dashboardServerPort, analyseInfo });
 
   // Create dashboard entry
   const dashboardEntryFilePath = createDashboardEntry();
 
   // Serve dashboard
   await runWebpackDevServer({
-    projectRootPath,
-    env,
     publicPath: '/static/',
     entryPath: dashboardEntryFilePath,
     devServerPort: freePort,
@@ -146,8 +131,7 @@ export const debugDashboard = async (projectConfig: IProjectConfig, analyseInfo:
     htmlTemplateArgs: {
       dashboardServerPort,
       libraryStaticPath
-    },
-    projectConfig
+    }
   });
 };
 
@@ -208,14 +192,12 @@ function createDashboardEntry() {
 }
 
 export default async (instance: typeof pri) => {
-  const currentEnv = 'local';
-  const currentProjectConfig = instance.project.getProjectConfig(currentEnv);
-  const freePort = currentProjectConfig.devPort || (await portfinder.getPortPromise());
+  const freePort = instance.projectConfig.devPort || (await portfinder.getPortPromise());
   const dashboardServerPort = await portfinder.getPortPromise({ port: freePort + 1 });
   const dashboardClientPort = await portfinder.getPortPromise({ port: freePort + 2 });
 
-  instance.project.onCreateEntry((analyseInfo, entry, env, projectConfig) => {
-    if (env === 'local') {
+  instance.project.onCreateEntry((analyseInfo, entry) => {
+    if (instance.isDevelopment) {
       entry.pipeAppHeader(header => {
         return `
           ${header}
@@ -224,11 +206,11 @@ export default async (instance: typeof pri) => {
       });
 
       // Set custom env
-      if (projectConfig.customEnv) {
+      if (instance.projectConfig.customEnv) {
         entry.pipeAppBody(body => {
           return `
             ${body}
-            setCustomEnv(${JSON.stringify(projectConfig.customEnv)})
+            setCustomEnv(${JSON.stringify(instance.projectConfig.customEnv)})
           `;
         });
       }
@@ -366,8 +348,8 @@ export default async (instance: typeof pri) => {
     }
   });
 
-  instance.build.pipeConfig((env, config) => {
-    if (env !== 'local') {
+  instance.build.pipeConfig(config => {
+    if (!instance.isDevelopment) {
       return config;
     }
 
@@ -387,19 +369,19 @@ export default async (instance: typeof pri) => {
     description: text.commander.dev.description,
     action: async (options: any) => {
       await instance.project.lint();
-      await instance.project.ensureProjectFiles(currentProjectConfig);
-      await instance.project.checkProjectFiles(currentProjectConfig);
+      await instance.project.ensureProjectFiles();
+      await instance.project.checkProjectFiles();
 
       const analyseInfo = await spinner('Analyse project', async () => {
-        const scopeAnalyseInfo = await analyseProject(projectRootPath, currentEnv, currentProjectConfig);
-        createEntry(projectRootPath, currentEnv, currentProjectConfig);
+        const scopeAnalyseInfo = await analyseProject();
+        createEntry();
         return scopeAnalyseInfo;
       });
 
       if (options && options.debugDashboard) {
-        await debugDashboard(currentProjectConfig, analyseInfo, currentEnv);
+        await debugDashboard(analyseInfo);
       } else {
-        await CommandDev(currentProjectConfig, analyseInfo, currentEnv, {
+        await CommandDev(analyseInfo, {
           freePort,
           dashboardServerPort,
           dashboardClientPort
@@ -414,10 +396,7 @@ export default async (instance: typeof pri) => {
  * Bundle dlls if node_modules changed, or dlls not exist.
  */
 async function bundleDlls() {
-  if (
-    (hasNodeModules(projectRootPath) && hasNodeModulesModified(projectRootPath)) ||
-    !fs.existsSync(path.join(dllOutPath, dllFileName))
-  ) {
+  if ((hasNodeModules() && hasNodeModulesModified()) || !fs.existsSync(path.join(dllOutPath, dllFileName))) {
     log(colors.blue('\nBundle dlls\n'));
 
     await runDllWebpack({ projectRootPath, dllOutPath, dllFileName, dllMainfestName });

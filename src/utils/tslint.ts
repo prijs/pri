@@ -3,22 +3,23 @@ import * as path from 'path';
 import { Configuration, Linter } from 'tslint';
 import { plugin } from '../utils/plugins';
 import { tempPath } from '../utils/structor-config';
+import { globalState } from './global-state';
 import { log, spinner } from './log';
 import { findNearestNodemodulesFile } from './npm-finder';
 
-export async function lint(projectRootPath: string) {
+export async function lint() {
   const configurationFilename = 'tslint.json';
   const lintOptions = {
     fix: true,
     formatter: 'json'
   };
-  const program = Linter.createProgram('tsconfig.json', projectRootPath);
+  const program = Linter.createProgram('tsconfig.json', globalState.projectRootPath);
   const linter = new Linter(lintOptions, program);
   const files = Linter.getFileNames(program);
 
   files
     .filter(filePath => {
-      return !filePath.startsWith(path.join(projectRootPath, tempPath.dir));
+      return !filePath.startsWith(path.join(globalState.projectRootPath, tempPath.dir));
     })
     .filter(filePath => {
       if (plugin.lintFilters.some(lintFilter => !lintFilter(filePath))) {

@@ -3,21 +3,18 @@ import * as HtmlWebpackPlugin from 'html-webpack-plugin';
 import * as MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import * as path from 'path';
 import * as webpack from 'webpack';
+import { globalState } from '../utils/global-state';
 import { plugin } from '../utils/plugins';
-import { IProjectConfig } from '../utils/project-config-interface';
 import { srcPath, tempPath } from '../utils/structor-config';
 
 interface IOptions {
   mode: 'development' | 'production';
-  projectRootPath: string;
   entryPath: string | string[];
-  env: 'local' | 'prod';
   htmlTemplatePath?: string;
   htmlTemplateArgs?: {
     dashboardServerPort?: number;
     libraryStaticPath?: string;
   };
-  projectConfig: IProjectConfig;
   publicPath?: string;
   distDir?: string;
   outFileName?: string;
@@ -33,27 +30,27 @@ export const getWebpackConfig = (opts: IOptions) => {
    */
   const styleLoader = {
     loader: 'style-loader',
-    options: plugin.buildConfigStyleLoaderOptionsPipes.reduce((options, fn) => fn(opts.env, options), {})
+    options: plugin.buildConfigStyleLoaderOptionsPipes.reduce((options, fn) => fn(options), {})
   };
 
   const cssLoader = {
     loader: 'css-loader',
-    options: plugin.buildConfigCssLoaderOptionsPipes.reduce((options, fn) => fn(opts.env, options), {})
+    options: plugin.buildConfigCssLoaderOptionsPipes.reduce((options, fn) => fn(options), {})
   };
 
   const sassLoader = {
     loader: 'sass-loader',
-    options: plugin.buildConfigSassLoaderOptionsPipes.reduce((options, fn) => fn(opts.env, options), {})
+    options: plugin.buildConfigSassLoaderOptionsPipes.reduce((options, fn) => fn(options), {})
   };
 
   const lessLoader = {
     loader: 'less-loader',
-    options: plugin.buildConfigLessLoaderOptionsPipes.reduce((options, fn) => fn(opts.env, options), {})
+    options: plugin.buildConfigLessLoaderOptionsPipes.reduce((options, fn) => fn(options), {})
   };
 
   const babelLoader = {
     loader: 'babel-loader',
-    options: plugin.buildConfigBabelLoaderOptionsPipes.reduce((options, fn) => fn(opts.env, options), {
+    options: plugin.buildConfigBabelLoaderOptionsPipes.reduce((options, fn) => fn(options), {
       babelrc: false,
       presets: [['@babel/env', { modules: false }], ['@babel/stage-2', { decoratorsLegacy: true }]],
       plugins: [['@babel/plugin-transform-runtime']],
@@ -63,7 +60,7 @@ export const getWebpackConfig = (opts: IOptions) => {
 
   const tsLoader = {
     loader: 'ts-loader',
-    options: plugin.buildConfigTsLoaderOptionsPipes.reduce((options, fn) => fn(opts.env, options), {
+    options: plugin.buildConfigTsLoaderOptionsPipes.reduce((options, fn) => fn(options), {
       happyPackMode: true
     })
   };
@@ -72,18 +69,18 @@ export const getWebpackConfig = (opts: IOptions) => {
    * Helper
    */
   function extraCssInProd(...loaders: any[]) {
-    if (opts.env === 'local') {
+    if (globalState.isDevelopment) {
       return [styleLoader, ...loaders];
-    } else if (opts.env === 'prod') {
+    } else {
       return [MiniCssExtractPlugin.loader, ...loaders];
     }
   }
 
-  const distDir = opts.distDir || path.join(opts.projectRootPath, opts.projectConfig.distDir);
-  const outFileName = opts.outFileName || opts.projectConfig.outFileName;
-  const outCssFileName = opts.outCssFileName || opts.projectConfig.outCssFileName;
+  const distDir = opts.distDir || path.join(globalState.projectRootPath, globalState.projectConfig.distDir);
+  const outFileName = opts.outFileName || globalState.projectConfig.outFileName;
+  const outCssFileName = opts.outCssFileName || globalState.projectConfig.outCssFileName;
 
-  let publicPath: string = opts.publicPath || opts.projectConfig.publicPath || '/';
+  let publicPath: string = opts.publicPath || globalState.projectConfig.publicPath || '/';
   if (!publicPath.endsWith('/')) {
     publicPath += '/';
   }
@@ -107,30 +104,30 @@ export const getWebpackConfig = (opts: IOptions) => {
         {
           test: /\.(tsx|ts)?$/,
           use: [babelLoader, tsLoader],
-          include: plugin.buildConfigTsLoaderIncludePipes.reduce((options, fn) => fn(opts.env, options), [
-            path.join(opts.projectRootPath, srcPath.dir),
-            path.join(opts.projectRootPath, tempPath.dir)
+          include: plugin.buildConfigTsLoaderIncludePipes.reduce((options, fn) => fn(options), [
+            path.join(globalState.projectRootPath, srcPath.dir),
+            path.join(globalState.projectRootPath, tempPath.dir)
           ]),
-          exclude: plugin.buildConfigTsLoaderExcludePipes.reduce((options, fn) => fn(opts.env, options), [])
+          exclude: plugin.buildConfigTsLoaderExcludePipes.reduce((options, fn) => fn(options), [])
         },
         { test: /\.css$/, use: extraCssInProd(cssLoader) },
         {
           test: /\.scss$/,
           use: extraCssInProd(cssLoader, sassLoader),
-          include: plugin.buildConfigSassLoaderIncludePipes.reduce((options, fn) => fn(opts.env, options), [
-            path.join(opts.projectRootPath, srcPath.dir),
-            path.join(opts.projectRootPath, tempPath.dir)
+          include: plugin.buildConfigSassLoaderIncludePipes.reduce((options, fn) => fn(options), [
+            path.join(globalState.projectRootPath, srcPath.dir),
+            path.join(globalState.projectRootPath, tempPath.dir)
           ]),
-          exclude: plugin.buildConfigSassLoaderExcludePipes.reduce((options, fn) => fn(opts.env, options), [])
+          exclude: plugin.buildConfigSassLoaderExcludePipes.reduce((options, fn) => fn(options), [])
         },
         {
           test: /\.less$/,
           use: extraCssInProd(cssLoader, lessLoader),
-          include: plugin.buildConfigLessLoaderIncludePipes.reduce((options, fn) => fn(opts.env, options), [
-            path.join(opts.projectRootPath, srcPath.dir),
-            path.join(opts.projectRootPath, tempPath.dir)
+          include: plugin.buildConfigLessLoaderIncludePipes.reduce((options, fn) => fn(options), [
+            path.join(globalState.projectRootPath, srcPath.dir),
+            path.join(globalState.projectRootPath, tempPath.dir)
           ]),
-          exclude: plugin.buildConfigLessLoaderExcludePipes.reduce((options, fn) => fn(opts.env, options), [])
+          exclude: plugin.buildConfigLessLoaderExcludePipes.reduce((options, fn) => fn(options), [])
         },
         { test: /\.html$/, use: ['raw-loader'] }
       ]
@@ -138,26 +135,25 @@ export const getWebpackConfig = (opts: IOptions) => {
     resolve: {
       modules: [
         // From project node_modules
-        path.join(opts.projectRootPath, 'node_modules'),
+        path.join(globalState.projectRootPath, 'node_modules'),
         path.join(__dirname, '../../node_modules')
       ],
       extensions: ['.js', '.jsx', '.tsx', '.ts', '.scss', '.less', '.css']
     },
     resolveLoader: {
       modules: [
-        // From project node_modules // Self node_modules
-        path.join(opts.projectRootPath, 'node_modules'),
+        // From project node_modules
+        // Self node_modules
+        path.join(globalState.projectRootPath, 'node_modules'),
         path.join(__dirname, '../../node_modules')
       ]
     },
     plugins: [],
-    optimization: {
-      namedChunks: false
-    },
+    optimization: { namedChunks: false },
     stats
-  }; // Self node_modules
+  };
 
-  if (opts.env === 'local') {
+  if (globalState.isDevelopment) {
     if (opts.htmlTemplatePath) {
       config.plugins.push(
         new HtmlWebpackPlugin({
@@ -170,31 +166,20 @@ export const getWebpackConfig = (opts: IOptions) => {
     }
   }
 
-  if (opts.env === 'prod') {
+  if (!globalState.isDevelopment) {
     config.optimization.splitChunks = {
       ...config.optimization.splitChunks,
-      cacheGroups: {
-        styles: {
-          name: outCssFileName,
-          test: /\.css$/,
-          chunks: 'all',
-          enforce: true
-        }
-      }
+      cacheGroups: { styles: { name: outCssFileName, test: /\.css$/, chunks: 'all', enforce: true } }
     };
-    config.plugins.push(
-      new MiniCssExtractPlugin({
-        filename: outCssFileName
-      })
-    );
+    config.plugins.push(new MiniCssExtractPlugin({ filename: outCssFileName }));
   }
 
-  if (opts.env === 'prod') {
+  if (!globalState.isDevelopment) {
     babelLoader.options.plugins.push(['import', { libraryName: 'antd' }]);
     cssLoader.options.minimize = true;
   }
 
-  if (opts.env === 'local') {
+  if (globalState.isDevelopment) {
     // Turn off performance hints during development.
     if (!config.performance) {
       config.performance = {};
@@ -202,5 +187,5 @@ export const getWebpackConfig = (opts: IOptions) => {
     config.performance.hints = false;
   }
 
-  return plugin.buildConfigPipes.reduce((newConfig, fn) => fn(opts.env, newConfig), config);
+  return plugin.buildConfigPipes.reduce((newConfig, fn) => fn(newConfig), config);
 };

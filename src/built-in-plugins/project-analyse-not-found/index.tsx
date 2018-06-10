@@ -13,16 +13,14 @@ interface IResult {
 }
 
 export default async (instance: typeof pri) => {
-  const projectRootPath = instance.project.getProjectRootPath();
-
   instance.project.whiteFileRules.add(file => {
-    const relativePath = path.relative(projectRootPath, file.dir);
+    const relativePath = path.relative(instance.projectRootPath, file.dir);
     return relativePath === `src${path.sep}pages` && file.name === '404' && file.ext === '.tsx';
   });
 
   instance.project.onAnalyseProject(files => {
     const notFoundFiles = files.filter(file => {
-      if (path.format(file) !== path.join(projectRootPath, path.format(notFoundPath))) {
+      if (path.format(file) !== path.join(instance.projectRootPath, path.format(notFoundPath))) {
         return false;
       }
 
@@ -34,7 +32,7 @@ export default async (instance: typeof pri) => {
     } as IResult;
   });
 
-  instance.project.onCreateEntry((analyseInfo: IResult, entry, env, projectConfig) => {
+  instance.project.onCreateEntry((analyseInfo: IResult, entry) => {
     if (!analyseInfo.projectAnalyseNotFound.hasNotFound) {
       return;
     }
@@ -43,7 +41,10 @@ export default async (instance: typeof pri) => {
       return `
         ${header}
         import NotFoundComponent from "${normalizePath(
-          path.relative(tempPath.dir, path.join(projectRootPath, path.join(notFoundPath.dir, notFoundPath.name)))
+          path.relative(
+            tempPath.dir,
+            path.join(instance.projectRootPath, path.join(notFoundPath.dir, notFoundPath.name))
+          )
         )}"
       `;
     });

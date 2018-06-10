@@ -5,10 +5,9 @@ import * as walk from 'walk';
 import * as pipe from '../node/pipe';
 import { IProjectInfo } from './analyse-project-interface';
 import { createEntry, Entry } from './create-entry';
+import { globalState } from './global-state';
 import { plugin } from './plugins';
-import { IProjectConfig } from './project-config-interface';
 import {
-  configPaths,
   layoutPath,
   markdownLayoutPath,
   notFoundPath,
@@ -19,8 +18,8 @@ import {
 } from './structor-config';
 import { walkProjectFiles } from './walk-project-files';
 
-export const analyseProject = async (projectRootPath: string, env: 'local' | 'prod', projectConfig: IProjectConfig) => {
-  const files = await walkProjectFiles(projectRootPath, projectConfig);
+export const analyseProject = async () => {
+  const files = await walkProjectFiles();
 
   // Clear analyseInfo
   plugin.analyseInfo = {};
@@ -29,7 +28,7 @@ export const analyseProject = async (projectRootPath: string, env: 'local' | 'pr
   pipe.clear();
 
   plugin.projectAnalyses.forEach(projectAnalyse => {
-    const result = projectAnalyse(files, env, projectConfig, pipe.set);
+    const result = projectAnalyse(files, pipe.set);
     if (result && typeof result === 'object') {
       plugin.analyseInfo = {
         ...plugin.analyseInfo,

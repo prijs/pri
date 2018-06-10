@@ -55,12 +55,10 @@ const markdown = markdownIt({
 });
 
 export default async (instance: typeof pri) => {
-  const projectRootPath = instance.project.getProjectRootPath();
-
   const markdownCaches = new Map<string, { originContent: string; pipeAppContent: string }>();
 
   instance.project.whiteFileRules.add(file => {
-    const relativePath = path.relative(projectRootPath, file.dir);
+    const relativePath = path.relative(instance.projectRootPath, file.dir);
     return (
       relativePath.startsWith(`src${path.sep}pages`) &&
       file.name === 'index' &&
@@ -68,12 +66,12 @@ export default async (instance: typeof pri) => {
     );
   });
 
-  instance.project.onAnalyseProject((files, env, projectConfig, setPipe) => {
+  instance.project.onAnalyseProject((files, setPipe) => {
     return {
       projectAnalyseMarkdownPages: {
         pages: files
           .filter(file => {
-            const relativePath = path.relative(projectRootPath, path.join(file.dir, file.name));
+            const relativePath = path.relative(instance.projectRootPath, path.join(file.dir, file.name));
 
             if (!relativePath.startsWith(pagesPath.dir)) {
               return false;
@@ -90,11 +88,11 @@ export default async (instance: typeof pri) => {
             return true;
           })
           .map(file => {
-            const relativePathWithoutIndex = path.relative(projectRootPath, file.dir);
+            const relativePathWithoutIndex = path.relative(instance.projectRootPath, file.dir);
             const routerPath = normalizePath('/' + path.relative(pagesPath.dir, relativePathWithoutIndex));
             const chunkName = _.camelCase(routerPath) || 'index';
 
-            const relativePageFilePath = path.relative(projectRootPath, file.dir + '/' + file.name);
+            const relativePageFilePath = path.relative(instance.projectRootPath, file.dir + '/' + file.name);
             const componentName = safeName(relativePageFilePath) + md5(relativePageFilePath).slice(0, 5);
 
             return { routerPath, file, chunkName, componentName };
@@ -103,7 +101,7 @@ export default async (instance: typeof pri) => {
     } as IResult;
   });
 
-  instance.project.onCreateEntry((analyseInfo: IResult, entry, env, projectConfig) => {
+  instance.project.onCreateEntry((analyseInfo: IResult, entry) => {
     if (analyseInfo.projectAnalyseMarkdownPages.pages.length === 0) {
       return;
     }
@@ -132,12 +130,12 @@ export default async (instance: typeof pri) => {
             } else {
               const markedHTML = markdown.render(fileContent);
               const markdownTsAbsolutePath = path.join(
-                projectRootPath,
+                instance.projectRootPath,
                 markdownTempPath.dir,
                 page.componentName + '.tsx'
               );
               const markdownTsAbsolutePathWithoutExt = path.join(
-                projectRootPath,
+                instance.projectRootPath,
                 markdownTempPath.dir,
                 page.componentName
               );

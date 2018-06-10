@@ -7,8 +7,9 @@ import { pri } from '../node/index';
 import { set } from '../node/pipe';
 import { Entry } from './create-entry';
 import { getDefault } from './es-module';
+import { globalState } from './global-state';
 import { log } from './log';
-import { IProjectConfig } from './project-config-interface';
+import { ProjectConfig } from './project-config-interface';
 
 export interface IPluginPackageInfo {
   name: string;
@@ -22,7 +23,7 @@ export interface IPluginPackageInfo {
 
 export const loadedPlugins = new Set<IPluginPackageInfo>();
 
-const getBuiltInPlugins = (projectRootPath: string) => {
+const getBuiltInPlugins = () => {
   const plugins = [
     ['pri-plugin-command-dev', '../built-in-plugins/command-dev/index.js'],
     ['pri-plugin-command-build', '../built-in-plugins/command-build/index.js'],
@@ -44,7 +45,7 @@ const getBuiltInPlugins = (projectRootPath: string) => {
   ];
 
   return plugins.reduce((obj: any, right) => {
-    obj[right[0]] = 'file:' + path.relative(projectRootPath, path.join(__dirname, right[1]));
+    obj[right[0]] = 'file:' + path.relative(globalState.projectRootPath, path.join(__dirname, right[1]));
     return obj;
   }, {});
 };
@@ -63,25 +64,18 @@ export type IDevDllList = (list: string[]) => string[];
 
 export type IAnalyseProject = (
   projectFilesParsedPaths?: Array<path.ParsedPath & { isDir: boolean }>,
-  env?: 'local' | 'prod',
-  projectConfig?: IProjectConfig,
   setPipe?: typeof set
 ) => any;
 
-export type ICreateEntry = (
-  analyseInfo?: any,
-  entry?: Entry,
-  env?: 'local' | 'prod',
-  projectConfig?: IProjectConfig
-) => void;
+export type ICreateEntry = (analyseInfo?: any, entry?: Entry) => void;
 
-export type IBuildConfigPipe = (env: 'local' | 'prod', config: webpack.Configuration) => webpack.Configuration;
+export type IBuildConfigPipe = ( config: webpack.Configuration) => webpack.Configuration;
 
-export type ILoaderOptionsPipe = (env: 'local' | 'prod', options: any) => any;
-export type ILoaderIncludePipe = (env: 'local' | 'prod', options: any) => any;
-export type ILoaderExcludePipe = (env: 'local' | 'prod', options: any) => any;
+export type ILoaderOptionsPipe = ( options: any) => any;
+export type ILoaderIncludePipe = ( options: any) => any;
+export type ILoaderExcludePipe = ( options: any) => any;
 
-export type IAfterProdBuild = (stats?: any, projectConfig?: IProjectConfig) => any;
+export type IAfterProdBuild = (stats?: any) => any;
 
 let hasInitPlugins = false;
 
@@ -134,16 +128,16 @@ export class IPluginConfig {
 
 export const plugin: IPluginConfig = new IPluginConfig();
 
-export const initPlugins = async (projectRootPath: string) => {
+export const initPlugins = async () => {
   if (hasInitPlugins) {
     return;
   }
   hasInitPlugins = true;
 
-  const projectPackageJsonPath = path.join(projectRootPath, 'package.json');
-  const builtInPlugins = getBuiltInPlugins(projectRootPath);
+  const projectPackageJsonPath = path.join(globalState.projectRootPath, 'package.json');
+  const builtInPlugins = getBuiltInPlugins();
 
-  getPriPlugins(path.join(projectRootPath, 'package.json'), builtInPlugins);
+  getPriPlugins(path.join(globalState.projectRootPath, 'package.json'), builtInPlugins);
 
   if (loadedPlugins.size > 1) {
     for (const eachPlugin of getPluginsByOrder()) {
@@ -153,7 +147,7 @@ export const initPlugins = async (projectRootPath: string) => {
 };
 
 function getPriPlugins(packageJsonPath: string, extendPlugins: any = {}) {
-  const projectRootPath = path.resolve(packageJsonPath, '..');
+  const pluginRootPath = path.resolve(packageJsonPath, '..');
   const packageJsonExist = fs.existsSync(packageJsonPath);
 
   const packageJson = packageJsonExist ? fs.readJsonSync(packageJsonPath) : null;
@@ -175,16 +169,16 @@ function getPriPlugins(packageJsonPath: string, extendPlugins: any = {}) {
 
       const subPackageVersion = allDependencies[subPackageName];
       const subPackageRealEntry = subPackageVersion.startsWith('file:')
-        ? path.join(projectRootPath, subPackageVersion.replace(/^file\:/g, ''))
+        ? path.join(pluginRootPath, subPackageVersion.replace(/^file\:/g, ''))
         : subPackageName;
 
       const subPackageRealEntryFilePath = require.resolve(subPackageRealEntry, {
-        paths: [__dirname, projectRootPath]
+        paths: [__dirname, pluginRootPath]
       });
 
       const subPackageAbsolutePath = !subPackageVersion.startsWith('file:')
-        ? getPackageJsonPathByPathOrNpmName(subPackageName, projectRootPath)
-        : path.resolve(projectRootPath, subPackageVersion.replace(/^file\:/g, ''), 'package.json');
+        ? getPackageJsonPathByPathOrNpmName(subPackageName, pluginRootPath)
+        : path.resolve(pluginRootPath, subPackageVersion.replace(/^file\:/g, ''), 'package.json');
 
       const subPackageJson = fs.readJsonSync(subPackageAbsolutePath, { throws: false });
       const instance = getDefault(require(subPackageRealEntryFilePath));
@@ -265,9 +259,9 @@ function getPluginWithPreloadDependences(preInstantiatedDependences: string[]) {
   );
 }
 
-function getPackageJsonPathByPathOrNpmName(pathOrNpmName: string, projectRootPath: string) {
+function getPackageJsonPathByPathOrNpmName(pathOrNpmName: string, currentRootPath: string) {
   try {
-    return require.resolve(path.join(pathOrNpmName, 'package.json'), { paths: [__dirname, projectRootPath] });
+    return require.resolve(path.join(pathOrNpmName, 'package.json'), { paths: [__dirname, currentRootPath] });
   } catch (error) {
     return null;
   }

@@ -6,21 +6,17 @@ import * as path from 'path';
 import * as portfinder from 'portfinder';
 import { pri } from '../../node';
 import { log, spinner } from '../../utils/log';
-import { getConfig } from '../../utils/project-config';
 import text from '../../utils/text';
 
 export default async (instance: typeof pri) => {
-  const projectRootPath = instance.project.getProjectRootPath();
-
   instance.commands.registerCommand({
     name: 'init',
     description: text.commander.init.description,
     action: async () => {
-      canExecuteInit(projectRootPath);
+      canExecuteInit(instance.projectRootPath);
 
-      const projectConfig = instance.project.getProjectConfig('local');
-      await instance.project.ensureProjectFiles(projectConfig);
-      await instance.project.checkProjectFiles(projectConfig);
+      await instance.project.ensureProjectFiles();
+      await instance.project.checkProjectFiles();
 
       log('\n Success init your project, you can run serval commands:\n');
 
