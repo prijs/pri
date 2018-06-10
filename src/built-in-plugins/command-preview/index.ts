@@ -18,14 +18,14 @@ import { ensureEndWithSlash } from '../../utils/functional';
 import { generateCertificate } from '../../utils/generate-certificate';
 import { log, spinner } from '../../utils/log';
 import text from '../../utils/text';
-import { CommandBuild } from '../command-build';
+import { buildProject } from '../command-build';
 
 const app = new Koa();
 
 export const CommandPreview = async (instance: typeof pri) => {
   const distDir = path.join(instance.projectRootPath, instance.projectConfig.distDir);
 
-  await CommandBuild(instance);
+  await buildProject(instance);
 
   const freePort = instance.projectConfig.devPort || (await portfinder.getPortPromise());
 

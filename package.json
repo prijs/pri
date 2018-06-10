@@ -1,6 +1,6 @@
 {
   "name": "pri",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "types": "src/node/index.ts",
   "main": "built/node/index.js",
   "scripts": {
@@ -69,6 +69,7 @@
     "highlight.js": "^9.12.0",
     "html-webpack-plugin": "^3.2.0",
     "htmltojsx": "^0.3.0",
+    "inquirer": "^6.0.0",
     "isomorphic-fetch": "^2.2.1",
     "koa": "^2.5.0",
     "koa-compress": "^2.0.0",

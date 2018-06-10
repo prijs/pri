@@ -2,6 +2,7 @@ import * as colors from 'colors';
 // tslint:disable-next-line:no-implicit-dependencies
 import * as express from 'express';
 import * as fs from 'fs';
+import { GlobSync } from 'glob';
 import * as normalizePath from 'normalize-path';
 import * as open from 'opn';
 import * as path from 'path';
@@ -83,15 +84,28 @@ export const runWebpackDevServer = async (opts: IOptions) => {
   const devServer = new webpackDevServer(compiler, webpackDevServerConfig);
 
   devServer.listen(opts.devServerPort, '127.0.0.1', () => {
-    if (globalState.projectConfig.devUrl) {
-      open(globalState.projectConfig.devUrl);
-    } else {
-      open(
-        urlJoin(
-          `${globalState.projectConfig.useHttps ? 'https' : 'http'}://localhost:${opts.devServerPort}`,
-          globalState.projectConfig.baseHref
-        )
-      );
+    switch (globalState.projectType) {
+      case 'project':
+        if (globalState.projectConfig.devUrl) {
+          open(globalState.projectConfig.devUrl);
+        } else {
+          open(
+            urlJoin(
+              `${globalState.projectConfig.useHttps ? 'https' : 'http'}://localhost:${opts.devServerPort}`,
+              globalState.projectConfig.baseHref
+            )
+          );
+        }
+        break;
+      case 'component':
+        open(
+          urlJoin(
+            `${globalState.projectConfig.useHttps ? 'https' : 'http'}://localhost:${opts.devServerPort}`,
+            path.join(globalState.projectConfig.baseHref, 'basic')
+          )
+        );
+        break;
+      default:
     }
   });
 };

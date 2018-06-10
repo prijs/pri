@@ -4,7 +4,7 @@ import * as path from 'path';
 import { pri } from '../../node';
 import { CONFIG_FILE } from '../../utils/constants';
 import { globalState } from '../../utils/global-state';
-import { gitIgnores, npmIgnores, srcPath } from '../../utils/structor-config';
+import { componentPath, gitIgnores, npmIgnores, pagesPath, srcPath, utilPath } from '../../utils/structor-config';
 
 const whiteList = [
   CONFIG_FILE,
@@ -25,21 +25,21 @@ export default async (instance: typeof pri) => {
       .some(whiteName => path.format(file) === path.join(instance.projectRootPath, whiteName));
   });
 
-  // src/utils/**
+  // [utils]/
   instance.project.whiteFileRules.add(file => {
-    const relativePath = path.relative(instance.projectRootPath, file.dir);
-    return relativePath.startsWith(`${srcPath.dir}${path.sep}utils`);
+    const relativePath = path.relative(instance.projectRootPath, path.format(file));
+    return relativePath.startsWith(utilPath.dir);
   });
 
-  // src/pages/[folder]
+  // [pages]/*
   instance.project.whiteFileRules.add(file => {
-    const relativePath = path.relative(instance.projectRootPath, file.dir);
-    return relativePath.startsWith(`${srcPath.dir}${path.sep}pages`) && file.isDir;
+    const relativePath = path.relative(instance.projectRootPath, path.format(file));
+    return relativePath.startsWith(pagesPath.dir);
   });
 
-  // src/components/**
+  // [components]/*
   instance.project.whiteFileRules.add(file => {
-    const relativePath = path.relative(instance.projectRootPath, file.dir);
-    return relativePath.startsWith(`${srcPath.dir}${path.sep}components`);
+    const relativePath = path.relative(instance.projectRootPath, path.format(file));
+    return relativePath.startsWith(componentPath.dir);
   });
 };

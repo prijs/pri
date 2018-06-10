@@ -60,10 +60,4 @@ export class ProjectConfig {
    * Warning: depend on service worker, should set useServiceWorker=true first.
    */
   public clientServerRender?: boolean = false;
-  /**
-   * Enable it when current project is a component.
-   * After enable it, the white list will takes effect for the entire `src` directory.
-   * And set `src/index.tsx` up as entry file.
-   */
-  public isComponentProject?: boolean = false;
 }

@@ -29,3 +29,4 @@ declare module 'url-join';
 declare module 'docsearch.js';
 declare module 'htmltojsx';
 declare module 'mini-css-extract-plugin';
+declare module 'inquirer';

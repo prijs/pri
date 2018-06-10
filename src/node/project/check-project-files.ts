@@ -13,8 +13,8 @@ export const checkProjectFiles = async () => {
 
   const whiteFileRules = plugin.whiteFileRules.slice();
 
-  // If enable `isComponentProject`, add `src` to white list.
-  if (globalState.projectConfig.isComponentProject) {
+  // For component project, add `src` to white list.
+  if (globalState.projectType === 'component') {
     const ignoreSrc: IWhiteFile = projectFiles => {
       const relativePath = path.relative(globalState.projectRootPath, projectFiles.dir);
       return relativePath.startsWith(srcPath.dir);

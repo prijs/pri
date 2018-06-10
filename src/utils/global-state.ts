@@ -4,7 +4,7 @@
  */
 
 import * as fs from 'fs-extra';
-import { merge } from 'lodash';
+import { get, merge } from 'lodash';
 import * as path from 'path';
 import * as ts from 'typescript';
 import * as yargs from 'yargs';
@@ -19,11 +19,22 @@ const globalState: {
    * Development enviroment.
    */
   isDevelopment: boolean;
+  /**
+   * Project type
+   */
+  projectType: 'project' | 'component' | 'plugin' | null;
 } = {} as any;
 
 globalState.projectRootPath = process.cwd();
 globalState.isDevelopment = yargs.argv._[0] === 'dev';
 globalState.projectConfig = getProjectConfig(globalState.isDevelopment);
+
+// get pri type from package.json
+const projectPackageJsonPath = path.join(globalState.projectRootPath, 'package.json');
+if (fs.existsSync(projectPackageJsonPath)) {
+  const projectPackageJson = fs.readJsonSync(projectPackageJsonPath, { throws: false }) || {};
+  globalState.projectType = get(projectPackageJson, 'pri.type', null);
+}
 
 function getProjectConfig(isDevelopment: boolean) {
   const configFilePath = path.join(globalState.projectRootPath, CONFIG_FILE);

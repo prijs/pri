@@ -4,7 +4,15 @@ import * as path from 'path';
 import * as prettier from 'prettier';
 import { pri } from '../../node';
 import { ProjectConfig } from '../../utils/project-config-interface';
-import { declarePath, gitIgnores, pagesPath, srcPath, tempTypesPath, tsBuiltPath } from '../../utils/structor-config';
+import {
+  declarePath,
+  gitIgnores,
+  npmIgnores,
+  pagesPath,
+  srcPath,
+  tempTypesPath,
+  tsBuiltPath
+} from '../../utils/structor-config';
 
 export function ensureDeclares(projectRootPath: string) {
   const declareAbsolutePath = path.join(projectRootPath, declarePath.dir);
@@ -47,18 +55,18 @@ export const ensureTsconfig = () => ({
           experimentalDecorators: true,
           skipLibCheck: true,
           outDir: tsBuiltPath.dir,
-          rootDir: './',
+          rootDir: './', // Make sure ./src structor. # https://github.com/Microsoft/TypeScript/issues/5134
           baseUrl: '.',
           lib: ['dom', 'es5', 'es6', 'scripthost'],
           paths: { 'pri/*': ['pri', path.join(tempTypesPath.dir, '*')] }
         },
         include: ['.temp/**/*', 'src/**/*', 'config/**/*', 'tests/**/*'],
-        exclude: ['node_modules', tsBuiltPath.dir, 'lib']
+        exclude: ['node_modules', tsBuiltPath.dir]
       },
       null,
       2
     ) + '\n'
-}); // Make sure ./src structor. # https://github.com/Microsoft/TypeScript/issues/5134
+});
 
 export const ensureTslint = () => ({
   fileName: 'tslint.json',
@@ -106,6 +114,11 @@ export const ensureGitignore = () => ({
   pipeContent: () => gitIgnores.map(name => `/${name}`).join('\n')
 });
 
+export const ensureNpmignore = () => ({
+  fileName: '.npmignore',
+  pipeContent: () => npmIgnores.map(name => `/${name}`).join('\n')
+});
+
 export const ensurePackageJson = () => ({
   fileName: 'package.json',
   pipeContent: (prev: string) => {
@@ -148,6 +161,8 @@ export const ensureTest = () => ({
 export default async (instance: typeof pri) => {
   instance.project.addProjectFiles(ensureGitignore());
 
+  instance.project.addProjectFiles(ensureNpmignore());
+
   instance.project.addProjectFiles(ensureTsconfig());
 
   instance.project.addProjectFiles(ensureVscode());
@@ -162,7 +177,7 @@ export default async (instance: typeof pri) => {
 
   ensureDeclares(instance.projectRootPath);
 
-  if (!instance.projectConfig.isComponentProject) {
+  if (instance.projectType === 'project') {
     const homePagePath = path.join(pagesPath.dir, 'index.tsx');
     const homePageAbsolutePath = path.join(instance.projectRootPath, homePagePath);
     const homeMarkdownPagePath = path.join(pagesPath.dir, 'index.md');
@@ -216,7 +231,10 @@ export default async (instance: typeof pri) => {
           JSON.stringify(
             _.merge({}, prevJson, {
               main: `${instance.projectConfig.distDir}/${srcPath.dir}/index.js`,
-              types: `${srcPath.dir}/index.tsx`
+              types: `${srcPath.dir}/index.tsx`,
+              scripts: {
+                publish: 'npm run build && npm publish'
+              }
             }),
             null,
             2
@@ -225,6 +243,7 @@ export default async (instance: typeof pri) => {
       }
     });
 
+    // Create entry file
     instance.project.addProjectFiles({
       fileName: `${srcPath.dir}/index.tsx`,
       pipeContent: text =>
@@ -234,7 +253,46 @@ export default async (instance: typeof pri) => {
               `
           import * as React from 'react'
 
-          export default () => <div />
+          export default () => <div>My Component</div>
+    `,
+              { semi: true, singleQuote: true, parser: 'typescript' }
+            )
+    });
+
+    // Create first demos
+    const basicDocsPath = path.join(pagesPath.dir, 'basic/index.tsx');
+    const relativeToEntryPath = path.relative(
+      path.parse(path.join(instance.projectRootPath, basicDocsPath)).dir,
+      path.join(instance.projectRootPath, srcPath.dir, 'index')
+    );
+    instance.project.addProjectFiles({
+      fileName: basicDocsPath,
+      pipeContent: text =>
+        text
+          ? text
+          : prettier.format(
+              `
+      import Component from "${relativeToEntryPath}"
+      import * as React from "react"
+
+      class Props {
+
+      }
+
+      class State {
+
+      }
+
+      export default class Page extends React.PureComponent<Props, State> {
+        public static defaultProps = new Props()
+        public state = new State()
+
+        public render() {
+          return (
+            <Component />
+          )
+        }
+      }
     `,
               { semi: true, singleQuote: true, parser: 'typescript' }
             )

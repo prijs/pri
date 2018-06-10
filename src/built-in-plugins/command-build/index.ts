@@ -15,17 +15,13 @@ import { plugin } from '../../utils/plugins';
 import { ProjectConfig } from '../../utils/project-config-interface';
 import { tsBuiltPath } from '../../utils/structor-config';
 import text from '../../utils/text';
+import { tsPlusBabel } from '../../utils/ts-plus-babel';
 import { runWebpack } from '../../utils/webpack';
 import { getStaticHtmlPaths } from './generate-static-html';
 
 const projectRootPath = process.cwd();
 
-export const CommandBuild = async (
-  instance: typeof pri,
-  opts: {
-    publicPath?: string;
-  } = {}
-) => {
+async function prepareBuild(instance: typeof pri) {
   await spinner('Clean project.', async () => {
     // Clean dist dir
     await exec(
@@ -35,11 +31,20 @@ export const CommandBuild = async (
 
     // Clean .temp dir
     await exec(`${findNearestNodemodulesFile('.bin/rimraf')} ${path.join(projectRootPath, '.temp')}`);
-  });
 
-  await instance.project.ensureProjectFiles();
-  await instance.project.lint();
-  await instance.project.checkProjectFiles();
+    await instance.project.ensureProjectFiles();
+    await instance.project.lint();
+    await instance.project.checkProjectFiles();
+  });
+}
+
+export const buildProject = async (
+  instance: typeof pri,
+  opts: {
+    publicPath?: string;
+  } = {}
+) => {
+  await prepareBuild(instance);
 
   const result = await spinner('Analyse project', async () => {
     const analyseInfo = await analyseProject();
@@ -91,20 +96,27 @@ export const CommandBuild = async (
   }
 };
 
+export const buildComponent = async (
+  instance: typeof pri,
+  opts: {
+    publicPath?: string;
+  } = {}
+) => {
+  await prepareBuild(instance);
+
+  await spinner('Building...', async () => {
+    await tsPlusBabel(instance.projectConfig.distDir);
+  });
+};
+
 export default async (instance: typeof pri) => {
   instance.project.onCreateEntry((analyseInfo, entry) => {
     if (!instance.isDevelopment) {
+      // Set prod env
       entry.pipeAppHeader(header => {
         return `
           ${header}
           setEnvProd()
-        `;
-      });
-
-      // Set prod env
-      entry.pipeAppBody(body => {
-        return `
-          ${body}
         `;
       });
 
@@ -125,7 +137,11 @@ export default async (instance: typeof pri) => {
     options: [['-c, --cloud', 'Cloud build tag'], ['-p, --publicPath <pathname>', 'rewrite publicPath']],
     description: text.commander.build.description,
     action: async (options: any) => {
-      await CommandBuild(instance, { publicPath: options.publicPath });
+      if (instance.projectType === 'component') {
+        await buildComponent(instance, options);
+      } else {
+        await buildProject(instance, options);
+      }
 
       // For async register commander, process will be exit automatic.
       process.exit(0);

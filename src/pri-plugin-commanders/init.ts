@@ -21,8 +21,6 @@ import { tsBuiltPath } from '../utils/structor-config';
 import { ensureEntry, ensureNpmIgnore, ensurePackageJson, ensureTest } from './utils/ensure-plugin-files';
 
 export default async () => {
-  canExecuteInit();
-
   ensureDeclares(globalState.projectRootPath);
 
   const ensurePrettierrcResult = ensurePrettierrc();
@@ -59,22 +57,3 @@ export default async () => {
 
   log(`    Run test.`);
 };
-
-function canExecuteInit() {
-  const packageJsonPath = path.join(globalState.projectRootPath, 'package.json');
-  const packageJson = fs.readJsonSync(packageJsonPath, { throws: false });
-  if (_.has(packageJson, 'pri.type') && _.get(packageJson, 'pri.type') !== 'plugin') {
-    throw Error(`Can't execute pri plugin-init in non plugin type.`);
-  }
-
-  fs.writeFileSync(
-    packageJsonPath,
-    JSON.stringify(
-      _.merge({}, packageJson, {
-        pri: { type: 'plugin' }
-      }),
-      null,
-      2
-    ) + '\n'
-  );
-}

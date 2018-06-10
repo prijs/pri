@@ -19,12 +19,18 @@ export const testsPath = {
 };
 
 export const tsBuiltPath = {
-  dir: 'built'
+  dir: globalState.projectConfig.distDir
 };
 
-export const pagesPath = {
-  dir: path.join(srcPath.dir, `pages`)
-};
+let pagesFilePath = '';
+switch (globalState.projectType) {
+  case 'project':
+    pagesFilePath = path.join(srcPath.dir, `pages`);
+    break;
+  case 'component':
+    pagesFilePath = 'docs';
+}
+export const pagesPath = { dir: pagesFilePath };
 
 export const notFoundPath = {
   dir: pagesPath.dir,
@@ -42,6 +48,10 @@ export const tempJsAppPath = { dir: tempPath.dir, name: 'app', ext: '.tsx' };
 
 export const utilPath = {
   dir: path.join(srcPath.dir, 'utils')
+};
+
+export const componentPath = {
+  dir: path.join(srcPath.dir, 'components')
 };
 
 export const helperPath = {
@@ -74,7 +84,7 @@ export const markdownTempPath = {
   dir: path.join(tempPath.dir, 'markdowns')
 };
 
-const gitIgnores: string[] = [
+let gitIgnores: string[] = [
   'node_modules',
   '.cache',
   '.vscode',
@@ -99,14 +109,16 @@ distPaths.reduce((prev, current) => {
     return prev;
   }
 }, '');
+gitIgnores = _.union(gitIgnores);
 export { gitIgnores };
 
-const npmIgnores = gitIgnores.slice();
+let npmIgnores = gitIgnores.slice();
 // Npm ignore test path
 npmIgnores.push(testsPath.dir);
 // Npm do not ignore built path!
 const builtPathIndex = npmIgnores.findIndex(name => name === tsBuiltPath.dir);
 npmIgnores.splice(builtPathIndex, 1);
+npmIgnores = _.union(npmIgnores);
 export { npmIgnores };
 
 export const ignoreScanFiles = [

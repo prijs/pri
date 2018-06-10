@@ -12,6 +12,7 @@ import * as path from 'path';
 import * as socketIo from 'socket.io';
 import * as zlib from 'zlib';
 import { analyseProject } from '../../../../utils/analyse-project';
+import { CONFIG_FILE } from '../../../../utils/constants';
 import { createEntry } from '../../../../utils/create-entry';
 import { generateCertificate } from '../../../../utils/generate-certificate';
 import { globalState } from '../../../../utils/global-state';
@@ -102,7 +103,7 @@ export default (opts: IOptions) => {
         //
       }
 
-      if (relativePath.startsWith('config')) {
+      if (relativePath === CONFIG_FILE) {
         await fresh();
       } else if (relativePath.startsWith('src') && pathInfo.ext === '.md') {
         await fresh();

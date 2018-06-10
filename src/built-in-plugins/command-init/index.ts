@@ -1,10 +1,13 @@
 import * as colors from 'colors';
 import * as fs from 'fs-extra';
+import * as inquirer from 'inquirer';
 import * as _ from 'lodash';
 import * as open from 'opn';
 import * as path from 'path';
 import * as portfinder from 'portfinder';
 import { pri } from '../../node';
+import initPlugin from '../../pri-plugin-commanders/init';
+import { globalState } from '../../utils/global-state';
 import { log, spinner } from '../../utils/log';
 import text from '../../utils/text';
 
@@ -13,7 +16,38 @@ export default async (instance: typeof pri) => {
     name: 'init',
     description: text.commander.init.description,
     action: async () => {
-      canExecuteInit(instance.projectRootPath);
+      if (!globalState.projectType) {
+        const inquirerInfo = await inquirer.prompt([
+          {
+            message: `Choose project type`,
+            name: 'projectType',
+            type: 'list',
+            choices: ['Project', 'Component', 'Pri Plugin']
+          }
+        ]);
+
+        switch (inquirerInfo.projectType) {
+          case 'Project':
+            overrideProjectPackageJson(instance.projectRootPath, {
+              pri: { type: 'project' }
+            });
+            globalState.projectType = 'project';
+            break;
+          case 'Component':
+            overrideProjectPackageJson(instance.projectRootPath, {
+              pri: { type: 'component' }
+            });
+            globalState.projectType = 'component';
+            break;
+          case 'Pri Plugin':
+            overrideProjectPackageJson(instance.projectRootPath, {
+              pri: { type: 'plugin' }
+            });
+            globalState.projectType = 'plugin';
+            await initPlugin();
+            break;
+        }
+      }
 
       await instance.project.ensureProjectFiles();
       await instance.project.checkProjectFiles();
@@ -40,21 +74,9 @@ export default async (instance: typeof pri) => {
   });
 };
 
-function canExecuteInit(projectRootPath: string) {
+function overrideProjectPackageJson(projectRootPath: string, data: any) {
   const packageJsonPath = path.join(projectRootPath, 'package.json');
   const packageJson = fs.readJsonSync(packageJsonPath, { throws: false });
-  if (_.has(packageJson, 'pri.type') && _.get(packageJson, 'pri.type') !== 'project') {
-    throw Error(`Can't execute pri init in non project type.`);
-  }
 
-  fs.writeFileSync(
-    packageJsonPath,
-    JSON.stringify(
-      _.merge({}, packageJson, {
-        pri: { type: 'project' }
-      }),
-      null,
-      2
-    ) + '\n'
-  );
+  fs.writeFileSync(packageJsonPath, JSON.stringify(_.merge({}, packageJson, data), null, 2) + '\n');
 }

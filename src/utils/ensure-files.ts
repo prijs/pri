@@ -20,6 +20,8 @@ export const ensureFiles = async () => {
 
     ensureFile(fileRelativePath, ensureProjectFilesQueue.map(ensureProjectFiles => ensureProjectFiles.pipeContent));
   });
+
+  log('');
 };
 
 export function ensureFile(fileRelativePath: string, pipeContents: Array<((prev: string) => string)>) {

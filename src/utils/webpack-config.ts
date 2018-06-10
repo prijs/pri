@@ -5,7 +5,7 @@ import * as path from 'path';
 import * as webpack from 'webpack';
 import { globalState } from '../utils/global-state';
 import { plugin } from '../utils/plugins';
-import { srcPath, tempPath } from '../utils/structor-config';
+import { pagesPath, srcPath, tempPath } from '../utils/structor-config';
 
 interface IOptions {
   mode: 'development' | 'production';
@@ -106,6 +106,7 @@ export const getWebpackConfig = (opts: IOptions) => {
           use: [babelLoader, tsLoader],
           include: plugin.buildConfigTsLoaderIncludePipes.reduce((options, fn) => fn(options), [
             path.join(globalState.projectRootPath, srcPath.dir),
+            path.join(globalState.projectRootPath, pagesPath.dir),
             path.join(globalState.projectRootPath, tempPath.dir)
           ]),
           exclude: plugin.buildConfigTsLoaderExcludePipes.reduce((options, fn) => fn(options), [])
@@ -116,6 +117,7 @@ export const getWebpackConfig = (opts: IOptions) => {
           use: extraCssInProd(cssLoader, sassLoader),
           include: plugin.buildConfigSassLoaderIncludePipes.reduce((options, fn) => fn(options), [
             path.join(globalState.projectRootPath, srcPath.dir),
+            path.join(globalState.projectRootPath, pagesPath.dir),
             path.join(globalState.projectRootPath, tempPath.dir)
           ]),
           exclude: plugin.buildConfigSassLoaderExcludePipes.reduce((options, fn) => fn(options), [])
@@ -125,6 +127,7 @@ export const getWebpackConfig = (opts: IOptions) => {
           use: extraCssInProd(cssLoader, lessLoader),
           include: plugin.buildConfigLessLoaderIncludePipes.reduce((options, fn) => fn(options), [
             path.join(globalState.projectRootPath, srcPath.dir),
+            path.join(globalState.projectRootPath, pagesPath.dir),
             path.join(globalState.projectRootPath, tempPath.dir)
           ]),
           exclude: plugin.buildConfigLessLoaderExcludePipes.reduce((options, fn) => fn(options), [])
