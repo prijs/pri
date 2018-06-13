@@ -1,6 +1,6 @@
 {
   "name": "pri",
-  "version": "0.9.1",
+  "version": "0.9.2",
   "types": "src/node/index.ts",
   "main": "built/node/index.js",
   "scripts": {
@@ -10,7 +10,7 @@
     "prepublishOnly": "npm run build",
     "lint": "echo 'Pre-commit checks...' && tslint --fix './src/**/*.?(ts|tsx)'",
     "prettier": "prettier --write './src/**/*.?(ts|tsx)'",
-    "reformat": "npm run lint && npm run prettier",
+    "format": "npm run lint && npm run prettier",
     "test": "rm -rf built && tsc && ava --files ./built/tests/**/*.js --failFast"
   },
   "pre-commit": [

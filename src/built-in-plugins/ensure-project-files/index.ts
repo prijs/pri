@@ -222,7 +222,7 @@ export default async (instance: typeof pri) => {
           )
       });
     }
-  } else {
+  } else if (instance.projectType === 'component') {
     instance.project.addProjectFiles({
       fileName: 'package.json',
       pipeContent: prev => {
@@ -232,8 +232,12 @@ export default async (instance: typeof pri) => {
             _.merge({}, prevJson, {
               main: `${instance.projectConfig.distDir}/${srcPath.dir}/index.js`,
               types: `${srcPath.dir}/index.tsx`,
+              peerDependencies: {
+                react: '>=16.0.0',
+                'react-dom': '>=16.0.0'
+              },
               scripts: {
-                publish: 'npm run build && npm publish'
+                prepublish: 'npm run build && npm publish'
               }
             }),
             null,
