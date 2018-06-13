@@ -237,7 +237,7 @@ export default async (instance: typeof pri) => {
                 'react-dom': '>=16.0.0'
               },
               scripts: {
-                prepublish: 'npm run build && npm publish'
+                prepublishOnly: 'npm run build'
               }
             }),
             null,
