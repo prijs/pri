@@ -6,6 +6,7 @@ import * as prettier from 'prettier';
 import { ensureFile } from '../../utils/ensure-files';
 import { globalState } from '../../utils/global-state';
 import { log } from '../../utils/log';
+import { prettierConfig } from '../../utils/prettier-config';
 import { gitIgnores, npmIgnores, tsBuiltPath } from '../../utils/structor-config';
 
 export function ensureNpmIgnore() {
@@ -52,7 +53,10 @@ export function ensureEntry() {
     return;
   }
 
-  ensureFile(fileName, [() => prettier.format(`
+  ensureFile(fileName, [
+    () =>
+      prettier.format(
+        `
     import * as path from "path"
     import { pri } from "pri"
     import { judgeHasComponents } from "./methods"
@@ -95,7 +99,10 @@ export function ensureEntry() {
         })
       })
     }
-  `, { semi: true, singleQuote: true, parser: 'typescript' })]);
+  `,
+        { ...prettierConfig, parser: 'typescript' }
+      )
+  ]);
 }
 
 function ensureEntryMethods() {
@@ -123,7 +130,7 @@ function ensureEntryMethods() {
       })
     }
   `,
-        { semi: true, singleQuote: true, parser: 'typescript' }
+        { ...prettierConfig, parser: 'typescript' }
       )
   ]);
 }
@@ -169,7 +176,7 @@ export function ensureTest() {
       t.false(judgeHasComponents(testProjectRootPath, testFilePaths(relativeProjectFiles)))
     })
   `,
-        { semi: true, singleQuote: true, parser: 'typescript' }
+        { ...prettierConfig, parser: 'typescript' }
       )
   ]);
 }

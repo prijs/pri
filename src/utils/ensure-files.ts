@@ -5,14 +5,12 @@ import * as _ from 'lodash';
 import * as path from 'path';
 import * as walk from 'walk';
 import { globalState } from './global-state';
-import { log } from './log';
+import { log, spinner } from './log';
 import { plugin } from './plugins';
 import { declarePath, pagesPath, tempPath, tsBuiltPath } from './structor-config';
 import { walkProjectFiles } from './walk-project-files';
 
 export const ensureFiles = async () => {
-  log('Ensure project files.\n');
-
   const ensureProjectFilesQueueGroupByPath = _.groupBy(plugin.ensureProjectFilesQueue, 'fileName');
 
   Object.keys(ensureProjectFilesQueueGroupByPath).forEach(fileRelativePath => {
@@ -20,8 +18,6 @@ export const ensureFiles = async () => {
 
     ensureFile(fileRelativePath, ensureProjectFilesQueue.map(ensureProjectFiles => ensureProjectFiles.pipeContent));
   });
-
-  log('');
 };
 
 export function ensureFile(fileRelativePath: string, pipeContents: Array<((prev: string) => string)>) {
@@ -39,7 +35,7 @@ export function ensureFile(fileRelativePath: string, pipeContents: Array<((prev:
 
   if (fileExist) {
     if (exitFileContent === nextContent) {
-      log(`${colors.green(`✔ ${fileRelativePath} not modified, skipped.`)} `);
+      // skipped not log
     } else {
       log(`${colors.yellow(`✔ ${fileRelativePath} exist, but the content is not correct, has been recovered.`)}`);
     }

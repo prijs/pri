@@ -8,7 +8,6 @@ import { srcPath } from '../../utils/structor-config';
 import { walkProjectFiles } from '../../utils/walk-project-files';
 
 export const checkProjectFiles = async () => {
-  log('Check project files.\n');
   const files = await walkProjectFiles();
 
   const whiteFileRules = plugin.whiteFileRules.slice();

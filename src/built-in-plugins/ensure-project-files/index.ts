@@ -3,9 +3,11 @@ import * as _ from 'lodash';
 import * as path from 'path';
 import * as prettier from 'prettier';
 import { pri } from '../../node';
+import { prettierConfig } from '../../utils/prettier-config';
 import { ProjectConfig } from '../../utils/project-config-interface';
 import {
   declarePath,
+  docsPath,
   gitIgnores,
   npmIgnores,
   pagesPath,
@@ -21,23 +23,7 @@ export function ensureDeclares(projectRootPath: string) {
 
 export const ensurePrettierrc = () => ({
   fileName: '.prettierrc',
-  pipeContent: () =>
-    JSON.stringify(
-      {
-        bracketSpacing: true,
-        printWidth: 120,
-        proseWrap: 'never',
-        requirePragma: false,
-        semi: true,
-        singleQuote: true,
-        tabWidth: 2,
-        trailingComma: 'none',
-        useTabs: false,
-        overrides: [{ files: '*.json', options: { printWidth: 200 } }]
-      },
-      null,
-      2
-    ) + '\n'
+  pipeContent: () => JSON.stringify(prettierConfig, null, 2) + '\n'
 });
 
 export const ensureTsconfig = () => ({
@@ -128,10 +114,12 @@ export const ensurePackageJson = () => ({
         _.merge({}, prevJson, {
           scripts: {
             start: 'pri dev',
+            docs: 'pri docs',
             build: 'pri build',
             preview: 'pri preview',
             analyse: 'pri analyse',
-            test: 'pri test'
+            test: 'pri test',
+            format: "tslint --fix './src/**/*.?(ts|tsx)' && prettier --write './src/**/*.?(ts|tsx)'"
           }
         }),
         null,
@@ -154,7 +142,7 @@ export const ensureTest = () => ({
         t.true(true)
       })
     `,
-          { semi: true, singleQuote: true, parser: 'typescript' }
+          { ...prettierConfig, parser: 'typescript' }
         )
 });
 
@@ -218,7 +206,7 @@ export default async (instance: typeof pri) => {
         }
       }
     `,
-            { semi: true, singleQuote: true, parser: 'typescript' }
+            { ...prettierConfig, parser: 'typescript' }
           )
       });
     }
@@ -259,12 +247,12 @@ export default async (instance: typeof pri) => {
 
           export default () => <div>My Component</div>
     `,
-              { semi: true, singleQuote: true, parser: 'typescript' }
+              { ...prettierConfig, parser: 'typescript' }
             )
     });
 
     // Create first demos
-    const basicDocsPath = path.join(pagesPath.dir, 'basic/index.tsx');
+    const basicDocsPath = path.join(docsPath.dir, 'basic.tsx');
     const relativeToEntryPath = path.relative(
       path.parse(path.join(instance.projectRootPath, basicDocsPath)).dir,
       path.join(instance.projectRootPath, srcPath.dir, 'index')
@@ -298,7 +286,7 @@ export default async (instance: typeof pri) => {
         }
       }
     `,
-              { semi: true, singleQuote: true, parser: 'typescript' }
+              { ...prettierConfig, parser: 'typescript' }
             )
     });
   }

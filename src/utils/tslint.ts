@@ -8,46 +8,48 @@ import { log, spinner } from './log';
 import { findNearestNodemodulesFile } from './npm-finder';
 
 export async function lint() {
-  const configurationFilename = 'tslint.json';
-  const lintOptions = {
-    fix: true,
-    formatter: 'json'
-  };
-  const program = Linter.createProgram('tsconfig.json', globalState.projectRootPath);
-  const linter = new Linter(lintOptions, program);
-  const files = Linter.getFileNames(program);
+  await spinner('Lint project', async () => {
+    const configurationFilename = 'tslint.json';
+    const lintOptions = {
+      fix: true,
+      formatter: 'json'
+    };
+    const program = Linter.createProgram('tsconfig.json', globalState.projectRootPath);
+    const linter = new Linter(lintOptions, program);
+    const files = Linter.getFileNames(program);
 
-  files
-    .filter(filePath => {
-      return !filePath.startsWith(path.join(globalState.projectRootPath, tempPath.dir));
-    })
-    .filter(filePath => {
-      if (plugin.lintFilters.some(lintFilter => !lintFilter(filePath))) {
-        return false;
-      }
+    files
+      .filter(filePath => {
+        return !filePath.startsWith(path.join(globalState.projectRootPath, tempPath.dir));
+      })
+      .filter(filePath => {
+        if (plugin.lintFilters.some(lintFilter => !lintFilter(filePath))) {
+          return false;
+        }
 
-      return true;
-    })
-    .forEach(filePath => {
-      const fileContents = program.getSourceFile(filePath).getFullText();
-      const configuration = Configuration.findConfiguration(configurationFilename, filePath).results;
-      linter.lint(filePath, fileContents, configuration);
-    });
+        return true;
+      })
+      .forEach(filePath => {
+        const fileContents = program.getSourceFile(filePath).getFullText();
+        const configuration = Configuration.findConfiguration(configurationFilename, filePath).results;
+        linter.lint(filePath, fileContents, configuration);
+      });
 
-  const results = linter.getResult();
-  if (results.errorCount > 0) {
-    log(colors.red(`Tslint errors:`));
-    results.failures.forEach(failure => {
-      const errorPosition = failure.getStartPosition().getLineAndCharacter();
-      log(
-        colors.red(`${failure.getFailure()}`),
-        ', at: ',
-        `${failure.getFileName()}:${errorPosition.line}:${errorPosition.character}`
-      );
-    });
-    process.exit(0);
-  }
-  if (results.fixes.length > 0) {
-    log(`Tslint auto fixed ${results.fixes.length} bugs`);
-  }
+    const results = linter.getResult();
+    if (results.errorCount > 0) {
+      log(colors.red(`Tslint errors:`));
+      results.failures.forEach(failure => {
+        const errorPosition = failure.getStartPosition().getLineAndCharacter();
+        log(
+          colors.red(`${failure.getFailure()}`),
+          ', at: ',
+          `${failure.getFileName()}:${errorPosition.line}:${errorPosition.character}`
+        );
+      });
+      process.exit(0);
+    }
+    if (results.fixes.length > 0) {
+      log(`Tslint auto fixed ${results.fixes.length} bugs`);
+    }
+  });
 }

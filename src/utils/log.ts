@@ -6,7 +6,7 @@ export function log(...message: string[]) {
   console.log.apply(null, message);
 }
 
-export async function spinner<T>(message: string, fn: (spinner: any) => T): Promise<T> {
+export async function spinner<T>(message: string, fn: (originSpinner: any) => T): Promise<T> {
   const oraSpinner = ora(colors.green(message)).start();
 
   try {

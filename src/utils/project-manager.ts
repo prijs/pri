@@ -7,6 +7,7 @@ import { analyseProject } from './analyse-project';
 import { CONFIG_FILE } from './constants';
 import { globalState } from './global-state';
 import { plugin } from './plugins';
+import { prettierConfig } from './prettier-config';
 import { helperPath, layoutPath, notFoundPath, pagesPath, storesPath } from './structor-config';
 
 export async function addPage(options: { path: string }) {
@@ -44,7 +45,7 @@ export async function addPage(options: { path: string }) {
         }
       }
     `,
-      { semi: true, singleQuote: true, parser: 'typescript' }
+      { ...prettierConfig, parser: 'typescript' }
     )
   );
 }
@@ -83,7 +84,7 @@ export async function createLayout() {
       }
     }
   `,
-      { semi: true, singleQuote: true, parser: 'typescript' }
+      { ...prettierConfig, parser: 'typescript' }
     )
   );
 }
@@ -122,7 +123,7 @@ export async function create404() {
       }
     }
   `,
-      { semi: true, singleQuote: true, parser: 'typescript' }
+      { ...prettierConfig, parser: 'typescript' }
     )
   );
 }
@@ -142,7 +143,7 @@ export async function createConfig() {
 
     } as ProjectConfig
   `,
-    { semi: true, singleQuote: true, parser: 'typescript' }
+    { ...prettierConfig, parser: 'typescript' }
   );
 
   fs.outputFileSync(configFilePath, fileContent);
@@ -183,7 +184,7 @@ export async function addStore(options: { name: string; withDemo: boolean }) {
       }
     }
   `,
-      { semi: true, singleQuote: true, parser: 'typescript' }
+      { ...prettierConfig, parser: 'typescript' }
     )
   );
 }

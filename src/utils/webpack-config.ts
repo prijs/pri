@@ -5,7 +5,7 @@ import * as path from 'path';
 import * as webpack from 'webpack';
 import { globalState } from '../utils/global-state';
 import { plugin } from '../utils/plugins';
-import { pagesPath, srcPath, tempPath } from '../utils/structor-config';
+import { docsPath, pagesPath, srcPath, tempPath } from '../utils/structor-config';
 
 interface IOptions {
   mode: 'development' | 'production';
@@ -87,6 +87,13 @@ export const getWebpackConfig = (opts: IOptions) => {
 
   const stats = { warnings: false, version: false, modules: false, entrypoints: false, hash: false };
 
+  const defaultSourcePathToBeResolve = [
+    path.join(globalState.projectRootPath, srcPath.dir),
+    path.join(globalState.projectRootPath, pagesPath.dir),
+    path.join(globalState.projectRootPath, tempPath.dir),
+    path.join(globalState.projectRootPath, docsPath.dir)
+  ];
+
   const config: webpack.Configuration = {
     mode: opts.mode,
     entry: opts.entryPath,
@@ -104,32 +111,29 @@ export const getWebpackConfig = (opts: IOptions) => {
         {
           test: /\.(tsx|ts)?$/,
           use: [babelLoader, tsLoader],
-          include: plugin.buildConfigTsLoaderIncludePipes.reduce((options, fn) => fn(options), [
-            path.join(globalState.projectRootPath, srcPath.dir),
-            path.join(globalState.projectRootPath, pagesPath.dir),
-            path.join(globalState.projectRootPath, tempPath.dir)
-          ]),
+          include: plugin.buildConfigTsLoaderIncludePipes.reduce(
+            (options, fn) => fn(options),
+            defaultSourcePathToBeResolve
+          ),
           exclude: plugin.buildConfigTsLoaderExcludePipes.reduce((options, fn) => fn(options), [])
         },
         { test: /\.css$/, use: extraCssInProd(cssLoader) },
         {
           test: /\.scss$/,
           use: extraCssInProd(cssLoader, sassLoader),
-          include: plugin.buildConfigSassLoaderIncludePipes.reduce((options, fn) => fn(options), [
-            path.join(globalState.projectRootPath, srcPath.dir),
-            path.join(globalState.projectRootPath, pagesPath.dir),
-            path.join(globalState.projectRootPath, tempPath.dir)
-          ]),
+          include: plugin.buildConfigSassLoaderIncludePipes.reduce(
+            (options, fn) => fn(options),
+            defaultSourcePathToBeResolve
+          ),
           exclude: plugin.buildConfigSassLoaderExcludePipes.reduce((options, fn) => fn(options), [])
         },
         {
           test: /\.less$/,
           use: extraCssInProd(cssLoader, lessLoader),
-          include: plugin.buildConfigLessLoaderIncludePipes.reduce((options, fn) => fn(options), [
-            path.join(globalState.projectRootPath, srcPath.dir),
-            path.join(globalState.projectRootPath, pagesPath.dir),
-            path.join(globalState.projectRootPath, tempPath.dir)
-          ]),
+          include: plugin.buildConfigLessLoaderIncludePipes.reduce(
+            (options, fn) => fn(options),
+            defaultSourcePathToBeResolve
+          ),
           exclude: plugin.buildConfigLessLoaderExcludePipes.reduce((options, fn) => fn(options), [])
         },
         { test: /\.html$/, use: ['raw-loader'] }
@@ -175,9 +179,7 @@ export const getWebpackConfig = (opts: IOptions) => {
       cacheGroups: { styles: { name: outCssFileName, test: /\.css$/, chunks: 'all', enforce: true } }
     };
     config.plugins.push(new MiniCssExtractPlugin({ filename: outCssFileName }));
-  }
 
-  if (!globalState.isDevelopment) {
     babelLoader.options.plugins.push(['import', { libraryName: 'antd' }]);
     cssLoader.options.minimize = true;
   }

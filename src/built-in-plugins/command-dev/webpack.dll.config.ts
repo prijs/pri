@@ -2,9 +2,10 @@ import * as crypto from 'crypto';
 import * as path from 'path';
 import * as webpack from 'webpack';
 import * as yargs from 'yargs';
+import { globalState } from '../../utils/global-state';
 import { plugin } from '../../utils/plugins';
+
 interface IOptions {
-  projectRootPath: string;
   dllOutPath: string;
   dllFileName: string;
   dllMainfestName: string;
@@ -73,7 +74,7 @@ export default (opts: IOptions) =>
     resolve: {
       modules: [
         // From project node_modules
-        path.join(opts.projectRootPath, 'node_modules'),
+        path.join(globalState.projectRootPath, 'node_modules'),
         // Self node_modules
         path.join(__dirname, '../../../node_modules')
       ],
@@ -83,7 +84,7 @@ export default (opts: IOptions) =>
     resolveLoader: {
       modules: [
         // From project node_modules
-        path.join(opts.projectRootPath, 'node_modules'),
+        path.join(globalState.projectRootPath, 'node_modules'),
         // Self node_modules
         path.join(__dirname, '../../../node_modules')
       ]

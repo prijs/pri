@@ -23,7 +23,7 @@ interface IOptions {
   publicPath: string;
   distDir?: string;
   outFileName?: string;
-  htmlTemplateArgs: {
+  htmlTemplateArgs?: {
     dashboardServerPort?: number;
     libraryStaticPath?: string;
   };
@@ -84,28 +84,15 @@ export const runWebpackDevServer = async (opts: IOptions) => {
   const devServer = new webpackDevServer(compiler, webpackDevServerConfig);
 
   devServer.listen(opts.devServerPort, '127.0.0.1', () => {
-    switch (globalState.projectType) {
-      case 'project':
-        if (globalState.projectConfig.devUrl) {
-          open(globalState.projectConfig.devUrl);
-        } else {
-          open(
-            urlJoin(
-              `${globalState.projectConfig.useHttps ? 'https' : 'http'}://localhost:${opts.devServerPort}`,
-              globalState.projectConfig.baseHref
-            )
-          );
-        }
-        break;
-      case 'component':
-        open(
-          urlJoin(
-            `${globalState.projectConfig.useHttps ? 'https' : 'http'}://localhost:${opts.devServerPort}`,
-            path.join(globalState.projectConfig.baseHref, 'basic')
-          )
-        );
-        break;
-      default:
+    if (globalState.projectConfig.devUrl) {
+      open(globalState.projectConfig.devUrl);
+    } else {
+      open(
+        urlJoin(
+          `${globalState.projectConfig.useHttps ? 'https' : 'http'}://localhost:${opts.devServerPort}`,
+          globalState.projectConfig.baseHref
+        )
+      );
     }
   });
 };

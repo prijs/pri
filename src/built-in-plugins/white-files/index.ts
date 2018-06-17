@@ -4,12 +4,21 @@ import * as path from 'path';
 import { pri } from '../../node';
 import { CONFIG_FILE } from '../../utils/constants';
 import { globalState } from '../../utils/global-state';
-import { componentPath, gitIgnores, npmIgnores, pagesPath, srcPath, utilPath } from '../../utils/structor-config';
+import {
+  componentPath,
+  docsPath,
+  gitIgnores,
+  npmIgnores,
+  pagesPath,
+  srcPath,
+  utilPath
+} from '../../utils/structor-config';
 
 const whiteList = [
   CONFIG_FILE,
   'readme.md',
   srcPath.dir,
+  docsPath.dir,
   `${srcPath.dir}${path.sep}pages`,
   `${srcPath.dir}${path.sep}utils`,
   '.git',
@@ -35,6 +44,12 @@ export default async (instance: typeof pri) => {
   instance.project.whiteFileRules.add(file => {
     const relativePath = path.relative(instance.projectRootPath, path.format(file));
     return relativePath.startsWith(pagesPath.dir);
+  });
+
+  // [docs]/*
+  instance.project.whiteFileRules.add(file => {
+    const relativePath = path.relative(instance.projectRootPath, path.format(file));
+    return relativePath.startsWith(docsPath.dir);
   });
 
   // [components]/*

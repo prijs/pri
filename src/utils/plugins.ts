@@ -8,7 +8,7 @@ import { set } from '../node/pipe';
 import { Entry } from './create-entry';
 import { getDefault } from './es-module';
 import { globalState } from './global-state';
-import { log } from './log';
+import { log, spinner } from './log';
 import { ProjectConfig } from './project-config-interface';
 
 export interface IPluginPackageInfo {
@@ -26,6 +26,7 @@ export const loadedPlugins = new Set<IPluginPackageInfo>();
 const getBuiltInPlugins = () => {
   const plugins = [
     ['pri-plugin-command-dev', '../built-in-plugins/command-dev/index.js'],
+    ['pri-plugin-command-docs', '../built-in-plugins/command-docs/index.js'],
     ['pri-plugin-command-build', '../built-in-plugins/command-build/index.js'],
     ['pri-plugin-command-init', '../built-in-plugins/command-init/index.js'],
     ['pri-plugin-command-preview', '../built-in-plugins/command-preview/index.js'],
@@ -69,11 +70,11 @@ export type IAnalyseProject = (
 
 export type ICreateEntry = (analyseInfo?: any, entry?: Entry) => void;
 
-export type IBuildConfigPipe = ( config: webpack.Configuration) => webpack.Configuration;
+export type IBuildConfigPipe = (config: webpack.Configuration) => webpack.Configuration;
 
-export type ILoaderOptionsPipe = ( options: any) => any;
-export type ILoaderIncludePipe = ( options: any) => any;
-export type ILoaderExcludePipe = ( options: any) => any;
+export type ILoaderOptionsPipe = (options: any) => any;
+export type ILoaderIncludePipe = (options: any) => any;
+export type ILoaderExcludePipe = (options: any) => any;
 
 export type IAfterProdBuild = (stats?: any) => any;
 
@@ -128,22 +129,24 @@ export class IPluginConfig {
 
 export const plugin: IPluginConfig = new IPluginConfig();
 
-export const initPlugins = async () => {
-  if (hasInitPlugins) {
-    return;
-  }
-  hasInitPlugins = true;
-
-  const projectPackageJsonPath = path.join(globalState.projectRootPath, 'package.json');
-  const builtInPlugins = getBuiltInPlugins();
-
-  getPriPlugins(path.join(globalState.projectRootPath, 'package.json'), builtInPlugins);
-
-  if (loadedPlugins.size > 1) {
-    for (const eachPlugin of getPluginsByOrder()) {
-      await Promise.resolve(eachPlugin.instance(pri));
+export const loadPlugins = async () => {
+  await spinner('loadPlugins', async () => {
+    if (hasInitPlugins) {
+      return;
     }
-  }
+    hasInitPlugins = true;
+
+    const projectPackageJsonPath = path.join(globalState.projectRootPath, 'package.json');
+    const builtInPlugins = getBuiltInPlugins();
+
+    getPriPlugins(path.join(globalState.projectRootPath, 'package.json'), builtInPlugins);
+
+    if (loadedPlugins.size > 1) {
+      for (const eachPlugin of getPluginsByOrder()) {
+        await Promise.resolve(eachPlugin.instance(pri));
+      }
+    }
+  });
 };
 
 function getPriPlugins(packageJsonPath: string, extendPlugins: any = {}) {

@@ -11,7 +11,7 @@ import * as pkg from '../package.json';
 
 import * as semver from 'semver';
 import { log } from './utils/log';
-import { initPlugins, plugin } from './utils/plugins';
+import { loadPlugins, plugin } from './utils/plugins';
 import text from './utils/text';
 
 import { pri } from './node';
@@ -46,7 +46,7 @@ async function runCommandAction(commandDetails: any[], args: any[]) {
 
 async function main() {
   if (process.argv[2] !== 'plugin') {
-    await initPlugins();
+    await loadPlugins();
   } else {
     commander.command('plugin', 'Operator for pri plugin.');
   }

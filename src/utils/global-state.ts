@@ -14,6 +14,11 @@ import { ProjectConfig } from './project-config-interface';
 
 const globalState: {
   projectRootPath: string;
+  /**
+   * majorCommand
+   * for example: pri dev -d, the major command is "dev"
+   */
+  majorCommand: string;
   projectConfig: ProjectConfig;
   /**
    * Development enviroment.
@@ -26,7 +31,8 @@ const globalState: {
 } = {} as any;
 
 globalState.projectRootPath = process.cwd();
-globalState.isDevelopment = yargs.argv._[0] === 'dev';
+globalState.majorCommand = yargs.argv._.length === 0 ? 'dev' : yargs.argv._[0];
+globalState.isDevelopment = ['dev', 'docs'].some(operate => operate === globalState.majorCommand);
 globalState.projectConfig = getProjectConfig(globalState.isDevelopment);
 
 // get pri type from package.json

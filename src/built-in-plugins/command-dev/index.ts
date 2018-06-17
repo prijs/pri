@@ -17,6 +17,7 @@ import { globalState } from '../../utils/global-state';
 import { log, spinner } from '../../utils/log';
 import { findNearestNodemodulesFile } from '../../utils/npm-finder';
 import { getPluginsByOrder } from '../../utils/plugins';
+import { prettierConfig } from '../../utils/prettier-config';
 import { ProjectConfig } from '../../utils/project-config-interface';
 import { hasNodeModules, hasNodeModulesModified, hasPluginsModified } from '../../utils/project-helper';
 import * as projectState from '../../utils/project-state';
@@ -27,13 +28,9 @@ import { runWebpackDevServer } from '../../utils/webpack-dev-server';
 import { WrapContent } from '../../utils/webpack-plugin-wrap-content';
 import dashboardClientServer from './dashboard/server/client-server';
 import dashboardServer from './dashboard/server/index';
-import { runDllWebpack } from './webpack';
+import { bundleDlls, dllMainfestName, dllOutPath, libraryStaticPath } from './dll';
 
 const projectRootPath = process.cwd();
-const dllFileName = 'main.dll.js';
-const dllMainfestName = 'mainfest.json';
-const dllOutPath = path.join(projectRootPath, '.temp/static/dlls');
-const libraryStaticPath = '/dlls/' + dllFileName;
 
 const dashboardBundleFileName = 'main';
 
@@ -184,7 +181,7 @@ function createDashboardEntry() {
         `
       }
     `,
-      { semi: true, singleQuote: true, parser: 'typescript' }
+      { ...prettierConfig, parser: 'typescript' }
     )
   );
 
@@ -348,20 +345,22 @@ export default async (instance: typeof pri) => {
     }
   });
 
-  instance.build.pipeConfig(config => {
-    if (!instance.isDevelopment) {
+  if (instance.majorCommand === 'dev') {
+    instance.build.pipeConfig(config => {
+      if (!instance.isDevelopment) {
+        return config;
+      }
+
+      config.plugins.push(
+        new webpack.DllReferencePlugin({
+          context: '.',
+          manifest: require(path.join(dllOutPath, dllMainfestName))
+        })
+      );
+
       return config;
-    }
-
-    config.plugins.push(
-      new webpack.DllReferencePlugin({
-        context: '.',
-        manifest: require(path.join(dllOutPath, dllMainfestName))
-      })
-    );
-
-    return config;
-  });
+    });
+  }
 
   instance.commands.registerCommand({
     name: 'dev',
@@ -391,14 +390,3 @@ export default async (instance: typeof pri) => {
     isDefault: true
   });
 };
-
-/**
- * Bundle dlls if node_modules changed, or dlls not exist.
- */
-async function bundleDlls() {
-  if ((hasNodeModules() && hasNodeModulesModified()) || !fs.existsSync(path.join(dllOutPath, dllFileName))) {
-    log(colors.blue('\nBundle dlls\n'));
-
-    await runDllWebpack({ projectRootPath, dllOutPath, dllFileName, dllMainfestName });
-  }
-}

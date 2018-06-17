@@ -22,15 +22,9 @@ export const tsBuiltPath = {
   dir: globalState.projectConfig.distDir
 };
 
-let pagesFilePath = '';
-switch (globalState.projectType) {
-  case 'project':
-    pagesFilePath = path.join(srcPath.dir, `pages`);
-    break;
-  case 'component':
-    pagesFilePath = 'docs';
-}
-export const pagesPath = { dir: pagesFilePath };
+export const pagesPath = { dir: path.join(srcPath.dir, `pages`) };
+
+export const docsPath = { dir: `docs` };
 
 export const notFoundPath = {
   dir: pagesPath.dir,

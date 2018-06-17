@@ -11,7 +11,7 @@ import * as pkg from '../package.json';
 
 import * as semver from 'semver';
 import { log } from './utils/log';
-import { initPlugins, plugin } from './utils/plugins';
+import { loadPlugins, plugin } from './utils/plugins';
 import text from './utils/text';
 
 import commandBuild from './pri-plugin-commanders/build';

@@ -14,6 +14,9 @@ export default {
     },
     test: {
       description: 'Run all tests'
+    },
+    docs: {
+      description: 'Run docs'
     }
   }
 };

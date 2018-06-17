@@ -5,6 +5,7 @@ import * as pipe from '../node/pipe';
 import { IProjectInfo } from './analyse-project-interface';
 import { globalState } from './global-state';
 import { plugin } from './plugins';
+import { prettierConfig } from './prettier-config';
 import { tempJsAppPath, tempJsEntryPath } from './structor-config';
 
 export class Entry {
@@ -169,20 +170,12 @@ export function createEntry() {
   const entryPath = path.join(globalState.projectRootPath, path.format(tempJsEntryPath));
   const appPath = path.join(globalState.projectRootPath, path.format(tempJsAppPath));
 
-  fs.outputFileSync(
-    appPath,
-    prettier.format(newEntryObject.getApp(), {
-      semi: true,
-      singleQuote: true,
-      parser: 'typescript'
-    })
-  );
+  fs.outputFileSync(appPath, prettier.format(newEntryObject.getApp(), { ...prettierConfig, parser: 'typescript' }));
 
   fs.outputFileSync(
     entryPath,
     prettier.format(newEntryObject.getEntry(), {
-      semi: true,
-      singleQuote: true,
+      ...prettierConfig,
       parser: 'typescript'
     })
   );
