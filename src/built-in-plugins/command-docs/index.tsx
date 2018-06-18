@@ -132,7 +132,7 @@ export default async (instance: typeof pri) => {
       }
     );
 
-    fs.writeFileSync(docsEntryPath, docsEntryContent);
+    fs.outputFileSync(docsEntryPath, docsEntryContent);
 
     return result;
   });
