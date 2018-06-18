@@ -12,7 +12,7 @@
     <script src="<%= htmlWebpackPlugin.options.htmlTemplateArgs.libraryStaticPath %>"></script>
   <% } %>
 
-  <% if (htmlWebpackPlugin.options.htmlTemplateArgs.appendBody) { %>
+  <% if (htmlWebpackPlugin.options.htmlTemplateArgs && htmlWebpackPlugin.options.htmlTemplateArgs.appendBody) { %>
     <%= htmlWebpackPlugin.options.htmlTemplateArgs.appendBody %>
   <% } %>
 </body>
