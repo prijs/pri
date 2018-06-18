@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { injectGlobal } from 'styled-components';
 
 export const Container = styled.div`
   background-color: whitesmoke;
@@ -6,6 +6,7 @@ export const Container = styled.div`
   height: 100vh;
   display: flex;
   padding: 10px;
+  box-sizing: border-box;
 `;
 
 export const LeftContainer = styled.div`
@@ -13,6 +14,7 @@ export const LeftContainer = styled.div`
   flex-direction: column;
   width: 300px;
   min-width: 300px;
+  box-sizing: border-box;
 `;
 
 export const RightContainer = styled.div`
@@ -20,6 +22,7 @@ export const RightContainer = styled.div`
   flex-direction: column;
   flex-grow: 1;
   padding-left: 10px;
+  box-sizing: border-box;
 `;
 
 export const DocInstanceContainer = styled.div`
@@ -30,6 +33,8 @@ export const DocInstanceContainer = styled.div`
   flex-grow: 1;
   flex-basis: 0;
   overflow-y: auto;
+  overflow-x: hidden;
+  box-sizing: border-box;
 `;
 
 export const DocInfoContainer = styled.div`
@@ -40,6 +45,7 @@ export const DocInfoContainer = styled.div`
   border: 1px solid #ddd;
   border-radius: 3px;
   margin-top: 10px;
+  box-sizing: border-box;
 `;
 
 export const DocMenuItem = styled.div`
@@ -49,6 +55,7 @@ export const DocMenuItem = styled.div`
   cursor: pointer;
   border-radius: 5px;
   padding-left: 10px;
+  box-sizing: border-box;
   &:hover {
     background-color: white;
   }
@@ -57,4 +64,9 @@ export const DocMenuItem = styled.div`
     `
     background-color: white;
   `};
+`;
+
+export const DocEditorInstance = styled.div`
+  width: 100%;
+  height: 180px;
 `;

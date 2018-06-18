@@ -26,6 +26,7 @@ interface IOptions {
   htmlTemplateArgs?: {
     dashboardServerPort?: number;
     libraryStaticPath?: string;
+    appendBody?: string;
   };
   pipeConfig?: (config?: webpack.Configuration) => webpack.Configuration;
 }

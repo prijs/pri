@@ -91,11 +91,13 @@ export default async (instance: typeof pri) => {
             docList.push(`
             {
               name: "${docFile.file.name}",
-              element: ${fileName}
+              element: ${fileName},
+              text: ${fileName}Text
             }
           `);
             return `
             import * as ${fileName} from '${docImportPath}'
+            import ${fileName}Text from '-!raw-loader!${docImportPath}'
           `;
           })
           .join('\n');
@@ -172,6 +174,11 @@ export default async (instance: typeof pri) => {
         entryPath: docsEntryPath,
         devServerPort: freePort,
         htmlTemplatePath: path.join(__dirname, '../../../template-project.ejs'),
+        htmlTemplateArgs: {
+          appendBody: `
+            <script src="https://unpkg.com/monaco-editor@0.13.1/min/vs/loader.js"></script>
+          `
+        },
         pipeConfig: config => {
           const dllHttpPath = urlJoin(
             `${instance.projectConfig.useHttps ? 'https' : 'http'}://127.0.0.1:${freePort}`,

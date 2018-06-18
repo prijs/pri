@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 export class Props {
-  public docs?: Array<{ name: string; element: any }> = [];
+  public docs?: Array<{ name: string; element: any; text: string }> = [];
 }
 
 export class State {

@@ -52,16 +52,34 @@ export default async (instance: typeof pri) => {
       await instance.project.ensureProjectFiles();
       await instance.project.checkProjectFiles();
 
-      log('\n Success init your project, you can run serval commands:\n');
+      log(`\n Success init your ${globalState.projectType}, you can run serval commands:\n`);
 
-      log(colors.blue('  npm start'));
-      log(`    ${text.commander.dev.description}\n`);
+      switch (globalState.projectType) {
+        case 'project':
+          log(colors.blue('  npm start'));
+          log(`    ${text.commander.dev.description}\n`);
+          break;
+        case 'component':
+          log(colors.blue('  npm run docs'));
+          log(`    ${text.commander.docs.description}\n`);
+          break;
+        default:
+      }
 
       log(colors.blue('  npm run build'));
       log(`    ${text.commander.build.description}\n`);
 
-      log(colors.blue('  npm run preview'));
-      log(`    ${text.commander.dev.description}\n`);
+      switch (globalState.projectType) {
+        case 'project':
+          log(colors.blue('  npm run preview'));
+          log(`    ${text.commander.dev.description}\n`);
+          break;
+        case 'component':
+          log(colors.blue('  npm publish'));
+          log(`    Publish this component to npm package.\n`);
+          break;
+        default:
+      }
 
       log(colors.blue('  npm test'));
       log('    Run tests.\n');

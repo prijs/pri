@@ -1,12 +1,30 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import * as S from './style';
 import { Props, State } from './type';
 
 export default class Docs extends React.PureComponent<Props, State> {
   public state = new State();
 
+  private editorRef: React.ReactInstance;
+
+  private monacoEditor: any;
+
+  public componentDidMount() {
+    const currentDoc = this.props.docs[this.state.currentDocIndex];
+
+    const vsRequire: any = (window as any).require;
+    vsRequire.config({ paths: { vs: 'https://unpkg.com/monaco-editor@0.13.1/min/vs' } });
+    vsRequire(['vs/editor/editor.main'], (info: any) => {
+      const monaco: any = (window as any).monaco;
+      const editorDOM = ReactDOM.findDOMNode(this.editorRef);
+      this.monacoEditor = monaco.editor.create(editorDOM, { value: currentDoc.text, language: 'typescript' });
+    });
+  }
+
   public render() {
-    const DocInstance = this.props.docs[this.state.currentDocIndex].element.default;
+    const currentDoc = this.props.docs[this.state.currentDocIndex];
+    const DocInstance = currentDoc.element.default;
     return (
       <S.Container>
         <S.LeftContainer>{this.renderLeftMenus()}</S.LeftContainer>
@@ -15,7 +33,9 @@ export default class Docs extends React.PureComponent<Props, State> {
           <S.DocInstanceContainer>
             <DocInstance />
           </S.DocInstanceContainer>
-          <S.DocInfoContainer>TODO</S.DocInfoContainer>
+          <S.DocInfoContainer>
+            <S.DocEditorInstance ref={(ref: any) => (this.editorRef = ref)} />
+          </S.DocInfoContainer>
         </S.RightContainer>
       </S.Container>
     );
@@ -36,8 +56,14 @@ export default class Docs extends React.PureComponent<Props, State> {
   };
 
   private selectDoc = (index: number) => {
-    this.setState({
-      currentDocIndex: index
-    });
+    this.setState(
+      {
+        currentDocIndex: index
+      },
+      () => {
+        const currentDoc = this.props.docs[this.state.currentDocIndex];
+        this.monacoEditor.setValue(currentDoc.text);
+      }
+    );
   };
 }
