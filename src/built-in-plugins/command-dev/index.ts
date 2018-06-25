@@ -30,8 +30,6 @@ import dashboardClientServer from './dashboard/server/client-server';
 import dashboardServer from './dashboard/server/index';
 import { bundleDlls, dllMainfestName, dllOutPath, libraryStaticPath } from './dll';
 
-const projectRootPath = process.cwd();
-
 const dashboardBundleFileName = 'main';
 
 export const CommandDev = async (
@@ -41,9 +39,8 @@ export const CommandDev = async (
   await bundleDlls();
 
   // Bundle dashboard if plugins changed or dashboard bundle not exist.
-  const dashboardDistDir = path.join(projectRootPath, tempPath.dir, 'static/dashboard-bundle');
+  const dashboardDistDir = path.join(globalState.projectRootPath, tempPath.dir, 'static/dashboard-bundle');
   if ((await hasPluginsModified()) || !fs.existsSync(path.join(dashboardDistDir, dashboardBundleFileName + '.js'))) {
-    log(colors.blue('\nBundle dashboard\n'));
     const dashboardEntryFilePath = createDashboardEntry();
 
     const status = await runWebpack({
@@ -51,10 +48,15 @@ export const CommandDev = async (
       publicPath: '/bundle/',
       entryPath: dashboardEntryFilePath,
       distDir: dashboardDistDir,
-      outFileName: 'main.[hash].js' // dashboard has no css file
+      outFileName: 'main.[hash].js', // dashboard has no css file
+      webpackBarOptions: {
+        name: 'dashboard'
+      }
     });
     projectState.set('dashboardHash', status.hash);
   }
+  const stdoutOfAnyType = process.stdout as any;
+  stdoutOfAnyType.clearLine(0);
 
   log(colors.blue('\nStart dev server.\n'));
 
@@ -69,18 +71,21 @@ export const CommandDev = async (
   dashboardClientServer({
     serverPort: portInfo.dashboardServerPort,
     clientPort: portInfo.dashboardClientPort,
-    staticRootPath: path.join(projectRootPath, tempPath.dir, 'static'),
+    staticRootPath: path.join(globalState.projectRootPath, tempPath.dir, 'static'),
     hash: projectState.get('dashboardHash')
   });
 
   // Serve project
   await runWebpackDevServer({
     publicPath: globalState.projectConfig.publicPath,
-    entryPath: path.join(projectRootPath, path.format(tempJsEntryPath)),
+    entryPath: path.join(globalState.projectRootPath, path.format(tempJsEntryPath)),
     devServerPort: portInfo.freePort,
     htmlTemplatePath: path.join(__dirname, '../../../template-project.ejs'),
     htmlTemplateArgs: {
       dashboardServerPort: portInfo.dashboardServerPort
+    },
+    webpackBarOptions: {
+      name: 'dev'
     },
     pipeConfig: config => {
       const dllHttpPath = urlJoin(
@@ -128,20 +133,23 @@ export const debugDashboard = async (analyseInfo: any) => {
     htmlTemplateArgs: {
       dashboardServerPort,
       libraryStaticPath
+    },
+    webpackBarOptions: {
+      name: 'dashboard'
     }
   });
 };
 
 function createDashboardEntry() {
   const dashboardEntryMainPath = path.join(__dirname, 'dashboard/client/index');
-  const dashboardEntryFilePath = path.join(projectRootPath, tempPath.dir, 'dashboard', 'main.tsx');
+  const dashboardEntryFilePath = path.join(globalState.projectRootPath, tempPath.dir, 'dashboard', 'main.tsx');
 
   const webUiEntries: string[] = [];
 
   Array.from(getPluginsByOrder()).forEach(plugin => {
     try {
       const packageJsonPath = require.resolve(path.join(plugin.pathOrModuleName, 'package.json'), {
-        paths: [__dirname, projectRootPath]
+        paths: [__dirname, globalState.projectRootPath]
       });
       const packageJson = fs.readJsonSync(packageJsonPath, { throws: false });
       const webEntry = _.get(packageJson, 'pri.web-entry', null);
@@ -367,7 +375,7 @@ export default async (instance: typeof pri) => {
     options: [['-d, --debugDashboard', 'Debug dashboard']],
     description: text.commander.dev.description,
     action: async (options: any) => {
-      await instance.project.lint();
+      await instance.project.lint(false);
       await instance.project.ensureProjectFiles();
       await instance.project.checkProjectFiles();
 

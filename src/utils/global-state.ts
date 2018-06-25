@@ -6,7 +6,6 @@
 import * as fs from 'fs-extra';
 import { get, merge } from 'lodash';
 import * as path from 'path';
-import * as ts from 'typescript';
 import * as yargs from 'yargs';
 import { CONFIG_FILE } from './constants';
 import { execTsByPath } from './functional';
@@ -30,7 +29,7 @@ const globalState: {
   projectType: 'project' | 'component' | 'plugin' | null;
 } = {} as any;
 
-globalState.projectRootPath = process.cwd();
+globalState.projectRootPath = yargs.argv.cwd || process.cwd();
 globalState.majorCommand = yargs.argv._.length === 0 ? 'dev' : yargs.argv._[0];
 globalState.isDevelopment = ['dev', 'docs'].some(operate => operate === globalState.majorCommand);
 globalState.projectConfig = getProjectConfig(globalState.isDevelopment);

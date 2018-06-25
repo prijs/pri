@@ -11,9 +11,9 @@ import * as url from 'url';
 import * as urlJoin from 'url-join';
 import * as webpack from 'webpack';
 import * as webpackDevServer from 'webpack-dev-server';
+import * as WebpackBar from 'webpackbar';
 import { globalState } from '../utils/global-state';
 import { tempPath } from '../utils/structor-config';
-import { compilerLogger } from './webpack-compiler-log';
 import { getWebpackConfig } from './webpack-config';
 
 interface IOptions {
@@ -29,6 +29,7 @@ interface IOptions {
     appendBody?: string;
   };
   pipeConfig?: (config?: webpack.Configuration) => webpack.Configuration;
+  webpackBarOptions?: any;
 }
 
 const stats = {
@@ -57,6 +58,7 @@ export const runWebpackDevServer = async (opts: IOptions) => {
   }
 
   webpackConfig.plugins.push(new webpack.HotModuleReplacementPlugin());
+  webpackConfig.plugins.push(new WebpackBar(opts.webpackBarOptions));
 
   const webpackDevServerConfig: webpackDevServer.Configuration = {
     host: '127.0.0.1',
@@ -80,7 +82,6 @@ export const runWebpackDevServer = async (opts: IOptions) => {
 
   webpackDevServer.addDevServerEntrypoints(webpackConfig, webpackDevServerConfig);
   const compiler = webpack(webpackConfig);
-  compilerLogger(compiler as any);
 
   const devServer = new webpackDevServer(compiler, webpackDevServerConfig);
 

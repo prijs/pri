@@ -9,6 +9,7 @@ import * as pipe from '../../node/pipe';
 import { analyseProject } from '../../utils/analyse-project';
 import { createEntry } from '../../utils/create-entry';
 import { exec } from '../../utils/exec';
+import { globalState } from '../../utils/global-state';
 import { log, spinner } from '../../utils/log';
 import { findNearestNodemodulesFile } from '../../utils/npm-finder';
 import { plugin } from '../../utils/plugins';
@@ -19,18 +20,21 @@ import { tsPlusBabel } from '../../utils/ts-plus-babel';
 import { runWebpack } from '../../utils/webpack';
 import { getStaticHtmlPaths } from './generate-static-html';
 
-const projectRootPath = process.cwd();
-
 async function prepareBuild(instance: typeof pri) {
   await spinner('Clean project.', async () => {
     // Clean dist dir
     await exec(
-      `${findNearestNodemodulesFile('.bin/rimraf')} ${path.join(projectRootPath, instance.projectConfig.distDir)}`
+      `${findNearestNodemodulesFile('.bin/rimraf')} ${path.join(
+        globalState.projectRootPath,
+        instance.projectConfig.distDir
+      )}`
     );
-    await exec(`${findNearestNodemodulesFile('.bin/rimraf')} ${path.join(projectRootPath, tsBuiltPath.dir)}`);
+    await exec(
+      `${findNearestNodemodulesFile('.bin/rimraf')} ${path.join(globalState.projectRootPath, tsBuiltPath.dir)}`
+    );
 
     // Clean .temp dir
-    await exec(`${findNearestNodemodulesFile('.bin/rimraf')} ${path.join(projectRootPath, '.temp')}`);
+    await exec(`${findNearestNodemodulesFile('.bin/rimraf')} ${path.join(globalState.projectRootPath, '.temp')}`);
 
     await instance.project.ensureProjectFiles();
     await instance.project.lint();
@@ -73,12 +77,15 @@ export const buildProject = async (
         );
       });
       return config;
+    },
+    webpackBarOptions: {
+      name: 'build'
     }
   });
 
   // Write .temp/static/sw.js
-  const tempSwPath = path.join(projectRootPath, tempPath.dir, 'static/sw.js');
-  const targetSwPath = path.join(projectRootPath, instance.projectConfig.distDir, 'sw.js');
+  const tempSwPath = path.join(globalState.projectRootPath, tempPath.dir, 'static/sw.js');
+  const targetSwPath = path.join(globalState.projectRootPath, instance.projectConfig.distDir, 'sw.js');
 
   plugin.buildAfterProdBuild.forEach(afterProdBuild => afterProdBuild(stats));
 

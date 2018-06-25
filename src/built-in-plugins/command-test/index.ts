@@ -49,9 +49,9 @@ export default async (instance: typeof pri) => {
 
   instance.commands.registerCommand({
     name: 'test',
-    description: text.commander.init.description,
+    description: 'Run tests.',
     action: async () => {
-      await instance.project.lint();
+      await instance.project.lint(false);
       await instance.project.checkProjectFiles();
       await CommandTest(instance);
 

@@ -5,9 +5,8 @@ import { plugin } from '../utils/plugins';
 import { tempPath } from '../utils/structor-config';
 import { globalState } from './global-state';
 import { log, spinner } from './log';
-import { findNearestNodemodulesFile } from './npm-finder';
 
-export async function lint() {
+export async function lint(showBreakError = true) {
   await spinner('Lint project', async () => {
     const configurationFilename = 'tslint.json';
     const lintOptions = {
@@ -37,16 +36,19 @@ export async function lint() {
 
     const results = linter.getResult();
     if (results.errorCount > 0) {
-      log(colors.red(`Tslint errors:`));
+      showBreakError ? log(colors.red(`Tslint errors:`)) : log(colors.yellow(`Tslint warnings:`));
       results.failures.forEach(failure => {
         const errorPosition = failure.getStartPosition().getLineAndCharacter();
         log(
-          colors.red(`${failure.getFailure()}`),
-          ', at: ',
+          showBreakError ? colors.red(`${failure.getFailure()}`) : colors.yellow(`${failure.getFailure()}`),
+          ' at: ',
           `${failure.getFileName()}:${errorPosition.line}:${errorPosition.character}`
         );
       });
-      process.exit(0);
+
+      if (showBreakError) {
+        process.exit(0);
+      }
     }
     if (results.fixes.length > 0) {
       log(`Tslint auto fixed ${results.fixes.length} bugs`);

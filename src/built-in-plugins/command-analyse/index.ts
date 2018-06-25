@@ -15,7 +15,7 @@ import { runWebpack } from '../../utils/webpack';
 export default async (instance: typeof pri) => {
   instance.commands.registerCommand({
     name: 'analyse',
-    description: text.commander.init.description,
+    description: 'Analyse project node_modules structor.',
     action: async () => {
       const result = await spinner('Analyse project', async () => {
         const analyseInfo = await analyseProject();

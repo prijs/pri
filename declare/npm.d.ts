@@ -30,3 +30,4 @@ declare module 'docsearch.js';
 declare module 'htmltojsx';
 declare module 'mini-css-extract-plugin';
 declare module 'inquirer';
+declare module 'webpackbar';

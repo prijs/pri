@@ -103,7 +103,7 @@ export default async (instance: typeof pri) => {
           .join('\n');
       })()}
 
-      const DocComponents = [${docList.join(',')}]
+      const DocComponents: any[] = [${docList.join(',')}]
 
       class Docs extends React.PureComponent {
         public render() {
@@ -141,7 +141,7 @@ export default async (instance: typeof pri) => {
     name: 'docs',
     description: text.commander.docs.description,
     action: async () => {
-      await instance.project.lint();
+      await instance.project.lint(false);
       await instance.project.ensureProjectFiles();
       await instance.project.checkProjectFiles();
 

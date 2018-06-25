@@ -5,9 +5,9 @@ import * as open from 'opn';
 import * as path from 'path';
 import * as portfinder from 'portfinder';
 import * as webpack from 'webpack';
+import * as WebpackBar from 'webpackbar';
 import { tempPath } from '../utils/structor-config';
-import { globalState} from './global-state'
-import { compilerLogger } from './webpack-compiler-log';
+import { globalState } from './global-state';
 import { getWebpackConfig } from './webpack-config';
 
 interface IOptions {
@@ -24,6 +24,7 @@ interface IOptions {
     libraryStaticPath?: string;
   };
   pipeConfig?: (config?: webpack.Configuration) => webpack.Configuration;
+  webpackBarOptions?: any;
 }
 
 const stats = {
@@ -52,8 +53,9 @@ export const runWebpack = async (opts: IOptions): Promise<any> => {
     webpackConfig = opts.pipeConfig(webpackConfig);
   }
 
+  webpackConfig.plugins.push(new WebpackBar(opts.webpackBarOptions));
+
   const compiler = webpack(webpackConfig);
-  compilerLogger(compiler as any);
   return runCompiler(compiler);
 };
 

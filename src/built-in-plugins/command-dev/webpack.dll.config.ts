@@ -1,6 +1,7 @@
 import * as crypto from 'crypto';
 import * as path from 'path';
 import * as webpack from 'webpack';
+import * as WebpackBar from 'webpackbar';
 import * as yargs from 'yargs';
 import { globalState } from '../../utils/global-state';
 import { plugin } from '../../utils/plugins';
@@ -59,6 +60,9 @@ export default (opts: IOptions) =>
       new webpack.DllPlugin({
         path: path.join(opts.dllOutPath, opts.dllMainfestName),
         name: 'library'
+      }),
+      new WebpackBar({
+        name: 'dll'
       })
     ],
 

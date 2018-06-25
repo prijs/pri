@@ -2,17 +2,10 @@
 
 import './utils/global-state';
 
-import * as colors from 'colors';
 import * as commander from 'commander';
-import * as _ from 'lodash';
 import * as updateNotifier from 'update-notifier';
 
 import * as pkg from '../package.json';
-
-import * as semver from 'semver';
-import { log } from './utils/log';
-import { loadPlugins, plugin } from './utils/plugins';
-import text from './utils/text';
 
 import commandBuild from './pri-plugin-commanders/build';
 import commandInit from './pri-plugin-commanders/init';

@@ -17,6 +17,7 @@ import {
 const whiteList = [
   CONFIG_FILE,
   'readme.md',
+  'LICENSE',
   srcPath.dir,
   docsPath.dir,
   `${srcPath.dir}${path.sep}pages`,
