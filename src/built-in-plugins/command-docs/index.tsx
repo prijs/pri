@@ -97,7 +97,7 @@ export default async (instance: typeof pri) => {
           `);
             return `
             import * as ${fileName} from '${docImportPath}'
-            import ${fileName}Text from '-!raw-loader!${docImportPath}'
+            const ${fileName}Text = require('-!raw-loader!${docImportPath}')
           `;
           })
           .join('\n');
