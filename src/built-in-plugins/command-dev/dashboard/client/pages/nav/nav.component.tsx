@@ -13,7 +13,7 @@ export class NavComponent extends PureComponent<Props, State> {
     return (
       <S.Container>
         <span>Pri dashboard</span>
-        <S.Link href="https://github.com/ascoders/pri" target="_blank">
+        <S.Link href="https://github.com/prijs/pri" target="_blank">
           Docs
         </S.Link>
       </S.Container>

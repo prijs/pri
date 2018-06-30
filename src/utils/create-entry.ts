@@ -3,6 +3,7 @@ import * as path from 'path';
 import * as prettier from 'prettier';
 import * as pipe from '../node/pipe';
 import { IProjectInfo } from './analyse-project-interface';
+import { PRI_PACKAGE_NAME } from './constants';
 import { globalState } from './global-state';
 import { plugin } from './plugins';
 import { prettierConfig } from './prettier-config';
@@ -58,7 +59,7 @@ export class Entry {
       'appHeader',
       `
       import createBrowserHistory from "history/createBrowserHistory"
-      import { setCustomEnv, setEnvLocal, setEnvProd } from "pri/client"
+      import { setCustomEnv, setEnvLocal, setEnvProd } from "${PRI_PACKAGE_NAME}/client"
       import * as React from "react"
       import * as ReactDOM from "react-dom"
       import Loadable from "react-loadable"

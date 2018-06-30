@@ -3,6 +3,7 @@ import * as fs from 'fs-extra';
 import * as _ from 'lodash';
 import * as path from 'path';
 import * as prettier from 'prettier';
+import { PRI_PACKAGE_NAME } from '../../utils/constants';
 import { ensureFile } from '../../utils/ensure-files';
 import { globalState } from '../../utils/global-state';
 import { log } from '../../utils/log';
@@ -28,7 +29,7 @@ export function ensurePackageJson() {
               release: 'npm publish',
               test: 'pri plugin test'
             },
-            devDependencies: { pri: '*' }
+            devDependencies: { [PRI_PACKAGE_NAME]: '*' }
           }),
           null,
           2
@@ -53,12 +54,9 @@ export function ensureEntry() {
     return;
   }
 
-  ensureFile(fileName, [
-    () =>
-      prettier.format(
-        `
+  ensureFile(fileName, [() => prettier.format(`
     import * as path from "path"
-    import { pri } from "pri"
+    import { pri } from "${PRI_PACKAGE_NAME}"
     import { judgeHasComponents } from "./methods"
 
     interface IResult {
@@ -99,10 +97,7 @@ export function ensureEntry() {
         })
       })
     }
-  `,
-        { ...prettierConfig, parser: 'typescript' }
-      )
-  ]);
+  `, { ...prettierConfig, parser: 'typescript' })]);
 }
 
 function ensureEntryMethods() {

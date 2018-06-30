@@ -3,6 +3,8 @@ import * as _ from 'lodash';
 import * as path from 'path';
 import * as prettier from 'prettier';
 import { pri } from '../../node';
+import { PRI_PACKAGE_NAME } from '../../utils/constants';
+import { globalState } from '../../utils/global-state';
 import { prettierConfig } from '../../utils/prettier-config';
 import { ProjectConfig } from '../../utils/project-config-interface';
 import {
@@ -28,30 +30,35 @@ export const ensurePrettierrc = () => ({
 
 export const ensureTsconfig = () => ({
   fileName: 'tsconfig.json',
-  pipeContent: () =>
-    JSON.stringify(
-      {
-        compilerOptions: {
-          module: 'esnext',
-          moduleResolution: 'node',
-          strict: true,
-          strictNullChecks: false,
-          jsx: 'react',
-          target: 'esnext',
-          experimentalDecorators: true,
-          skipLibCheck: true,
-          outDir: tsBuiltPath.dir,
-          rootDir: './', // Make sure ./src structor. # https://github.com/Microsoft/TypeScript/issues/5134
-          baseUrl: '.',
-          lib: ['dom', 'es5', 'es6', 'scripthost'],
-          paths: { 'pri/*': ['pri', path.join(tempTypesPath.dir, '*')] }
+  pipeContent: async () => {
+    return (
+      JSON.stringify(
+        {
+          compilerOptions: {
+            module: 'esnext',
+            moduleResolution: 'node',
+            strict: true,
+            strictNullChecks: false,
+            jsx: 'react',
+            target: 'esnext',
+            experimentalDecorators: true,
+            skipLibCheck: true,
+            outDir: tsBuiltPath.dir,
+            rootDir: './', // Make sure ./src structor. # https://github.com/Microsoft/TypeScript/issues/5134
+            baseUrl: '.',
+            lib: ['dom', 'es5', 'es6', 'scripthost'],
+            paths: {
+              [PRI_PACKAGE_NAME + '/*']: [PRI_PACKAGE_NAME, path.join(tempTypesPath.dir, '*')]
+            }
+          },
+          include: ['.temp/**/*', 'src/**/*', 'config/**/*', 'tests/**/*'],
+          exclude: ['node_modules', tsBuiltPath.dir]
         },
-        include: ['.temp/**/*', 'src/**/*', 'config/**/*', 'tests/**/*'],
-        exclude: ['node_modules', tsBuiltPath.dir]
-      },
-      null,
-      2
-    ) + '\n'
+        null,
+        2
+      ) + '\n'
+    );
+  }
 });
 
 export const ensureTslint = () => ({
@@ -172,12 +179,8 @@ export default async (instance: typeof pri) => {
     const homeMarkdownPageAbsolutePath = path.join(instance.projectRootPath, homeMarkdownPagePath);
 
     if (!fs.existsSync(homePageAbsolutePath) && !fs.existsSync(homeMarkdownPageAbsolutePath)) {
-      instance.project.addProjectFiles({
-        fileName: homePagePath,
-        pipeContent: () =>
-          prettier.format(
-            `
-      import { env } from "pri/client"
+      instance.project.addProjectFiles({ fileName: homePagePath, pipeContent: () => prettier.format(`
+      import { env } from "${PRI_PACKAGE_NAME}/client"
       import * as React from "react"
 
       class Props {
@@ -205,10 +208,7 @@ export default async (instance: typeof pri) => {
           )
         }
       }
-    `,
-            { ...prettierConfig, parser: 'typescript' }
-          )
-      });
+    `, { ...prettierConfig, parser: 'typescript' }) });
     }
   } else if (instance.projectType === 'component') {
     instance.project.addProjectFiles({

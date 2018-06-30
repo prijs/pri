@@ -6,13 +6,30 @@ export function log(...message: string[]) {
   console.log.apply(null, message);
 }
 
-export async function spinner<T>(message: string, fn: (originSpinner: any) => T): Promise<T> {
+export function logError(message: string) {
+  log(colors.red(message));
+  process.exit(0);
+}
+
+export async function spinner<T>(message: string, fn: (error: (message?: string) => void) => T): Promise<T> {
   const oraSpinner = ora(colors.green(message)).start();
 
+  let errorMessage: string = null;
+
+  function runError(customMessage: string) {
+    errorMessage = customMessage;
+  }
+
   try {
-    const result = await fn(oraSpinner);
-    oraSpinner.succeed(colors.green(message));
-    return result;
+    const result = await fn(runError);
+
+    if (errorMessage) {
+      oraSpinner.fail(colors.red(errorMessage));
+      return null;
+    } else {
+      oraSpinner.succeed(colors.green(message));
+      return result;
+    }
   } catch (error) {
     oraSpinner.fail(colors.red(error.toString()));
     return process.exit(0);

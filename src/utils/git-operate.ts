@@ -6,14 +6,14 @@ import { log } from './log';
 let hasCheckGitVersion = false;
 const gitVersionWarning: string = null;
 
-export const checkGitVersion = async () => {
+export const checkGitVersion = async (cwd?: string) => {
   if (hasCheckGitVersion) {
     return validateGitVersion();
   }
 
   hasCheckGitVersion = true;
 
-  const gitVersion = await exec(`git --version`);
+  const gitVersion = await exec(`git --version`, { cwd });
 
   try {
     const gitVersionPorcelain = /git\s+version\s+([0-9.]+)/g.exec(gitVersion)[1];
@@ -40,29 +40,35 @@ function validateGitVersion() {
   }
 }
 
-export const getStatus = async () => {
-  await checkGitVersion();
+export const getStatus = async (cwd?: string) => {
+  await checkGitVersion(cwd);
 
-  const gitStatus = await exec(`git status --porcelain`);
+  const gitStatus = await exec(`git status --porcelain`, { cwd });
 
   return gitStatus;
 };
 
-export const isWorkingTreeClean = async () => {
-  const status = await getStatus();
+export const isWorkingTreeClean = async (cwd?: string) => {
+  const status = await getStatus(cwd);
   if (status === '') {
     return true;
   }
   return false;
 };
 
-export const addAllAndCommit = async (message: string) => {
-  await exec(`git add -A; git commit -m "${message}"`);
+export const addAllAndCommit = async (message: string, cwd?: string) => {
+  try {
+    await exec(`git add -A; git commit -m "${message}"`, { cwd });
+  } catch {}
 };
 
-export const addAllAndCommitIfWorkingTreeNotClean = async (message: string) => {
-  if (!(await isWorkingTreeClean())) {
+export const addAllAndCommitIfWorkingTreeNotClean = async (message: string, cwd?: string) => {
+  if (!(await isWorkingTreeClean(cwd))) {
     log(colors.yellow(`Working tree is not clean, auto add all and commit: "${message}"`));
-    await addAllAndCommit(message);
+    try {
+      await addAllAndCommit(message, cwd);
+    } catch {
+      // Ignore
+    }
   }
 };

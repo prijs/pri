@@ -5,6 +5,7 @@ import * as portfinder from 'portfinder';
 import * as prettier from 'prettier';
 import * as urlJoin from 'url-join';
 import * as webpack from 'webpack';
+import * as yargs from 'yargs';
 import { pri } from '../../node';
 import { analyseProject } from '../../utils/analyse-project';
 import { spinner } from '../../utils/log';
@@ -24,24 +25,110 @@ interface IResult {
 }
 
 export default async (instance: typeof pri) => {
+  instance.commands.registerCommand({
+    name: 'docs',
+    description: text.commander.docs.description,
+    action: async () => {
+      await devDocs(instance, docsPath.dir);
+    }
+  });
+};
+
+export async function devDocs(instance: typeof pri, realDocsPath: string) {
   const docsEntryPath = path.join(instance.projectRootPath, tempPath.dir, 'docs-entry.tsx');
 
-  if (instance.majorCommand === 'docs') {
-    instance.build.pipeConfig(config => {
-      if (!instance.isDevelopment) {
-        return config;
-      }
+  prepare(instance, realDocsPath, docsEntryPath);
 
-      config.plugins.push(
-        new webpack.DllReferencePlugin({
-          context: '.',
-          manifest: require(path.join(dllOutPath, dllMainfestName))
-        })
+  await instance.project.lint(false);
+  await instance.project.ensureProjectFiles();
+  await instance.project.checkProjectFiles();
+
+  // Anaylse project for init.
+  await spinner('Analyse project', async () => {
+    return analyseProject();
+  });
+
+  await bundleDlls();
+
+  chokidar
+    .watch(path.join(instance.projectRootPath, realDocsPath, '/**'), {
+      ignored: /(^|[\/\\])\../,
+      ignoreInitial: true
+    })
+    .on('add', async filePath => {
+      await analyseProject();
+    })
+    .on('unlink', async filePath => {
+      await analyseProject();
+    })
+    .on('unlinkDir', async filePath => {
+      await analyseProject();
+    });
+
+  // Serve docs
+  const freePort = await portfinder.getPortPromise();
+  await runWebpackDevServer({
+    publicPath: '/',
+    entryPath: docsEntryPath,
+    devServerPort: freePort,
+    htmlTemplatePath: path.join(__dirname, '../../../template-project.ejs'),
+    htmlTemplateArgs: {
+      appendBody: `
+            <script src="https://unpkg.com/monaco-editor@0.13.1/min/vs/loader.js"></script>
+          `
+    },
+    pipeConfig: config => {
+      const dllHttpPath = urlJoin(
+        `${instance.projectConfig.useHttps ? 'https' : 'http'}://127.0.0.1:${freePort}`,
+        libraryStaticPath
       );
 
+      config.plugins.push(
+        new WrapContent(
+          `
+          var dllScript = document.createElement("script");
+          dllScript.src = "${dllHttpPath}";
+          dllScript.onload = runEntry;
+          document.body.appendChild(dllScript);
+
+          function runEntry() {
+        `,
+          `}`
+        )
+      );
       return config;
-    });
-  }
+    }
+  });
+}
+
+function prepare(instance: typeof pri, realDocsPath: string, docsEntryPath: string) {
+  instance.build.pipeTsInclude(paths => {
+    paths.push(path.join(instance.projectRootPath, realDocsPath));
+    return paths;
+  });
+  instance.build.pipeLessInclude(paths => {
+    paths.push(path.join(instance.projectRootPath, realDocsPath));
+    return paths;
+  });
+  instance.build.pipeSassInclude(paths => {
+    paths.push(path.join(instance.projectRootPath, realDocsPath));
+    return paths;
+  });
+
+  instance.build.pipeConfig(config => {
+    if (!instance.isDevelopment) {
+      return config;
+    }
+
+    config.plugins.push(
+      new webpack.DllReferencePlugin({
+        context: '.',
+        manifest: require(path.join(dllOutPath, dllMainfestName))
+      })
+    );
+
+    return config;
+  });
 
   instance.project.onAnalyseProject(files => {
     const result = {
@@ -50,7 +137,7 @@ export default async (instance: typeof pri) => {
           .filter(file => {
             const relativePath = path.relative(instance.projectRootPath, path.join(file.dir, file.name));
 
-            if (!relativePath.startsWith(docsPath.dir)) {
+            if (!relativePath.startsWith(realDocsPath)) {
               return false;
             }
 
@@ -136,71 +223,4 @@ export default async (instance: typeof pri) => {
 
     return result;
   });
-
-  instance.commands.registerCommand({
-    name: 'docs',
-    description: text.commander.docs.description,
-    action: async () => {
-      await instance.project.lint(false);
-      await instance.project.ensureProjectFiles();
-      await instance.project.checkProjectFiles();
-
-      // Anaylse project for init.
-      await spinner('Analyse project', async () => {
-        return analyseProject();
-      });
-
-      await bundleDlls();
-
-      chokidar
-        .watch(path.join(instance.projectRootPath, docsPath.dir, '/**'), {
-          ignored: /(^|[\/\\])\../,
-          ignoreInitial: true
-        })
-        .on('add', async filePath => {
-          await analyseProject();
-        })
-        .on('unlink', async filePath => {
-          await analyseProject();
-        })
-        .on('unlinkDir', async filePath => {
-          await analyseProject();
-        });
-
-      // Serve docs
-      const freePort = await portfinder.getPortPromise();
-      await runWebpackDevServer({
-        publicPath: '/',
-        entryPath: docsEntryPath,
-        devServerPort: freePort,
-        htmlTemplatePath: path.join(__dirname, '../../../template-project.ejs'),
-        htmlTemplateArgs: {
-          appendBody: `
-            <script src="https://unpkg.com/monaco-editor@0.13.1/min/vs/loader.js"></script>
-          `
-        },
-        pipeConfig: config => {
-          const dllHttpPath = urlJoin(
-            `${instance.projectConfig.useHttps ? 'https' : 'http'}://127.0.0.1:${freePort}`,
-            libraryStaticPath
-          );
-
-          config.plugins.push(
-            new WrapContent(
-              `
-          var dllScript = document.createElement("script");
-          dllScript.src = "${dllHttpPath}";
-          dllScript.onload = runEntry;
-          document.body.appendChild(dllScript);
-
-          function runEntry() {
-        `,
-              `}`
-            )
-          );
-          return config;
-        }
-      });
-    }
-  });
-};
+}

@@ -1,12 +1,17 @@
 import * as colors from 'colors';
 import * as path from 'path';
 import { Configuration, Linter } from 'tslint';
+import * as yargs from 'yargs';
 import { plugin } from '../utils/plugins';
 import { tempPath } from '../utils/structor-config';
 import { globalState } from './global-state';
 import { log, spinner } from './log';
 
 export async function lint(showBreakError = true) {
+  if (yargs.argv['light']) {
+    return;
+  }
+
   await spinner('Lint project', async () => {
     const configurationFilename = 'tslint.json';
     const lintOptions = {

@@ -24,7 +24,7 @@ interface IOptions {
 /**
  * Get webpack config.
  */
-export const getWebpackConfig = (opts: IOptions) => {
+export const getWebpackConfig = async (opts: IOptions) => {
   /**
    * Mutilpe loaders
    */
@@ -90,8 +90,7 @@ export const getWebpackConfig = (opts: IOptions) => {
   const defaultSourcePathToBeResolve = [
     path.join(globalState.projectRootPath, srcPath.dir),
     path.join(globalState.projectRootPath, pagesPath.dir),
-    path.join(globalState.projectRootPath, tempPath.dir),
-    path.join(globalState.projectRootPath, docsPath.dir)
+    path.join(globalState.projectRootPath, tempPath.dir)
   ];
 
   const config: webpack.Configuration = {
@@ -192,5 +191,5 @@ export const getWebpackConfig = (opts: IOptions) => {
     config.performance.hints = false;
   }
 
-  return plugin.buildConfigPipes.reduce((newConfig, fn) => fn(newConfig), config);
+  return plugin.buildConfigPipes.reduce(async (newConfig, fn) => fn(await newConfig), Promise.resolve(config));
 };

@@ -19,8 +19,12 @@ if (semver.lte(process.version, '8.0.0')) {
   process.exit(0);
 }
 
+commander.command('plugin', 'Operator for pri plugin.');
+commander.command('packages', 'Packages manager.');
+
 // Common options
 commander.option('--cwd <path>', `Project root path. Default to current cwd - ${process.cwd()}`);
+commander.option('--light', `Do not lint or check any files, just run the command!`);
 
 async function runCommandAction(commandDetails: any[], args: any[]) {
   const mainCommand = commandDetails.find(commandDetail => !!commandDetail.action);
@@ -47,9 +51,6 @@ async function runCommandAction(commandDetails: any[], args: any[]) {
 async function main() {
   if (['plugin', 'packages'].indexOf(globalState.majorCommand) === -1) {
     await loadPlugins();
-  } else {
-    commander.command('plugin', 'Operator for pri plugin.');
-    commander.command('packages', 'Packages manager.');
   }
 
   commander.version(pkg.version, '-v, --version');

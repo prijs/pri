@@ -3,6 +3,7 @@ import * as path from 'path';
 import * as webpack from 'webpack';
 import * as WebpackBar from 'webpackbar';
 import * as yargs from 'yargs';
+import { PRI_PACKAGE_NAME } from '../../utils/constants';
 import { globalState } from '../../utils/global-state';
 import { plugin } from '../../utils/plugins';
 
@@ -39,7 +40,7 @@ export default (opts: IOptions) =>
         'react-router',
         'styled-components',
         'history',
-        'pri/client',
+        PRI_PACKAGE_NAME + '/client',
 
         /** include this will make hot load invaild! */
         // "react-hot-loader",

@@ -1,5 +1,13 @@
 import styled, { injectGlobal } from 'styled-components';
 
+// tslint:disable-next-line:no-unused-expression
+injectGlobal`
+  body {
+    margin: 0;
+    padding: 0;
+  }
+`;
+
 export const Container = styled.div`
   background-color: whitesmoke;
   width: 100vw;

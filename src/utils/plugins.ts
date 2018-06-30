@@ -42,7 +42,8 @@ const getBuiltInPlugins = () => {
     ['pri-plugin-service-worker', '../built-in-plugins/service-worker/index.js'],
     ['pri-plugin-mocks', '../built-in-plugins/mocks/index.js'],
     ['pri-plugin-client-ssr', '../built-in-plugins/client-ssr/index.js'],
-    ['pri-plugin-command-analyse', '../built-in-plugins/command-analyse/index.js']
+    ['pri-plugin-command-analyse', '../built-in-plugins/command-analyse/index.js'],
+    ['pri-plugin-packages', '../built-in-plugins/packages/index.js']
   ];
 
   return plugins.reduce((obj: any, right) => {
@@ -70,11 +71,13 @@ export type IAnalyseProject = (
 
 export type ICreateEntry = (analyseInfo?: any, entry?: Entry) => void;
 
-export type IBuildConfigPipe = (config: webpack.Configuration) => webpack.Configuration;
+export type IBuildConfigPipe = (
+  config: webpack.Configuration
+) => webpack.Configuration | Promise<webpack.Configuration>;
 
 export type ILoaderOptionsPipe = (options: any) => any;
-export type ILoaderIncludePipe = (options: any) => any;
-export type ILoaderExcludePipe = (options: any) => any;
+export type ILoaderIncludePipe = (paths: string[]) => any;
+export type ILoaderExcludePipe = (paths: string[]) => any;
 
 export type IAfterProdBuild = (stats?: any) => any;
 
@@ -84,7 +87,7 @@ export type IWhiteFile = (file: path.ParsedPath & { isDir: boolean }) => boolean
 
 export interface IEnsureProjectFilesQueue {
   fileName: string;
-  pipeContent: (prev?: string) => string;
+  pipeContent: (prev?: string) => string | Promise<string>;
 }
 
 export type ILintFilter = (filePath?: string) => boolean;
@@ -130,13 +133,12 @@ export class IPluginConfig {
 export const plugin: IPluginConfig = new IPluginConfig();
 
 export const loadPlugins = async () => {
-  await spinner('loadPlugins', async () => {
+  await spinner('load plugins', async () => {
     if (hasInitPlugins) {
       return;
     }
     hasInitPlugins = true;
 
-    const projectPackageJsonPath = path.join(globalState.projectRootPath, 'package.json');
     const builtInPlugins = getBuiltInPlugins();
 
     getPriPlugins(path.join(globalState.projectRootPath, 'package.json'), builtInPlugins);
@@ -184,6 +186,7 @@ function getPriPlugins(packageJsonPath: string, extendPlugins: any = {}) {
         : path.resolve(pluginRootPath, subPackageVersion.replace(/^file\:/g, ''), 'package.json');
 
       const subPackageJson = fs.readJsonSync(subPackageAbsolutePath, { throws: false });
+      // Waste time
       const instance = getDefault(require(subPackageRealEntryFilePath));
 
       loadedPlugins.add({

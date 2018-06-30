@@ -8,17 +8,18 @@ import { get, merge } from 'lodash';
 import * as path from 'path';
 import * as yargs from 'yargs';
 import { CONFIG_FILE } from './constants';
+import { getPackageJson, IPackageJson } from './file-operate';
 import { execTsByPath } from './functional';
 import { ProjectConfig } from './project-config-interface';
 
 const globalState: {
   projectRootPath: string;
+  projectConfig: ProjectConfig;
   /**
    * majorCommand
    * for example: pri dev -d, the major command is "dev"
    */
   majorCommand: string;
-  projectConfig: ProjectConfig;
   /**
    * Development enviroment.
    */

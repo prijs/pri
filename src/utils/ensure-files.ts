@@ -4,6 +4,7 @@ import * as fs from 'fs-extra';
 import * as _ from 'lodash';
 import * as path from 'path';
 import * as walk from 'walk';
+import * as yargs from 'yargs';
 import { globalState } from './global-state';
 import { log, spinner } from './log';
 import { plugin } from './plugins';
@@ -11,16 +12,28 @@ import { declarePath, pagesPath, tempPath, tsBuiltPath } from './structor-config
 import { walkProjectFiles } from './walk-project-files';
 
 export const ensureFiles = async () => {
+  if (yargs.argv['light']) {
+    return;
+  }
+
   const ensureProjectFilesQueueGroupByPath = _.groupBy(plugin.ensureProjectFilesQueue, 'fileName');
 
-  Object.keys(ensureProjectFilesQueueGroupByPath).forEach(fileRelativePath => {
-    const ensureProjectFilesQueue = ensureProjectFilesQueueGroupByPath[fileRelativePath];
+  await Promise.all(
+    Object.keys(ensureProjectFilesQueueGroupByPath).map(async fileRelativePath => {
+      const ensureProjectFilesQueue = ensureProjectFilesQueueGroupByPath[fileRelativePath];
 
-    ensureFile(fileRelativePath, ensureProjectFilesQueue.map(ensureProjectFiles => ensureProjectFiles.pipeContent));
-  });
+      await ensureFile(
+        fileRelativePath,
+        ensureProjectFilesQueue.map(ensureProjectFiles => ensureProjectFiles.pipeContent)
+      );
+    })
+  );
 };
 
-export function ensureFile(fileRelativePath: string, pipeContents: Array<((prev: string) => string)>) {
+export async function ensureFile(
+  fileRelativePath: string,
+  pipeContents: Array<((prev: string) => string | Promise<string>)>
+) {
   const filePath = path.join(globalState.projectRootPath, fileRelativePath);
   const fileExist = fs.existsSync(filePath);
 
@@ -31,7 +44,10 @@ export function ensureFile(fileRelativePath: string, pipeContents: Array<((prev:
     //
   }
 
-  const nextContent = pipeContents.reduce((preContent, pipeContent) => pipeContent(preContent), exitFileContent);
+  const nextContent = await pipeContents.reduce(
+    async (preContent, pipeContent) => Promise.resolve(pipeContent(await preContent)),
+    Promise.resolve(exitFileContent)
+  );
 
   if (fileExist) {
     if (exitFileContent === nextContent) {

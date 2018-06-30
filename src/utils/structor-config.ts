@@ -86,7 +86,8 @@ let gitIgnores: string[] = [
   tsBuiltPath.dir,
   '.DS_Store',
   'coverage',
-  '.nyc_output'
+  '.nyc_output',
+  'npm-debug.log'
 ];
 // Add distDir to gitIgnore
 // EG: /dist -> '/dist'
@@ -117,11 +118,13 @@ export { npmIgnores };
 
 export const ignoreScanFiles = [
   '.gitignore',
+  '.gitmodules',
   '.npmignore',
   '.prettierrc',
   '.git',
   'package-lock.json',
   'package.json',
   'tsconfig.json',
-  'tslint.json'
+  'tslint.json',
+  'npm-debug.log'
 ];

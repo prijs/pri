@@ -11,6 +11,10 @@ export default class Docs extends React.PureComponent<Props, State> {
   private monacoEditor: any;
 
   public componentDidMount() {
+    if (this.props.docs.length === 0) {
+      return;
+    }
+
     const currentDoc = this.props.docs[this.state.currentDocIndex];
 
     const vsRequire: any = (window as any).require;
@@ -23,6 +27,10 @@ export default class Docs extends React.PureComponent<Props, State> {
   }
 
   public render() {
+    if (this.props.docs.length === 0) {
+      return null;
+    }
+
     const currentDoc = this.props.docs[this.state.currentDocIndex];
     const DocInstance = currentDoc.element.default;
     return (
