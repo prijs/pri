@@ -18,7 +18,7 @@ export default class Docs extends React.PureComponent<Props, State> {
     const currentDoc = this.props.docs[this.state.currentDocIndex];
 
     const vsRequire: any = (window as any).require;
-    vsRequire.config({ paths: { vs: 'https://unpkg.com/monaco-editor@0.13.1/min/vs' } });
+    vsRequire.config({ paths: { vs: 'https://g.alicdn.com/dt/fbi/0.0.292/monaco-editor/vs' } });
     vsRequire(['vs/editor/editor.main'], (info: any) => {
       const monaco: any = (window as any).monaco;
       const editorDOM = ReactDOM.findDOMNode(this.editorRef);

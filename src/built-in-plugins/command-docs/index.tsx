@@ -74,7 +74,7 @@ export async function devDocs(instance: typeof pri, realDocsPath: string) {
     htmlTemplatePath: path.join(__dirname, '../../../template-project.ejs'),
     htmlTemplateArgs: {
       appendBody: `
-            <script src="https://unpkg.com/monaco-editor@0.13.1/min/vs/loader.js"></script>
+            <script src="https://g.alicdn.com/dt/fbi/0.0.292/monaco-editor/vs/loader.js"></script>
           `
     },
     pipeConfig: config => {

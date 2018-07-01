@@ -20,7 +20,10 @@ export const getPackages = (() => {
     }
 
     const submoduleStatus = await exec(`git submodule status | awk '{ print $2 }'`);
-    const submodulePaths = submoduleStatus.split('\n').map(each => each.trim());
+    const submodulePaths = submoduleStatus
+      .split('\n')
+      .map(each => each.trim())
+      .filter(each => !!each);
     result = await Promise.all(
       submodulePaths.map(async submodulePath => {
         const packagesPathEndWithSep = packagesPath.endsWith(path.sep) ? packagesPath : packagesPath + path.sep;

@@ -56,6 +56,7 @@ export const runWebpack = async (opts: IOptions): Promise<any> => {
   webpackConfig.plugins.push(new WebpackBar(opts.webpackBarOptions));
 
   const compiler = webpack(webpackConfig);
+
   return runCompiler(compiler);
 };
 
