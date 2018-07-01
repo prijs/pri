@@ -179,7 +179,11 @@ export default async (instance: typeof pri) => {
     const homeMarkdownPageAbsolutePath = path.join(instance.projectRootPath, homeMarkdownPagePath);
 
     if (!fs.existsSync(homePageAbsolutePath) && !fs.existsSync(homeMarkdownPageAbsolutePath)) {
-      instance.project.addProjectFiles({ fileName: homePagePath, pipeContent: () => prettier.format(`
+      instance.project.addProjectFiles({
+        fileName: homePagePath,
+        pipeContent: () =>
+          prettier.format(
+            `
       import { env } from "${PRI_PACKAGE_NAME}/client"
       import * as React from "react"
 
@@ -208,7 +212,10 @@ export default async (instance: typeof pri) => {
           )
         }
       }
-    `, { ...prettierConfig, parser: 'typescript' }) });
+    `,
+            { ...prettierConfig, parser: 'typescript' }
+          )
+      });
     }
   } else if (instance.projectType === 'component') {
     instance.project.addProjectFiles({
@@ -223,6 +230,9 @@ export default async (instance: typeof pri) => {
               peerDependencies: {
                 react: '>=16.0.0',
                 'react-dom': '>=16.0.0'
+              },
+              dependencies: {
+                '@babel/runtime': '^7.0.0-beta.51'
               },
               scripts: {
                 prepublishOnly: 'npm run build'
