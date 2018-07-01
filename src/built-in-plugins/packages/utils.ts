@@ -85,16 +85,20 @@ async function getExternalImportsFromEntry(program: ts.Program, entryFilePath: s
     return;
   }
 
-  Array.from<string>((sourceFile as any).resolvedModules.keys()).forEach(importPath => {
-    const resolveInfo = (sourceFile as any).resolvedModules.get(importPath);
+  const resolveModules = (sourceFile as any).resolvedModules;
 
-    if (resolveInfo && !resolveInfo.isExternalLibraryImport) {
-      // Find import file
-      getExternalImportsFromEntry(program, resolveInfo.resolvedFileName, importPaths);
-    } else if (!importPath.startsWith('./') && !importPath.startsWith('../')) {
-      importPaths.push(importPath);
-    }
-  });
+  if (resolveModules) {
+    Array.from<string>(resolveModules.keys()).forEach(importPath => {
+      const resolveInfo = (sourceFile as any).resolvedModules.get(importPath);
+
+      if (resolveInfo && !resolveInfo.isExternalLibraryImport) {
+        // Find import file
+        getExternalImportsFromEntry(program, resolveInfo.resolvedFileName, importPaths);
+      } else if (!importPath.startsWith('./') && !importPath.startsWith('../')) {
+        importPaths.push(importPath);
+      }
+    });
+  }
 
   return importPaths;
 }
