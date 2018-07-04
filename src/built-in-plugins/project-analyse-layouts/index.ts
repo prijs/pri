@@ -74,7 +74,7 @@ export default async (instance: typeof pri) => {
 
         const ${LAYOUT_ROUTE} = ({ component: Component, ...rest }: any) => {
           return (
-            <Route {...rest} render={matchProps => (
+            <Route {...rest} render={(matchProps: any) => (
               <${LAYOUT}>
                 <Component {...matchProps} />
               </${LAYOUT}>

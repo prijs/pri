@@ -148,7 +148,7 @@ export class Entry {
       if ((window as any).enableSsr) {
         // Need wait preloadAll, because we already have ssr html.
         Loadable.preloadAll().then(() => {
-          ReactDOM.hydrate(${pipe.get('entryRenderApp', '<App />')}, document.getElementById(ROOT_ID))
+          (ReactDOM as any).hydrate(${pipe.get('entryRenderApp', '<App />')}, document.getElementById(ROOT_ID))
         })
       } else {
         // Don't need wait preloadAll.

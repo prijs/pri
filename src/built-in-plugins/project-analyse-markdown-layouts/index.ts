@@ -79,7 +79,7 @@ export default async (instance: typeof pri) => {
 
         const ${MARKDOWN_LAYOUT_ROUTE} = ({ component: Component, ...rest }: any) => {
           return (
-            <Route {...rest} render={matchProps => (
+            <Route {...rest} render={(matchProps: any) => (
               <${MARKDOWN_LAYOUT}>
                 <Component {...matchProps} />
               </${MARKDOWN_LAYOUT}>
