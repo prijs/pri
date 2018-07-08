@@ -12,6 +12,9 @@ export const getPackages = (() => {
     name: string;
     path: string;
     packageJson: IPackageJson;
+    pri?: {
+      type: 'project' | 'component' | 'plugin';
+    };
   }> = null;
 
   return async function foo() {
@@ -78,7 +81,27 @@ function createProgram(entryFilePaths: string[]) {
   });
 }
 
-async function getExternalImportsFromEntry(program: ts.Program, entryFilePath: string, importPaths: string[] = []) {
+async function getExternalImportsFromEntrys(program: ts.Program, entryFilePaths: string[]) {
+  return entryFilePaths.reduce(async (allImportPathsPromise, entryFilePath) => {
+    let allImportPaths = await allImportPathsPromise;
+    allImportPaths = allImportPaths.concat(await getExternalImportsFromEntry(program, entryFilePath));
+    return allImportPaths;
+  }, Promise.resolve([]));
+}
+
+async function getExternalImportsFromEntry(
+  program: ts.Program,
+  entryFilePath: string,
+  importPaths: string[] = [],
+  handledEntryFilePaths: string[] = []
+) {
+  if (handledEntryFilePaths.some(handledEntryFilePath => handledEntryFilePath === entryFilePath)) {
+    // Ignore handled file.
+    return;
+  } else {
+    handledEntryFilePaths.push(entryFilePath);
+  }
+
   const sourceFile = program.getSourceFile(entryFilePath);
 
   if (!sourceFile) {
@@ -93,7 +116,7 @@ async function getExternalImportsFromEntry(program: ts.Program, entryFilePath: s
 
       if (resolveInfo && !resolveInfo.isExternalLibraryImport) {
         // Find import file
-        getExternalImportsFromEntry(program, resolveInfo.resolvedFileName, importPaths);
+        getExternalImportsFromEntry(program, resolveInfo.resolvedFileName, importPaths, handledEntryFilePaths);
       } else if (!importPath.startsWith('./') && !importPath.startsWith('../')) {
         importPaths.push(importPath);
       }
@@ -106,7 +129,15 @@ async function getExternalImportsFromEntry(program: ts.Program, entryFilePath: s
 export async function getExternalImportsFromProjectRoot(projectRootPath: string) {
   const packageJson = await getPackageJson(projectRootPath);
   const allTsFiles = await getAllTsFiles(projectRootPath);
-  const entryFilePath = path.join(projectRootPath, packageJson.types || packageJson.typings);
+  const entryRelativePath = packageJson.types || packageJson.typings;
   const program = createProgram(allTsFiles);
-  return getExternalImportsFromEntry(program, entryFilePath);
+
+  if (entryRelativePath) {
+    // Only one entry declared in package.json types | typings
+    const entryFilePath = path.join(projectRootPath, packageJson.types || packageJson.typings);
+    return getExternalImportsFromEntrys(program, [entryFilePath]);
+  } else {
+    // All ts files is entry
+    return getExternalImportsFromEntrys(program, allTsFiles);
+  }
 }

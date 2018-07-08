@@ -43,6 +43,13 @@ async function init() {
     });
 
   commander
+    .command(`docs [packageName]`)
+    .description('Develop package docs.')
+    .action(async (packageName: string) => {
+      await commandDev(packageName);
+    });
+
+  commander
     .command(`push [packageName] [message]`)
     .description('Push package.')
     .action(async (packageName: string, message: string) => {

@@ -33,9 +33,19 @@ import { bundleDlls, dllMainfestName, dllOutPath, libraryStaticPath } from './dl
 const dashboardBundleFileName = 'main';
 
 export const CommandDev = async (
-  analyseInfo: any,
+  instance: typeof pri,
   portInfo: { freePort: number; dashboardServerPort: number; dashboardClientPort: number }
 ) => {
+  await instance.project.lint(false);
+  await instance.project.ensureProjectFiles();
+  await instance.project.checkProjectFiles();
+
+  const analyseInfo = await spinner('Analyse project', async () => {
+    const scopeAnalyseInfo = await analyseProject();
+    createEntry();
+    return scopeAnalyseInfo;
+  });
+
   await bundleDlls();
 
   // Bundle dashboard if plugins changed or dashboard bundle not exist.
@@ -111,7 +121,13 @@ export const CommandDev = async (
   });
 };
 
-export const debugDashboard = async (analyseInfo: any) => {
+export const debugDashboard = async (instance: typeof pri) => {
+  const analyseInfo = await spinner('Analyse project', async () => {
+    const scopeAnalyseInfo = await analyseProject();
+    createEntry();
+    return scopeAnalyseInfo;
+  });
+
   const freePort = await portfinder.getPortPromise();
   const dashboardServerPort = await portfinder.getPortPromise({ port: freePort + 1 });
 
@@ -375,20 +391,10 @@ export default async (instance: typeof pri) => {
     options: [['-d, --debugDashboard', 'Debug dashboard']],
     description: text.commander.dev.description,
     action: async (options: any) => {
-      await instance.project.lint(false);
-      await instance.project.ensureProjectFiles();
-      await instance.project.checkProjectFiles();
-
-      const analyseInfo = await spinner('Analyse project', async () => {
-        const scopeAnalyseInfo = await analyseProject();
-        createEntry();
-        return scopeAnalyseInfo;
-      });
-
       if (options && options.debugDashboard) {
-        await debugDashboard(analyseInfo);
+        await debugDashboard(instance);
       } else {
-        await CommandDev(analyseInfo, {
+        await CommandDev(instance, {
           freePort,
           dashboardServerPort,
           dashboardClientPort

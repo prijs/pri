@@ -1,5 +1,6 @@
 import { execSync } from 'child_process';
 import * as inquirer from 'inquirer';
+import * as _ from 'lodash';
 import * as path from 'path';
 import * as semver from 'semver';
 import { pri } from '../../../node';
@@ -40,7 +41,11 @@ export default async (packageName: string, semverStr: semver.ReleaseType) => {
     logError(`${packageName} not exist`);
   }
 
-  const packagePath = path.join(globalState.projectRootPath, packageInfo.path);
+  const projectType = _.get(packageInfo.packageJson, 'pri.type', null);
+  if (projectType && projectType !== 'component') {
+    // Is pri and only support component
+    logError(`${packageName} is a pri ${projectType}, only support publish component!`);
+  }
 
   if (!semverStr) {
     const inquirerInfo = await inquirer.prompt([
@@ -81,7 +86,7 @@ export default async (packageName: string, semverStr: semver.ReleaseType) => {
   // Add tag
 
   // Run npm publish
-  // execSync(`npm publish`, {
-  //   stdio: 'inherit'
-  // });
+  execSync(`npm publish`, {
+    stdio: 'inherit'
+  });
 };

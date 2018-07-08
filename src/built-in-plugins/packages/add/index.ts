@@ -61,6 +61,12 @@ export default async (gitUri: string) => {
       importPaths.forEach(importPath => {
         const packageVersion = packageDeps[importPath] as string;
         const projectVersion = projectPackageDeps[importPath] as string;
+
+        if (!packageVersion) {
+          // Hasn't packageVersion means it's a sub dependence, so could be ignored.
+          return;
+        }
+
         if (packageVersion !== projectVersion) {
           extraPackages.push({ name: importPath, packageVersion });
         }
