@@ -1,4 +1,3 @@
-import * as Htmltojsx from 'ascoders-htmltojsx';
 import * as fs from 'fs-extra';
 import * as highlight from 'highlight.js';
 import * as _ from 'lodash';
@@ -11,10 +10,6 @@ import { pri } from '../../node';
 import { ensureStartWithWebpackRelativePoint } from '../../utils/functional';
 import { md5 } from '../../utils/md5';
 import { markdownTempPath, pagesPath, tempPath } from '../../utils/structor-config';
-
-const htmlToJsxConverter = new Htmltojsx({
-  createClass: false
-});
 
 interface IResult {
   projectAnalyseMarkdownPages: {
@@ -132,34 +127,25 @@ export default async (instance: typeof pri) => {
               const markdownTsAbsolutePath = path.join(
                 instance.projectRootPath,
                 markdownTempPath.dir,
-                page.componentName + '.tsx'
-              );
-              const markdownTsAbsolutePathWithoutExt = path.join(
-                instance.projectRootPath,
-                markdownTempPath.dir,
-                page.componentName
-              );
-              const markdownTsRelativePath = ensureStartWithWebpackRelativePoint(
-                normalizePath(path.relative(tempPath.dir, markdownTsAbsolutePathWithoutExt))
+                page.componentName + '.html'
               );
 
               fs.outputFileSync(
                 markdownTsAbsolutePath,
                 `
-                import * as React from "react"
-                export default (
-                  <div className="markdown-body">
-                    ${htmlToJsxConverter.convert(markedHTML)}
+                  <div class="markdown-body">
+                    ${markedHTML}
                   </div>
-                )
               `
               );
 
               // Add it's importer to app component.
               const markdownImportCode = `
-                import(/* webpackChunkName: "${page.chunkName}" */ "${markdownTsRelativePath}").then(code => {
+                import(/* webpackChunkName: "${
+                  page.chunkName
+                }" */ "-!raw-loader!${markdownTsAbsolutePath}").then(code => {
                   ${entry.pipe.get('afterPageLoad', '')}
-                  return () => code.default
+                  return () => <div dangerouslySetInnerHTML={{__html: code.default}}/>
                 })
               `;
 
