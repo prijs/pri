@@ -72,14 +72,14 @@ export const ensureTslint = () => ({
           'object-literal-sort-keys': false,
           'max-classes-per-file': [true, 5],
           'trailing-comma': [false],
-          'no-string-literal': false,
+          'no-string-literal': true,
           'arrow-parens': false,
-          'no-var-requires': false,
+          'no-var-requires': true,
           'prefer-conditional-expression': false,
-          'no-implicit-dependencies': false,
+          'no-implicit-dependencies': true,
           'no-object-literal-type-assertion': false,
           'no-submodule-imports': false,
-          'no-empty': false
+          'no-empty': true
         }
       },
       null,

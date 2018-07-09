@@ -1,6 +1,6 @@
 import * as fs from 'fs-extra';
 import * as highlight from 'highlight.js';
-import * as Htmltojsx from 'htmltojsx';
+import * as Htmltojsx from 'ascoders-htmltojsx';
 import * as _ from 'lodash';
 import * as markdownIt from 'markdown-it';
 import * as normalizePath from 'normalize-path';

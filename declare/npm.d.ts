@@ -27,7 +27,7 @@ declare module 'webpack-bundle-analyzer';
 declare module 'webpack-sources';
 declare module 'url-join';
 declare module 'docsearch.js';
-declare module 'htmltojsx';
+declare module 'ascoders-htmltojsx';
 declare module 'mini-css-extract-plugin';
 declare module 'inquirer';
 declare module 'webpackbar';
