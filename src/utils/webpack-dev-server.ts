@@ -65,7 +65,7 @@ export const runWebpackDevServer = async (opts: IOptions) => {
     hot: true,
     hotOnly: true,
     publicPath: opts.publicPath,
-    before: app => {
+    before: (app: any) => {
       app.use('/', express.static(path.join(globalState.projectRootPath, tempPath.dir, 'static')));
     },
     compress: true,
@@ -78,7 +78,7 @@ export const runWebpackDevServer = async (opts: IOptions) => {
     clientLogLevel: 'warning',
     disableHostCheck: true,
     port: opts.devServerPort
-  };
+  } as any;
 
   webpackDevServer.addDevServerEntrypoints(webpackConfig, webpackDevServerConfig);
   const compiler = webpack(webpackConfig);
