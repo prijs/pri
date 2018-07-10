@@ -33,13 +33,17 @@ const globalState: {
 globalState.projectRootPath = yargs.argv.cwd || process.cwd();
 globalState.majorCommand = yargs.argv._.length === 0 ? 'dev' : yargs.argv._[0];
 globalState.isDevelopment = ['dev', 'docs'].some(operate => operate === globalState.majorCommand);
-globalState.projectConfig = getProjectConfig(globalState.isDevelopment);
+freshProjectConfig();
 
 // get pri type from package.json
 const projectPackageJsonPath = path.join(globalState.projectRootPath, 'package.json');
 if (fs.existsSync(projectPackageJsonPath)) {
   const projectPackageJson = fs.readJsonSync(projectPackageJsonPath, { throws: false }) || {};
   globalState.projectType = get(projectPackageJson, 'pri.type', null);
+}
+
+export function freshProjectConfig() {
+  globalState.projectConfig = getProjectConfig(globalState.isDevelopment);
 }
 
 function getProjectConfig(isDevelopment: boolean) {

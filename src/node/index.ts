@@ -34,7 +34,22 @@ export const pri = {
   serviceWorker,
 
   ...self,
-  ...globalState
+
+  get projectRootPath() {
+    return globalState.projectRootPath;
+  },
+  get isDevelopment() {
+    return globalState.isDevelopment;
+  },
+  get majorCommand() {
+    return globalState.majorCommand;
+  },
+  get projectConfig() {
+    return globalState.projectConfig;
+  },
+  get projectType() {
+    return globalState.projectType;
+  }
 };
 
 export * from '../utils/structor-config';

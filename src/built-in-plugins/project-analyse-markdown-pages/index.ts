@@ -62,38 +62,82 @@ export default async (instance: typeof pri) => {
   });
 
   instance.project.onAnalyseProject((files, setPipe) => {
-    return {
-      projectAnalyseMarkdownPages: {
-        pages: files
-          .filter(file => {
-            const relativePath = path.relative(instance.projectRootPath, path.join(file.dir, file.name));
+    if (instance.projectConfig.routes.length === 0) {
+      return {
+        projectAnalyseMarkdownPages: {
+          pages: files
+            .filter(file => {
+              const relativePath = path.relative(instance.projectRootPath, path.join(file.dir, file.name));
 
-            if (!relativePath.startsWith(pagesPath.dir)) {
+              if (!relativePath.startsWith(pagesPath.dir)) {
+                return false;
+              }
+
+              if (file.name !== 'index') {
+                return false;
+              }
+
+              if (['.md'].indexOf(file.ext) === -1) {
+                return false;
+              }
+
+              return true;
+            })
+            .map(file => {
+              const relativePathWithoutIndex = path.relative(instance.projectRootPath, file.dir);
+              const routerPath = normalizePath('/' + path.relative(pagesPath.dir, relativePathWithoutIndex));
+              const chunkName = _.camelCase(routerPath) || 'index';
+
+              const relativePageFilePath = path.relative(instance.projectRootPath, file.dir + '/' + file.name);
+              const componentName = safeName(relativePageFilePath) + md5(relativePageFilePath).slice(0, 5);
+
+              return { routerPath, file, chunkName, componentName };
+            })
+        }
+      } as IResult;
+    } else {
+      return {
+        projectAnalyseMarkdownPages: {
+          pages: files
+            .filter(file => {
+              const relativePath = path.relative(instance.projectRootPath, path.join(file.dir, file.name));
+
+              if (['.md'].indexOf(file.ext) === -1) {
+                return false;
+              }
+
+              if (
+                instance.projectConfig.routes.some(
+                  route => route.component === relativePath || path.join(route.component, 'index') === relativePath
+                )
+              ) {
+                return true;
+              }
+
               return false;
-            }
+            })
+            .map(file => {
+              const relativePath = path.relative(instance.projectRootPath, path.join(file.dir, file.name));
 
-            if (file.name !== 'index') {
-              return false;
-            }
+              const routeInfo = instance.projectConfig.routes.find(
+                route => route.component === relativePath || path.join(route.component, 'index') === relativePath
+              );
 
-            if (['.md'].indexOf(file.ext) === -1) {
-              return false;
-            }
+              if (!routeInfo) {
+                return null;
+              }
 
-            return true;
-          })
-          .map(file => {
-            const relativePathWithoutIndex = path.relative(instance.projectRootPath, file.dir);
-            const routerPath = normalizePath('/' + path.relative(pagesPath.dir, relativePathWithoutIndex));
-            const chunkName = _.camelCase(routerPath) || 'index';
+              const routerPath = routeInfo.path;
+              const chunkName = _.camelCase(routerPath) || 'index';
 
-            const relativePageFilePath = path.relative(instance.projectRootPath, file.dir + '/' + file.name);
-            const componentName = safeName(relativePageFilePath) + md5(relativePageFilePath).slice(0, 5);
+              const relativePageFilePath = path.relative(instance.projectRootPath, file.dir + '/' + file.name);
+              const componentName = safeName(relativePageFilePath) + md5(relativePageFilePath).slice(0, 5);
 
-            return { routerPath, file, chunkName, componentName };
-          })
-      }
-    } as IResult;
+              return { routerPath, file, chunkName, componentName };
+            })
+        }
+      } as IResult;
+    }
   });
 
   instance.project.onCreateEntry((analyseInfo: IResult, entry) => {

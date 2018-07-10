@@ -15,7 +15,7 @@ import { analyseProject } from '../../../../utils/analyse-project';
 import { CONFIG_FILE } from '../../../../utils/constants';
 import { createEntry } from '../../../../utils/create-entry';
 import { generateCertificate } from '../../../../utils/generate-certificate';
-import { globalState } from '../../../../utils/global-state';
+import { freshProjectConfig, globalState } from '../../../../utils/global-state';
 import { log } from '../../../../utils/log';
 import { md5 } from '../../../../utils/md5';
 import { plugin } from '../../../../utils/plugins';
@@ -104,6 +104,7 @@ export default (opts: IOptions) => {
       }
 
       if (relativePath === CONFIG_FILE) {
+        freshProjectConfig();
         await fresh();
       } else if (relativePath.startsWith('src') && pathInfo.ext === '.md') {
         await fresh();

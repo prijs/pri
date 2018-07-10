@@ -1,3 +1,9 @@
+interface IRoute {
+  path: string;
+  component: string;
+  routes: IRoute[];
+}
+
 export class ProjectConfig {
   /**
    * Title for html <title>.
@@ -60,4 +66,8 @@ export class ProjectConfig {
    * Warning: depend on service worker, should set useServiceWorker=true first.
    */
   public clientServerRender?: boolean = false;
+  /**
+   * Custom routes. When this configuration exists, it will not parse the `pages` directory.
+   */
+  public routes?: IRoute[] = [];
 }
