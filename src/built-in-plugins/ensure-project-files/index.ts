@@ -76,7 +76,7 @@ export const ensureTslint = () => ({
           'arrow-parens': false,
           'no-var-requires': true,
           'prefer-conditional-expression': false,
-          'no-implicit-dependencies': true,
+          'no-implicit-dependencies': false,
           'no-object-literal-type-assertion': false,
           'no-submodule-imports': false,
           'no-empty': true
