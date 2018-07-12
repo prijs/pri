@@ -102,7 +102,10 @@ export default async (instance: typeof pri) => {
             .map((route, index) => {
               const componentFile = files.find(file => {
                 const relativePath = path.relative(instance.projectRootPath, path.join(file.dir, file.name));
-                return route.component === relativePath || path.join(route.component, 'index') === relativePath;
+                return (
+                  (route.component === relativePath && !file.isDir && file.ext === '.md') ||
+                  (path.join(route.component, 'index') === relativePath && !file.isDir && file.ext === '.md')
+                );
               });
 
               if (!componentFile) {
@@ -120,7 +123,7 @@ export default async (instance: typeof pri) => {
 
               return { routerPath, file: componentFile, chunkName, componentName };
             })
-            .filter(route => route !== null && ['.md'].indexOf(route.file.ext) > -1)
+            .filter(route => route !== null)
         }
       };
     }
