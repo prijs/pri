@@ -67,45 +67,36 @@ export default async (instance: typeof pri) => {
     } else {
       return {
         projectAnalysePages: {
-          pages: files
-            .filter(file => {
-              const relativePath = path.relative(instance.projectRootPath, path.join(file.dir, file.name));
+          pages: instance.projectConfig.routes
+            .map((route, index) => {
+              const componentFile = files.find(file => {
+                const relativePath = path.relative(instance.projectRootPath, path.join(file.dir, file.name));
+                return route.component === relativePath || path.join(route.component, 'index') === relativePath;
+              });
 
-              if (['.tsx'].indexOf(file.ext) === -1) {
-                return false;
-              }
-
-              if (
-                instance.projectConfig.routes.some(
-                  route => route.component === relativePath || path.join(route.component, 'index') === relativePath
-                )
-              ) {
-                return true;
-              }
-
-              return false;
-            })
-            .map(file => {
-              const relativePath = path.relative(instance.projectRootPath, path.join(file.dir, file.name));
-
-              const routeInfo = instance.projectConfig.routes.find(
-                route => route.component === relativePath || path.join(route.component, 'index') === relativePath
-              );
-
-              if (!routeInfo) {
+              if (!componentFile) {
                 return null;
               }
 
-              const routerPath = routeInfo.path;
+              const routerPath = route.path;
               const chunkName = _.camelCase(routerPath) || 'index';
 
-              const relativePageFilePath = path.relative(instance.projectRootPath, file.dir + '/' + file.name);
+              const relativePageFilePath = path.relative(
+                instance.projectRootPath,
+                componentFile.dir + '/' + componentFile.name
+              );
               const componentName = safeName(relativePageFilePath) + md5(relativePageFilePath).slice(0, 5);
 
-              return { routerPath, file, chunkName, componentName };
+              return {
+                routerPath,
+                file: componentFile,
+                chunkName: chunkName + index,
+                componentName: componentName + index
+              };
             })
+            .filter(route => route !== null)
         }
-      } as IResult;
+      };
     }
   });
 

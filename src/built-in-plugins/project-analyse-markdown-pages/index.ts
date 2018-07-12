@@ -97,46 +97,32 @@ export default async (instance: typeof pri) => {
       } as IResult;
     } else {
       return {
-        projectAnalyseMarkdownPages: {
-          pages: files
-            .filter(file => {
-              const relativePath = path.relative(instance.projectRootPath, path.join(file.dir, file.name));
+        projectAnalysePages: {
+          pages: instance.projectConfig.routes
+            .map((route, index) => {
+              const componentFile = files.find(file => {
+                const relativePath = path.relative(instance.projectRootPath, path.join(file.dir, file.name));
+                return route.component === relativePath || path.join(route.component, 'index') === relativePath;
+              });
 
-              if (['.md'].indexOf(file.ext) === -1) {
-                return false;
-              }
-
-              if (
-                instance.projectConfig.routes.some(
-                  route => route.component === relativePath || path.join(route.component, 'index') === relativePath
-                )
-              ) {
-                return true;
-              }
-
-              return false;
-            })
-            .map(file => {
-              const relativePath = path.relative(instance.projectRootPath, path.join(file.dir, file.name));
-
-              const routeInfo = instance.projectConfig.routes.find(
-                route => route.component === relativePath || path.join(route.component, 'index') === relativePath
-              );
-
-              if (!routeInfo) {
+              if (!componentFile) {
                 return null;
               }
 
-              const routerPath = routeInfo.path;
+              const routerPath = route.path;
               const chunkName = _.camelCase(routerPath) || 'index';
 
-              const relativePageFilePath = path.relative(instance.projectRootPath, file.dir + '/' + file.name);
+              const relativePageFilePath = path.relative(
+                instance.projectRootPath,
+                componentFile.dir + '/' + componentFile.name
+              );
               const componentName = safeName(relativePageFilePath) + md5(relativePageFilePath).slice(0, 5);
 
-              return { routerPath, file, chunkName, componentName };
+              return { routerPath, file: componentFile, chunkName, componentName };
             })
+            .filter(route => route !== null)
         }
-      } as IResult;
+      };
     }
   });
 
@@ -160,19 +146,19 @@ export default async (instance: typeof pri) => {
             const markdownFilePath = path.format(page.file);
             const fileContent = fs.readFileSync(markdownFilePath).toString();
 
+            const markdownTsAbsolutePath = path.join(
+              instance.projectRootPath,
+              markdownTempPath.dir,
+              page.componentName + '.html'
+            );
+
             if (
               markdownCaches.has(markdownFilePath) &&
               markdownCaches.get(markdownFilePath).originContent === fileContent
             ) {
-              const markdownCache = markdownCaches.get(markdownFilePath);
-              return markdownCache.pipeAppContent;
+              return markdownCaches.get(markdownFilePath).pipeAppContent;
             } else {
               const markedHTML = markdown.render(fileContent);
-              const markdownTsAbsolutePath = path.join(
-                instance.projectRootPath,
-                markdownTempPath.dir,
-                page.componentName + '.html'
-              );
 
               fs.outputFileSync(
                 markdownTsAbsolutePath,
@@ -182,9 +168,10 @@ export default async (instance: typeof pri) => {
                   </div>
               `
               );
+            }
 
-              // Add it's importer to app component.
-              const markdownImportCode = `
+            // Add it's importer to app component.
+            const markdownImportCode = `
                 import(/* webpackChunkName: "${
                   page.chunkName
                 }" */ "-!raw-loader!${markdownTsAbsolutePath}").then(code => {
@@ -193,21 +180,20 @@ export default async (instance: typeof pri) => {
                 })
               `;
 
-              const pipeAppContent = `
+            const pipeAppContent = `
                 const ${page.componentName} = Loadable({
                   loader: () => ${markdownImportCode},
                   loading: (): any => null
                 })\n
               `;
 
-              const markdownCache = {
-                originContent: fileContent,
-                pipeAppContent
-              };
-              markdownCaches.set(markdownFilePath, markdownCache);
+            const markdownCache = {
+              originContent: fileContent,
+              pipeAppContent
+            };
+            markdownCaches.set(markdownFilePath, markdownCache);
 
-              return pipeAppContent;
-            }
+            return pipeAppContent;
           })
           .join('\n')}
           ${entryComponent}
