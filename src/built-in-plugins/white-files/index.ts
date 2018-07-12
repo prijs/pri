@@ -15,18 +15,7 @@ import {
   utilPath
 } from '../../utils/structor-config';
 
-const whiteList = [
-  CONFIG_FILE,
-  'readme.md',
-  'LICENSE',
-  srcPath.dir,
-  docsPath.dir,
-  `${srcPath.dir}${path.sep}pages`,
-  `${srcPath.dir}${path.sep}utils`,
-  `${srcPath.dir}${path.sep}requests`,
-  '.git',
-  `src${path.sep}components`
-];
+const whiteList = [CONFIG_FILE, 'readme.md', 'LICENSE', srcPath.dir, docsPath.dir, '.git', `src${path.sep}components`];
 
 export default async (instance: typeof pri) => {
   const allIgnores = _.union(gitIgnores, npmIgnores);
@@ -65,5 +54,11 @@ export default async (instance: typeof pri) => {
   instance.project.whiteFileRules.add(file => {
     const relativePath = path.relative(instance.projectRootPath, path.format(file));
     return relativePath.startsWith(requestsPath.dir);
+  });
+
+  // [layouts]/*
+  instance.project.whiteFileRules.add(file => {
+    const relativePath = path.relative(instance.projectRootPath, path.format(file));
+    return relativePath.startsWith(`src${path.sep}layouts`);
   });
 };

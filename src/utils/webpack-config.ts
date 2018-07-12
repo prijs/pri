@@ -89,7 +89,6 @@ export const getWebpackConfig = async (opts: IOptions) => {
 
   const defaultSourcePathToBeResolve = [
     path.join(globalState.projectRootPath, srcPath.dir),
-    path.join(globalState.projectRootPath, pagesPath.dir),
     path.join(globalState.projectRootPath, tempPath.dir)
   ];
 

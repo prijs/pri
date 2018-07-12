@@ -16,24 +16,6 @@ interface IResult {
 }
 
 export default async (instance: typeof pri) => {
-  // src/layouts/markdown.tsx
-  instance.project.whiteFileRules.add(file => {
-    const relativePath = path.relative(instance.projectRootPath, file.dir);
-    return relativePath === `src${path.sep}layouts` && file.name === 'markdown' && file.ext === '.tsx';
-  });
-
-  // src/layouts/markdown.style.tsx
-  instance.project.whiteFileRules.add(file => {
-    const relativePath = path.relative(instance.projectRootPath, file.dir);
-    return relativePath === `src${path.sep}layouts` && file.name === 'markdown.style' && file.ext === '.ts';
-  });
-
-  // src/layouts/markdown.css
-  instance.project.whiteFileRules.add(file => {
-    const relativePath = path.relative(instance.projectRootPath, file.dir);
-    return relativePath === `src${path.sep}layouts` && file.name === 'markdown' && file.ext === '.css';
-  });
-
   instance.project.onAnalyseProject(files => {
     return {
       projectAnalyseMarkdownLayout: {
