@@ -94,7 +94,7 @@ export default async (instance: typeof pri) => {
                 componentName: componentName + index
               };
             })
-            .filter(route => route !== null)
+            .filter(route => route !== null && ['.tsx'].indexOf(route.file.ext) > -1)
         }
       };
     }

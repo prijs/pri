@@ -97,7 +97,7 @@ export default async (instance: typeof pri) => {
       } as IResult;
     } else {
       return {
-        projectAnalysePages: {
+        projectAnalyseMarkdownPages: {
           pages: instance.projectConfig.routes
             .map((route, index) => {
               const componentFile = files.find(file => {
@@ -120,7 +120,7 @@ export default async (instance: typeof pri) => {
 
               return { routerPath, file: componentFile, chunkName, componentName };
             })
-            .filter(route => route !== null)
+            .filter(route => route !== null && ['.md'].indexOf(route.file.ext) > -1)
         }
       };
     }
