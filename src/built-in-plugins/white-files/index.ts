@@ -23,6 +23,7 @@ const whiteList = [
   docsPath.dir,
   `${srcPath.dir}${path.sep}pages`,
   `${srcPath.dir}${path.sep}utils`,
+  `${srcPath.dir}${path.sep}requests`,
   '.git',
   `src${path.sep}components`
 ];
