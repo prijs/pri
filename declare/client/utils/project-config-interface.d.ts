@@ -1,7 +1,6 @@
 interface IRoute {
     path: string;
     component: string;
-    routes: IRoute[];
 }
 export declare class ProjectConfig {
     /**

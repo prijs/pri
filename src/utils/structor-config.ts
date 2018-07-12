@@ -44,6 +44,10 @@ export const utilPath = {
   dir: path.join(srcPath.dir, 'utils')
 };
 
+export const requestsPath = {
+  dir: path.join(srcPath.dir, 'utils')
+};
+
 export const componentPath = {
   dir: path.join(srcPath.dir, 'components')
 };

@@ -10,6 +10,7 @@ import {
   gitIgnores,
   npmIgnores,
   pagesPath,
+  requestsPath,
   srcPath,
   utilPath
 } from '../../utils/structor-config';
@@ -57,5 +58,11 @@ export default async (instance: typeof pri) => {
   instance.project.whiteFileRules.add(file => {
     const relativePath = path.relative(instance.projectRootPath, path.format(file));
     return relativePath.startsWith(componentPath.dir);
+  });
+
+  // [requests]/*
+  instance.project.whiteFileRules.add(file => {
+    const relativePath = path.relative(instance.projectRootPath, path.format(file));
+    return relativePath.startsWith(requestsPath.dir);
   });
 };
