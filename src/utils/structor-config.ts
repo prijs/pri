@@ -18,10 +18,6 @@ export const testsPath = {
   dir: 'tests'
 };
 
-export const tsBuiltPath = {
-  dir: globalState.projectConfig.distDir
-};
-
 export const pagesPath = { dir: path.join(srcPath.dir, `pages`) };
 
 export const docsPath = { dir: `docs` };
@@ -82,12 +78,18 @@ export const markdownTempPath = {
   dir: path.join(tempPath.dir, 'markdowns')
 };
 
+export const componentEntry = {
+  dir: path.join(srcPath.dir),
+  name: 'index',
+  ext: '.tsx'
+};
+
 let gitIgnores: string[] = [
   'node_modules',
   '.cache',
   '.vscode',
   tempPath.dir,
-  tsBuiltPath.dir,
+  globalState.projectConfig.distDir,
   '.DS_Store',
   'coverage',
   '.nyc_output',
@@ -115,7 +117,7 @@ let npmIgnores = gitIgnores.slice();
 // Npm ignore test path
 npmIgnores.push(testsPath.dir);
 // Npm do not ignore built path!
-const builtPathIndex = npmIgnores.findIndex(name => name === tsBuiltPath.dir);
+const builtPathIndex = npmIgnores.findIndex(name => name === globalState.projectConfig.distDir);
 npmIgnores.splice(builtPathIndex, 1);
 npmIgnores = _.union(npmIgnores);
 export { npmIgnores };

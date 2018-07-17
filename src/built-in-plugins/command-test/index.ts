@@ -3,17 +3,18 @@ import * as fs from 'fs-extra';
 import * as open from 'opn';
 import * as path from 'path';
 import { pri } from '../../node';
+import { globalState } from '../../utils/global-state';
 import { log } from '../../utils/log';
 import { findNearestNodemodulesFile } from '../../utils/npm-finder';
-import { testsPath, tsBuiltPath } from '../../utils/structor-config';
+import { testsPath } from '../../utils/structor-config';
 import text from '../../utils/text';
 import { tsPlusBabel } from '../../utils/ts-plus-babel';
 
 export const CommandTest = async (instance: typeof pri) => {
   log(`Build typescript files`);
-  execSync(`${findNearestNodemodulesFile('/.bin/rimraf')} ${tsBuiltPath.dir}`, { stdio: 'inherit' });
+  execSync(`${findNearestNodemodulesFile('/.bin/rimraf')} ${globalState.projectConfig.distDir}`, { stdio: 'inherit' });
 
-  await tsPlusBabel(tsBuiltPath.dir);
+  await tsPlusBabel(globalState.projectConfig.distDir);
 
   execSync(
     [
@@ -21,9 +22,9 @@ export const CommandTest = async (instance: typeof pri) => {
       `--reporter lcov`,
       `--reporter text`,
       `--reporter json`,
-      `--exclude ${tsBuiltPath.dir}/${testsPath.dir}/**/*.js`,
+      `--exclude ${globalState.projectConfig.distDir}/${testsPath.dir}/**/*.js`,
       `${findNearestNodemodulesFile('/.bin/ava')}`,
-      `--files ${path.join(instance.projectRootPath, `${tsBuiltPath.dir}/${testsPath.dir}/**/*.js`)}`,
+      `--files ${path.join(instance.projectRootPath, `${globalState.projectConfig.distDir}/${testsPath.dir}/**/*.js`)}`,
       `--failFast`
     ].join(' '),
     {

@@ -8,7 +8,7 @@ import { ensureFile } from '../../utils/ensure-files';
 import { globalState } from '../../utils/global-state';
 import { log } from '../../utils/log';
 import { prettierConfig } from '../../utils/prettier-config';
-import { gitIgnores, npmIgnores, tsBuiltPath } from '../../utils/structor-config';
+import { gitIgnores, npmIgnores } from '../../utils/structor-config';
 
 export function ensureNpmIgnore() {
   ensureFile('.npmignore', [() => npmIgnores.map(name => `/${name}`).join('\n')]);
@@ -22,7 +22,7 @@ export function ensurePackageJson() {
         JSON.stringify(
           _.merge({}, prevJson, {
             types: 'src/index.ts',
-            main: path.join(tsBuiltPath.dir, 'src/index.js'),
+            main: path.join(globalState.projectConfig.distDir, 'src/index.js'),
             scripts: {
               start: 'pri plugin watch',
               prepublishOnly: 'pri plugin build',

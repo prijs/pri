@@ -9,7 +9,7 @@ import { globalState } from './global-state';
 import { log, spinner } from './log';
 import { plugin } from './plugins';
 import { priEvent } from './pri-events';
-import { declarePath, pagesPath, tempPath, tsBuiltPath } from './structor-config';
+import { declarePath, pagesPath, tempPath } from './structor-config';
 import { walkProjectFiles } from './walk-project-files';
 
 export const ensureFiles = async () => {

@@ -28,6 +28,7 @@ const getBuiltInPlugins = () => {
     ['pri-plugin-command-dev', '../built-in-plugins/command-dev/index.js'],
     ['pri-plugin-command-docs', '../built-in-plugins/command-docs/index.js'],
     ['pri-plugin-command-build', '../built-in-plugins/command-build/index.js'],
+    ['pri-plugin-command-bundle', '../built-in-plugins/command-bundle/index.js'],
     ['pri-plugin-command-init', '../built-in-plugins/command-init/index.js'],
     ['pri-plugin-command-preview', '../built-in-plugins/command-preview/index.js'],
     ['pri-plugin-command-test', '../built-in-plugins/command-test/index.js'],

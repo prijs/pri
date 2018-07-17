@@ -8,14 +8,14 @@ import { globalState } from '../../utils/global-state';
 import { prettierConfig } from '../../utils/prettier-config';
 import { ProjectConfig } from '../../utils/project-config-interface';
 import {
+  componentEntry,
   declarePath,
   docsPath,
   gitIgnores,
   npmIgnores,
   pagesPath,
   srcPath,
-  tempTypesPath,
-  tsBuiltPath
+  tempTypesPath
 } from '../../utils/structor-config';
 
 export function ensureDeclares(projectRootPath: string) {
@@ -43,21 +43,19 @@ export const ensureTsconfig = () => ({
             target: 'esnext',
             experimentalDecorators: true,
             skipLibCheck: true,
-            outDir: tsBuiltPath.dir,
-            rootDir: './', // Make sure ./src structor. # https://github.com/Microsoft/TypeScript/issues/5134
+            outDir: globalState.projectConfig.distDir,
+            rootDir: './',
             baseUrl: '.',
             lib: ['dom', 'es5', 'es6', 'scripthost'],
-            paths: {
-              [PRI_PACKAGE_NAME + '/*']: [PRI_PACKAGE_NAME, path.join(tempTypesPath.dir, '*')]
-            }
+            paths: { [PRI_PACKAGE_NAME + '/*']: [PRI_PACKAGE_NAME, path.join(tempTypesPath.dir, '*')] }
           },
           include: ['.temp/**/*', 'src/**/*', 'config/**/*', 'tests/**/*'],
-          exclude: ['node_modules', tsBuiltPath.dir]
+          exclude: ['node_modules', globalState.projectConfig.distDir]
         },
         null,
         2
       ) + '\n'
-    );
+    ); // Make sure ./src structor. # https://github.com/Microsoft/TypeScript/issues/5134
   }
 });
 
@@ -123,6 +121,7 @@ export const ensurePackageJson = () => ({
             start: 'pri dev',
             docs: 'pri docs',
             build: 'pri build',
+            bundle: 'pri bundle',
             preview: 'pri preview',
             analyse: 'pri analyse',
             test: 'pri test',
@@ -227,7 +226,7 @@ export default async (instance: typeof pri) => {
             JSON.stringify(
               _.merge({}, prevJson, {
                 main: `${instance.projectConfig.distDir}/${srcPath.dir}/index.js`,
-                types: `${srcPath.dir}/index.tsx`,
+                types: path.format(componentEntry),
                 peerDependencies: {
                   react: '>=16.0.0',
                   'react-dom': '>=16.0.0'
@@ -248,7 +247,7 @@ export default async (instance: typeof pri) => {
 
       // Create entry file
       instance.project.addProjectFiles({
-        fileName: `${srcPath.dir}/index.tsx`,
+        fileName: path.format(componentEntry),
         pipeContent: text =>
           text
             ? text

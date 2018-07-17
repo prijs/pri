@@ -21,6 +21,10 @@ export class ProjectConfig {
    */
   public outCssFileName?: string = 'main.[hash].css';
   /**
+   * Bundle file name
+   */
+  public bundleFileName?: string = 'bundle.js';
+  /**
    * Specify the development url, work both for `npm start` and `npm run preview`.
    * In most scenes, it should not be configured.
    * > Conflict with `devPort`

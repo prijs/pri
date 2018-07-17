@@ -4,7 +4,6 @@ import * as React from 'react';
 import * as url from 'url';
 import { globalState } from '../../utils/global-state';
 import { ProjectConfig } from '../../utils/project-config-interface';
-import { tempJsAppPath, tempPath, tsBuiltPath } from '../../utils/structor-config';
 
 export function getStaticHtmlPaths(analyseInfo: any) {
   const pages = analyseInfo.projectAnalysePages ? analyseInfo.projectAnalysePages.pages : [];

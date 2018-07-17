@@ -9,6 +9,9 @@ export default {
     build: {
       description: 'Bundles the app into static files for production.'
     },
+    bundle: {
+      description: 'Bundle to once file from entry.'
+    },
     preview: {
       description: 'Preview the app in production mode.'
     },

@@ -14,7 +14,6 @@ import { log, spinner } from '../../utils/log';
 import { findNearestNodemodulesFile } from '../../utils/npm-finder';
 import { plugin } from '../../utils/plugins';
 import { ProjectConfig } from '../../utils/project-config-interface';
-import { tsBuiltPath } from '../../utils/structor-config';
 import text from '../../utils/text';
 import { tsPlusBabel } from '../../utils/ts-plus-babel';
 import { runWebpack } from '../../utils/webpack';
@@ -30,7 +29,10 @@ async function prepareBuild(instance: typeof pri) {
       )}`
     );
     await exec(
-      `${findNearestNodemodulesFile('.bin/rimraf')} ${path.join(globalState.projectRootPath, tsBuiltPath.dir)}`
+      `${findNearestNodemodulesFile('.bin/rimraf')} ${path.join(
+        globalState.projectRootPath,
+        globalState.projectConfig.distDir
+      )}`
     );
 
     // Clean .temp dir

@@ -7,15 +7,7 @@ import { IProjectInfo } from './analyse-project-interface';
 import { createEntry, Entry } from './create-entry';
 import { globalState } from './global-state';
 import { plugin } from './plugins';
-import {
-  layoutPath,
-  markdownLayoutPath,
-  notFoundPath,
-  pagesPath,
-  storesPath,
-  tempPath,
-  tsBuiltPath
-} from './structor-config';
+import { layoutPath, markdownLayoutPath, notFoundPath, pagesPath, storesPath, tempPath } from './structor-config';
 import { walkProjectFiles } from './walk-project-files';
 
 export const analyseProject = async () => {
