@@ -74,7 +74,7 @@ export const CommandDev = async (
   dashboardServer({ serverPort: portInfo.dashboardServerPort, analyseInfo });
 
   if (globalState.projectConfig.useHttps) {
-    log(`you should set chrome://flags/#allow-insecure-localhost, to trust local certificate.`);
+    log(colors.blue(`you should set chrome://flags/#allow-insecure-localhost, to trust local certificate.`));
   }
 
   // Start dashboard client production server

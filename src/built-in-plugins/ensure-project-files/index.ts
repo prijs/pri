@@ -154,36 +154,37 @@ export const ensureTest = () => ({
 });
 
 export default async (instance: typeof pri) => {
-  instance.project.addProjectFiles(ensureGitignore());
+  instance.event.once('beforeEnsureFiles', () => {
+    instance.project.addProjectFiles(ensureGitignore());
 
-  instance.project.addProjectFiles(ensureNpmignore());
+    instance.project.addProjectFiles(ensureNpmignore());
 
-  instance.project.addProjectFiles(ensureTsconfig());
+    instance.project.addProjectFiles(ensureTsconfig());
 
-  instance.project.addProjectFiles(ensureVscode());
+    instance.project.addProjectFiles(ensureVscode());
 
-  instance.project.addProjectFiles(ensurePrettierrc());
+    instance.project.addProjectFiles(ensurePrettierrc());
 
-  instance.project.addProjectFiles(ensureTslint());
+    instance.project.addProjectFiles(ensureTslint());
 
-  instance.project.addProjectFiles(ensurePackageJson());
+    instance.project.addProjectFiles(ensurePackageJson());
 
-  instance.project.addProjectFiles(ensureTest());
+    instance.project.addProjectFiles(ensureTest());
 
-  ensureDeclares(instance.projectRootPath);
+    ensureDeclares(instance.projectRootPath);
 
-  if (instance.projectType === 'project') {
-    const homePagePath = path.join(pagesPath.dir, 'index.tsx');
-    const homePageAbsolutePath = path.join(instance.projectRootPath, homePagePath);
-    const homeMarkdownPagePath = path.join(pagesPath.dir, 'index.md');
-    const homeMarkdownPageAbsolutePath = path.join(instance.projectRootPath, homeMarkdownPagePath);
+    if (instance.projectType === 'project') {
+      const homePagePath = path.join(pagesPath.dir, 'index.tsx');
+      const homePageAbsolutePath = path.join(instance.projectRootPath, homePagePath);
+      const homeMarkdownPagePath = path.join(pagesPath.dir, 'index.md');
+      const homeMarkdownPageAbsolutePath = path.join(instance.projectRootPath, homeMarkdownPagePath);
 
-    if (!fs.existsSync(homePageAbsolutePath) && !fs.existsSync(homeMarkdownPageAbsolutePath)) {
-      instance.project.addProjectFiles({
-        fileName: homePagePath,
-        pipeContent: () =>
-          prettier.format(
-            `
+      if (!fs.existsSync(homePageAbsolutePath) && !fs.existsSync(homeMarkdownPageAbsolutePath)) {
+        instance.project.addProjectFiles({
+          fileName: homePagePath,
+          pipeContent: () =>
+            prettier.format(
+              `
       import { env } from "${PRI_PACKAGE_NAME}/client"
       import * as React from "react"
 
@@ -213,67 +214,67 @@ export default async (instance: typeof pri) => {
         }
       }
     `,
-            { ...prettierConfig, parser: 'typescript' }
-          )
-      });
-    }
-  } else if (instance.projectType === 'component') {
-    instance.project.addProjectFiles({
-      fileName: 'package.json',
-      pipeContent: prev => {
-        const prevJson = JSON.parse(prev);
-        return (
-          JSON.stringify(
-            _.merge({}, prevJson, {
-              main: `${instance.projectConfig.distDir}/${srcPath.dir}/index.js`,
-              types: `${srcPath.dir}/index.tsx`,
-              peerDependencies: {
-                react: '>=16.0.0',
-                'react-dom': '>=16.0.0'
-              },
-              dependencies: {
-                '@babel/runtime': '^7.0.0-beta.51'
-              },
-              scripts: {
-                prepublishOnly: 'npm run build'
-              }
-            }),
-            null,
-            2
-          ) + '\n'
-        );
+              { ...prettierConfig, parser: 'typescript' }
+            )
+        });
       }
-    });
+    } else if (instance.projectType === 'component') {
+      instance.project.addProjectFiles({
+        fileName: 'package.json',
+        pipeContent: prev => {
+          const prevJson = JSON.parse(prev);
+          return (
+            JSON.stringify(
+              _.merge({}, prevJson, {
+                main: `${instance.projectConfig.distDir}/${srcPath.dir}/index.js`,
+                types: `${srcPath.dir}/index.tsx`,
+                peerDependencies: {
+                  react: '>=16.0.0',
+                  'react-dom': '>=16.0.0'
+                },
+                dependencies: {
+                  '@babel/runtime': '^7.0.0-beta.51'
+                },
+                scripts: {
+                  prepublishOnly: 'npm run build'
+                }
+              }),
+              null,
+              2
+            ) + '\n'
+          );
+        }
+      });
 
-    // Create entry file
-    instance.project.addProjectFiles({
-      fileName: `${srcPath.dir}/index.tsx`,
-      pipeContent: text =>
-        text
-          ? text
-          : prettier.format(
-              `
+      // Create entry file
+      instance.project.addProjectFiles({
+        fileName: `${srcPath.dir}/index.tsx`,
+        pipeContent: text =>
+          text
+            ? text
+            : prettier.format(
+                `
           import * as React from 'react'
 
           export default () => <div>My Component</div>
     `,
-              { ...prettierConfig, parser: 'typescript' }
-            )
-    });
+                { ...prettierConfig, parser: 'typescript' }
+              )
+      });
 
-    // Create first demos
-    const basicDocsPath = path.join(docsPath.dir, 'basic.tsx');
-    const relativeToEntryPath = path.relative(
-      path.parse(path.join(instance.projectRootPath, basicDocsPath)).dir,
-      path.join(instance.projectRootPath, srcPath.dir, 'index')
-    );
-    instance.project.addProjectFiles({
-      fileName: basicDocsPath,
-      pipeContent: text =>
-        text
-          ? text
-          : prettier.format(
-              `
+      // Create first demos
+      const basicDocsPath = path.join(docsPath.dir, 'basic.tsx');
+      const relativeToEntryPath = path.relative(
+        path.parse(path.join(instance.projectRootPath, basicDocsPath)).dir,
+        path.join(instance.projectRootPath, srcPath.dir, 'index')
+      );
+      instance.project.addProjectFiles({
+        fileName: basicDocsPath,
+        pipeContent: text =>
+          text
+            ? text
+            : prettier.format(
+                `
       import Component from "${relativeToEntryPath}"
       import * as React from "react"
 
@@ -296,8 +297,9 @@ export default async (instance: typeof pri) => {
         }
       }
     `,
-              { ...prettierConfig, parser: 'typescript' }
-            )
-    });
-  }
+                { ...prettierConfig, parser: 'typescript' }
+              )
+      });
+    }
+  });
 };

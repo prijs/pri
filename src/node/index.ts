@@ -1,4 +1,5 @@
 import { globalState } from '../utils/global-state';
+import { priEvent } from '../utils/pri-events';
 import * as build from './build';
 import * as commands from './commands';
 import * as context from './context';
@@ -7,7 +8,7 @@ import * as project from './project/index';
 import * as self from './self';
 import * as serviceWorker from './service-worker';
 
-export const pri = {
+const pri = {
   /**
    * Operate cli commands
    */
@@ -33,23 +34,49 @@ export const pri = {
    */
   serviceWorker,
 
-  ...self,
+  event: priEvent,
 
-  get projectRootPath() {
-    return globalState.projectRootPath;
-  },
-  get isDevelopment() {
-    return globalState.isDevelopment;
-  },
-  get majorCommand() {
-    return globalState.majorCommand;
-  },
-  get projectConfig() {
-    return globalState.projectConfig;
-  },
-  get projectType() {
+  ...self
+};
+
+const outputPri = pri as typeof pri & {
+  projectType: typeof globalState.projectType;
+  projectRootPath: typeof globalState.projectRootPath;
+  isDevelopment: typeof globalState.isDevelopment;
+  majorCommand: typeof globalState.majorCommand;
+  projectConfig: typeof globalState.projectConfig;
+};
+
+Object.defineProperty(pri, 'projectType', {
+  get() {
     return globalState.projectType;
   }
-};
+});
+
+Object.defineProperty(pri, 'projectRootPath', {
+  get() {
+    return globalState.projectRootPath;
+  }
+});
+
+Object.defineProperty(pri, 'isDevelopment', {
+  get() {
+    return globalState.isDevelopment;
+  }
+});
+
+Object.defineProperty(pri, 'majorCommand', {
+  get() {
+    return globalState.majorCommand;
+  }
+});
+
+Object.defineProperty(pri, 'projectConfig', {
+  get() {
+    return globalState.projectConfig;
+  }
+});
+
+export { outputPri as pri };
 
 export * from '../utils/structor-config';

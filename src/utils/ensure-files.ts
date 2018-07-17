@@ -8,6 +8,7 @@ import * as yargs from 'yargs';
 import { globalState } from './global-state';
 import { log, spinner } from './log';
 import { plugin } from './plugins';
+import { priEvent } from './pri-events';
 import { declarePath, pagesPath, tempPath, tsBuiltPath } from './structor-config';
 import { walkProjectFiles } from './walk-project-files';
 
@@ -15,6 +16,8 @@ export const ensureFiles = async () => {
   if (yargs.argv['light']) {
     return;
   }
+
+  priEvent.emit('beforeEnsureFiles');
 
   const ensureProjectFilesQueueGroupByPath = _.groupBy(plugin.ensureProjectFilesQueue, 'fileName');
 

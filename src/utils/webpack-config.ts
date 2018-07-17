@@ -174,9 +174,12 @@ export const getWebpackConfig = async (opts: IOptions) => {
   if (!globalState.isDevelopment) {
     config.optimization.splitChunks = {
       ...config.optimization.splitChunks,
-      cacheGroups: { styles: { name: outCssFileName, test: /\.css$/, chunks: 'all', enforce: true } }
+      cacheGroups: {
+        styles: { name: outCssFileName.replace(/\.css$/g, ''), test: /\.(s?css)$/, enforce: true }
+      }
     };
-    config.plugins.push(new MiniCssExtractPlugin({ filename: outCssFileName }));
+
+    config.plugins.push(new MiniCssExtractPlugin());
 
     babelLoader.options.plugins.push(['import', { libraryName: 'antd' }]);
     cssLoader.options.minimize = true;
