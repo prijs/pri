@@ -37,7 +37,12 @@ export const CommandTest = async (instance: typeof pri) => {
   execSync(`${findNearestNodemodulesFile('.bin/rimraf')} ${path.join(instance.projectRootPath, '.nyc_output')}`);
 
   // Open test html in brower
-  open(path.join(instance.projectRootPath, 'coverage/lcov-report/index.html'));
+  log(
+    `Open this url to see code coverage: file:///${path.join(
+      instance.projectRootPath,
+      'coverage/lcov-report/index.html'
+    )}`
+  );
 
   process.exit(0);
 };
