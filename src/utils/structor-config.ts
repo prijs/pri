@@ -133,5 +133,6 @@ export const ignoreScanFiles = [
   'package.json',
   'tsconfig.json',
   'tslint.json',
-  'npm-debug.log'
+  'npm-debug.log',
+  '.idea'
 ];
