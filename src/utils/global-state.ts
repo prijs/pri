@@ -7,7 +7,6 @@ import * as fs from 'fs-extra';
 import { get, merge } from 'lodash';
 import * as path from 'path';
 import * as yargs from 'yargs';
-import { fn } from '../../node_modules/moment';
 import { CONFIG_FILE } from './constants';
 import { getPackageJson, IPackageJson } from './file-operate';
 import { execTsByPath } from './functional';

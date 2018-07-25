@@ -90,8 +90,6 @@ export const ensureVscode = () => ({
   pipeContent: () =>
     JSON.stringify(
       {
-        "editor.formatOnPaste": true,
-        "editor.formatOnType": true,
         "editor.formatOnSave": true,
         "tslint.autoFixOnSave": true,
         "files.autoSave": "afterDelay",
