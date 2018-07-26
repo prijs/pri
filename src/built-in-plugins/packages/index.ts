@@ -23,7 +23,7 @@ export default async (instance: typeof pri) => {
         return obj;
       }, {});
 
-      const jsonData = JSON.parse(prev);
+      const jsonData = prev ? JSON.parse(prev) : {};
 
       _.set(jsonData, 'compilerOptions.paths', { ..._.get(jsonData, 'compilerOptions.paths'), ...packagePaths });
 

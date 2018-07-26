@@ -41,5 +41,10 @@ export default async () => {
   execSync(`${findNearestNodemodulesFile('.bin/rimraf')} ${path.join(globalState.projectRootPath, '.nyc_output')}`);
 
   // Open test html in brower
-  open(path.join(globalState.projectRootPath, 'coverage/lcov-report/index.html'));
+  log(
+    `Open this url to see code coverage: file:///${path.join(
+      globalState.projectRootPath,
+      'coverage/lcov-report/index.html'
+    )}`
+  );
 };
