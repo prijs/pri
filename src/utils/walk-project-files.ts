@@ -30,6 +30,11 @@ export function walkProjectFiles(): Promise<ICustomParsedPath[]> {
           return;
         }
 
+        if (gitIgnores.concat(scanIgnores).some(ignorePath => ignorePath === path.join(root, dirStats.name))) {
+          next();
+          return;
+        }
+
         files.push({ isDir: true, ...path.parse(dirPath) });
         next();
       });
