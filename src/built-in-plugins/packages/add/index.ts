@@ -16,7 +16,7 @@ export default async (gitUri: string) => {
   if (!gitUri) {
     const inquirerInfo = await inquirer.prompt([
       {
-        message: `Choose packages to add:`,
+        message: `Choose packages to add.`,
         name: 'gitUri',
         type: 'input'
       }

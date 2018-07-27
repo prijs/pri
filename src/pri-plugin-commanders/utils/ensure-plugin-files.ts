@@ -54,7 +54,10 @@ export function ensureEntry() {
     return;
   }
 
-  ensureFile(fileName, [() => prettier.format(`
+  ensureFile(fileName, [
+    () =>
+      prettier.format(
+        `
     import * as path from "path"
     import { pri } from "${PRI_PACKAGE_NAME}"
     import { judgeHasComponents } from "./methods"
@@ -97,10 +100,13 @@ export function ensureEntry() {
         })
       })
     }
-  `, { ...prettierConfig, parser: 'typescript' })]);
+  `,
+        { ...prettierConfig, parser: 'typescript' }
+      )
+  ]);
 }
 
-function ensureEntryMethods() {
+export function ensureEntryMethods() {
   const fileName = 'src/methods.ts';
   const filePath = path.join(globalState.projectRootPath, fileName);
 

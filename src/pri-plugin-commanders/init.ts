@@ -10,7 +10,13 @@ import {
 import { ensureFile } from '../utils/ensure-files';
 import { globalState } from '../utils/global-state';
 import { log } from '../utils/log';
-import { ensureEntry, ensureNpmIgnore, ensurePackageJson, ensureTest } from './utils/ensure-plugin-files';
+import {
+  ensureEntry,
+  ensureEntryMethods,
+  ensureNpmIgnore,
+  ensurePackageJson,
+  ensureTest
+} from './utils/ensure-plugin-files';
 
 export default async () => {
   ensureDeclares(globalState.projectRootPath);
@@ -33,6 +39,7 @@ export default async () => {
   ensurePackageJson();
   ensureNpmIgnore();
   ensureEntry();
+  ensureEntryMethods();
   ensureTest();
 
   log('\n Success init pri plugin, you can run serval commands:\n');
