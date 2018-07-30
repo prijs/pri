@@ -40,3 +40,4 @@ declare module '@babel/plugin-syntax-dynamic-import';
 declare module '@babel/plugin-syntax-import-meta';
 declare module '@babel/plugin-proposal-class-properties';
 declare module '@babel/plugin-proposal-json-strings';
+declare module '@babel/plugin-proposal-optional-catch-binding';
