@@ -1,13 +1,6 @@
 import * as fs from 'fs';
-import * as normalizePath from 'normalize-path';
-import * as path from 'path';
-import * as walk from 'walk';
 import * as pipe from '../node/pipe';
-import { IProjectInfo } from './analyse-project-interface';
-import { createEntry, Entry } from './create-entry';
-import { globalState } from './global-state';
 import { plugin } from './plugins';
-import { layoutPath, markdownLayoutPath, notFoundPath, pagesPath, storesPath, tempPath } from './structor-config';
 import { walkProjectFiles } from './walk-project-files';
 
 export const analyseProject = async () => {

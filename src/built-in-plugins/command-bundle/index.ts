@@ -27,9 +27,6 @@ async function bundle(instance: typeof pri) {
     mode: 'production',
     outFileName: instance.projectConfig.bundleFileName,
     entryPath: path.join(instance.projectRootPath, path.format(componentEntry)),
-    webpackBarOptions: {
-      name: 'bundle'
-    },
     pipeConfig: config => {
       config.output.libraryTarget = 'umd';
       return config;

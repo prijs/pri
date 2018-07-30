@@ -1,4 +1,3 @@
-import * as crypto from 'crypto';
 import * as path from 'path';
 import * as webpack from 'webpack';
 import * as WebpackBar from 'webpackbar';
@@ -62,9 +61,7 @@ export default (opts: IOptions) =>
         path: path.join(opts.dllOutPath, opts.dllMainfestName),
         name: 'library'
       }),
-      new WebpackBar({
-        name: 'dll'
-      })
+      new WebpackBar()
     ],
 
     module: {

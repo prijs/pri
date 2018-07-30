@@ -49,7 +49,7 @@ export const CommandPreview = async (instance: typeof pri) => {
   if (instance.projectConfig.useHttps) {
     await spinner('Create https server', async () =>
       https
-        .createServer(generateCertificate(path.join(instance.projectRootPath, '.temp/preview')), app.callback())
+        .createServer(generateCertificate(), app.callback())
         .listen(freePort)
     );
   } else {

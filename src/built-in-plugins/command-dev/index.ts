@@ -1,24 +1,18 @@
-import { exec, execSync, fork } from 'child_process';
 import * as colors from 'colors';
 import * as fs from 'fs-extra';
 import * as _ from 'lodash';
 import * as path from 'path';
 import * as portfinder from 'portfinder';
 import * as prettier from 'prettier';
-import * as url from 'url';
 import * as urlJoin from 'url-join';
 import * as webpack from 'webpack';
-import * as webpackDevServer from 'webpack-dev-server';
 import { pri } from '../../node';
 import { analyseProject } from '../../utils/analyse-project';
 import { createEntry } from '../../utils/create-entry';
-import { ensureEndWithSlash } from '../../utils/functional';
 import { globalState } from '../../utils/global-state';
 import { log, spinner } from '../../utils/log';
-import { findNearestNodemodulesFile } from '../../utils/npm-finder';
 import { getPluginsByOrder } from '../../utils/plugins';
 import { prettierConfig } from '../../utils/prettier-config';
-import { ProjectConfig } from '../../utils/project-config-interface';
 import { hasNodeModules, hasNodeModulesModified, hasPluginsModified } from '../../utils/project-helper';
 import * as projectState from '../../utils/project-state';
 import { tempJsEntryPath, tempPath } from '../../utils/structor-config';
@@ -59,9 +53,6 @@ export const CommandDev = async (
       entryPath: dashboardEntryFilePath,
       distDir: dashboardDistDir,
       outFileName: 'main.[hash].js', // dashboard has no css file
-      webpackBarOptions: {
-        name: 'dashboard'
-      }
     });
     projectState.set('dashboardHash', status.hash);
   }

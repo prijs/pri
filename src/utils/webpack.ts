@@ -1,13 +1,5 @@
-import * as colors from 'colors';
-import * as fs from 'fs';
-import * as normalizePath from 'normalize-path';
-import * as open from 'opn';
-import * as path from 'path';
-import * as portfinder from 'portfinder';
 import * as webpack from 'webpack';
 import * as WebpackBar from 'webpackbar';
-import { tempPath } from '../utils/structor-config';
-import { globalState } from './global-state';
 import { getWebpackConfig } from './webpack-config';
 
 interface IOptions {
@@ -24,7 +16,6 @@ interface IOptions {
     libraryStaticPath?: string;
   };
   pipeConfig?: (config?: webpack.Configuration) => webpack.Configuration;
-  webpackBarOptions?: any;
 }
 
 const stats = {
@@ -53,8 +44,7 @@ export const runWebpack = async (opts: IOptions): Promise<any> => {
     webpackConfig = opts.pipeConfig(webpackConfig);
   }
 
-  webpackConfig.plugins.push(new WebpackBar(opts.webpackBarOptions));
-
+  webpackConfig.plugins.push(new WebpackBar());
   const compiler = webpack(webpackConfig);
 
   return runCompiler(compiler);

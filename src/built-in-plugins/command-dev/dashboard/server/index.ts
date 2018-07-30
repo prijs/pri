@@ -37,10 +37,7 @@ export default (opts: IOptions) => {
   app.use(koaMount('/static', koaStatic(path.join(globalState.projectRootPath, '.temp'), { gzip: true })));
 
   const server = globalState.projectConfig.useHttps
-    ? https.createServer(
-        generateCertificate(path.join(globalState.projectRootPath, '.temp/dashboard-server')),
-        app.callback()
-      )
+    ? https.createServer(generateCertificate(), app.callback())
     : http.createServer(app.callback());
 
   const io = socketIo(server);

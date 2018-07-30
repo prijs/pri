@@ -1,12 +1,7 @@
-import * as colors from 'colors';
 import * as fs from 'fs-extra';
-import * as normalizePath from 'normalize-path';
-import * as open from 'opn';
 import * as path from 'path';
-import * as portfinder from 'portfinder';
 import * as webpack from 'webpack';
 import { globalState } from '../../utils/global-state';
-import { log } from '../../utils/log';
 import { hasNodeModules, hasNodeModulesModified, hasPluginsModified } from '../../utils/project-helper';
 import getWebpackDllConfig from './webpack.dll.config';
 

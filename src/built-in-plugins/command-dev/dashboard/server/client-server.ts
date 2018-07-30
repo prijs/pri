@@ -62,12 +62,7 @@ export default (opts: IOptions) => {
   });
 
   if (globalState.projectConfig.useHttps) {
-    https
-      .createServer(
-        generateCertificate(path.join(globalState.projectRootPath, '.temp/dashboard-client-server')),
-        app.callback()
-      )
-      .listen(opts.clientPort);
+    https.createServer(generateCertificate(), app.callback()).listen(opts.clientPort);
   } else {
     http.createServer(app.callback()).listen(opts.clientPort);
   }

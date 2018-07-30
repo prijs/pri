@@ -79,9 +79,6 @@ export const buildProject = async (
         );
       });
       return config;
-    },
-    webpackBarOptions: {
-      name: 'build'
     }
   });
 
