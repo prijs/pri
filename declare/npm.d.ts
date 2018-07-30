@@ -36,3 +36,7 @@ declare module '@babel/plugin-proposal-export-namespace-from';
 declare module '@babel/plugin-proposal-function-sent';
 declare module '@babel/plugin-proposal-numeric-separator';
 declare module '@babel/plugin-proposal-throw-expressions';
+declare module '@babel/plugin-syntax-dynamic-import';
+declare module '@babel/plugin-syntax-import-meta';
+declare module '@babel/plugin-proposal-class-properties';
+declare module '@babel/plugin-proposal-json-strings';

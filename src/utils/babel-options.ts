@@ -1,8 +1,12 @@
+import babelPluginProposalClassProperties from '@babel/plugin-proposal-class-properties';
 import babelPluginProposalDecorators from '@babel/plugin-proposal-decorators';
 import babelPluginProposalExportNamespace from '@babel/plugin-proposal-export-namespace-from';
 import babelPluginProposalFunctionSent from '@babel/plugin-proposal-function-sent';
+import babelPluginProposalJsonStrings from '@babel/plugin-proposal-json-strings';
 import babelPluginProposalNumericSeparator from '@babel/plugin-proposal-numeric-separator';
 import babelPluginProposalThrowExpressions from '@babel/plugin-proposal-throw-expressions';
+import babelPluginSyntaxDynamicImport from '@babel/plugin-syntax-dynamic-import';
+import babelPluginSyntaxImportMeta from '@babel/plugin-syntax-import-meta';
 import transformRuntime from '@babel/plugin-transform-runtime';
 import babelEnv from '@babel/preset-env';
 
@@ -16,6 +20,10 @@ export const babelOptions = {
     [babelPluginProposalExportNamespace],
     [babelPluginProposalFunctionSent],
     [babelPluginProposalNumericSeparator],
-    [babelPluginProposalThrowExpressions]
+    [babelPluginProposalThrowExpressions],
+    [babelPluginSyntaxDynamicImport],
+    [babelPluginSyntaxImportMeta],
+    [babelPluginProposalClassProperties, { loose: false }],
+    [babelPluginProposalJsonStrings]
   ]
 };
