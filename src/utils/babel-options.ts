@@ -12,7 +12,7 @@ export const babelOptions = {
   presets: [[babelEnv]],
   plugins: [
     [transformRuntime],
-    [babelPluginProposalDecorators],
+    [babelPluginProposalDecorators, { legacy: true }],
     [babelPluginProposalExportNamespace],
     [babelPluginProposalFunctionSent],
     [babelPluginProposalNumericSeparator],
