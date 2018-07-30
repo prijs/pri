@@ -31,3 +31,8 @@ declare module 'ascoders-htmltojsx';
 declare module 'mini-css-extract-plugin';
 declare module 'inquirer';
 declare module 'webpackbar';
+declare module '@babel/plugin-proposal-decorators';
+declare module '@babel/plugin-proposal-export-namespace-from';
+declare module '@babel/plugin-proposal-function-sent';
+declare module '@babel/plugin-proposal-numeric-separator';
+declare module '@babel/plugin-proposal-throw-expressions';

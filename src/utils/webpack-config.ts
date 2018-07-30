@@ -6,6 +6,7 @@ import * as webpack from 'webpack';
 import { globalState } from '../utils/global-state';
 import { plugin } from '../utils/plugins';
 import { docsPath, pagesPath, srcPath, tempPath } from '../utils/structor-config';
+import { babelOptions } from './babel-options';
 
 interface IOptions {
   mode: 'development' | 'production';
@@ -50,12 +51,7 @@ export const getWebpackConfig = async (opts: IOptions) => {
 
   const babelLoader = {
     loader: 'babel-loader',
-    options: plugin.buildConfigBabelLoaderOptionsPipes.reduce((options, fn) => fn(options), {
-      babelrc: false,
-      presets: [['@babel/env', { modules: false }], ['@babel/stage-2', { decoratorsLegacy: true }]],
-      plugins: [['@babel/plugin-transform-runtime']],
-      comments: true
-    })
+    options: plugin.buildConfigBabelLoaderOptionsPipes.reduce((options, fn) => fn(options), babelOptions)
   };
 
   const tsLoader = {

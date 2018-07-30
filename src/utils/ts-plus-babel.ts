@@ -1,6 +1,3 @@
-import transformRuntime from '@babel/plugin-transform-runtime';
-import babelEnv from '@babel/preset-env';
-import stage2 from '@babel/preset-stage-2';
 import * as fs from 'fs-extra';
 import * as gulp from 'gulp';
 import * as gulpBabel from 'gulp-babel';
@@ -9,6 +6,7 @@ import * as tsGulp from 'gulp-typescript';
 import * as _ from 'lodash';
 import * as path from 'path';
 import { CompilerOptions } from 'typescript';
+import { babelOptions } from './babel-options';
 import { globalState } from './global-state';
 
 export const tsPlusBabel = (outDir: string, tsCompileOptions: CompilerOptions = {}) => {
@@ -33,12 +31,7 @@ export const tsPlusBabel = (outDir: string, tsCompileOptions: CompilerOptions = 
       .src()
       // .pipe(gulpSourcemaps.init())
       .pipe(tsProject())
-      .pipe(
-        gulpBabel({
-          presets: [[babelEnv], [stage2, { decoratorsLegacy: true }]],
-          plugins: [[transformRuntime]]
-        })
-      )
+      .pipe(gulpBabel(babelOptions))
       // .pipe(
       //   gulpSourcemaps.mapSources((sourcePath: string) => {
       //     return path.join("..", sourcePath)

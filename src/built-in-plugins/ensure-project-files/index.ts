@@ -232,7 +232,7 @@ export default async (instance: typeof pri) => {
                   'react-dom': '>=16.0.0'
                 },
                 dependencies: {
-                  '@babel/runtime': '^7.0.0-beta.51'
+                  '@babel/runtime': '^7.0.0-beta.55'
                 },
                 scripts: {
                   prepublishOnly: 'npm run build'
