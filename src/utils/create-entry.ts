@@ -7,23 +7,23 @@ import { PRI_PACKAGE_NAME } from './constants';
 import { globalState } from './global-state';
 import { plugin } from './plugins';
 import { prettierConfig } from './prettier-config';
-import { tempJsAppPath, tempJsEntryPath } from './structor-config';
+import { tempEnvironmentPath, tempJsAppPath, tempJsEntryPath } from './structor-config';
 
 export class Entry {
   public getApp() {
-    return [this.getAppTop(), this.getAppHeader(), this.getAppBody(), this.getAppComponent()].join('\n');
+    return [this.getAppHeader(), this.getAppBody(), this.getAppComponent()].join('\n');
   }
 
   public getEntry() {
     return [this.getEntryHeader(), this.getEntryRender()].join('\n');
   }
 
-  public get pipe() {
-    return pipe;
+  public getEnvironment() {
+    return [this.getEnvironmentBody()].join('\n');
   }
 
-  public pipeAppTop(fn: (top: string) => string) {
-    pipe.set('appTop', fn);
+  public get pipe() {
+    return pipe;
   }
 
   public pipeAppHeader(fn: (header: string) => string) {
@@ -58,28 +58,18 @@ export class Entry {
     pipe.set('entryRender', fn);
   }
 
-  protected getAppTop() {
-    return pipe.get(
-      'appTop',
-      `
-      let priStore = {};
-      
-      const tag = 'pri';
-      if ((window as any)[tag]) {
-        priStore = (window as any)[tag];
-      } else {
-        (window as any)[tag] = priStore;
-      }
-    `
-    );
+  public pipeEnvironmentBody(fn: (render: string) => string) {
+    pipe.set('environmentBody', fn);
   }
 
   protected getAppHeader() {
     return pipe.get(
       'appHeader',
       `
+      import './environment'
+
       import createBrowserHistory from "history/createBrowserHistory"
-      import { __store, history as customHistory } from "${PRI_PACKAGE_NAME}/client"
+      import { history as customHistory } from "${PRI_PACKAGE_NAME}/client"
       import * as React from "react"
       import * as ReactDOM from "react-dom"
       import Loadable from "react-loadable"
@@ -175,6 +165,22 @@ export class Entry {
     `
     );
   }
+
+  protected getEnvironmentBody() {
+    return pipe.get(
+      'environmentBody',
+      `
+      const priStore: any = {};
+        
+      const tag = 'pri';
+      if ((window as any)[tag]) {
+        priStore = (window as any)[tag];
+      } else {
+        (window as any)[tag] = priStore;
+      }
+    `
+    );
+  }
 }
 
 export function createEntry() {
@@ -185,8 +191,14 @@ export function createEntry() {
   });
 
   // Create entry tsx file
+  const environmentPath = path.join(globalState.projectRootPath, path.format(tempEnvironmentPath));
   const entryPath = path.join(globalState.projectRootPath, path.format(tempJsEntryPath));
   const appPath = path.join(globalState.projectRootPath, path.format(tempJsAppPath));
+
+  fs.outputFileSync(
+    environmentPath,
+    prettier.format(newEntryObject.getEnvironment(), { ...prettierConfig, parser: 'typescript' })
+  );
 
   fs.outputFileSync(appPath, prettier.format(newEntryObject.getApp(), { ...prettierConfig, parser: 'typescript' }));
 

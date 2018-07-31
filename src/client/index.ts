@@ -3,7 +3,7 @@ import { GlobalState } from '../utils/global-state-class';
 
 const priStore = (window as any)['pri'];
 
-const globalState: GlobalState = priStore ? priStore.globalState : new GlobalState();
+const globalState: GlobalState = priStore.globalState;
 
 export const history = createBrowserHistory({
   basename: globalState.projectConfig.baseHref

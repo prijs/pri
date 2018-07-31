@@ -34,6 +34,12 @@ export const tempJsEntryPath = {
   ext: '.tsx'
 };
 
+export const tempEnvironmentPath = {
+  dir: tempPath.dir,
+  name: 'environment',
+  ext: '.ts'
+};
+
 export const tempJsAppPath = { dir: tempPath.dir, name: 'app', ext: '.tsx' };
 
 export const utilPath = {

@@ -211,9 +211,9 @@ export default async (instance: typeof pri) => {
   instance.project.onCreateEntry((analyseInfo, entry) => {
     if (instance.isDevelopment) {
       if (instance.projectConfig.customEnv) {
-        entry.pipeAppTop(top => {
+        entry.pipeEnvironmentBody(envText => {
           return `
-            ${top}
+            ${envText}
             priStore.globalState = ${JSON.stringify(globalState)}
           `;
         });
