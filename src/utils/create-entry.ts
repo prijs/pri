@@ -170,7 +170,7 @@ export class Entry {
     return pipe.get(
       'environmentBody',
       `
-      const priStore: any = {};
+      let priStore: any = {};
         
       const tag = 'pri';
       if ((window as any)[tag]) {
