@@ -1,14 +1,14 @@
 import createBrowserHistory from 'history/createBrowserHistory';
-import { store as __store } from '../utils/pri-client';
+import { GlobalState } from '../utils/global-state-class';
+
+const globalState: GlobalState = (window as any)['pri'];
 
 export const history = createBrowserHistory({
-  basename: __store.globalState.projectConfig.baseHref
+  basename: globalState.projectConfig.baseHref
 });
 
-export { __store };
+export const isDevelopment = globalState.isDevelopment;
 
-export const isDevelopment = __store.globalState.isDevelopment;
-
-export const projectConfig = __store.globalState.projectConfig;
+export const projectConfig = globalState.projectConfig;
 
 export type ProjectConfig = typeof projectConfig;

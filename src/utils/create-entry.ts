@@ -11,7 +11,7 @@ import { tempJsAppPath, tempJsEntryPath } from './structor-config';
 
 export class Entry {
   public getApp() {
-    return [this.getAppHeader(), this.getAppBody(), this.getAppComponent()].join('\n');
+    return [this.getAppTop(), this.getAppHeader(), this.getAppBody(), this.getAppComponent()].join('\n');
   }
 
   public getEntry() {
@@ -20,6 +20,10 @@ export class Entry {
 
   public get pipe() {
     return pipe;
+  }
+
+  public pipeAppTop(fn: (top: string) => string) {
+    pipe.set('appTop', fn);
   }
 
   public pipeAppHeader(fn: (header: string) => string) {
@@ -52,6 +56,22 @@ export class Entry {
 
   public pipeEntryRender(fn: (render: string) => string) {
     pipe.set('entryRender', fn);
+  }
+
+  protected getAppTop() {
+    return pipe.get(
+      'appTop',
+      `
+      var priStore = {};
+      
+      const tag = 'pri';
+      if (window[tag]) {
+        priStore = window[tag];
+      } else {
+        window[tag] = priStore;
+      }
+    `
+    );
   }
 
   protected getAppHeader() {
