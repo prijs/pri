@@ -89,7 +89,12 @@ export class Entry {
   }
 
   protected getAppBody() {
-    return pipe.get('appBody', ``);
+    return pipe.get(
+      'appBody',
+      `
+      export const pageLoadableMap = new Map<string, any>()
+    `
+    );
   }
 
   protected getAppComponent() {

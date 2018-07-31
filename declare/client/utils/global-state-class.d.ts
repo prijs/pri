@@ -1,4 +1,4 @@
-import { ProjectConfig } from "./project-config-interface";
+import { ProjectConfig } from './project-config-interface';
 export declare class GlobalState {
     projectRootPath: string;
     projectConfig: ProjectConfig;
