@@ -1,8 +1,8 @@
-import { ProjectConfig } from "./project-config-interface";
+import { ProjectConfig } from './project-config-interface';
 
 export class GlobalState {
   public projectRootPath: string;
-  public projectConfig: ProjectConfig;
+  public projectConfig = new ProjectConfig();
   /**
    * majorCommand
    * for example: pri dev -d, the major command is "dev"

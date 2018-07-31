@@ -62,13 +62,13 @@ export class Entry {
     return pipe.get(
       'appTop',
       `
-      var priStore = {};
+      let priStore = {};
       
       const tag = 'pri';
-      if (window[tag]) {
-        priStore = window[tag];
+      if ((window as any)[tag]) {
+        priStore = (window as any)[tag];
       } else {
-        window[tag] = priStore;
+        (window as any)[tag] = priStore;
       }
     `
     );

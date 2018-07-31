@@ -1,7 +1,9 @@
 import createBrowserHistory from 'history/createBrowserHistory';
 import { GlobalState } from '../utils/global-state-class';
 
-const globalState: GlobalState = (window as any)['pri'];
+const priStore = (window as any)['pri'];
+
+const globalState: GlobalState = priStore ? priStore.globalState : new GlobalState();
 
 export const history = createBrowserHistory({
   basename: globalState.projectConfig.baseHref
