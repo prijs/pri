@@ -178,6 +178,8 @@ export default async (instance: typeof pri) => {
                 import(/* webpackChunkName: "${
                   page.chunkName
                 }" */ "-!raw-loader!${markdownTsAbsolutePath}").then(code => {
+                  const filePath = "${path.format(page.file)}"
+
                   ${entry.pipe.get('afterPageLoad', '')}
                   return () => <div dangerouslySetInnerHTML={{__html: code.default}}/>
                 })

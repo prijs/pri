@@ -117,6 +117,8 @@ export default async (instance: typeof pri) => {
             );
 
             const importCode = `import(/* webpackChunkName: "${page.chunkName}" */ "${pageRequirePath}").then(code => {
+                const filePath = "${path.format(page.file)}"
+
                 ${entry.pipe.get('afterPageLoad', '')}
                 return code.default
               })`;

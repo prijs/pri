@@ -72,10 +72,12 @@ export class Entry {
     return pipe.get(
       'appBody',
       `
+      ;(window as any).pri = {};
       export const pageLoadableMap = new Map<string, any>()
       export const customHistory = createBrowserHistory({
         basename: "${globalState.projectConfig.baseHref}"
       })
+      ;(window as any).pri.history = customHistory
     `
     );
   }
