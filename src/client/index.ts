@@ -1,5 +1,14 @@
-export { env, setCustomEnv, setEnvLocal, setEnvProd } from '../utils/env';
-export { ProjectConfig } from '../utils/project-config-interface';
-import { History } from 'history';
+import createBrowserHistory from 'history/createBrowserHistory';
+import { store as __store } from '../utils/pri-client';
 
-export const history: History = (window as any).pri.history;
+export const history = createBrowserHistory({
+  basename: __store.globalState.projectConfig.baseHref
+});
+
+export { __store };
+
+export const isDevelopment = __store.globalState.isDevelopment;
+
+export const projectConfig = __store.globalState.projectConfig;
+
+export type ProjectConfig = typeof projectConfig;

@@ -41,9 +41,6 @@ export default (opts: IOptions) =>
         'history',
         PRI_PACKAGE_NAME + '/client',
 
-        /** include this will make hot load invaild! */
-        // "react-hot-loader",
-
         // /** webpack */
         'sockjs-client/dist/sockjs.js',
         'html-entities'

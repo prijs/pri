@@ -10,25 +10,10 @@ import * as yargs from 'yargs';
 import { CONFIG_FILE } from './constants';
 import { getPackageJson, IPackageJson } from './file-operate';
 import { execTsByPath } from './functional';
+import { GlobalState } from './global-state-class';
 import { ProjectConfig } from './project-config-interface';
 
-const globalState: {
-  projectRootPath: string;
-  projectConfig: ProjectConfig;
-  /**
-   * majorCommand
-   * for example: pri dev -d, the major command is "dev"
-   */
-  majorCommand: string;
-  /**
-   * Development enviroment.
-   */
-  isDevelopment: boolean;
-  /**
-   * Project type
-   */
-  projectType: 'project' | 'component' | 'plugin' | null;
-} = {} as any;
+const globalState = new GlobalState();
 
 globalState.projectRootPath = yargs.argv.cwd || process.cwd();
 globalState.majorCommand = yargs.argv._.length === 0 ? 'dev' : yargs.argv._[0];

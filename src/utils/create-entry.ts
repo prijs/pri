@@ -59,7 +59,7 @@ export class Entry {
       'appHeader',
       `
       import createBrowserHistory from "history/createBrowserHistory"
-      import { setCustomEnv, setEnvLocal, setEnvProd } from "${PRI_PACKAGE_NAME}/client"
+      import { __store, history as customHistory } from "${PRI_PACKAGE_NAME}/client"
       import * as React from "react"
       import * as ReactDOM from "react-dom"
       import Loadable from "react-loadable"
@@ -69,17 +69,7 @@ export class Entry {
   }
 
   protected getAppBody() {
-    return pipe.get(
-      'appBody',
-      `
-      ;(window as any).pri = {};
-      export const pageLoadableMap = new Map<string, any>()
-      export const customHistory = createBrowserHistory({
-        basename: "${globalState.projectConfig.baseHref}"
-      })
-      ;(window as any).pri.history = customHistory
-    `
-    );
+    return pipe.get('appBody', ``);
   }
 
   protected getAppComponent() {

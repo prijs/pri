@@ -90,9 +90,9 @@ export const ensureVscode = () => ({
   pipeContent: () =>
     JSON.stringify(
       {
-        "editor.formatOnSave": true,
-        "tslint.autoFixOnSave": true,
-        "files.autoSave": "afterDelay",
+        'editor.formatOnSave': true,
+        'tslint.autoFixOnSave': true,
+        'files.autoSave': 'afterDelay',
         'typescript.tsdk': 'node_modules/typescript/lib'
       },
       null,
@@ -184,7 +184,7 @@ export default async (instance: typeof pri) => {
           pipeContent: () =>
             prettier.format(
               `
-      import { env } from "${PRI_PACKAGE_NAME}/client"
+      import { isDevelopment } from "${PRI_PACKAGE_NAME}/client"
       import * as React from "react"
 
       class Props {
@@ -206,7 +206,7 @@ export default async (instance: typeof pri) => {
                 Welcome to pri!
               </h1>
               <p style={{ padding: "10 50px" }}>
-                Current env: {env.isLocal && "local"}{env.isProd && "prod"}
+                Current env: {isDevelopment ? "local" : "prod"}
               </p>
             </div>
           )

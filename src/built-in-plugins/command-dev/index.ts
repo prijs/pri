@@ -210,19 +210,11 @@ export default async (instance: typeof pri) => {
 
   instance.project.onCreateEntry((analyseInfo, entry) => {
     if (instance.isDevelopment) {
-      entry.pipeAppHeader(header => {
-        return `
-          ${header}
-          setEnvLocal()
-        `;
-      });
-
-      // Set custom env
       if (instance.projectConfig.customEnv) {
         entry.pipeAppBody(body => {
           return `
             ${body}
-            setCustomEnv(${JSON.stringify(instance.projectConfig.customEnv)})
+            __store.globalState = ${JSON.stringify(globalState)}
           `;
         });
       }

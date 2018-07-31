@@ -118,20 +118,11 @@ export const buildComponent = async (
 export default async (instance: typeof pri) => {
   instance.project.onCreateEntry((analyseInfo, entry) => {
     if (!instance.isDevelopment) {
-      // Set prod env
-      entry.pipeAppHeader(header => {
-        return `
-          ${header}
-          setEnvProd()
-        `;
-      });
-
-      // Set custom env
       if (instance.projectConfig.customEnv) {
         entry.pipeAppBody(body => {
           return `
             ${body}
-            setCustomEnv(${JSON.stringify(instance.projectConfig.customEnv)})
+            __store.globalState = ${JSON.stringify(globalState)}
           `;
         });
       }
