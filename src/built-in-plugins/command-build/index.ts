@@ -118,14 +118,12 @@ export const buildComponent = async (
 export default async (instance: typeof pri) => {
   instance.project.onCreateEntry((analyseInfo, entry) => {
     if (!instance.isDevelopment) {
-      if (instance.projectConfig.customEnv) {
-        entry.pipeEnvironmentBody(envText => {
-          return `
+      entry.pipeEnvironmentBody(envText => {
+        return `
             ${envText}
             priStore.globalState = ${JSON.stringify(globalState)}
           `;
-        });
-      }
+      });
     }
   });
 
