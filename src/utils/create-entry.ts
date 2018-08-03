@@ -73,7 +73,7 @@ export class Entry {
       import * as React from "react"
       import * as ReactDOM from "react-dom"
       import Loadable from "react-loadable"
-      import { Redirect, Route, Router, Switch } from "react-router-dom"
+      import { Redirect, Route, Router, Switch, HashRouter } from "react-router-dom"
     `
     );
   }
@@ -111,14 +111,21 @@ export class Entry {
   }
 
   protected getAppRouter() {
+    const routerName = globalState.projectConfig.useHashRouter ? 'HashRouter' : 'Router';
+    const historyInfo = globalState.projectConfig.useHashRouter
+      ? ''
+      : `
+      history={${pipe.get('appRouterHistory', 'customHistory')}}
+    `;
+
     return pipe.get(
       'appRouter',
       `
-      <Router history={${pipe.get('appRouterHistory', 'customHistory')}}>
+      <${routerName} ${historyInfo}>
         <Switch>
           ${this.getAppRoutes()}
         </Switch>
-      </Router>
+      </${routerName}>
     `
     );
   }

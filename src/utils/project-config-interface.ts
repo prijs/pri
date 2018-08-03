@@ -73,4 +73,8 @@ export class ProjectConfig {
    * Custom routes. When this configuration exists, it will not parse the `pages` directory.
    */
   public routes?: IRoute[] = [];
+  /**
+   * Enable hash router.
+   */
+  public useHashRouter?: boolean = false;
 }
