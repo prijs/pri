@@ -29,6 +29,9 @@ export function ensurePackageJson() {
               release: 'npm publish',
               test: 'pri plugin test'
             },
+            dependencies:{
+              '@babel/runtime': '^7.0.0-beta.56'
+            },
             devDependencies: { [PRI_PACKAGE_NAME]: '*' }
           }),
           null,
