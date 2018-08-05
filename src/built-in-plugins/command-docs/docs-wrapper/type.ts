@@ -6,4 +6,5 @@ export class Props {
 
 export class State {
   public currentDocIndex = 0;
+  public showDocInfo = false;
 }

@@ -22,7 +22,10 @@ export default class Docs extends React.PureComponent<Props, State> {
     vsRequire(['vs/editor/editor.main'], (info: any) => {
       const monaco: any = (window as any).monaco;
       const editorDOM = ReactDOM.findDOMNode(this.editorRef);
-      this.monacoEditor = monaco.editor.create(editorDOM, { value: currentDoc.text, language: 'typescript' });
+      this.monacoEditor = monaco.editor.create(editorDOM, {
+        value: currentDoc.text,
+        language: 'typescript'
+      });
     });
   }
 
@@ -35,15 +38,18 @@ export default class Docs extends React.PureComponent<Props, State> {
     const DocInstance = currentDoc.element.default;
     return (
       <S.Container>
-        <S.LeftContainer>{this.renderLeftMenus()}</S.LeftContainer>
+        {this.props.docs.length > 1 && <S.LeftContainer>{this.renderLeftMenus()}</S.LeftContainer>}
 
         <S.RightContainer>
           <S.DocInstanceContainer>
             <DocInstance />
           </S.DocInstanceContainer>
-          <S.DocInfoContainer>
+
+          <S.DocInfoContainer style={{ display: this.state.showDocInfo ? 'block' : 'none' }}>
             <S.DocEditorInstance ref={(ref: any) => (this.editorRef = ref)} />
           </S.DocInfoContainer>
+
+          <S.ToggleDocInfoContainer onClick={this.handleToggleSHowDocInfo}>Show code</S.ToggleDocInfoContainer>
         </S.RightContainer>
       </S.Container>
     );
@@ -71,6 +77,19 @@ export default class Docs extends React.PureComponent<Props, State> {
       () => {
         const currentDoc = this.props.docs[this.state.currentDocIndex];
         this.monacoEditor.setValue(currentDoc.text);
+      }
+    );
+  };
+
+  private handleToggleSHowDocInfo = () => {
+    this.setState(
+      {
+        showDocInfo: !this.state.showDocInfo
+      },
+      () => {
+        if (this.state.showDocInfo) {
+          this.monacoEditor.layout();
+        }
       }
     );
   };

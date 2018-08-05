@@ -9,7 +9,7 @@ injectGlobal`
 `;
 
 export const Container = styled.div`
-  background-color: whitesmoke;
+  background-color: whitesmokesmoke;
   width: 100vw;
   height: 100vh;
   display: flex;
@@ -23,13 +23,13 @@ export const LeftContainer = styled.div`
   width: 300px;
   min-width: 300px;
   box-sizing: border-box;
+  padding-right: 10px;
 `;
 
 export const RightContainer = styled.div`
   display: flex;
   flex-direction: column;
   flex-grow: 1;
-  padding-left: 10px;
   box-sizing: border-box;
 `;
 
@@ -77,4 +77,19 @@ export const DocMenuItem = styled.div`
 export const DocEditorInstance = styled.div`
   width: 100%;
   height: 180px;
+`;
+
+export const ToggleDocInfoContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 30px;
+  background-color: white;
+  margin-top: 10px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+  cursor: pointer;
+  &:hover {
+    background-color: whitesmoke;
+  }
 `;
