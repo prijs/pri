@@ -87,14 +87,14 @@ export const ensureTslint = () => ({
 
 export const ensureVscode = () => ({
   fileName: '.vscode/settings.json',
-  pipeContent: () =>
+  pipeContent: (prev: string) =>
     JSON.stringify(
-      {
+      _.merge({}, JSON.parse(prev), {
         'editor.formatOnSave': true,
         'tslint.autoFixOnSave': true,
         'files.autoSave': 'afterDelay',
         'typescript.tsdk': 'node_modules/typescript/lib'
-      },
+      }),
       null,
       2
     ) + '\n'
@@ -112,27 +112,23 @@ export const ensureNpmignore = () => ({
 
 export const ensurePackageJson = () => ({
   fileName: 'package.json',
-  pipeContent: (prev: string) => {
-    const prevJson = JSON.parse(prev);
-    return (
-      JSON.stringify(
-        _.merge({}, prevJson, {
-          scripts: {
-            start: 'pri dev',
-            docs: 'pri docs',
-            build: 'pri build',
-            bundle: 'pri bundle',
-            preview: 'pri preview',
-            analyse: 'pri analyse',
-            test: 'pri test',
-            format: "tslint --fix './src/**/*.?(ts|tsx)' && prettier --write './src/**/*.?(ts|tsx)'"
-          }
-        }),
-        null,
-        2
-      ) + '\n'
-    );
-  }
+  pipeContent: (prev: string) =>
+    JSON.stringify(
+      _.merge({}, JSON.parse(prev), {
+        scripts: {
+          start: 'pri dev',
+          docs: 'pri docs',
+          build: 'pri build',
+          bundle: 'pri bundle',
+          preview: 'pri preview',
+          analyse: 'pri analyse',
+          test: 'pri test',
+          format: "tslint --fix './src/**/*.?(ts|tsx)' && prettier --write './src/**/*.?(ts|tsx)'"
+        }
+      }),
+      null,
+      2
+    ) + '\n'
 });
 
 export const ensureTest = () => ({
