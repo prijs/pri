@@ -89,7 +89,7 @@ export const ensureVscode = () => ({
   fileName: '.vscode/settings.json',
   pipeContent: (prev: string) =>
     JSON.stringify(
-      _.merge({}, JSON.parse(prev), {
+      _.merge({}, prev ? JSON.parse(prev) : {}, {
         'editor.formatOnSave': true,
         'tslint.autoFixOnSave': true,
         'files.autoSave': 'afterDelay',
@@ -114,7 +114,7 @@ export const ensurePackageJson = () => ({
   fileName: 'package.json',
   pipeContent: (prev: string) =>
     JSON.stringify(
-      _.merge({}, JSON.parse(prev), {
+      _.merge({}, prev ? JSON.parse(prev) : {}, {
         scripts: {
           start: 'pri dev',
           docs: 'pri docs',
