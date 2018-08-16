@@ -6,15 +6,18 @@ import { pri } from '../../node';
 import { globalState } from '../../utils/global-state';
 import { log } from '../../utils/log';
 import { findNearestNodemodulesFile } from '../../utils/npm-finder';
-import { testsPath } from '../../utils/structor-config';
+import { tempPath, testsPath } from '../../utils/structor-config';
 import text from '../../utils/text';
 import { tsPlusBabel } from '../../utils/ts-plus-babel';
 
 export const CommandTest = async (instance: typeof pri) => {
-  log(`Build typescript files`);
-  execSync(`${findNearestNodemodulesFile('/.bin/rimraf')} ${globalState.projectConfig.distDir}`, { stdio: 'inherit' });
+  const testJsTempDir = path.join(tempPath.dir, 'test-js-temp-dir');
 
-  await tsPlusBabel(globalState.projectConfig.distDir);
+  log(`Build typescript files`);
+  execSync(`${findNearestNodemodulesFile('/.bin/rimraf')} ${testJsTempDir}`, { stdio: 'inherit' });
+
+  // await tsPlusBabel(testJsTempDir);
+  execSync(`${findNearestNodemodulesFile('/.bin/tsc')} --outDir ${testJsTempDir} --sourceMap`, { stdio: 'inherit' });
 
   execSync(
     [
@@ -22,9 +25,9 @@ export const CommandTest = async (instance: typeof pri) => {
       `--reporter lcov`,
       `--reporter text`,
       `--reporter json`,
-      `--exclude ${globalState.projectConfig.distDir}/${testsPath.dir}/**/*.js`,
+      `--exclude ${testJsTempDir}/${testsPath.dir}/**/*.js`,
       `${findNearestNodemodulesFile('/.bin/ava')}`,
-      `--files ${path.join(instance.projectRootPath, `${globalState.projectConfig.distDir}/${testsPath.dir}/**/*.js`)}`,
+      `--files ${path.join(instance.projectRootPath, `${testJsTempDir}/${testsPath.dir}/**/*.js`)}`,
       `--failFast`
     ].join(' '),
     {
@@ -35,6 +38,9 @@ export const CommandTest = async (instance: typeof pri) => {
 
   // remove .nyc_output
   execSync(`${findNearestNodemodulesFile('.bin/rimraf')} ${path.join(instance.projectRootPath, '.nyc_output')}`);
+
+  // remove test output temp dir
+  execSync(`${findNearestNodemodulesFile('/.bin/rimraf')} ${testJsTempDir}`, { stdio: 'inherit' });
 
   // Open test html in brower
   log(

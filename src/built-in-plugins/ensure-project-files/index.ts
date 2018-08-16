@@ -50,7 +50,10 @@ export const ensureTsconfig = () => ({
             lib: ['dom', 'es5', 'es6', 'scripthost'],
             paths: { [PRI_PACKAGE_NAME + '/*']: [PRI_PACKAGE_NAME, path.join(tempTypesPath.dir, '*')] }
           },
-          include: ['.temp/**/*', 'src/**/*', 'config/**/*', 'tests/**/*'],
+          include: [
+            '.temp/**/*',
+            ['src/**/*', 'tests/**/*', 'docs/**/*'].map(each => path.join(globalState.projectConfig.sourceRoot, each))
+          ],
           exclude: ['node_modules', globalState.projectConfig.distDir]
         },
         null,
