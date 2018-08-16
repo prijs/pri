@@ -2,25 +2,33 @@ import * as _ from 'lodash';
 import * as path from 'path';
 import { globalState } from './global-state';
 
+/**
+ * Top level definition start
+ */
+
 export const srcPath = {
-  dir: 'src'
+  dir: path.join(globalState.projectConfig.sourceRoot, 'src')
 };
+
+export const testsPath = {
+  dir: path.join(globalState.projectConfig.sourceRoot, 'tests')
+};
+
+export const docsPath = { dir: path.join(globalState.projectConfig.sourceRoot, 'docs') };
 
 export const tempPath = {
   dir: '.temp'
 };
 
+/**
+ * Top level definition end
+ */
+
 export const tempTypesPath = {
   dir: path.join(tempPath.dir, 'types')
 };
 
-export const testsPath = {
-  dir: 'tests'
-};
-
 export const pagesPath = { dir: path.join(srcPath.dir, `pages`) };
-
-export const docsPath = { dir: `docs` };
 
 export const notFoundPath = {
   dir: pagesPath.dir,
@@ -89,6 +97,10 @@ export const componentEntry = {
   name: 'index',
   ext: '.tsx'
 };
+
+/**
+ * Ignores.
+ */
 
 let gitIgnores: string[] = [
   'node_modules',
