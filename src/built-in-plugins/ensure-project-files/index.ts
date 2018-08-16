@@ -15,7 +15,8 @@ import {
   npmIgnores,
   pagesPath,
   srcPath,
-  tempTypesPath
+  tempTypesPath,
+  testsPath
 } from '../../utils/structor-config';
 
 export function ensureDeclares(projectRootPath: string) {
@@ -132,7 +133,7 @@ export const ensurePackageJson = () => ({
 });
 
 export const ensureTest = () => ({
-  fileName: 'tests/index.ts',
+  fileName: path.join(testsPath.dir, 'index.ts'),
   pipeContent: (prev: string) =>
     prev
       ? prev

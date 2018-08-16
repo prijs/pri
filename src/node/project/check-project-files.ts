@@ -13,6 +13,10 @@ export const checkProjectFiles = async () => {
     return;
   }
 
+  if (!globalState.projectConfig.unexpectedFileCheck) {
+    return;
+  }
+
   const files = await walkProjectFiles();
 
   const whiteFileRules = plugin.whiteFileRules.slice();

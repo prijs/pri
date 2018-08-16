@@ -80,5 +80,9 @@ export class ProjectConfig {
   /**
    * Specify source file root path, for example `sourceRoot='app/client'`, will lead to `app/client/src` and `app/client/tests`.
    */
-  public sourceRoot?:string = './'
+  public sourceRoot?: string = './';
+  /**
+   * Suggestion to open!
+   */
+  public unexpectedFileCheck = true;
 }

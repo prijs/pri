@@ -78,5 +78,9 @@ export declare class ProjectConfig {
      * Enable hash router.
      */
     useHashRouter?: boolean;
+    /**
+     * Specify source file root path, for example `sourceRoot='app/client'`, will lead to `app/client/src` and `app/client/tests`.
+     */
+    sourceRoot?: string;
 }
 export {};
