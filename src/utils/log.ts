@@ -31,7 +31,7 @@ export async function spinner<T>(message: string, fn: (error: (message?: string)
       return result;
     }
   } catch (error) {
-    oraSpinner.fail(colors.red(error.toString()));
+    oraSpinner.fail(colors.red(error));
     return process.exit(0);
   }
 }

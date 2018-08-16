@@ -68,6 +68,7 @@ export default async (instance: typeof pri) => {
       return {
         projectAnalysePages: {
           pages: instance.projectConfig.routes
+            .filter(route => route.component && route.path)
             .map((route, index) => {
               const componentFile = files.find(file => {
                 const relativePath = path.relative(instance.projectRootPath, path.join(file.dir, file.name));
