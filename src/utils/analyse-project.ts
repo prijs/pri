@@ -24,13 +24,3 @@ export const analyseProject = async () => {
 
   return plugin.analyseInfo;
 };
-
-function hasFileWithoutExt(pathName: string) {
-  const exts = ['.js', '.jsx', '.ts', '.tsx'];
-  for (const ext of exts) {
-    if (fs.existsSync(pathName + ext)) {
-      return true;
-    }
-  }
-  return false;
-}

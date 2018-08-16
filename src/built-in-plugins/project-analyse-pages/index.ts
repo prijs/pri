@@ -5,7 +5,7 @@ import * as path from 'path';
 import * as url from 'url';
 import { pri } from '../../node';
 import { md5 } from '../../utils/md5';
-import { markdownTempPath, pagesPath, tempPath } from '../../utils/structor-config';
+import { pagesPath, tempPath } from '../../utils/structor-config';
 
 interface IResult {
   projectAnalysePages: {
@@ -24,7 +24,7 @@ export default async (instance: typeof pri) => {
   instance.project.whiteFileRules.add(file => {
     const relativePath = path.relative(instance.projectRootPath, file.dir);
     return (
-      relativePath.startsWith(`src${path.sep}pages`) &&
+      relativePath.startsWith(pagesPath.dir) &&
       file.name === 'index' &&
       (file.ext === '.tsx' || file.ext === '.css' || file.ext === '.scss' || file.ext === '.less')
     );

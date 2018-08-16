@@ -102,7 +102,7 @@ export const componentEntry = {
  * Ignores.
  */
 
-let gitIgnores: string[] = [
+const gitIgnores: string[] = [
   'node_modules',
   '.cache',
   '.vscode',
@@ -113,22 +113,24 @@ let gitIgnores: string[] = [
   '.nyc_output',
   'npm-debug.log'
 ];
-// Add distDir to gitIgnore
-// EG: /dist -> '/dist'
-// EG: /a/b/c -> ['/a', '/a/b', '/a/b/c']
-const trimedDistDir = _.trimEnd(globalState.projectConfig.distDir, '/');
-const distPaths = trimedDistDir.split('/');
-distPaths.reduce((prev, current) => {
-  if (prev === '') {
-    gitIgnores.push(current);
-    return current;
-  } else {
-    prev += '/' + current;
-    gitIgnores.push(prev);
-    return prev;
-  }
-}, '');
-gitIgnores = _.union(gitIgnores);
+
+// // Add distDir to gitIgnore
+// // EG: /dist -> '/dist'
+// // EG: /a/b/c -> ['/a', '/a/b', '/a/b/c']
+// const trimedDistDir = _.trimEnd(globalState.projectConfig.distDir, '/');
+// const distPaths = trimedDistDir.split('/');
+// distPaths.reduce((prev, current) => {
+//   if (prev === '') {
+//     gitIgnores.push(current);
+//     return current;
+//   } else {
+//     prev += '/' + current;
+//     gitIgnores.push(prev);
+//     return prev;
+//   }
+// }, '');
+// gitIgnores = _.union(gitIgnores);
+
 export { gitIgnores };
 
 let npmIgnores = gitIgnores.slice();
@@ -152,5 +154,6 @@ export const ignoreScanFiles = [
   'tsconfig.json',
   'tslint.json',
   'npm-debug.log',
-  '.idea'
+  '.idea',
+  '.node'
 ];

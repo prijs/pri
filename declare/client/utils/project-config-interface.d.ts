@@ -82,5 +82,9 @@ export declare class ProjectConfig {
      * Specify source file root path, for example `sourceRoot='app/client'`, will lead to `app/client/src` and `app/client/tests`.
      */
     sourceRoot?: string;
+    /**
+     * Suggestion to open!
+     */
+    unexpectedFileCheck: boolean;
 }
 export {};

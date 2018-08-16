@@ -55,7 +55,7 @@ export default async (instance: typeof pri) => {
   instance.project.whiteFileRules.add(file => {
     const relativePath = path.relative(instance.projectRootPath, file.dir);
     return (
-      relativePath.startsWith(`src${path.sep}pages`) &&
+      relativePath.startsWith(pagesPath.dir) &&
       file.name === 'index' &&
       (file.ext === '.md' || file.ext === '.css' || file.ext === '.scss' || file.ext === '.less')
     );
