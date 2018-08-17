@@ -52,7 +52,7 @@ export const ensureTsconfig = () => ({
           },
           include: [
             '.temp/**/*',
-            ['src/**/*', 'tests/**/*', 'docs/**/*'].map(each => path.join(globalState.projectConfig.sourceRoot, each))
+            ...['src/**/*', 'tests/**/*', 'docs/**/*'].map(each => path.join(globalState.projectConfig.sourceRoot, each))
           ],
           exclude: ['node_modules', globalState.projectConfig.distDir]
         },
