@@ -16,8 +16,7 @@ export const CommandTest = async (instance: typeof pri) => {
   log(`Build typescript files`);
   execSync(`${findNearestNodemodulesFile('/.bin/rimraf')} ${testJsTempDir}`, { stdio: 'inherit' });
 
-  // await tsPlusBabel(testJsTempDir);
-  execSync(`${findNearestNodemodulesFile('/.bin/tsc')} --outDir ${testJsTempDir} --sourceMap`, { stdio: 'inherit' });
+  await tsPlusBabel(testJsTempDir);
 
   execSync(
     [
