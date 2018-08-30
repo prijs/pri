@@ -41,6 +41,8 @@ export default async (packageName: string, semverStr: semver.ReleaseType) => {
     logError(`${packageName} not exist`);
   }
 
+  const packagePath = path.join(globalState.projectRootPath, packageInfo.path);
+
   const projectType = _.get(packageInfo.packageJson, 'pri.type', null);
   if (projectType && projectType !== 'component') {
     // Is pri and only support component
@@ -55,15 +57,15 @@ export default async (packageName: string, semverStr: semver.ReleaseType) => {
         type: 'list',
         choices: [
           {
-            name: 'path( Bug fix. )',
+            name: 'patch(Bug fix.)',
             value: 'patch'
           },
           {
-            name: 'minor( New function. )',
+            name: 'minor(New function.)',
             value: 'minor'
           },
           {
-            name: 'major( Major update or break changes. )',
+            name: 'major(Major update or break changes.)',
             value: 'major'
           }
         ]
@@ -86,7 +88,7 @@ export default async (packageName: string, semverStr: semver.ReleaseType) => {
   // Add tag
 
   // Run npm publish
-  execSync(`npm publish`, {
+  execSync(`npm publish --folder "${packagePath}"`, {
     stdio: 'inherit'
   });
 };
