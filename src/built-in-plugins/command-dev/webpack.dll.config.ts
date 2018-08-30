@@ -39,11 +39,7 @@ export default (opts: IOptions) =>
         'react-router',
         'styled-components',
         'history',
-        PRI_PACKAGE_NAME + '/client',
-
-        // /** webpack */
-        'sockjs-client/dist/sockjs.js',
-        'html-entities'
+        PRI_PACKAGE_NAME + '/client'
       ])
     },
 
