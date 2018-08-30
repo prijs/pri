@@ -30,7 +30,7 @@ export function ensurePackageJson() {
               test: 'pri plugin test'
             },
             dependencies: {
-              '@babel/runtime': '7.0.0-beta.56'
+              '@babel/runtime': '^7.0.0'
             },
             devDependencies: { [PRI_PACKAGE_NAME]: '*' }
           }),

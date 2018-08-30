@@ -52,7 +52,9 @@ export const ensureTsconfig = () => ({
           },
           include: [
             '.temp/**/*',
-            ...['src/**/*', 'tests/**/*', 'docs/**/*'].map(each => path.join(globalState.projectConfig.sourceRoot, each))
+            ...['src/**/*', 'tests/**/*', 'docs/**/*'].map(each =>
+              path.join(globalState.projectConfig.sourceRoot, each)
+            )
           ],
           exclude: ['node_modules', globalState.projectConfig.distDir]
         },
@@ -232,7 +234,7 @@ export default async (instance: typeof pri) => {
                   'react-dom': '>=16.0.0'
                 },
                 dependencies: {
-                  '@babel/runtime': '7.0.0-beta.56'
+                  '@babel/runtime': '^7.0.0'
                 },
                 scripts: {
                   prepublishOnly: 'npm run build'
