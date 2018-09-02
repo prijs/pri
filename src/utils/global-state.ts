@@ -7,14 +7,15 @@ import * as fs from 'fs-extra';
 import { get, merge } from 'lodash';
 import * as path from 'path';
 import * as yargs from 'yargs';
+import * as pkg from '../../package.json';
 import { CONFIG_FILE } from './constants';
-import { getPackageJson, IPackageJson } from './file-operate';
 import { execTsByPath } from './functional';
 import { GlobalState } from './global-state-class';
 import { ProjectConfig } from './project-config-interface';
 
 const globalState = new GlobalState();
 
+globalState.priPackageJson = pkg;
 globalState.projectRootPath = yargs.argv.cwd || process.cwd();
 globalState.majorCommand = yargs.argv._.length === 0 ? 'dev' : yargs.argv._[0];
 globalState.isDevelopment = ['dev', 'docs'].some(operate => operate === globalState.majorCommand);

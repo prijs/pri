@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 
+import { globalState } from './utils/global-state';
+
 import * as colors from 'colors';
 import * as commander from 'commander';
 import * as _ from 'lodash';
 import * as updateNotifier from 'update-notifier';
-
-import * as pkg from '../package.json';
 
 import * as semver from 'semver';
 import { log } from './utils/log';
@@ -48,7 +48,7 @@ async function runCommandAction(commandDetails: any[], args: any[]) {
 async function main() {
   await loadPlugins();
 
-  commander.version(pkg.version, '-v, --version');
+  commander.version(globalState.priPackageJson.version, '-v, --version');
 
   const commandersGroupByName = _.groupBy(plugin.commands, 'name');
   Object.keys(commandersGroupByName).forEach(commandName => {
@@ -85,7 +85,7 @@ async function main() {
   /**
    * Update notify.
    */
-  updateNotifier({ pkg }).notify();
+  updateNotifier({ pkg: globalState.priPackageJson }).notify();
 
   /**
    * Parse argv.

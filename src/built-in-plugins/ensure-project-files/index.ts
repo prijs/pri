@@ -1,12 +1,12 @@
 import * as fs from 'fs-extra';
 import * as _ from 'lodash';
 import * as path from 'path';
-import * as prettier from 'prettier';
+import * as pkg from '../../../package.json';
 import { pri } from '../../node';
 import { PRI_PACKAGE_NAME } from '../../utils/constants';
 import { globalState } from '../../utils/global-state';
 import { prettierConfig } from '../../utils/prettier-config';
-import { declarePath, gitIgnores, npmIgnores, tempTypesPath, testsPath } from '../../utils/structor-config';
+import { declarePath, gitIgnores, npmIgnores, tempTypesPath } from '../../utils/structor-config';
 import { ensureComponentFiles } from './ensure-component';
 import { ensurePluginFiles } from './ensure-plugin';
 import { ensureProjectFiles } from './ensure-project';
@@ -144,23 +144,31 @@ const ensureNpmignore = (instance: typeof pri) =>
 const ensurePackageJson = (instance: typeof pri) =>
   instance.project.addProjectFiles({
     fileName: 'package.json',
-    pipeContent: (prev: string) =>
-      JSON.stringify(
-        _.merge({}, prev ? JSON.parse(prev) : {}, {
-          scripts: {
-            start: 'pri dev',
-            docs: 'pri docs',
-            build: 'pri build',
-            bundle: 'pri bundle',
-            preview: 'pri preview',
-            analyse: 'pri analyse',
-            test: 'pri test',
-            format: "tslint --fix './src/**/*.?(ts|tsx)' && prettier --write './src/**/*.?(ts|tsx)'"
-          },
-          devDependencies: { [PRI_PACKAGE_NAME]: '*' },
-          pri: { type: instance.projectType }
-        }),
-        null,
-        2
-      ) + '\n'
+    pipeContent: (prev: string) => {
+      const oldPackageJson: any = prev ? JSON.parse(prev) : {};
+
+      // Remove pri dep in dependencies
+      _.unset(oldPackageJson, 'dependencies.pri');
+
+      return (
+        JSON.stringify(
+          _.merge({}, oldPackageJson, {
+            scripts: {
+              start: 'pri dev',
+              docs: 'pri docs',
+              build: 'pri build',
+              bundle: 'pri bundle',
+              preview: 'pri preview',
+              analyse: 'pri analyse',
+              test: 'pri test',
+              format: "tslint --fix './src/**/*.?(ts|tsx)' && prettier --write './src/**/*.?(ts|tsx)'"
+            },
+            devDependencies: { [PRI_PACKAGE_NAME]: pkg.version },
+            pri: { type: instance.projectType }
+          }),
+          null,
+          2
+        ) + '\n'
+      );
+    }
   });

@@ -176,9 +176,7 @@ export default async (instance: typeof pri) => {
 
             // Add it's importer to app component.
             const markdownImportCode = `
-                import(/* webpackChunkName: "${
-                  page.chunkName
-                }" */ "-!raw-loader!${markdownTsAbsolutePath}").then(code => {
+                import(/* webpackChunkName: "${page.chunkName}" */ "${markdownTsAbsolutePath}").then(code => {
                   const filePath = "${path.format(page.file)}"
 
                   ${entry.pipe.get('afterPageLoad', '')}

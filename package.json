@@ -1,6 +1,6 @@
 {
   "name": "pri",
-  "version": "1.0.0-beta1",
+  "version": "1.0.0-beta4",
   "types": "src/node/index.ts",
   "main": "built/node/index.js",
   "scripts": {
@@ -18,7 +18,6 @@
   ],
   "bin": {
     "pri": "built/bin.js",
-    "pri-plugin": "built/bin-plugin.js",
     "pri-packages": "built/bin-packages.js"
   },
   "dependencies": {

@@ -1,1 +1,2 @@
-declare module "*.json"
+declare module '*.json';
+declare module '*.html';
