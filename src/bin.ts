@@ -1,7 +1,5 @@
 #!/usr/bin/env node
 
-import { globalState } from './utils/global-state';
-
 import * as colors from 'colors';
 import * as commander from 'commander';
 import * as _ from 'lodash';
@@ -19,7 +17,6 @@ if (semver.lte(process.version, '8.0.0')) {
   process.exit(0);
 }
 
-commander.command('plugin', 'Operator for pri plugin.');
 commander.command('packages', 'Packages manager.');
 
 // Common options
@@ -49,9 +46,7 @@ async function runCommandAction(commandDetails: any[], args: any[]) {
 }
 
 async function main() {
-  if (['plugin', 'packages'].indexOf(globalState.majorCommand) === -1) {
-    await loadPlugins();
-  }
+  await loadPlugins();
 
   commander.version(pkg.version, '-v, --version');
 
@@ -86,17 +81,6 @@ async function main() {
       }
     });
   });
-
-  /**
-   * When no args given, use dev command
-   */
-  if (!process.argv[2]) {
-    const defaultCommand = plugin.commands.find(command => command.isDefault === true);
-
-    if (defaultCommand) {
-      await runCommandAction(commandersGroupByName[defaultCommand.name], commander.args);
-    }
-  }
 
   /**
    * Update notify.

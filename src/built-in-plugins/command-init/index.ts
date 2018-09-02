@@ -1,14 +1,9 @@
 import * as colors from 'colors';
-import * as fs from 'fs-extra';
 import * as inquirer from 'inquirer';
 import * as _ from 'lodash';
-import * as open from 'opn';
-import * as path from 'path';
-import * as portfinder from 'portfinder';
 import { pri } from '../../node';
-import initPlugin from '../../pri-plugin-commanders/init';
 import { globalState } from '../../utils/global-state';
-import { log, spinner } from '../../utils/log';
+import { log } from '../../utils/log';
 import text from '../../utils/text';
 
 export default async (instance: typeof pri) => {
@@ -28,23 +23,13 @@ export default async (instance: typeof pri) => {
 
         switch (inquirerInfo.projectType) {
           case 'Project':
-            overrideProjectPackageJson(instance.projectRootPath, {
-              pri: { type: 'project' }
-            });
             globalState.projectType = 'project';
             break;
           case 'Component':
-            overrideProjectPackageJson(instance.projectRootPath, {
-              pri: { type: 'component' }
-            });
             globalState.projectType = 'component';
             break;
           case 'Pri Plugin':
-            overrideProjectPackageJson(instance.projectRootPath, {
-              pri: { type: 'plugin' }
-            });
             globalState.projectType = 'plugin';
-            await initPlugin();
             break;
         }
       }
@@ -56,6 +41,7 @@ export default async (instance: typeof pri) => {
 
       switch (globalState.projectType) {
         case 'project':
+        case 'plugin':
           log(colors.blue('  npm start'));
           log(`    ${text.commander.dev.description}\n`);
           break;
@@ -75,6 +61,7 @@ export default async (instance: typeof pri) => {
           log(`    ${text.commander.dev.description}\n`);
           break;
         case 'component':
+        case 'plugin':
           log(colors.blue('  npm publish'));
           log(`    Publish this component to npm package.\n`);
           break;
@@ -91,10 +78,3 @@ export default async (instance: typeof pri) => {
     }
   });
 };
-
-function overrideProjectPackageJson(projectRootPath: string, data: any) {
-  const packageJsonPath = path.join(projectRootPath, 'package.json');
-  const packageJson = fs.readJsonSync(packageJsonPath, { throws: false });
-
-  fs.writeFileSync(packageJsonPath, JSON.stringify(_.merge({}, packageJson, data), null, 2) + '\n');
-}

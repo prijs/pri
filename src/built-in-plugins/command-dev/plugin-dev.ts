@@ -1,10 +1,10 @@
 import * as colors from 'colors';
 import * as gulp from 'gulp';
-import { globalState } from '../utils/global-state';
-import { log } from '../utils/log';
-import { tsPlusBabel } from '../utils/ts-plus-babel';
+import { globalState } from '../../utils/global-state';
+import { log } from '../../utils/log';
+import { tsPlusBabel } from '../../utils/ts-plus-babel';
 
-export default async () => {
+export const pluginDev = async () => {
   log("Watching plugin's files.");
 
   const sourceBlob = 'src/**/*.{tsx,ts}';

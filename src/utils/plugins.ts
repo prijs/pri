@@ -59,7 +59,6 @@ export interface ICommand {
   beforeAction?: any;
   action?: any;
   afterAction?: any;
-  isDefault?: boolean;
   options?: string[][];
 }
 
@@ -212,10 +211,13 @@ export function getPluginsByOrder() {
   loadedPlugins.forEach(loadedPlugin => {
     if (loadedPlugin.config && loadedPlugin.config.dependencies) {
       loadedPlugin.config.dependencies.forEach(depPluginName => {
-        if (!Array.from(loadedPlugins).some(eachLoadedPlugin => eachLoadedPlugin.name === depPluginName)) {
-          log(colors.red(`${loadedPlugin.name}: No dependent "${depPluginName}"`));
-          log(colors.blue(`Try: npm install ${depPluginName}.`));
-          process.exit(0);
+        // Check plugin dependent, unless current project is plugin.
+        if (globalState.projectType !== 'plugin') {
+          if (!Array.from(loadedPlugins).some(eachLoadedPlugin => eachLoadedPlugin.name === depPluginName)) {
+            log(colors.red(`${loadedPlugin.name}: No dependent "${depPluginName}"`));
+            log(colors.blue(`Try: npm install ${depPluginName}.`));
+            process.exit(0);
+          }
         }
       });
     }
@@ -227,7 +229,7 @@ export function getPluginsByOrder() {
     currentInstantiatedPlugins.forEach(eachPlugin => outputPlugins.push(eachPlugin));
 
     if (currentInstantiatedPlugins.length === 0) {
-      throw Error('Plug-in loop dependency.');
+      throw Error('Plugin loop dependency.');
     }
 
     currentInstantiatedPlugins.forEach(eachPlugin => instantiatedPluginNames.add(eachPlugin.name));

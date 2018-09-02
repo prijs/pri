@@ -1,16 +1,12 @@
 import * as colors from 'colors';
-import { FILE } from 'dns';
 import * as fs from 'fs-extra';
 import * as _ from 'lodash';
 import * as path from 'path';
-import * as walk from 'walk';
 import * as yargs from 'yargs';
 import { globalState } from './global-state';
-import { log, spinner } from './log';
+import { log } from './log';
 import { plugin } from './plugins';
 import { priEvent } from './pri-events';
-import { declarePath, pagesPath, tempPath } from './structor-config';
-import { walkProjectFiles } from './walk-project-files';
 
 export const ensureFiles = async () => {
   if (yargs.argv['light']) {

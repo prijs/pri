@@ -4,7 +4,6 @@ import * as yargs from 'yargs';
 import { globalState } from '../../utils/global-state';
 import { log } from '../../utils/log';
 import { IWhiteFile, plugin } from '../../utils/plugins';
-import { ProjectConfig } from '../../utils/project-config-interface';
 import { srcPath } from '../../utils/structor-config';
 import { walkProjectFiles } from '../../utils/walk-project-files';
 
@@ -21,8 +20,8 @@ export const checkProjectFiles = async () => {
 
   const whiteFileRules = plugin.whiteFileRules.slice();
 
-  // For component project, add `src` to white list.
-  if (globalState.projectType === 'component') {
+  // For component/plugin, add `src` to white list.
+  if (globalState.projectType === 'component' || globalState.projectType === 'plugin') {
     const ignoreSrc: IWhiteFile = projectFiles => {
       const relativePath = path.relative(globalState.projectRootPath, projectFiles.dir);
       return relativePath.startsWith(srcPath.dir);

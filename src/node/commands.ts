@@ -5,7 +5,6 @@ export interface IRegisterCommand {
   name?: string;
   description?: string;
   action?: any;
-  isDefault?: boolean;
   options?: any[][];
 }
 

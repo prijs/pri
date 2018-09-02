@@ -1,4 +1,3 @@
-import * as fs from 'fs-extra';
 import * as gulp from 'gulp';
 import * as gulpBabel from 'gulp-babel';
 // import * as gulpSourcemaps from "gulp-sourcemaps"

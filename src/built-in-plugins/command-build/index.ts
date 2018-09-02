@@ -102,12 +102,7 @@ export const buildProject = async (
   }
 };
 
-export const buildComponent = async (
-  instance: typeof pri,
-  opts: {
-    publicPath?: string;
-  } = {}
-) => {
+export const buildComponent = async (instance: typeof pri) => {
   await prepareBuild(instance);
 
   await spinner('Building...', async () => {
@@ -132,10 +127,14 @@ export default async (instance: typeof pri) => {
     options: [['-c, --cloud', 'Cloud build tag'], ['-p, --publicPath <pathname>', 'rewrite publicPath']],
     description: text.commander.build.description,
     action: async (options: any) => {
-      if (instance.projectType === 'component') {
-        await buildComponent(instance, options);
-      } else {
-        await buildProject(instance, options);
+      switch (instance.projectType) {
+        case 'project':
+          await buildProject(instance, options);
+          break;
+        case 'component':
+        case 'plugin':
+          await buildComponent(instance);
+        default:
       }
 
       // For async register commander, process will be exit automatic.
