@@ -1,5 +1,5 @@
-node_modules
-dist
-.cache
-coverage
-.nyc_output
+/node_modules
+/dist
+/.cache
+/coverage
+/.nyc_output
