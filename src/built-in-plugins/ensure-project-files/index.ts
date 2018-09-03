@@ -147,8 +147,14 @@ const ensurePackageJson = (instance: typeof pri) =>
     pipeContent: (prev: string) => {
       const oldPackageJson: any = prev ? JSON.parse(prev) : {};
 
-      // Remove pri dep in dependencies
-      _.unset(oldPackageJson, 'dependencies.pri');
+      if (instance.projectType === 'project') {
+        _.unset(oldPackageJson, 'devDependencies.pri');
+        _.set(oldPackageJson, `dependencies.${PRI_PACKAGE_NAME}`, pkg.version);
+      } else {
+        // Remove pri dep in dependencies
+        _.unset(oldPackageJson, 'dependencies.pri');
+        _.set(oldPackageJson, `devDependencies.${PRI_PACKAGE_NAME}`, pkg.version);
+      }
 
       return (
         JSON.stringify(
@@ -163,7 +169,6 @@ const ensurePackageJson = (instance: typeof pri) =>
               test: 'pri test',
               format: "tslint --fix './src/**/*.?(ts|tsx)' && prettier --write './src/**/*.?(ts|tsx)'"
             },
-            devDependencies: { [PRI_PACKAGE_NAME]: pkg.version },
             pri: { type: instance.projectType }
           }),
           null,
