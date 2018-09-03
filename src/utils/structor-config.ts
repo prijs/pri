@@ -155,5 +155,6 @@ export const ignoreScanFiles = [
   'tslint.json',
   'npm-debug.log',
   '.idea',
-  '.node'
+  '.node',
+  '.travis.yml'
 ];
