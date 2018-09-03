@@ -1,13 +1,9 @@
 import { execSync } from 'child_process';
-import * as fs from 'fs-extra';
-import * as open from 'opn';
 import * as path from 'path';
 import { pri } from '../../node';
-import { globalState } from '../../utils/global-state';
 import { log } from '../../utils/log';
 import { findNearestNodemodulesFile } from '../../utils/npm-finder';
 import { tempPath, testsPath } from '../../utils/structor-config';
-import text from '../../utils/text';
 import { tsPlusBabel } from '../../utils/ts-plus-babel';
 
 export const CommandTest = async (instance: typeof pri) => {
@@ -63,6 +59,7 @@ export default async (instance: typeof pri) => {
     description: 'Run tests.',
     action: async () => {
       await instance.project.lint(false);
+      await instance.project.ensureProjectFiles();
       await instance.project.checkProjectFiles();
       await CommandTest(instance);
 
