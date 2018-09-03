@@ -111,25 +111,9 @@ const gitIgnores: string[] = [
   '.DS_Store',
   'coverage',
   '.nyc_output',
-  'npm-debug.log'
+  'npm-debug.log',
+  'package-lock.json'
 ];
-
-// // Add distDir to gitIgnore
-// // EG: /dist -> '/dist'
-// // EG: /a/b/c -> ['/a', '/a/b', '/a/b/c']
-// const trimedDistDir = _.trimEnd(globalState.projectConfig.distDir, '/');
-// const distPaths = trimedDistDir.split('/');
-// distPaths.reduce((prev, current) => {
-//   if (prev === '') {
-//     gitIgnores.push(current);
-//     return current;
-//   } else {
-//     prev += '/' + current;
-//     gitIgnores.push(prev);
-//     return prev;
-//   }
-// }, '');
-// gitIgnores = _.union(gitIgnores);
 
 export { gitIgnores };
 

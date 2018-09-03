@@ -141,6 +141,12 @@ const ensureNpmignore = (instance: typeof pri) =>
     pipeContent: () => npmIgnores.map(name => `/${name}`).join('\n')
   });
 
+const ensureNpmrc = (instance: typeof pri) =>
+  instance.project.addProjectFiles({
+    fileName: '.npmrc',
+    pipeContent: () => `package-lock=false`
+  });
+
 const ensurePackageJson = (instance: typeof pri) =>
   instance.project.addProjectFiles({
     fileName: 'package.json',
