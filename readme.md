@@ -6,7 +6,7 @@ Pri is a toolkit for building web applications with React. **Helps you deal with
 
 Pri can help you develop project and component.
 
-- [Regular routing](https://prijs.github.io/pri-docs/project/pages/). Create pages according to rules without writing routing configuration.
+- [convention routing](https://prijs.github.io/pri-docs/project/pages/). Create pages according to convention without writing routing configuration.
 - [Markdown support](https://prijs.github.io/pri-docs/project/markdown-page/). Write markdown page easily, by rename `.tsx` to `.md` in `pages` folder.
 - [Static export](https://prijs.github.io/pri-docs/project/deploy-to-github-pages/). Very easy to deploy to github pages.
 - [Plugin mechanism](https://prijs.github.io/pri-docs/plugin/). 20+ built-in plugins, and more community plug-ins.
@@ -14,7 +14,7 @@ Pri can help you develop project and component.
 - [WebUI](https://prijs.github.io/pri-docs/project/webui/). You can create page, or config files by click button in webui!
 - [Dynamic Import](https://prijs.github.io/pri-docs/project/dynamic-import/). Automatic page level dynamic routing.
 - [Typescript](https://prijs.github.io/pri-docs/project/typescript/). 100% typescript source code, for project maintainability considerations, only TS projects are supported!
-- [Configuration file auto refresh](https://prijs.github.io/pri-docs/project/project-files/). Never worry about configuration files and updates of configuration files. This is automatic.
+- [Configuration file auto creator](https://prijs.github.io/pri-docs/project/project-files/). Never worry about configuration files and updates of configuration files. This is automatic.
 - [Auto dll](https://prijs.github.io/pri-docs/project/auto-dlls/). Speed up hot loader.
 
 ## Docs
