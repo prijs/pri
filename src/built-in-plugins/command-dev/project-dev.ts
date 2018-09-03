@@ -102,7 +102,9 @@ const debugProject = async (instance: typeof pri) => {
     projectState.set('dashboardHash', status.hash);
   }
   const stdoutOfAnyType = process.stdout as any;
-  stdoutOfAnyType.clearLine(0);
+  try {
+    stdoutOfAnyType.clearLine(0);
+  } catch {}
 
   log(colors.blue('\nStart dev server.\n'));
 
