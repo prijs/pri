@@ -6,7 +6,7 @@ Pri is a toolkit for building web applications with React. **Helps you deal with
 
 Pri can help you develop project and component.
 
-- [convention routing](https://prijs.github.io/pri-docs/project/pages/). Create pages according to convention without writing routing configuration.
+- [Convention routing](https://prijs.github.io/pri-docs/project/pages/). Create pages according to convention without writing routing configuration.
 - [Markdown support](https://prijs.github.io/pri-docs/project/markdown-page/). Write markdown page easily, by rename `.tsx` to `.md` in `pages` folder.
 - [Static export](https://prijs.github.io/pri-docs/project/deploy-to-github-pages/). Very easy to deploy to github pages.
 - [Plugin mechanism](https://prijs.github.io/pri-docs/plugin/). 20+ built-in plugins, and more community plug-ins.
