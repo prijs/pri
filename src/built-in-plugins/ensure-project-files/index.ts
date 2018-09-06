@@ -16,6 +16,7 @@ export default async (instance: typeof pri) => {
     ensureGitignore(instance);
     ensureNpmignore(instance);
     ensureTsconfig(instance);
+    ensureJestTsconfig(instance);
     ensureVscode(instance);
     ensurePrettierrc(instance);
     ensureTslint(instance);
@@ -83,6 +84,25 @@ const ensureTsconfig = (instance: typeof pri) =>
           2
         ) + '\n'
       ); // Make sure ./src structor. # https://github.com/Microsoft/TypeScript/issues/5134
+    }
+  });
+
+const ensureJestTsconfig = (instance: typeof pri) =>
+  instance.project.addProjectFiles({
+    fileName: 'tsconfig.jest.json',
+    pipeContent: async () => {
+      return (
+        JSON.stringify(
+          {
+            extends: './tsconfig',
+            compilerOptions: {
+              module: 'commonjs'
+            }
+          },
+          null,
+          2
+        ) + '\n'
+      );
     }
   });
 

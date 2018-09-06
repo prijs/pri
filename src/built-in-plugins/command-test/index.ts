@@ -8,27 +8,36 @@ import { tempPath, testsPath } from '../../utils/structor-config';
 export const CommandTest = async (instance: typeof pri) => {
   execSync(
     [
-      findNearestNodemodulesFile('/.bin/nyc'),
-      `--reporter lcov`,
-      `--reporter text`,
-      `--reporter json`,
-      `--exclude ${testsPath.dir}/**/*.ts`,
-      `${findNearestNodemodulesFile('/.bin/ava')}`,
-      `--files ${path.join(instance.projectRootPath, `${testsPath.dir}/**/*.ts`)}`,
-      `--fail-fast`
-    ].join(' '),
+      findNearestNodemodulesFile('/.bin/jest'),
+      `--testRegex "/${testsPath.dir}/.*\\.tsx?$"`,
+      `
+      --transform '${JSON.stringify({
+        '^.+\\.tsx?$': 'ts-jest'
+      })}'
+      `,
+      `--moduleFileExtensions ts tsx js jsx`,
+      `
+      --globals '${JSON.stringify({
+        'ts-jest': {
+          babelConfig: {
+            presets: ['@babel/env']
+          }
+        }
+      })}'
+      `,
+      `--coverage`
+    ]
+      .map(each => each.trim())
+      .join(' '),
     {
       stdio: 'inherit',
       cwd: instance.projectRootPath
     }
   );
 
-  // remove .nyc_output
-  execSync(`${findNearestNodemodulesFile('.bin/rimraf')} ${path.join(instance.projectRootPath, '.nyc_output')}`);
-
   // Open test html in brower
   log(
-    `Open this url to see code coverage: file:///${path.join(
+    `Open this url to see code coverage: file://${path.join(
       instance.projectRootPath,
       'coverage/lcov-report/index.html'
     )}`

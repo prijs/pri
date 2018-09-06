@@ -136,6 +136,7 @@ export const ignoreScanFiles = [
   'package-lock.json',
   'package.json',
   'tsconfig.json',
+  'tsconfig.jest.json',
   'tslint.json',
   'npm-debug.log',
   '.idea',
