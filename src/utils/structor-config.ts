@@ -141,5 +141,6 @@ export const ignoreScanFiles = [
   'npm-debug.log',
   '.idea',
   '.node',
-  '.travis.yml'
+  '.travis.yml',
+  'readme.md'
 ];
