@@ -80,6 +80,9 @@ export const getWebpackConfig = async (opts: IOptions) => {
   if (!publicPath.endsWith('/')) {
     publicPath += '/';
   }
+  if (!publicPath.startsWith('/')) {
+    publicPath = '/' + publicPath;
+  }
 
   const stats = { warnings: false, version: false, modules: false, entrypoints: false, hash: false };
 
