@@ -142,5 +142,8 @@ export const ignoreScanFiles = [
   '.idea',
   '.node',
   '.travis.yml',
-  'readme.md'
+  'license',
+  'LICENSE',
+  'readme.md',
+  'README.md'
 ];

@@ -13,7 +13,7 @@ import {
   utilPath
 } from '../../utils/structor-config';
 
-const whiteList = [CONFIG_FILE, 'readme.md', 'LICENSE', srcPath.dir, docsPath.dir, '.git', `src${path.sep}components`];
+const whiteList = [CONFIG_FILE, srcPath.dir, docsPath.dir, '.git', `src${path.sep}components`];
 
 export default async (instance: typeof pri) => {
   const allIgnores = _.union(gitIgnores, npmIgnores);
