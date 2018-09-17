@@ -106,6 +106,7 @@ const gitIgnores: string[] = [
   'node_modules',
   '.cache',
   '.vscode',
+  '.idea',
   tempPath.dir,
   globalState.projectConfig.distDir,
   '.DS_Store',

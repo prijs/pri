@@ -1,6 +1,7 @@
 import * as fs from 'fs-extra';
 import * as HtmlWebpackPlugin from 'html-webpack-plugin';
-import * as MiniCssExtractPlugin from 'mini-css-extract-plugin';
+// TODO:
+// import * as MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import * as path from 'path';
 import * as webpack from 'webpack';
 import { globalState } from '../utils/global-state';
@@ -65,11 +66,13 @@ export const getWebpackConfig = async (opts: IOptions) => {
    * Helper
    */
   function extraCssInProd(...loaders: any[]) {
-    if (globalState.isDevelopment) {
-      return [styleLoader, ...loaders];
-    } else {
-      return [MiniCssExtractPlugin.loader, ...loaders];
-    }
+    return [styleLoader, ...loaders];
+    // TODO:
+    // if (globalState.isDevelopment) {
+    //   return [styleLoader, ...loaders];
+    // } else {
+    //   return [MiniCssExtractPlugin.loader, ...loaders];
+    // }
   }
 
   const distDir = opts.distDir || path.join(globalState.projectRootPath, globalState.projectConfig.distDir);
@@ -178,7 +181,8 @@ export const getWebpackConfig = async (opts: IOptions) => {
       }
     };
 
-    config.plugins.push(new MiniCssExtractPlugin());
+    // TODO:
+    // config.plugins.push(new MiniCssExtractPlugin());
 
     babelLoader.options.plugins.push(['import', { libraryName: 'antd' }]);
     cssLoader.options.minimize = true;
