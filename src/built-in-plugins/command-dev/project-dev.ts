@@ -207,13 +207,6 @@ function debugProjectPrepare(instance: typeof pri, dashboardClientPort: number) 
         str => `
         ${str}
         const webUICss = \`
-          html,
-          body {
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden;
-          }
-
           #pri-help-button {
             position: fixed;
             display: flex;
