@@ -1,6 +1,6 @@
 {
   "name": "pri",
-  "version": "1.0.0-beta18",
+  "version": "1.0.0-beta19",
   "types": "src/node/index.ts",
   "main": "built/node/index.js",
   "scripts": {
@@ -85,7 +85,7 @@
     "html-webpack-plugin": "^3.2.0",
     "inquirer": "^6.2.0",
     "isomorphic-fetch": "^2.2.1",
-    "jest": "^23.5.0",
+    "jest": "^21.3.0-beta.15",
     "koa": "^2.5.2",
     "koa-compress": "^3.0.0",
     "koa-connect": "^2.0.1",
