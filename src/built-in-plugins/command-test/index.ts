@@ -56,10 +56,10 @@ export default async (instance: typeof pri) => {
     name: 'test',
     description: 'Run tests.',
     action: async () => {
-      // await instance.project.lint();
-      // await instance.project.ensureProjectFiles();
-      // await instance.project.checkProjectFiles();
-      // await CommandTest(instance);
+      await instance.project.lint();
+      await instance.project.ensureProjectFiles();
+      await instance.project.checkProjectFiles();
+      await CommandTest(instance);
 
       // For async register commander, process will be exit automatic.
       process.exit(0);
