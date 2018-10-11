@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 import * as path from 'path';
 import * as prettier from 'prettier';
 import { pri } from '../../node';
-import { ensureEndWithSlash } from '../../utils/functional';
+import { ensureEndWithSlash, ensureStartWithSlash } from '../../utils/functional';
 import { tempPath } from '../../utils/structor-config';
 
 export default async (instance: typeof pri) => {
@@ -14,10 +14,8 @@ export default async (instance: typeof pri) => {
         instance.projectConfig.useServiceWorker
           ? `
         if (navigator.serviceWorker) {
-          navigator.serviceWorker.register("${path.join(
-            instance.projectConfig.baseHref,
-            'sw.js'
-          )}", {scope: "${ensureEndWithSlash(instance.projectConfig.baseHref)}"})
+          navigator.serviceWorker.register('/sw.js'
+          )}", {scope: "${ensureStartWithSlash(ensureEndWithSlash(instance.projectConfig.baseHref))}"})
         }
       `
           : ''

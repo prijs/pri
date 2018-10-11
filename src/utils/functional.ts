@@ -15,6 +15,14 @@ export function ensureEndWithSlash(str: string) {
   }
 }
 
+export function ensureStartWithSlash(str: string) {
+  if (str.startsWith('/')) {
+    return str;
+  } else {
+    return '/' + str;
+  }
+}
+
 export function ensureStartWithWebpackRelativePoint(str: string) {
   if (str.startsWith('/')) {
     throw Error(`${str} is an absolute path!`);
