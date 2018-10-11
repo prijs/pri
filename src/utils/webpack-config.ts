@@ -178,14 +178,6 @@ export const getWebpackConfig = async (opts: IOptions) => {
       }
     };
 
-    config.plugins.push(
-      new webpack.DefinePlugin({
-        'process.env': {
-          NODE_ENV: JSON.stringify('production')
-        }
-      })
-    );
-
     // TODO:
     // config.plugins.push(new MiniCssExtractPlugin());
 

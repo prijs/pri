@@ -56,7 +56,7 @@ export default async (instance: typeof pri) => {
         const mockInfo = mockList.find(mock => requestUrl.hostname === mock.url.hostname && requestUrl.pathname === mock.url.pathname)
 
         if (mockInfo) {
-          var responseInit = { status: 200, statusText: "OK", headers: { "Content-Type": "application/json" } }
+          var responseInit = { status: 200, statusText: "OK", headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" } }
 
           if (typeof mockInfo.value === 'function') {
             event.respondWith(
