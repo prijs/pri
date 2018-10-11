@@ -1,6 +1,6 @@
 {
   "name": "pri",
-  "version": "1.0.0-beta22",
+  "version": "1.0.0-beta23",
   "types": "src/node/index.ts",
   "main": "built/node/index.js",
   "scripts": {
@@ -85,7 +85,7 @@
     "html-webpack-plugin": "^3.2.0",
     "inquirer": "^6.2.0",
     "isomorphic-fetch": "^2.2.1",
-    "jest": "^21.3.0-beta.15",
+    "jest": "^23.6.0",
     "koa": "^2.5.2",
     "koa-compress": "^3.0.0",
     "koa-connect": "^2.0.1",
@@ -114,7 +114,7 @@
     "socket.io-client": "^2.1.1",
     "style-loader": "^0.23.0",
     "styled-components": "^3.4.5",
-    "ts-jest": "^23.1.4",
+    "ts-jest": "^23.10.4",
     "ts-loader": "^4.5.0",
     "tslint": "^5.11.0",
     "tslint-config-prettier": "^1.15.0",
