@@ -72,7 +72,7 @@ export const buildProject = async (
       staticHtmlPaths.forEach(staticHtmlPath => {
         config.plugins.push(
           new HtmlWebpackPlugin({
-            title: instance.projectConfig.title,
+            title: instance.projectConfig.title || globalState.projectRootPath.split(path.sep).pop(),
             filename: staticHtmlPath,
             template: path.join(__dirname, '../../../template-project.ejs')
           })

@@ -7,7 +7,7 @@ export class ProjectConfig {
   /**
    * Title for html <title>.
    */
-  public title?: string = 'pri';
+  public title?: string = null;
   /**
    * Dev server port, when execute npm start.
    */
