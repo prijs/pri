@@ -172,14 +172,16 @@ const ensurePackageJson = (instance: typeof pri) =>
     fileName: 'package.json',
     pipeContent: (prev: string) => {
       const oldPackageJson: any = prev ? JSON.parse(prev) : {};
+      const projectPriVersion =
+        _.get(oldPackageJson, 'devDependencies.pri') || _.get(oldPackageJson, 'dependencies.pri') || pkg.version;
 
       if (instance.projectType === 'project') {
         _.unset(oldPackageJson, 'devDependencies.pri');
-        _.set(oldPackageJson, `dependencies.${PRI_PACKAGE_NAME}`, pkg.version);
+        _.set(oldPackageJson, `dependencies.${PRI_PACKAGE_NAME}`, projectPriVersion);
       } else {
         // Remove pri dep in dependencies
         _.unset(oldPackageJson, 'dependencies.pri');
-        _.set(oldPackageJson, `devDependencies.${PRI_PACKAGE_NAME}`, pkg.version);
+        _.set(oldPackageJson, `devDependencies.${PRI_PACKAGE_NAME}`, projectPriVersion);
       }
 
       return (
