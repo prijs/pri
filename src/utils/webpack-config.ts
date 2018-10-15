@@ -161,7 +161,7 @@ export const getWebpackConfig = async (opts: IOptions) => {
     if (opts.htmlTemplatePath) {
       config.plugins.push(
         new HtmlWebpackPlugin({
-          title: 'Pre Dev',
+          title: globalState.projectConfig.title || globalState.projectRootPath.split(path.sep).pop(),
           filename: 'index.html',
           template: opts.htmlTemplatePath,
           htmlTemplateArgs: opts.htmlTemplateArgs
