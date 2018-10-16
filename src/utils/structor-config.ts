@@ -146,5 +146,7 @@ export const ignoreScanFiles = [
   'license',
   'LICENSE',
   'readme.md',
-  'README.md'
+  'README.md',
+  'history.md',
+  'HISTORY.md'
 ];
