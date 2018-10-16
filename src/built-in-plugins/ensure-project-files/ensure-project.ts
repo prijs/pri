@@ -65,10 +65,8 @@ export const ensureTest = (instance: typeof pri) =>
         ? prev
         : prettier.format(
             `
-              import test from "ava"
-
-              test("Example", t => {
-                t.true(true)
+              test("Example", () => {
+                expect(true).toBe(true)
               })
             `,
             { ...prettierConfig, parser: 'typescript' }

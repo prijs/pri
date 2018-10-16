@@ -95,7 +95,6 @@ function ensureTest(instance: typeof pri) {
     pipeContent: prev =>
       prettier.format(
         `
-          import test from "ava"
           import * as path from "path"
           import { judgeHasComponents } from "../src"
 
@@ -104,23 +103,23 @@ function ensureTest(instance: typeof pri) {
           const testFilePaths = (filePaths: string[]) =>
             filePaths.map(filePath => path.join(testProjectRootPath, filePath)).map(filePath => path.parse(filePath))
 
-          test("Single file", t => {
+          test("Single file", () => {
             const relativeProjectFiles = ["src/components"]
-            t.true(judgeHasComponents(testProjectRootPath, testFilePaths(relativeProjectFiles)))
+            expect(judgeHasComponents(testProjectRootPath, testFilePaths(relativeProjectFiles))).toBe(true)
           })
 
-          test("Multiple files", t => {
+          test("Multiple files", () => {
             const relativeProjectFiles = [
               "src/components/index.tsx",
               "src/components/button/index.tsx",
               "src/components/select/index.tsx"
             ]
-            t.true(judgeHasComponents(testProjectRootPath, testFilePaths(relativeProjectFiles)))
+            expect(judgeHasComponents(testProjectRootPath, testFilePaths(relativeProjectFiles))).toBe(true)
           })
 
-          test("hasn't components", t => {
+          test("hasn't components", () => {
             const relativeProjectFiles = ["src/pages/index.tsx"]
-            t.false(judgeHasComponents(testProjectRootPath, testFilePaths(relativeProjectFiles)))
+            expect(judgeHasComponents(testProjectRootPath, testFilePaths(relativeProjectFiles))).toBe(true)
           })
         `,
         { ...prettierConfig, parser: 'typescript' }
