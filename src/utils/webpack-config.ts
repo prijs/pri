@@ -106,7 +106,16 @@ export const getWebpackConfig = async (opts: IOptions) => {
     module: {
       rules: [
         {
-          test: /\.(tsx|ts)?$/,
+          test: /\.jsx?$/,
+          use: [babelLoader],
+          include: plugin.buildConfigJsLoaderIncludePipes.reduce(
+            (options, fn) => fn(options),
+            defaultSourcePathToBeResolve
+          ),
+          exclude: plugin.buildConfigJsLoaderExcludePipes.reduce((options, fn) => fn(options), [])
+        },
+        {
+          test: /\.tsx?$/,
           use: [babelLoader, tsLoader],
           include: plugin.buildConfigTsLoaderIncludePipes.reduce(
             (options, fn) => fn(options),

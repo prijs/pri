@@ -2,6 +2,7 @@ declare module '@babel/preset-env';
 declare module '@babel/preset-react';
 declare module '@babel/preset-stage-2';
 declare module '@babel/plugin-transform-runtime';
+declare module '@babel/preset/react';
 declare module 'opn';
 declare module 'walk';
 declare module 'colors';

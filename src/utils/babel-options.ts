@@ -10,11 +10,12 @@ import babelPluginSyntaxDynamicImport from '@babel/plugin-syntax-dynamic-import'
 import babelPluginSyntaxImportMeta from '@babel/plugin-syntax-import-meta';
 import transformRuntime from '@babel/plugin-transform-runtime';
 import babelEnv from '@babel/preset-env';
+import babelReact from '@babel/preset/react';
 
 export const babelOptions = {
   babelrc: false,
   comments: true,
-  presets: [[babelEnv]],
+  presets: [[babelEnv, babelReact]],
   plugins: [
     [transformRuntime],
     [babelPluginProposalDecorators, { legacy: true }],

@@ -1,6 +1,6 @@
 {
   "name": "pri",
-  "version": "1.0.0-beta32",
+  "version": "1.0.0-beta33",
   "types": "src/node/index.ts",
   "main": "built/node/index.js",
   "scripts": {
@@ -26,7 +26,6 @@
     "url": "git+https://github.com/prijs/pri.git"
   },
   "dependencies": {
-    "babel-core": "^7.0.0-bridge.0",
     "@babel/core": "^7.1.2",
     "@babel/plugin-proposal-class-properties": "^7.1.0",
     "@babel/plugin-proposal-decorators": "^7.1.2",
@@ -40,6 +39,7 @@
     "@babel/plugin-syntax-import-meta": "^7.0.0",
     "@babel/plugin-transform-runtime": "^7.1.0",
     "@babel/preset-env": "^7.1.0",
+    "@babel/preset-react": "^7.0.0",
     "@babel/runtime": "^7.1.2",
     "@koa/cors": "^2.2.2",
     "@types/chokidar": "^1.7.5",
@@ -64,6 +64,7 @@
     "@types/webpack-serve": "^2.0.0",
     "@types/yargs": "^11.1.1",
     "antd": "^3.8.4",
+    "babel-core": "^7.0.0-bridge.0",
     "babel-loader": "^8.0.0",
     "babel-plugin-import": "^1.8.0",
     "body-parser": "^1.18.3",
