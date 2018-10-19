@@ -156,7 +156,7 @@ const ensureGitignore = (instance: typeof pri) =>
     pipeContent: (prev = '') => {
       const values = prev.split('\n').filter(eachRule => !!eachRule);
       const gitIgnoresInRoot = gitIgnores.map(name => `/${name}`);
-      return _.merge(values, gitIgnoresInRoot).join('\n');
+      return _.union(values, gitIgnoresInRoot).join('\n');
     }
   });
 
@@ -166,7 +166,7 @@ const ensureNpmignore = (instance: typeof pri) =>
     pipeContent: (prev = '') => {
       const values = prev.split('\n').filter(eachRule => !!eachRule);
       const npmIgnoresInRoot = npmIgnores.map(name => `/${name}`);
-      return _.merge(values, npmIgnoresInRoot).join('\n');
+      return _.union(values, npmIgnoresInRoot).join('\n');
     }
   });
 

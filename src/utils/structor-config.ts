@@ -142,6 +142,7 @@ export const ignoreScanFiles = [
   'npm-debug.log',
   '.idea',
   '.node',
+  '.npmrc',
   '.travis.yml',
   'license',
   'LICENSE',
