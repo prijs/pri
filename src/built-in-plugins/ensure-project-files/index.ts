@@ -15,6 +15,7 @@ export default async (instance: typeof pri) => {
   instance.event.once('beforeEnsureFiles', () => {
     ensureGitignore(instance);
     ensureNpmignore(instance);
+    ensureNpmrc(instance);
     ensureTsconfig(instance);
     ensureJestTsconfig(instance);
     ensureVscode(instance);
@@ -152,13 +153,21 @@ const ensureVscode = (instance: typeof pri) =>
 const ensureGitignore = (instance: typeof pri) =>
   instance.project.addProjectFiles({
     fileName: '.gitignore',
-    pipeContent: () => gitIgnores.map(name => `/${name}`).join('\n')
+    pipeContent: (prev = '') => {
+      const values = prev.split('\n').filter(eachRule => !!eachRule);
+      const gitIgnoresInRoot = gitIgnores.map(name => `/${name}`);
+      return _.merge(values, gitIgnoresInRoot).join('\n');
+    }
   });
 
 const ensureNpmignore = (instance: typeof pri) =>
   instance.project.addProjectFiles({
     fileName: '.npmignore',
-    pipeContent: () => npmIgnores.map(name => `/${name}`).join('\n')
+    pipeContent: (prev = '') => {
+      const values = prev.split('\n').filter(eachRule => !!eachRule);
+      const npmIgnoresInRoot = npmIgnores.map(name => `/${name}`);
+      return _.merge(values, npmIgnoresInRoot).join('\n');
+    }
   });
 
 const ensureNpmrc = (instance: typeof pri) =>
