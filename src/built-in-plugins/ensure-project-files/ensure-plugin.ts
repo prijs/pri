@@ -119,7 +119,7 @@ function ensureTest(instance: typeof pri) {
 
           test("hasn't components", () => {
             const relativeProjectFiles = ["src/pages/index.tsx"]
-            expect(judgeHasComponents(testProjectRootPath, testFilePaths(relativeProjectFiles))).toBe(true)
+            expect(judgeHasComponents(testProjectRootPath, testFilePaths(relativeProjectFiles))).toBe(false)
           })
         `,
         { ...prettierConfig, parser: 'typescript' }
