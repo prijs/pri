@@ -119,12 +119,14 @@ const gitIgnores: string[] = [
 export { gitIgnores };
 
 let npmIgnores = gitIgnores.slice();
-// Npm ignore test path
 npmIgnores.push(testsPath.dir);
+npmIgnores.push('packages');
+
 // Npm do not ignore built path!
 const builtPathIndex = npmIgnores.findIndex(name => name === globalState.projectConfig.distDir);
 npmIgnores.splice(builtPathIndex, 1);
 npmIgnores = _.union(npmIgnores);
+
 export { npmIgnores };
 
 export const ignoreScanFiles = [
@@ -144,6 +146,7 @@ export const ignoreScanFiles = [
   '.node',
   '.npmrc',
   '.travis.yml',
+  '.prettierignore',
   'license',
   'LICENSE',
   'readme.md',

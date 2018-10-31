@@ -88,7 +88,7 @@ export default async (packageName: string, semverStr: semver.ReleaseType) => {
   // Add tag
 
   // Run npm publish
-  execSync(`npm publish --folder "${packagePath}"`, {
+  execSync(`npm explore "${packagePath}" -- npm publish`, {
     stdio: 'inherit'
   });
 };
