@@ -7,7 +7,7 @@ export const analyseProject = async () => {
   const files = await walkProjectFiles();
 
   // Clear analyseInfo
-  plugin.analyseInfo = {};
+  Object.keys(plugin.analyseInfo).forEach(key => delete plugin.analyseInfo[key]);
 
   // Clear pipe
   pipe.clear();
@@ -15,7 +15,7 @@ export const analyseProject = async () => {
   plugin.projectAnalyses.forEach(projectAnalyse => {
     const result = projectAnalyse(files, pipe.set);
     if (result && typeof result === 'object') {
-      Object.keys(result).forEach(key=>plugin.analyseInfo[key]=result[key]);
+      Object.keys(result).forEach(key => (plugin.analyseInfo[key] = result[key]));
     }
   });
 
