@@ -94,7 +94,7 @@ export const getWebpackConfig = async (opts: IOptions) => {
   const config: webpack.Configuration = {
     mode: opts.mode,
     entry: opts.entryPath,
-    devtool: opts.mode === 'development' ? 'source-map' : null,
+    devtool: opts.mode === 'development' ? 'source-map' : false,
     output: {
       path: distDir,
       filename: outFileName,
