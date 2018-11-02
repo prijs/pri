@@ -15,10 +15,7 @@ export const analyseProject = async () => {
   plugin.projectAnalyses.forEach(projectAnalyse => {
     const result = projectAnalyse(files, pipe.set);
     if (result && typeof result === 'object') {
-      plugin.analyseInfo = {
-        ...plugin.analyseInfo,
-        ...result
-      };
+      Object.keys(result).forEach(key=>plugin.analyseInfo[key]=result[key]);
     }
   });
 
