@@ -1,6 +1,6 @@
 {
   "name": "pri",
-  "version": "1.0.0-beta43",
+  "version": "1.0.0-beta44",
   "types": "src/node/index.ts",
   "main": "built/node/index.js",
   "scripts": {
@@ -105,9 +105,9 @@
     "pre-commit": "^1.2.2",
     "prettier": "^1.14.2",
     "raw-loader": "^0.5.1",
-    "react": "^16.5.0",
-    "react-dom": "^16.5.0",
-    "react-hot-loader": "^4.3.5",
+    "react": "^16.7.0-alpha.0",
+    "react-dom": "^16.7.0-alpha.0",
+    "react-hot-loader": "^4.3.12",
     "react-loadable": "^5.5.0",
     "react-router-dom": "^4.3.1",
     "rimraf": "^2.6.2",
