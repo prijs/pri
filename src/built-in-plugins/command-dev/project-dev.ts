@@ -189,12 +189,14 @@ function debugProjectPrepare(instance: typeof pri, dashboardClientPort: number) 
       entry.pipeEntryHeader(
         header => `
         ${header}
-        import { hot } from "react-hot-loader"
+        import { hot, setConfig } from "react-hot-loader"
       `
       );
 
       entry.pipeEntryRender(
         str => `
+        setConfig({ pureSFC: true })
+
         const HotApp = hot(module)(App)
         ${str}
       `

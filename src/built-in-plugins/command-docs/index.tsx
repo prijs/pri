@@ -164,7 +164,7 @@ function prepare(instance: typeof pri, realDocsPath: string, docsEntryPath: stri
       `
       import * as React from "react"
       import * as ReactDOM from 'react-dom'
-      import { hot } from 'react-hot-loader'
+      import { hot, setConfig } from 'react-hot-loader'
       
       const DocsWrapper = require("${path.join(__dirname, 'docs-wrapper')}").default
 
@@ -201,6 +201,8 @@ function prepare(instance: typeof pri, realDocsPath: string, docsEntryPath: stri
       }
 
       const ROOT_ID = 'root';
+
+      setConfig({ pureSFC: true })
 
       const HotDocs = hot(module)(Docs);
 
