@@ -71,7 +71,10 @@ const ensureTsconfig = (instance: typeof pri) =>
               rootDir: './',
               baseUrl: '.',
               lib: ['dom', 'es5', 'es6', 'scripthost'],
-              paths: { [PRI_PACKAGE_NAME + '/*']: [PRI_PACKAGE_NAME, path.join(tempTypesPath.dir, '*')] }
+              paths: {
+                [PRI_PACKAGE_NAME + '/*']: [PRI_PACKAGE_NAME, path.join(tempTypesPath.dir, '*')],
+                '@/*': ['src/*']
+              }
             },
             include: [
               '.temp/**/*',
