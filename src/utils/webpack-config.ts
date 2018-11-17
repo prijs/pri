@@ -153,7 +153,7 @@ export const getWebpackConfig = async (opts: IOptions) => {
         path.join(__dirname, '../../node_modules')
       ],
       alias: {
-        '@': '/src'
+        '@': path.join(globalState.projectRootPath, '/src')
       },
       extensions: ['.js', '.jsx', '.tsx', '.ts', '.scss', '.less', '.css']
     },
