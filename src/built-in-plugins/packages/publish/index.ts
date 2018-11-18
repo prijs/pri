@@ -83,12 +83,11 @@ export default async (packageName: string, semverStr: semver.ReleaseType) => {
 
   await push(packageName, `Publish ${newVersion}`);
 
-  // TODO:
-
-  // Add tag
+  // Build TODO:
 
   // Run npm publish
-  execSync(`npm explore "${packagePath}" -- npm publish`, {
-    stdio: 'inherit'
+  execSync(`npm publish`, {
+    stdio: 'inherit',
+    cwd: packagePath
   });
 };

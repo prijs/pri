@@ -26,8 +26,7 @@ export function ensurePackageJson(instance: typeof pri) {
               '@babel/runtime': '^7.0.0'
             },
             scripts: {
-              prepublishOnly: 'npm run build',
-              release: 'npm publish'
+              publish: 'npm run build && npm publish'
             }
           }),
           null,

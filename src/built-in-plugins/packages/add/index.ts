@@ -44,6 +44,10 @@ export default async (gitUri: string) => {
         return error(`There is no property "name" in ${gitUri} package.json.`);
       }
 
+      if (get(packageJson, 'pri.type') !== 'component') {
+        return error(`You can only using pri packages with "pri component" type.`);
+      }
+
       const projectPackageJson = await getPackageJson(globalState.projectRootPath);
       const importPaths = await getExternalImportsFromProjectRoot(tempFolderPath);
       const packageDeps = {

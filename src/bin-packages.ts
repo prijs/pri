@@ -9,7 +9,7 @@ import * as updateNotifier from 'update-notifier';
 import * as pkg from '../package.json';
 
 import commandAdd from './built-in-plugins/packages/add';
-import commandDev from './built-in-plugins/packages/dev';
+import commandDocs from './built-in-plugins/packages/docs';
 import commandPublish from './built-in-plugins/packages/publish';
 import commandPush from './built-in-plugins/packages/push';
 import commandRemove from './built-in-plugins/packages/remove';
@@ -36,17 +36,10 @@ async function init() {
     });
 
   commander
-    .command(`dev [packageName]`)
-    .description('Develop package.')
-    .action(async (packageName: string) => {
-      await commandDev(packageName);
-    });
-
-  commander
     .command(`docs [packageName]`)
     .description('Develop package docs.')
     .action(async (packageName: string) => {
-      await commandDev(packageName);
+      await commandDocs(packageName);
     });
 
   commander
