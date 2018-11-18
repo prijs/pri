@@ -1,7 +1,7 @@
-import styled, { injectGlobal } from 'styled-components';
+import styled, { createGlobalStyle } from 'styled-components';
 
 // tslint:disable-next-line:no-unused-expression
-injectGlobal`
+export const GlobalStyles = createGlobalStyle`
   * {
     font-size: 12px;
     &::-webkit-scrollbar {

@@ -38,6 +38,8 @@ export default class Docs extends React.PureComponent<Props, State> {
     const DocInstance = currentDoc.element.default;
     return (
       <S.Container>
+        <S.GlobalStyles />
+
         {this.props.docs.length > 1 && <S.LeftContainer>{this.renderLeftMenus()}</S.LeftContainer>}
 
         <S.RightContainer>

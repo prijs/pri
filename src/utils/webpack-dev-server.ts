@@ -1,18 +1,13 @@
-import * as history from 'connect-history-api-fallback';
-import * as koaCompress from 'koa-compress';
-import * as convert from 'koa-connect';
-import * as koaMount from 'koa-mount';
-import * as koaStatic from 'koa-static';
+import * as express from 'express';
 import * as normalizePath from 'normalize-path';
 import * as open from 'opn';
 import * as path from 'path';
 import * as urlJoin from 'url-join';
 import * as webpack from 'webpack';
-import * as webpackServe from 'webpack-serve';
-import * as webpackServeWaitpage from 'webpack-serve-waitpage';
+import * as webpackDevServer from 'webpack-dev-server';
+import * as WebpackBar from 'webpackbar';
 import { globalState } from '../utils/global-state';
-import { generateCertificate } from './generate-certificate';
-import { tempPath } from './structor-config';
+import { tempPath } from '../utils/structor-config';
 import { getWebpackConfig } from './webpack-config';
 
 interface IOptions {
@@ -44,7 +39,7 @@ const stats = {
 export const runWebpackDevServer = async (opts: IOptions) => {
   let webpackConfig = await getWebpackConfig({
     mode: 'development',
-    entryPath: [opts.entryPath],
+    entryPath: opts.entryPath,
     htmlTemplatePath: opts.htmlTemplatePath,
     htmlTemplateArgs: opts.htmlTemplateArgs,
     publicPath: opts.publicPath,
@@ -56,62 +51,44 @@ export const runWebpackDevServer = async (opts: IOptions) => {
     webpackConfig = opts.pipeConfig(webpackConfig);
   }
 
+  webpackConfig.plugins.push(new webpack.HotModuleReplacementPlugin());
+  webpackConfig.plugins.push(new WebpackBar(opts.webpackBarOptions));
+
+  const webpackDevServerConfig: webpackDevServer.Configuration = {
+    host: '127.0.0.1',
+    hot: true,
+    hotOnly: true,
+    publicPath: opts.publicPath,
+    before: (app: any) => {
+      app.use('/', express.static(path.join(globalState.projectRootPath, tempPath.dir, 'static')));
+    },
+    compress: true,
+    historyApiFallback: { rewrites: [{ from: '/', to: normalizePath(path.join(opts.publicPath, 'index.html')) }] },
+    https: globalState.projectConfig.useHttps,
+    overlay: { warnings: true, errors: true },
+    stats,
+    watchOptions: { ignored: /node_modules/ },
+    headers: { 'Access-Control-Allow-Origin': '*' },
+    clientLogLevel: 'warning',
+    disableHostCheck: true,
+    port: opts.devServerPort
+  } as any;
+
+  webpackDevServer.addDevServerEntrypoints(webpackConfig, webpackDevServerConfig);
   const compiler = webpack(webpackConfig);
 
-  webpackServe(
-    {},
-    {
-      host: '127.0.0.1',
-      hotClient: true,
-      devMiddleware: {
-        publicPath: opts.publicPath,
-        headers: {
-          'Access-Control-Allow-Origin': '*'
-        },
-        stats,
-        watchOptions: { ignored: /node_modules/ }
-      },
-      https: globalState.projectConfig.useHttps ? generateCertificate() : null,
-      port: opts.devServerPort,
-      add: (app: any, middleware: any, options: any) => {
-        app.use(koaCompress());
-        app.use(
-          webpackServeWaitpage(options, {
-            theme: 'dark'
-          })
-        );
+  const devServer = new webpackDevServer(compiler, webpackDevServerConfig);
 
-        app.use(
-          koaMount('/', koaStatic(path.join(globalState.projectRootPath, tempPath.dir, 'static'), { gzip: true }))
-        );
-
-        app.use(
-          convert(
-            history({
-              rewrites: [
-                {
-                  from: '/',
-                  to: (ctx: any) => {
-                    if (ctx.parsedUrl.path.indexOf('.js') > -1 || ctx.parsedUrl.path.indexOf('.css') > -1) {
-                      return ctx.parsedUrl.href;
-                    }
-                    return normalizePath(path.join(opts.publicPath, 'index.html'));
-                  }
-                }
-              ]
-            })
-          )
-        );
-      },
-      compiler,
-      on: {
-        listening: () => {
-          const openUrl = globalState.projectConfig.devUrl
-            ? globalState.projectConfig.devUrl
-            : urlJoin(`${globalState.projectConfig.useHttps ? 'https' : 'http'}://localhost:${opts.devServerPort}`);
-          open(openUrl);
-        }
-      }
+  devServer.listen(opts.devServerPort, '127.0.0.1', () => {
+    if (globalState.projectConfig.devUrl) {
+      open(globalState.projectConfig.devUrl);
+    } else {
+      open(
+        urlJoin(
+          `${globalState.projectConfig.useHttps ? 'https' : 'http'}://localhost:${opts.devServerPort}`,
+          globalState.projectConfig.baseHref
+        )
+      );
     }
-  );
+  });
 };

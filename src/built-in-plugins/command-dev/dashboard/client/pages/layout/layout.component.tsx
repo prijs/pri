@@ -21,6 +21,7 @@ export class LayoutComponent extends PureComponent<Props, State> {
   public render() {
     return (
       <S.Container>
+        <S.GlobalStyles />
         <S.ContainerLeft>
           <S.TopContainer>
             <NavComponent />
