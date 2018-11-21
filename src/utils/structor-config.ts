@@ -147,6 +147,7 @@ export const ignoreScanFiles = [
   '.npmrc',
   '.travis.yml',
   '.prettierignore',
+  'assets',
   'license',
   'LICENSE',
   'readme.md',

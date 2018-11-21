@@ -82,11 +82,9 @@ export const buildProject = async (
     }
   });
 
-  // Write .temp/static/sw.js
+  // Write .temp/static/sw.js to [distDir]
   const tempSwPath = path.join(globalState.projectRootPath, tempPath.dir, 'static/sw.js');
   const targetSwPath = path.join(globalState.projectRootPath, instance.projectConfig.distDir, 'sw.js');
-
-  plugin.buildAfterProdBuild.forEach(afterProdBuild => afterProdBuild(stats));
 
   if (fs.existsSync(tempSwPath)) {
     const tempSwContent = fs.readFileSync(tempSwPath).toString();
@@ -100,13 +98,34 @@ export const buildProject = async (
       })
     );
   }
+
+  await copyAssets(instance);
+
+  plugin.buildAfterProdBuild.forEach(afterProdBuild => afterProdBuild(stats));
 };
+
+// Copy assets dir to distDir
+async function copyAssets(instance: typeof pri) {
+  const sourceAssetsPath = path.join(globalState.projectRootPath, 'assets');
+
+  if (!fs.existsSync(sourceAssetsPath)) {
+    return;
+  }
+
+  const distAssetsPath = path.join(globalState.projectRootPath, instance.projectConfig.distDir, 'assets');
+  if (fs.existsSync(distAssetsPath)) {
+    log(colors.yellow(`assets path exists in distDir, so skip /assets copy.`));
+  } else {
+    await fs.copy(sourceAssetsPath, distAssetsPath);
+  }
+}
 
 export const buildComponent = async (instance: typeof pri) => {
   await prepareBuild(instance);
 
   await spinner('Building...', async () => {
     await tsPlusBabel(instance.projectConfig.distDir);
+    await copyAssets(instance);
   });
 };
 
