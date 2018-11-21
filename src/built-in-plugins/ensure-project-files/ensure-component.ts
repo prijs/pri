@@ -26,7 +26,8 @@ export function ensurePackageJson(instance: typeof pri) {
               '@babel/runtime': '^7.0.0'
             },
             scripts: {
-              publish: 'npm run build && npm publish'
+              // FIXME: Don't know which cli to use.
+              // publish: 'npm run build && npm publish'
             }
           }),
           null,
