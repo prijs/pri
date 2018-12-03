@@ -112,9 +112,12 @@ const gitIgnores: string[] = [
   '.DS_Store',
   'coverage',
   '.nyc_output',
-  'npm-debug.log',
-  'package-lock.json'
+  'npm-debug.log'
 ];
+
+if (!globalState.projectConfig.packageLock) {
+  gitIgnores.push('package-lock.json');
+}
 
 export { gitIgnores };
 
