@@ -85,4 +85,8 @@ export class ProjectConfig {
    * Suggestion to open!
    */
   public unexpectedFileCheck = true;
+  /**
+   * Enable package lock.
+   */
+  public packageLock = false
 }

@@ -176,7 +176,7 @@ const ensureNpmignore = (instance: typeof pri) =>
 const ensureNpmrc = (instance: typeof pri) =>
   instance.project.addProjectFiles({
     fileName: '.npmrc',
-    pipeContent: () => `package-lock=false`
+    pipeContent: () => `package-lock=${globalState.projectConfig.packageLock ? 'true' : 'false'}`
   });
 
 const ensurePackageJson = (instance: typeof pri) =>
