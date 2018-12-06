@@ -102,10 +102,20 @@ export const getWebpackConfig = async (opts: IOptions) => {
       chunkFilename: '[name].[hash].chunk.js',
       hotUpdateChunkFilename: 'hot~[id].[hash].chunk.js',
       hotUpdateMainFilename: 'hot-update.[hash].json',
-      hashDigestLength: 4
+      hashDigestLength: 4,
+      globalObject: `(typeof self !== 'undefined' ? self : this)`
     },
     module: {
       rules: [
+        {
+          test: /\.worker\.tsx?$/,
+          use: {
+            loader: 'worker-loader',
+            options: {
+              inline: true
+            }
+          }
+        },
         {
           test: /\.jsx?$/,
           use: [babelLoader],

@@ -15,6 +15,11 @@ export class WrapContent {
       compilation.plugin('optimize-chunk-assets', (chunks: any[], done: any) => {
         chunks.forEach(chunk => {
           chunk.files.forEach((fileName: string) => {
+            // Ignore workers
+            if (fileName.indexOf('worker.js') > -1) {
+              return;
+            }
+
             if (chunk.name === 'main') {
               compilation.assets[fileName] = new ConcatSource.ConcatSource(
                 this.header,
