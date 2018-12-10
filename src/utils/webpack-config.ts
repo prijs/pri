@@ -114,6 +114,21 @@ export const getWebpackConfig = async (opts: IOptions) => {
             options: {
               inline: true
             }
+          },
+          include: plugin.buildConfigTsLoaderIncludePipes.reduce(
+            (options, fn) => fn(options),
+            defaultSourcePathToBeResolve
+          ),
+          exclude: plugin.buildConfigTsLoaderExcludePipes.reduce((options, fn) => fn(options), [])
+        },
+        {
+          // TODO: because webpack not support libraryTarget: 'module': https://github.com/webpack/webpack/issues/2933
+          test: /\.worker\.js$/, // Parser worker for node_modules.
+          use: {
+            loader: 'worker-loader',
+            options: {
+              inline: true
+            }
           }
         },
         {

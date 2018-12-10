@@ -14,6 +14,7 @@ import { log, spinner } from '../../utils/log';
 import { findNearestNodemodulesFile } from '../../utils/npm-finder';
 import { plugin } from '../../utils/plugins';
 import { ProjectConfig } from '../../utils/project-config-interface';
+import { componentEntry } from '../../utils/structor-config';
 import text from '../../utils/text';
 import { tsPlusBabel } from '../../utils/ts-plus-babel';
 import { runWebpack } from '../../utils/webpack';
