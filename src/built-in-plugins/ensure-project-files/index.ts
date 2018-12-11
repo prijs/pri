@@ -145,7 +145,6 @@ const ensureVscode = (instance: typeof pri) =>
         _.merge({}, prev ? JSON.parse(prev) : {}, {
           'editor.formatOnSave': true,
           'tslint.autoFixOnSave': true,
-          'files.autoSave': 'afterDelay',
           'typescript.tsdk': 'node_modules/typescript/lib'
         }),
         null,
