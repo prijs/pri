@@ -3,7 +3,7 @@ import * as ora from 'ora';
 
 export function log(...message: string[]) {
   // tslint:disable-next-line:no-console
-  console.log.apply(null, message);
+  (console.log as any).apply(null, message);
 }
 
 export function logError(message: string) {
