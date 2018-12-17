@@ -77,7 +77,7 @@ async function main() {
     // Set options
     commandDetails.forEach(commandDetail => {
       if (commandDetail.options) {
-        commandDetail.options.forEach(option => command.option.apply(command, option));
+        commandDetail.options.forEach(option => command.option.apply(command, option as any));
       }
     });
   });

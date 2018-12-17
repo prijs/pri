@@ -220,7 +220,7 @@ export const getWebpackConfig = async (opts: IOptions) => {
     // config.plugins.push(new MiniCssExtractPlugin());
 
     babelLoader.options.plugins.push(['import', { libraryName: 'antd' }]);
-    cssLoader.options.minimize = true;
+    (cssLoader.options as any).minimize = true;
   }
 
   if (globalState.isDevelopment) {
