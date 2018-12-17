@@ -1,6 +1,6 @@
 {
   "name": "pri",
-  "version": "1.0.0-beta59",
+  "version": "1.0.0-beta60",
   "types": "src/node/index.ts",
   "main": "built/node/index.js",
   "scripts": {
@@ -10,6 +10,7 @@
     "prepublishOnly": "npm run build",
     "lint": "echo 'Pre-commit checks...' && tslint --fix './src/**/*.?(ts|tsx)'",
     "prettier": "prettier --write './src/**/*.?(ts|tsx)'",
+    "postinstall": "rimraf node_modules/jest-runtime/node_modules/babel-core && node_modules/jest-config/node_modules/babel-core",
     "format": "npm run lint && npm run prettier",
     "test": "rm -rf built && tsc && ava --files ./built/tests/**/*.js --failFast",
     "generateDocument": "typedoc --out ./document --mode file --ignoreCompilerErrors ./src/node/index.ts"
@@ -121,7 +122,7 @@
     "ts-loader": "^5.3.0",
     "tslint": "^5.11.0",
     "tslint-config-prettier": "^1.16.0",
-    "typescript": "^3.1.6",
+    "typescript": "^3.2.2",
     "update-notifier": "^2.5.0",
     "url-join": "^4.0.0",
     "walk": "^2.3.14",
