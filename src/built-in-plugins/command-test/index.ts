@@ -20,7 +20,8 @@ export const CommandTest = async (instance: typeof pri) => {
       --globals '${JSON.stringify({
         'ts-jest': {
           babelConfig: {
-            presets: [['@babel/preset-env']]
+            presets: [['@babel/preset-env']],
+            plugins: [['@babel/plugin-transform-runtime', { regenerator: true }]]
           }
         }
       })}'
