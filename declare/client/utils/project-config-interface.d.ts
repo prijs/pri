@@ -85,10 +85,10 @@ export declare class ProjectConfig {
     /**
      * Suggestion to open!
      */
-    unexpectedFileCheck: boolean;
+    unexpectedFileCheck?: boolean;
     /**
      * Enable package lock.
      */
-    packageLock: boolean;
+    packageLock?: boolean;
 }
 export {};
