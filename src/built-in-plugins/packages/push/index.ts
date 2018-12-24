@@ -15,7 +15,7 @@ export default async (packageName: string, message: string) => {
   if (!packageName) {
     const inquirerInfo = await inquirer.prompt([
       {
-        message: `Choose packages to push.`,
+        message: `Choose packages to push:`,
         name: 'packageName',
         type: 'list',
         choices: packages.map(eachPackage => eachPackage.name)

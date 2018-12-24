@@ -16,7 +16,7 @@ export default async (gitUri: string) => {
   if (!gitUri) {
     const inquirerInfo = await inquirer.prompt([
       {
-        message: `Choose packages to add.`,
+        message: `Input packages to add:`,
         name: 'gitUri',
         type: 'input'
       }
@@ -35,7 +35,7 @@ export default async (gitUri: string) => {
       try {
         await exec(`git clone ${gitUri} ${tempFolderPath}`);
       } catch {
-        return error(`${gitUri} dosen't esixt.`);
+        return error(`${gitUri} dosen't exist.`);
       }
 
       const packageJson = await getPackageJson(tempFolderPath);

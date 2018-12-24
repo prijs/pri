@@ -25,7 +25,7 @@ export default async (packageName: string, semverStr: semver.ReleaseType) => {
   if (!packageName) {
     const inquirerInfo = await inquirer.prompt([
       {
-        message: `Choose packages to publish.`,
+        message: `Choose packages to publish:`,
         name: 'packageName',
         type: 'list',
         choices: packages.map(eachPackage => eachPackage.name)
@@ -86,8 +86,15 @@ export default async (packageName: string, semverStr: semver.ReleaseType) => {
   // Build TODO:
 
   // Run npm publish
-  execSync(`npm publish`, {
-    stdio: 'inherit',
-    cwd: packagePath
-  });
+  if (_.get(packageInfo.packageJson, 'publishConfig.registry') === 'http://registry.npm.alibaba-inc.com') {
+    execSync(`tnpm publish`, {
+      stdio: 'inherit',
+      cwd: packagePath
+    });
+  } else {
+    execSync(`npm publish`, {
+      stdio: 'inherit',
+      cwd: packagePath
+    });
+  }
 };
