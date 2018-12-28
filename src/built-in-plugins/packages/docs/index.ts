@@ -1,8 +1,8 @@
+import * as fs from 'fs-extra';
 import * as inquirer from 'inquirer';
 import * as path from 'path';
 import { pri } from '../../../node';
-import { exec } from '../../../utils/exec';
-import { log, logError, spinner } from '../../../utils/log';
+import { globalState } from '../../../utils/global-state';
 import { devDocs } from '../../command-docs';
 import { packagesPath } from '../config';
 import { getPackages } from '../utils';

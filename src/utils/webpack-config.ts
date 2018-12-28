@@ -168,7 +168,18 @@ export const getWebpackConfig = async (opts: IOptions) => {
           ),
           exclude: plugin.buildConfigLessLoaderExcludePipes.reduce((options, fn) => fn(options), [])
         },
-        { test: /\.html$/, use: ['raw-loader'] }
+        { test: /\.html$/, use: ['raw-loader'] },
+        {
+          test: /\.(png|jpg|jpeg|gif)$/,
+          use: [
+            {
+              loader: 'url-loader',
+              options: {
+                limit: 81920000
+              }
+            }
+          ]
+        }
       ]
     },
     resolve: {
@@ -180,7 +191,7 @@ export const getWebpackConfig = async (opts: IOptions) => {
       alias: {
         ...(globalState.projectType === 'project' && { '@': path.join(globalState.projectRootPath, '/src') })
       },
-      extensions: ['.js', '.jsx', '.tsx', '.ts', '.scss', '.less', '.css']
+      extensions: ['.js', '.jsx', '.tsx', '.ts', '.scss', '.less', '.css', '.png', '.jpg', '.jpeg', '.gif']
     },
     resolveLoader: {
       modules: [

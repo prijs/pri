@@ -1,6 +1,6 @@
 {
   "name": "pri",
-  "version": "1.0.0-beta72",
+  "version": "1.0.0-beta73",
   "types": "src/node/index.ts",
   "main": "built/node/index.js",
   "scripts": {
@@ -125,6 +125,7 @@
     "typescript": "^3.2.2",
     "update-notifier": "^2.5.0",
     "url-join": "^4.0.0",
+    "url-loader": "^1.1.2",
     "walk": "^2.3.14",
     "webpack": "^4.25.1",
     "webpack-bundle-analyzer": "^3.0.3",

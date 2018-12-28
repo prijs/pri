@@ -39,9 +39,14 @@ export async function runInTempFolderAndDestroyAfterFinished(fn: (tempPath?: str
   }
 }
 
-export async function getPackageJson(projectPath: string) {
+export async function getPackageJson(projectPath: string): Promise<IPackageJson> {
   const packageJsonPath = path.join(projectPath, 'package.json');
-  return fs.readJson(packageJsonPath, { throws: false }) || ({} as Promise<IPackageJson>);
+
+  if (!fs.existsSync(projectPath)) {
+    return {} as IPackageJson;
+  }
+
+  return fs.readJson(packageJsonPath);
 }
 
 export async function writePackageJson(projectPath: string, packageJson: IPackageJson) {

@@ -5,8 +5,6 @@ import { pri } from '../../node';
 import { packagesPath } from './config';
 import { getPackages } from './utils';
 
-commander.command('packages', 'Packages manager.');
-
 export default async (instance: typeof pri) => {
   const packages = await getPackages();
 

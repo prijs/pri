@@ -14,6 +14,7 @@ import commandPublish from './built-in-plugins/packages/publish';
 import commandPush from './built-in-plugins/packages/push';
 import commandRemove from './built-in-plugins/packages/remove';
 import commandUpdate from './built-in-plugins/packages/update';
+import { resetSymlinkForPackages } from './built-in-plugins/packages/utils';
 import { loadPlugins } from './utils/plugins';
 
 async function init() {
@@ -26,6 +27,7 @@ async function init() {
     .description('Add remote package.')
     .action(async (gitUri: string) => {
       await commandAdd(gitUri);
+      await resetSymlinkForPackages(false);
     });
 
   commander
@@ -33,12 +35,14 @@ async function init() {
     .description("Remove remote package(Won't delete it).")
     .action(async (packageName: string) => {
       await commandRemove(packageName);
+      await resetSymlinkForPackages(false);
     });
 
   commander
     .command(`docs [packageName]`)
     .description('Develop package docs.')
     .action(async (packageName: string) => {
+      await resetSymlinkForPackages(true);
       await commandDocs(packageName);
     });
 
@@ -46,6 +50,7 @@ async function init() {
     .command(`push [packageName] [message]`)
     .description('Push package.')
     .action(async (packageName: string, message: string) => {
+      await resetSymlinkForPackages(true);
       await commandPush(packageName, message);
     });
 
@@ -53,6 +58,7 @@ async function init() {
     .command(`publish [packageName] [semver]`)
     .description('Publish package.')
     .action(async (packageName: string, semverStr: semver.ReleaseType) => {
+      await resetSymlinkForPackages(true);
       await commandPublish(packageName, semverStr);
     });
 
@@ -60,11 +66,9 @@ async function init() {
     .command(`update [packageName]`)
     .description('Update package.')
     .action(async (packageName: string) => {
+      await resetSymlinkForPackages(true);
       await commandUpdate(packageName);
     });
-
-  // Upgrade to card TODO:
-  // Add as template TODO:
 
   /**
    * Parse argv.

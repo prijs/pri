@@ -34,8 +34,8 @@ export default async (gitUri: string) => {
       // Clone to local, so can read package.json
       try {
         await exec(`git clone ${gitUri} ${tempFolderPath}`);
-      } catch {
-        return error(`${gitUri} dosen't exist.`);
+      } catch (err) {
+        return error(err);
       }
 
       const packageJson = await getPackageJson(tempFolderPath);

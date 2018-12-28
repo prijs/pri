@@ -1,4 +1,5 @@
 import * as fs from 'fs-extra';
+import * as _ from 'lodash';
 import * as path from 'path';
 import * as ts from 'typescript';
 import * as walk from 'walk';
@@ -17,8 +18,9 @@ export const getPackages = (() => {
     };
   }> = null;
 
-  return async function foo() {
-    if (result) {
+  // Ensure run once in each command.
+  return async function foo(useCache = true) {
+    if (useCache && result) {
       return result;
     }
 
@@ -39,6 +41,8 @@ export const getPackages = (() => {
         };
       })
     );
+
+    result = result.filter(eachResult => !_.isEmpty(eachResult.packageJson));
 
     return result;
   };
@@ -139,5 +143,17 @@ export async function getExternalImportsFromProjectRoot(projectRootPath: string)
   } else {
     // All ts files is entry
     return getExternalImportsFromEntrys(program, allTsFiles);
+  }
+}
+
+export async function resetSymlinkForPackages(useCache: boolean) {
+  const packages = await getPackages(useCache);
+
+  for (const packageInfo of packages) {
+    await fs.ensureSymlink(
+      path.join(globalState.projectRootPath, packageInfo.path),
+      path.join(globalState.projectRootPath, 'node_modules', packageInfo.name),
+      'dir'
+    );
   }
 }
