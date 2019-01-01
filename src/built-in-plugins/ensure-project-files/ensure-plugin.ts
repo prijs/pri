@@ -42,7 +42,7 @@ function ensureEntry(instance: typeof pri) {
               })
 
               instance.commands.expandCommand({
-                name: "init",
+                name: ["init"],
                 beforeAction: async (...args: any[]) => {
                   //
                 }
