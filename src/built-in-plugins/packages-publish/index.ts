@@ -3,19 +3,24 @@ import * as inquirer from 'inquirer';
 import * as _ from 'lodash';
 import * as path from 'path';
 import * as semver from 'semver';
-import { pri } from '../../../node';
-import { exec } from '../../../utils/exec';
-import { writePackageJson } from '../../../utils/file-operate';
-import { addAllAndCommit } from '../../../utils/git-operate';
-import { globalState } from '../../../utils/global-state';
-import { log, logError, spinner } from '../../../utils/log';
-import { devDocs } from '../../command-docs';
-import { packagesPath } from '../config';
-import push from '../push';
-import update from '../update';
-import { getPackages } from '../utils';
+import { pri } from '../../node';
+import { writePackageJson } from '../../utils/file-operate';
+import { globalState } from '../../utils/global-state';
+import { log, logError, spinner } from '../../utils/log';
+import { ensurePackagesLinks, getPackages } from '../../utils/packages';
 
-export default async (packageName: string, semverStr: semver.ReleaseType) => {
+export default async (instance: typeof pri) => {
+  instance.commands.registerCommand({
+    name: ['packages', 'publish [packageName] [semver]'],
+    description: `Publish package.`,
+    action: async options => {
+      await ensurePackagesLinks(true);
+      await packagesPublish(options.packageName, options.semver);
+    }
+  });
+};
+
+async function packagesPublish(packageName: string, semverStr: semver.ReleaseType) {
   if (semverStr && ['patch', 'minor', 'major'].indexOf(semverStr) === -1) {
     logError('semver must be patch | minor | major');
   }
@@ -74,27 +79,27 @@ export default async (packageName: string, semverStr: semver.ReleaseType) => {
     semverStr = inquirerInfo.semverStr;
   }
 
-  await update(packageName);
+  // await update(packageName);
 
-  // Change package version
-  const newVersion = semver.inc(packageInfo.packageJson.version, semverStr);
-  packageInfo.packageJson.version = newVersion;
-  await writePackageJson(packageInfo.path, packageInfo.packageJson);
+  // // Change package version
+  // const newVersion = semver.inc(packageInfo.packageJson.version, semverStr);
+  // packageInfo.packageJson.version = newVersion;
+  // await writePackageJson(packageInfo.path, packageInfo.packageJson);
 
-  await push(packageName, `Publish ${newVersion}`);
+  // await push(packageName, `Publish ${newVersion}`);
 
-  // Build TODO:
+  // // Build TODO:
 
-  // Run npm publish
-  if (_.get(packageInfo.packageJson, 'publishConfig.registry') === 'http://registry.npm.alibaba-inc.com') {
-    execSync(`tnpm publish`, {
-      stdio: 'inherit',
-      cwd: packagePath
-    });
-  } else {
-    execSync(`npm publish`, {
-      stdio: 'inherit',
-      cwd: packagePath
-    });
-  }
-};
+  // // Run npm publish
+  // if (_.get(packageInfo.packageJson, 'publishConfig.registry') === 'http://registry.npm.alibaba-inc.com') {
+  //   execSync(`tnpm publish`, {
+  //     stdio: 'inherit',
+  //     cwd: packagePath
+  //   });
+  // } else {
+  //   execSync(`npm publish`, {
+  //     stdio: 'inherit',
+  //     cwd: packagePath
+  //   });
+  // }
+}

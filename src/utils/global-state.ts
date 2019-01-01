@@ -16,16 +16,22 @@ import { ProjectConfig } from './project-config-interface';
 const globalState = new GlobalState();
 
 globalState.priPackageJson = pkg;
-globalState.projectRootPath = yargs.argv.cwd || process.cwd();
 globalState.majorCommand = yargs.argv._.length === 0 ? 'dev' : yargs.argv._[0];
 globalState.isDevelopment = ['dev', 'docs'].some(operate => operate === globalState.majorCommand);
-freshProjectConfig();
 
-// get pri type from package.json
-const projectPackageJsonPath = path.join(globalState.projectRootPath, 'package.json');
-if (fs.existsSync(projectPackageJsonPath)) {
-  const projectPackageJson = fs.readJsonSync(projectPackageJsonPath, { throws: false }) || {};
-  globalState.projectType = get(projectPackageJson, 'pri.type', null);
+freshGlobalState(yargs.argv.cwd || process.cwd());
+
+export function freshGlobalState(projectRootPath: string) {
+  globalState.projectRootPath = projectRootPath;
+
+  freshProjectConfig();
+
+  // get project type from package.json
+  const projectPackageJsonPath = path.join(globalState.projectRootPath, 'package.json');
+  if (fs.existsSync(projectPackageJsonPath)) {
+    const projectPackageJson = fs.readJsonSync(projectPackageJsonPath, { throws: false }) || {};
+    globalState.projectType = get(projectPackageJson, 'pri.type', null);
+  }
 }
 
 export function freshProjectConfig() {

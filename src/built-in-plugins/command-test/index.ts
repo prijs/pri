@@ -54,7 +54,7 @@ export default async (instance: typeof pri) => {
   });
 
   instance.commands.registerCommand({
-    name: 'test',
+    name: ['test'],
     description: 'Run tests.',
     action: async () => {
       await instance.project.lint();

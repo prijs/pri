@@ -143,8 +143,17 @@ export default async (instance: typeof pri) => {
   });
 
   instance.commands.registerCommand({
-    name: 'build',
-    options: [['-c, --cloud', 'Cloud build tag'], ['-p, --publicPath <pathname>', 'rewrite publicPath']],
+    name: ['build'],
+    options: {
+      cloud: {
+        alias: 'c',
+        description: 'Cloud build tag'
+      },
+      publicPath: {
+        alias: 'p',
+        description: 'rewrite publicPath'
+      }
+    },
     description: text.commander.build.description,
     action: async (options: any) => {
       switch (instance.projectType) {
@@ -153,12 +162,10 @@ export default async (instance: typeof pri) => {
           break;
         case 'component':
         case 'plugin':
+        case 'cli':
           await buildComponent(instance);
         default:
       }
-
-      // For async register commander, process will be exit automatic.
-      process.exit(0);
     }
   });
 };

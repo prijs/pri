@@ -7,8 +7,13 @@ import { projectDev } from './project-dev';
 
 export default async (instance: typeof pri) => {
   instance.commands.registerCommand({
-    name: 'dev',
-    options: [['-d, --debugDashboard', 'Debug dashboard']],
+    name: ['dev'],
+    options: {
+      debugDashboard: {
+        alias: 'd',
+        description: 'Debug dashboard'
+      }
+    },
     description: text.commander.dev.description,
     action: async (options: any) => {
       switch (instance.projectType) {

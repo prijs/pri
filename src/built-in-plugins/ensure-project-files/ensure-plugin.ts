@@ -35,7 +35,7 @@ function ensureEntry(instance: typeof pri) {
 
             export default async (instance: typeof pri) => {
               instance.commands.registerCommand({
-                name: "deploy",
+                name: ["deploy"],
                 action: async () => {
                   //
                 }

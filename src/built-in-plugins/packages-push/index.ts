@@ -1,15 +1,24 @@
 import * as inquirer from 'inquirer';
 import * as path from 'path';
-import { pri } from '../../../node';
-import { exec } from '../../../utils/exec';
-import { addAllAndCommit, isWorkingTreeClean } from '../../../utils/git-operate';
-import { globalState } from '../../../utils/global-state';
-import { log, logError, spinner } from '../../../utils/log';
-import { devDocs } from '../../command-docs';
-import { packagesPath } from '../config';
-import { getPackages } from '../utils';
+import { pri } from '../../node';
+import { exec } from '../../utils/exec';
+import { addAllAndCommit, isWorkingTreeClean } from '../../utils/git-operate';
+import { globalState } from '../../utils/global-state';
+import { log, logError, spinner } from '../../utils/log';
+import { ensurePackagesLinks, getPackages } from '../../utils/packages';
 
-export default async (packageName: string, message: string) => {
+export default async (instance: typeof pri) => {
+  instance.commands.registerCommand({
+    name: ['packages', 'push [packageName] [message]'],
+    description: `Push package.`,
+    action: async options => {
+      await ensurePackagesLinks(true);
+      await packagesPush(options.packageName, options.semver);
+    }
+  });
+};
+
+async function packagesPush(packageName: string, message: string) {
   const packages = await getPackages();
 
   if (!packageName) {
@@ -57,4 +66,4 @@ export default async (packageName: string, message: string) => {
 
     await exec(['git push'].join(';'), { cwd: packagePath });
   });
-};
+}

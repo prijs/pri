@@ -1,11 +1,22 @@
 import * as inquirer from 'inquirer';
 import * as path from 'path';
-import { exec } from '../../../utils/exec';
-import { logError, spinner } from '../../../utils/log';
-import { packagesPath } from '../config';
-import { getPackages } from '../utils';
+import { pri } from '../../node';
+import { exec } from '../../utils/exec';
+import { logError, spinner } from '../../utils/log';
+import { ensurePackagesLinks, getPackages, packagesPath } from '../../utils/packages';
 
-export default async (packageName: string) => {
+export default async (instance: typeof pri) => {
+  instance.commands.registerCommand({
+    name: ['packages', 'rm [gitUri]'],
+    description: `Remove remote package(Won't delete it).`,
+    action: async options => {
+      await packagesRemove(options.gitUri);
+      await ensurePackagesLinks(false);
+    }
+  });
+};
+
+async function packagesRemove(packageName: string) {
   const packages = await getPackages();
 
   if (!packageName) {
@@ -40,4 +51,4 @@ export default async (packageName: string) => {
       await exec(`rm -rf ${packagesPath}`);
     }
   });
-};
+}

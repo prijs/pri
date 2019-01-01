@@ -1,12 +1,7 @@
-import * as koaCors from '@koa/cors';
 import * as chokidar from 'chokidar';
 import * as fs from 'fs';
 import * as http from 'http';
 import * as https from 'https';
-import * as Koa from 'koa';
-import * as koaCompress from 'koa-compress';
-import * as koaMount from 'koa-mount';
-import * as koaStatic from 'koa-static';
 import * as path from 'path';
 import * as socketIo from 'socket.io';
 import * as yargs from 'yargs';
@@ -16,8 +11,6 @@ import { globalState } from '../../../../utils/global-state';
 import { log } from '../../../../utils/log';
 import { ProjectConfig } from '../../../../utils/project-config-interface';
 
-const app = new Koa();
-
 interface IOptions {
   clientPort: number;
   serverPort: number;
@@ -26,13 +19,20 @@ interface IOptions {
 }
 
 export default (opts: IOptions) => {
-  app.use(koaCors());
+  const Koa = require('koa');
+  const koaCompress = require('koa-compress');
+  const KoaCors = require('@koa/cors');
+  const KoaMount = require('koa-mount');
+
+  const app = new Koa();
+
+  app.use(KoaCors());
 
   app.use(koaCompress({ flush: zlib.Z_SYNC_FLUSH }));
 
-  app.use(koaMount('/', koaStatic(opts.staticRootPath, { gzip: true })));
+  app.use(KoaMount('/', KoaMount(opts.staticRootPath, { gzip: true })));
 
-  app.use(async ctx => {
+  app.use(async (ctx: any) => {
     ctx.set('Content-Type', 'text/html; charset=utf-8');
 
     ctx.body = `

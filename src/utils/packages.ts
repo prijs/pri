@@ -3,10 +3,11 @@ import * as _ from 'lodash';
 import * as path from 'path';
 import * as ts from 'typescript';
 import * as walk from 'walk';
-import { exec } from '../../utils/exec';
-import { getPackageJson, IPackageJson } from '../../utils/file-operate';
-import { globalState } from '../../utils/global-state';
-import { packagesPath } from './config';
+import { exec } from './exec';
+import { getPackageJson, IPackageJson } from './file-operate';
+import { globalState } from './global-state';
+
+export const packagesPath = `packages`;
 
 export const getPackages = (() => {
   let result: Array<{
@@ -146,13 +147,21 @@ export async function getExternalImportsFromProjectRoot(projectRootPath: string)
   }
 }
 
-export async function resetSymlinkForPackages(useCache: boolean) {
+export async function ensurePackagesLinks(useCache: boolean) {
   const packages = await getPackages(useCache);
 
   for (const packageInfo of packages) {
+    // linkEveryPackagesToRootNodeModules
     await fs.ensureSymlink(
       path.join(globalState.projectRootPath, packageInfo.path),
       path.join(globalState.projectRootPath, 'node_modules', packageInfo.name),
+      'dir'
+    );
+
+    // linkRootNodeModulesToEveryPackages
+    await fs.ensureSymlink(
+      path.join(globalState.projectRootPath, 'node_modules'),
+      path.join(globalState.projectRootPath, packageInfo.path, 'node_modules'),
       'dir'
     );
   }

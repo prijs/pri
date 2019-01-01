@@ -2,6 +2,8 @@ import * as _ from 'lodash';
 import * as path from 'path';
 import { pri } from '../../node';
 import { CONFIG_FILE } from '../../utils/constants';
+import { globalState } from '../../utils/global-state';
+import { IWhiteFile } from '../../utils/plugins';
 import {
   componentPath,
   docsPath,
@@ -59,4 +61,17 @@ export default async (instance: typeof pri) => {
     const relativePath = path.relative(instance.projectRootPath, path.format(file));
     return relativePath.startsWith(`src${path.sep}layouts`);
   });
+
+  // For component/plugin/cli, add `src` to white list.
+  if (
+    globalState.projectType === 'component' ||
+    globalState.projectType === 'plugin' ||
+    globalState.projectType === 'cli'
+  ) {
+    const ignoreSrc: IWhiteFile = projectFiles => {
+      const relativePath = path.relative(globalState.projectRootPath, projectFiles.dir);
+      return relativePath.startsWith(srcPath.dir);
+    };
+    instance.project.whiteFileRules.add(ignoreSrc);
+  }
 };

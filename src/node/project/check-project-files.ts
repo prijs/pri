@@ -20,15 +20,6 @@ export const checkProjectFiles = async () => {
 
   const whiteFileRules = plugin.whiteFileRules.slice();
 
-  // For component/plugin, add `src` to white list.
-  if (globalState.projectType === 'component' || globalState.projectType === 'plugin') {
-    const ignoreSrc: IWhiteFile = projectFiles => {
-      const relativePath = path.relative(globalState.projectRootPath, projectFiles.dir);
-      return relativePath.startsWith(srcPath.dir);
-    };
-    whiteFileRules.push(ignoreSrc);
-  }
-
   files.forEach(file => {
     if (!whiteFileRules.some(whiteFileRule => whiteFileRule(file))) {
       log(colors.red(`Unexpected file or directory: ${path.format(file)}`));

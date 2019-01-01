@@ -2,10 +2,6 @@ import * as colors from 'colors';
 import * as fs from 'fs';
 import * as http from 'http';
 import * as https from 'https';
-import * as Koa from 'koa';
-import * as koaCompress from 'koa-compress';
-import * as koaMount from 'koa-mount';
-import * as koaStatic from 'koa-static';
 import * as open from 'opn';
 import * as path from 'path';
 import * as portfinder from 'portfinder';
@@ -20,9 +16,14 @@ import { log, spinner } from '../../utils/log';
 import text from '../../utils/text';
 import { buildProject } from '../command-build';
 
-const app = new Koa();
-
 export const CommandPreview = async (instance: typeof pri) => {
+  const Koa = require('koa');
+  const koaCompress = require('koa-compress');
+  const KoaMount = require('koa-mount');
+  const KoaStatic = require('koa-static');
+
+  const app = new Koa();
+
   const distDir = path.join(instance.projectRootPath, instance.projectConfig.distDir);
 
   await buildProject(instance);
@@ -32,9 +33,9 @@ export const CommandPreview = async (instance: typeof pri) => {
   app.use(koaCompress({ flush: zlib.Z_SYNC_FLUSH }));
 
   app.use(
-    koaMount(
+    KoaMount(
       url.parse(instance.projectConfig.publicPath).pathname,
-      koaStatic(distDir, {
+      KoaStatic(distDir, {
         gzip: true,
         setHeaders: (res: any) => {
           res.setHeader('Access-Control-Allow-Origin', '*');
@@ -48,9 +49,7 @@ export const CommandPreview = async (instance: typeof pri) => {
 
   if (instance.projectConfig.useHttps) {
     await spinner('Create https server', async () =>
-      https
-        .createServer(generateCertificate(), app.callback())
-        .listen(freePort)
+      https.createServer(generateCertificate(), app.callback()).listen(freePort)
     );
   } else {
     await spinner('Create http server', async () => http.createServer(app.callback()).listen(freePort));
@@ -72,7 +71,7 @@ export const CommandPreview = async (instance: typeof pri) => {
 
 export default async (instance: typeof pri) => {
   instance.commands.registerCommand({
-    name: 'preview',
+    name: ['preview'],
     description: text.commander.preview.description,
     action: () => CommandPreview(instance)
   });

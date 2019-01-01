@@ -8,7 +8,7 @@ import text from '../../utils/text';
 
 export default async (instance: typeof pri) => {
   instance.commands.registerCommand({
-    name: 'init',
+    name: ['init'],
     description: text.commander.init.description,
     action: async () => {
       if (!globalState.projectType) {
@@ -17,7 +17,7 @@ export default async (instance: typeof pri) => {
             message: `Choose project type`,
             name: 'projectType',
             type: 'list',
-            choices: ['Project', 'Component', 'Pri Plugin']
+            choices: ['Project', 'Component', 'Pri Plugin', 'Cli']
           }
         ]);
 
@@ -31,6 +31,9 @@ export default async (instance: typeof pri) => {
           case 'Pri Plugin':
             globalState.projectType = 'plugin';
             break;
+          case 'Cli':
+            globalState.projectType = 'cli';
+            break;
         }
       }
 
@@ -42,6 +45,7 @@ export default async (instance: typeof pri) => {
       switch (globalState.projectType) {
         case 'project':
         case 'plugin':
+        case 'cli':
           log(colors.blue('  npm start'));
           log(`    ${text.commander.dev.description}\n`);
           break;
@@ -62,6 +66,7 @@ export default async (instance: typeof pri) => {
           break;
         case 'component':
         case 'plugin':
+        case 'cli':
           log(colors.blue('  npm publish'));
           log(`    Publish this component to npm package.\n`);
           break;

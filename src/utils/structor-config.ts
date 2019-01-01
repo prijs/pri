@@ -98,6 +98,12 @@ export const componentEntry = {
   ext: '.tsx'
 };
 
+export const cliEntry = {
+  dir: path.join(srcPath.dir),
+  name: 'index',
+  ext: '.ts'
+}
+
 /**
  * Ignores.
  */

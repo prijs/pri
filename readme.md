@@ -16,25 +16,35 @@ Pri can help you develop **project** and **component**.
 - [Typescript](https://prijs.github.io/pri-docs/project/typescript/). 100% typescript source code, for project maintainability considerations, only TS projects are supported!
 - [Configuration file auto creator](https://prijs.github.io/pri-docs/project/project-files/). Never worry about configuration files and updates of configuration files. This is automatic.
 - [Auto dll](https://prijs.github.io/pri-docs/project/auto-dlls/). Speed up hot loader.
-- And more, [see Docs](https://prijs.github.io/pri-docs/).
+- For more, [see Docs](https://prijs.github.io/pri-docs/).
 
-## Setup
+## Using pri as npm package
 
 ```shell
 # 1. Create an empty folder, install pri locally.
 $ npm i pri --save
+
 # 2. Init project files, and you will have following npm scripts.
-$ npx pri init
+$ npx pri init # Choose project or component.
 
 # Start dev server
 $ npm start
+
+# Start docs server
+$ npm run docs
 
 # Build
 $ npm run build
 
 # Test
 $ npm test
+```
 
+<details>
+
+<summary>Read more npm scripts.</summary>
+
+```shell
 # Preview of production environment
 $ npm run preview
 
@@ -44,11 +54,57 @@ $ npm run analyse
 # Bundle to one file
 $ npm run bundle
 
-# Start docs server
-$ npm run docs
-
 # Format all sources code
 $ npm run format
+```
+
+</details>
+
+## Using pri plugin
+
+Installing the pri plugin into the project will take effect.
+
+For example, to use [pri-plugin-dob](https://github.com/prijs/pri-plugin-dob):
+
+```shell
+npm i pri-plugin-dob --save
+
+# Now all plugin works
+npm start
+```
+
+## Using pri to create a new cli
+
+You can use pri to create a new cli tool, in addition to owning your own brand, you can also build in pri plugins in it!
+
+For example, create a tool named `appx`:
+
+```shell
+npm i pri pri-plugin-dob --save
+
+npx pri init # Choose cli
+```
+
+Then, open `src/index.tsx`, here is the simplest way to write it, equals to pri:
+
+```typescript
+#!/usr/bin/env node
+
+import { createCli } from 'pri';
+
+const cli = createCli({
+  rootDir: __dirname
+});
+
+export default cli;
+```
+
+Finally, add `bin` to `package.json`:
+
+```json
+"bin": {
+  "appx": "built/index.js"
+}
 ```
 
 ## File Structure

@@ -26,7 +26,7 @@ interface IResult {
 
 export default async (instance: typeof pri) => {
   instance.commands.registerCommand({
-    name: 'docs',
+    name: ['docs'],
     description: text.commander.docs.description,
     action: async () => {
       await devDocs(instance, docsPath.dir);

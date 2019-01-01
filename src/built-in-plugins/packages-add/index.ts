@@ -4,15 +4,26 @@ import * as inquirer from 'inquirer';
 import { get } from 'lodash';
 import * as path from 'path';
 import * as ts from 'typescript';
-import { exec } from '../../../utils/exec';
-import { getPackageJson, runInTempFolderAndDestroyAfterFinished } from '../../../utils/file-operate';
-import * as git from '../../../utils/git-operate';
-import { globalState } from '../../../utils/global-state';
-import { log, logError, spinner } from '../../../utils/log';
-import { packagesPath } from '../config';
-import { getExternalImportsFromProjectRoot } from '../utils';
+import { pri } from '../../node';
+import { exec } from '../../utils/exec';
+import { getPackageJson, runInTempFolderAndDestroyAfterFinished } from '../../utils/file-operate';
+import * as git from '../../utils/git-operate';
+import { globalState } from '../../utils/global-state';
+import { log, logError, spinner } from '../../utils/log';
+import { ensurePackagesLinks, getExternalImportsFromProjectRoot, packagesPath } from '../../utils/packages';
 
-export default async (gitUri: string) => {
+export default async (instance: typeof pri) => {
+  instance.commands.registerCommand({
+    name: ['packages', 'add [gitUri]'],
+    description: 'Add remote package.',
+    action: async options => {
+      await addPackages(options.gitUri);
+      await ensurePackagesLinks(false);
+    }
+  });
+};
+
+async function addPackages(gitUri: string) {
   if (!gitUri) {
     const inquirerInfo = await inquirer.prompt([
       {
@@ -101,4 +112,4 @@ export default async (gitUri: string) => {
       )
     );
   }
-};
+}

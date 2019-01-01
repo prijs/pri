@@ -1,6 +1,6 @@
 import * as colors from 'colors';
 import * as fs from 'fs-extra';
-import { flatten } from 'lodash';
+import * as _ from 'lodash';
 import * as path from 'path';
 import * as webpack from 'webpack';
 import { pri } from '../node/index';
@@ -8,8 +8,7 @@ import { set } from '../node/pipe';
 import { Entry } from './create-entry';
 import { getDefault } from './es-module';
 import { globalState } from './global-state';
-import { log, spinner } from './log';
-import { ProjectConfig } from './project-config-interface';
+import { log, logError, spinner } from './log';
 
 export interface IPluginPackageInfo {
   name: string;
@@ -44,7 +43,13 @@ const getBuiltInPlugins = () => {
     ['pri-plugin-mocks', '../built-in-plugins/mocks/index.js'],
     ['pri-plugin-client-ssr', '../built-in-plugins/client-ssr/index.js'],
     ['pri-plugin-command-analyse', '../built-in-plugins/command-analyse/index.js'],
-    ['pri-plugin-packages', '../built-in-plugins/packages/index.js']
+    ['pri-plugin-packages', '../built-in-plugins/packages/index.js'],
+    ['pri-plugin-packages-add', '../built-in-plugins/packages-add/index.js'],
+    ['pri-plugin-packages-docs', '../built-in-plugins/packages-docs/index.js'],
+    ['pri-plugin-packages-publish', '../built-in-plugins/packages-publish/index.js'],
+    ['pri-plugin-packages-push', '../built-in-plugins/packages-push/index.js'],
+    ['pri-plugin-packages-remove', '../built-in-plugins/packages-remove/index.js'],
+    ['pri-plugin-packages-update', '../built-in-plugins/packages-update/index.js']
   ];
 
   return plugins.reduce((obj: any, right) => {
@@ -53,13 +58,23 @@ const getBuiltInPlugins = () => {
   }, {});
 };
 
-export interface ICommand {
-  name?: string;
-  description?: string;
+export interface ICommandRegister<
+  T = {
+    [optionName: string]: {
+      alias?: string;
+      description?: string;
+      required?: boolean;
+    };
+  }
+> {
+  name: string[];
+  // TODO:
+  action?: (options?: any) => void;
   beforeAction?: any;
-  action?: any;
   afterAction?: any;
-  options?: string[][];
+  alias?: string | string[];
+  description?: string;
+  options?: T;
 }
 
 export type IDevDllList = (list: string[]) => string[];
@@ -95,7 +110,7 @@ export type ILintFilter = (filePath?: string) => boolean;
 export class IPluginConfig {
   public analyseInfo?: any = {};
 
-  public commands?: ICommand[] = [];
+  public commands?: ICommandRegister[] = [];
 
   public buildConfigPipes: IBuildConfigPipe[] = [];
   public buildConfigStyleLoaderOptionsPipes: ILoaderOptionsPipe[] = [];
@@ -134,7 +149,7 @@ export class IPluginConfig {
 
 export const plugin: IPluginConfig = new IPluginConfig();
 
-export const loadPlugins = async () => {
+export const loadPlugins = async (pluginIncludeRoots: string[] = []) => {
   await spinner('load plugins', async () => {
     if (hasInitPlugins) {
       return;
@@ -143,7 +158,13 @@ export const loadPlugins = async () => {
 
     const builtInPlugins = getBuiltInPlugins();
 
-    getPriPlugins(path.join(globalState.projectRootPath, 'package.json'), builtInPlugins);
+    getPriPlugins(
+      globalState.projectRootPath,
+      pluginIncludeRoots
+        .concat(globalState.projectRootPath)
+        .map(pluginIncludeRoot => path.join(pluginIncludeRoot, 'package.json')),
+      builtInPlugins
+    );
 
     if (loadedPlugins.size > 1) {
       for (const eachPlugin of getPluginsByOrder()) {
@@ -153,25 +174,25 @@ export const loadPlugins = async () => {
   });
 };
 
-function getPriPlugins(packageJsonPath: string, extendPlugins: any = {}) {
-  const pluginRootPath = path.resolve(packageJsonPath, '..');
-  const packageJsonExist = fs.existsSync(packageJsonPath);
+function getPriPlugins(pluginRootPath: string, packageJsonPaths: string[], builtInPlugins: any = {}) {
+  let loadOtherPlugins = false;
+  // Load other plugins only when project type is 'project' or 'component'
+  if (globalState.projectType === 'project' || globalState.projectType === 'component') {
+    loadOtherPlugins = true;
+  }
 
-  const packageJson = packageJsonExist ? fs.readJsonSync(packageJsonPath) : null;
-  const allDependencies = packageJson
-    ? {
-        ...packageJson.dependencies,
-        ...packageJson.devDependencies,
-        ...extendPlugins
-      }
-    : extendPlugins;
+  const allDependencies = {
+    ...(loadOtherPlugins &&
+      _.flatten(packageJsonPaths.map(packageJsonPath => getDependencesByPackageJsonPath(packageJsonPath)))),
+    ...builtInPlugins
+  };
 
   Object.keys(allDependencies)
     .filter(subPackageName => subPackageName.startsWith('pri-plugin') || subPackageName.startsWith('@ali/pri-plugin'))
     .map(subPackageName => {
       // Can't allowed same name plugins
       if (Array.from(loadedPlugins).some(loadedPlugin => loadedPlugin.name === subPackageName)) {
-        throw Error(`There are two plugins named ${subPackageName}!`);
+        logError(`There are two plugins named ${subPackageName}!`);
       }
 
       const subPackageVersion = allDependencies[subPackageName];
@@ -200,7 +221,7 @@ function getPriPlugins(packageJsonPath: string, extendPlugins: any = {}) {
       });
 
       if (subPackageAbsolutePath) {
-        getPriPlugins(subPackageAbsolutePath);
+        getPriPlugins(path.resolve(subPackageAbsolutePath, '..'), [subPackageAbsolutePath]);
       }
     });
 }
@@ -276,4 +297,14 @@ function getPackageJsonPathByPathOrNpmName(pathOrNpmName: string, currentRootPat
   } catch (error) {
     return null;
   }
+}
+
+function getDependencesByPackageJsonPath(packageJsonPath: string) {
+  const packageJsonExist = fs.existsSync(packageJsonPath);
+  const packageJson = packageJsonExist ? fs.readJsonSync(packageJsonPath) : null;
+
+  return {
+    ..._.get(packageJson, 'dependencies', {}),
+    ..._.get(packageJson, 'devDependencies', {})
+  };
 }

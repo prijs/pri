@@ -2,9 +2,9 @@ import * as commander from 'commander';
 import * as _ from 'lodash';
 import * as path from 'path';
 import { pri } from '../../node';
-import { packagesPath } from './config';
-import { getPackages } from './utils';
+import { getPackages, packagesPath } from '../../utils/packages';
 
+// Used for packages plugin register.
 export default async (instance: typeof pri) => {
   const packages = await getPackages();
 

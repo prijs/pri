@@ -36,7 +36,7 @@ async function bundle(instance: typeof pri) {
 
 export default async (instance: typeof pri) => {
   instance.commands.registerCommand({
-    name: 'bundle',
+    name: ['bundle'],
     description: text.commander.bundle.description,
     action: async () => {
       await bundle(instance);

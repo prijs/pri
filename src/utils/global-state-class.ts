@@ -16,5 +16,5 @@ export class GlobalState {
   /**
    * Project type
    */
-  public projectType: 'project' | 'component' | 'plugin' | null;
+  public projectType: 'project' | 'component' | 'plugin' | 'cli' | null;
 }

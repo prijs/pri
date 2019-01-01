@@ -1,12 +1,7 @@
-import * as koaCors from '@koa/cors';
 import * as chokidar from 'chokidar';
 import * as fs from 'fs-extra';
 import * as http from 'http';
 import * as https from 'https';
-import * as Koa from 'koa';
-import * as koaCompress from 'koa-compress';
-import * as koaMount from 'koa-mount';
-import * as koaStatic from 'koa-static';
 import * as _ from 'lodash';
 import * as path from 'path';
 import * as socketIo from 'socket.io';
@@ -28,13 +23,19 @@ interface IOptions {
 }
 
 export default (opts: IOptions) => {
+  const Koa = require('koa');
+  const koaCompress = require('koa-compress');
+  const KoaCors = require('@koa/cors');
+  const KoaMount = require('koa-mount');
+  const KoaStatic = require('koa-static');
+
   const app = new Koa();
 
-  app.use(koaCors());
+  app.use(KoaCors());
 
   app.use(koaCompress({ flush: zlib.Z_SYNC_FLUSH }));
 
-  app.use(koaMount('/static', koaStatic(path.join(globalState.projectRootPath, '.temp'), { gzip: true })));
+  app.use(KoaMount('/static', KoaStatic(path.join(globalState.projectRootPath, '.temp'), { gzip: true })));
 
   const server = globalState.projectConfig.useHttps
     ? https.createServer(generateCertificate(), app.callback())
