@@ -181,9 +181,14 @@ function getPriPlugins(pluginRootPath: string, packageJsonPaths: string[], built
     loadOtherPlugins = true;
   }
 
+  const deps = packageJsonPaths.map(packageJsonPath => getDependencesByPackageJsonPath(packageJsonPath));
+  const flatDeps = deps.reduce((obj, next) => {
+    Object.assign(obj, next);
+    return obj;
+  }, {});
+
   const allDependencies = {
-    ...(loadOtherPlugins &&
-      _.flatten(packageJsonPaths.map(packageJsonPath => getDependencesByPackageJsonPath(packageJsonPath)))),
+    ...(loadOtherPlugins && flatDeps),
     ...builtInPlugins
   };
 

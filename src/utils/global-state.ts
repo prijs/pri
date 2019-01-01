@@ -19,7 +19,7 @@ globalState.priPackageJson = pkg;
 globalState.majorCommand = yargs.argv._.length === 0 ? 'dev' : yargs.argv._[0];
 globalState.isDevelopment = ['dev', 'docs'].some(operate => operate === globalState.majorCommand);
 
-freshGlobalState(yargs.argv.cwd || process.cwd());
+freshGlobalState((yargs.argv.cwd as string) || process.cwd());
 
 export function freshGlobalState(projectRootPath: string) {
   globalState.projectRootPath = projectRootPath;

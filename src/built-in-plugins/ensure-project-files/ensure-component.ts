@@ -20,7 +20,7 @@ export function ensurePackageJson(instance: typeof pri) {
       return (
         JSON.stringify(
           _.merge({}, prevJson, {
-            main: `${instance.projectConfig.distDir}/${srcPath.dir}/index.js`,
+            main: `${instance.projectConfig.distDir}/index.js`,
             types: path.format(componentEntry),
             dependencies: {
               '@babel/runtime': '^7.0.0'

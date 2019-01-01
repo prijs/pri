@@ -72,7 +72,7 @@ const ensureTsconfig = (instance: typeof pri) =>
               experimentalDecorators: true,
               skipLibCheck: true,
               outDir: globalState.projectConfig.distDir,
-              rootDir: './',
+              rootDir: './src',
               baseUrl: '.',
               lib: ['dom', 'es5', 'es6', 'scripthost'],
               paths: {
@@ -82,7 +82,7 @@ const ensureTsconfig = (instance: typeof pri) =>
             },
             include: [
               '.temp/**/*',
-              ...['src/**/*', 'tests/**/*', 'docs/**/*'].map(each =>
+              ...['src/**/*'].map(each =>
                 path.join(globalState.projectConfig.sourceRoot, each)
               )
             ],
