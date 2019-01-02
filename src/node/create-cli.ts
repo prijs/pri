@@ -56,7 +56,19 @@ function registerYargs(leafYargs: typeof yargs, transferedRegisterCommands: Tran
 
         return childYargs;
       },
-      handler: commandRegister.action ? commandRegister.action : () => {}
+      handler: async argv => {
+        if (commandRegister.beforeAction) {
+          await commandRegister.beforeAction(argv);
+        }
+
+        if (commandRegister.action) {
+          await commandRegister.action(argv);
+        }
+
+        if (commandRegister.afterAction) {
+          await commandRegister.afterAction(argv);
+        }
+      }
     });
   });
 }
