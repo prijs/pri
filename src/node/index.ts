@@ -37,8 +37,6 @@ const pri = {
 
   event: priEvent,
 
-  createCli,
-
   ...self
 };
 
@@ -80,6 +78,6 @@ Object.defineProperty(pri, 'projectConfig', {
   }
 });
 
-export { outputPri as pri };
+export { outputPri as pri, createCli };
 
 export * from '../utils/structor-config';

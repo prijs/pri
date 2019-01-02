@@ -1,6 +1,6 @@
 {
   "name": "pri",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "types": "src/node/index.ts",
   "main": "built/node/index.js",
   "scripts": {
