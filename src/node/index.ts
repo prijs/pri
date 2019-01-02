@@ -3,6 +3,7 @@ import { priEvent } from '../utils/pri-events';
 import * as build from './build';
 import * as commands from './commands';
 import * as context from './context';
+import { createCli } from './create-cli';
 import * as devService from './dev-service';
 import * as project from './project/index';
 import * as self from './self';
@@ -35,6 +36,8 @@ const pri = {
   serviceWorker,
 
   event: priEvent,
+
+  createCli,
 
   ...self
 };
