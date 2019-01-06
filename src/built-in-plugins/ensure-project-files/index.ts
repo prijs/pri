@@ -80,12 +80,7 @@ const ensureTsconfig = (instance: typeof pri) =>
                 ...(instance.projectType === 'project' && { '@/*': ['src/*'] })
               }
             },
-            include: [
-              '.temp/**/*',
-              ...['src/**/*'].map(each =>
-                path.join(globalState.projectConfig.sourceRoot, each)
-              )
-            ],
+            include: ['.temp/**/*', ...['src/**/*'].map(each => path.join(globalState.projectConfig.sourceRoot, each))],
             exclude: ['node_modules', globalState.projectConfig.distDir]
           },
           null,
@@ -186,22 +181,11 @@ const ensurePackageJson = (instance: typeof pri) =>
   instance.project.addProjectFiles({
     fileName: 'package.json',
     pipeContent: (prev: string) => {
-      const oldPackageJson: any = prev ? JSON.parse(prev) : {};
-      const projectPriVersion =
-        _.get(oldPackageJson, 'devDependencies.pri') || _.get(oldPackageJson, 'dependencies.pri') || pkg.version;
-
-      if (instance.projectType === 'project') {
-        _.unset(oldPackageJson, 'devDependencies.pri');
-        _.set(oldPackageJson, `dependencies.${PRI_PACKAGE_NAME}`, projectPriVersion);
-      } else {
-        // Remove pri dep in dependencies
-        _.unset(oldPackageJson, 'dependencies.pri');
-        _.set(oldPackageJson, `devDependencies.${PRI_PACKAGE_NAME}`, projectPriVersion);
-      }
+      const prevJson = prev ? JSON.parse(prev) : {};
 
       return (
         JSON.stringify(
-          _.merge({}, oldPackageJson, {
+          _.merge({}, prevJson, {
             scripts: {
               start: 'pri dev',
               docs: 'pri docs',

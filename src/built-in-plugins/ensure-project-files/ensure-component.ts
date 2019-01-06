@@ -1,7 +1,9 @@
 import * as _ from 'lodash';
 import * as path from 'path';
 import * as prettier from 'prettier';
+import * as pkg from '../../../package.json';
 import { componentEntry, docsPath, pri, srcPath } from '../../node';
+import { PRI_PACKAGE_NAME } from '../../utils/constants';
 import { prettierConfig } from '../../utils/prettier-config';
 import { ensureTest } from './ensure-project';
 
@@ -16,7 +18,13 @@ export function ensurePackageJson(instance: typeof pri) {
   instance.project.addProjectFiles({
     fileName: 'package.json',
     pipeContent: prev => {
-      const prevJson = JSON.parse(prev);
+      const prevJson = prev ? JSON.parse(prev) : {};
+      const projectPriVersion =
+        _.get(prevJson, 'devDependencies.pri') || _.get(prevJson, 'dependencies.pri') || pkg.version;
+
+      _.unset(prevJson, 'dependencies.pri');
+      _.set(prevJson, `devDependencies.${PRI_PACKAGE_NAME}`, projectPriVersion);
+
       return (
         JSON.stringify(
           _.merge({}, prevJson, {
@@ -25,10 +33,6 @@ export function ensurePackageJson(instance: typeof pri) {
             dependencies: {
               '@babel/runtime': '^7.0.0'
             },
-            scripts: {
-              // FIXME: Don't know which cli to use.
-              // publish: 'npm run build && npm publish'
-            }
           }),
           null,
           2

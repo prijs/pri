@@ -1,6 +1,6 @@
 {
   "name": "pri",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "types": "src/node/index.ts",
   "main": "built/node/index.js",
   "scripts": {
@@ -124,7 +124,7 @@
     "url-join": "^4.0.0",
     "url-loader": "^1.1.2",
     "walk": "^2.3.14",
-    "webpack": "^4.25.1",
+    "webpack": "^4.28.3",
     "webpack-bundle-analyzer": "^3.0.3",
     "webpack-dev-server": "^3.1.10",
     "webpack-sources": "^1.3.0",
