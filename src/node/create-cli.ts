@@ -10,8 +10,6 @@ import { transferCommandsArrayToMap, TransferedRegisterCommand } from '../utils/
 import { log } from '../utils/log';
 import { loadPlugins, plugin } from '../utils/plugins';
 
-yargs.scriptName('pri');
-
 // Check node version
 if (semver.lte(process.version, '8.0.0')) {
   log(colors.red(`nodejs version should be greater than 8, current is ${process.version}`));

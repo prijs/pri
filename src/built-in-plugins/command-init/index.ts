@@ -5,6 +5,7 @@ import { pri } from '../../node';
 import { globalState } from '../../utils/global-state';
 import { log } from '../../utils/log';
 import text from '../../utils/text';
+import { addWhiteFilesByProjectType } from '../../utils/white-file-helper';
 
 export default async (instance: typeof pri) => {
   instance.commands.registerCommand({
@@ -36,6 +37,9 @@ export default async (instance: typeof pri) => {
             break;
         }
       }
+
+      // Add white files by projectType because we might change project type above.
+      addWhiteFilesByProjectType(instance);
 
       await instance.project.ensureProjectFiles();
       await instance.project.checkProjectFiles();

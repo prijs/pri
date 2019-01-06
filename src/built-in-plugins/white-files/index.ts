@@ -14,6 +14,7 @@ import {
   srcPath,
   utilPath
 } from '../../utils/structor-config';
+import { addWhiteFilesByProjectType } from '../../utils/white-file-helper';
 
 const whiteList = [CONFIG_FILE, srcPath.dir, docsPath.dir, '.git', `src${path.sep}components`];
 
@@ -62,16 +63,5 @@ export default async (instance: typeof pri) => {
     return relativePath.startsWith(`src${path.sep}layouts`);
   });
 
-  // For component/plugin/cli, add `src` to white list.
-  if (
-    globalState.projectType === 'component' ||
-    globalState.projectType === 'plugin' ||
-    globalState.projectType === 'cli'
-  ) {
-    const ignoreSrc: IWhiteFile = projectFiles => {
-      const relativePath = path.relative(globalState.projectRootPath, projectFiles.dir);
-      return relativePath.startsWith(srcPath.dir);
-    };
-    instance.project.whiteFileRules.add(ignoreSrc);
-  }
+  addWhiteFilesByProjectType(instance);
 };
