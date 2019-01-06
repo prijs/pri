@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 import * as path from 'path';
 import * as prettier from 'prettier';
 import * as pkg from '../../../package.json';
-import { cliEntry, componentEntry, docsPath, pri, srcPath } from '../../node';
+import { cliEntry, docsPath, pri, srcPath } from '../../node';
 import { PRI_PACKAGE_NAME } from '../../utils/constants';
 import { prettierConfig } from '../../utils/prettier-config';
 import { ensureTest } from './ensure-project';
@@ -45,7 +45,8 @@ export function ensurePackageJson(instance: typeof pri) {
         JSON.stringify(
           _.merge({}, prevJson, {
             main: `${instance.projectConfig.distDir}/index.js`,
-            types: path.format(componentEntry)
+            types: path.format(cliEntry),
+            scripts: { prepublishOnly: 'npm run build' }
           }),
           null,
           2

@@ -30,9 +30,10 @@ export function ensurePackageJson(instance: typeof pri) {
           _.merge({}, prevJson, {
             main: `${instance.projectConfig.distDir}/index.js`,
             types: path.format(componentEntry),
+            scripts: { prepublishOnly: 'npm run build' },
             dependencies: {
               '@babel/runtime': '^7.0.0'
-            },
+            }
           }),
           null,
           2
