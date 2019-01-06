@@ -2,7 +2,7 @@ import * as inquirer from 'inquirer';
 import * as path from 'path';
 import { pri } from '../../node';
 import { exec } from '../../utils/exec';
-import { logError, spinner } from '../../utils/log';
+import { logFatal, spinner } from '../../utils/log';
 import { ensurePackagesLinks, getPackages, packagesPath } from '../../utils/packages';
 
 export default async (instance: typeof pri) => {
@@ -33,7 +33,7 @@ async function packagesRemove(packageName: string) {
   }
 
   if (!packages.some(eachPackage => eachPackage.name === packageName)) {
-    logError(`Package ${packageName} not exist.`);
+    logFatal(`Package ${packageName} not exist.`);
   }
 
   await spinner(`remove ${packageName}`, async error => {

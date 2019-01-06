@@ -1,4 +1,3 @@
-import * as commander from 'commander';
 import { ICommandRegister, plugin } from '../utils/plugins';
 
 export const registerCommand = (opts: ICommandRegister) => {

@@ -1,7 +1,6 @@
-import * as colors from 'colors';
 import * as fs from 'fs';
 import * as path from 'path';
-import { log } from './log';
+import { logFatal, logText } from './log';
 
 export const findNearestNodemodules = () => {
   return findNearestNodemodulesByPath(__dirname);
@@ -12,8 +11,7 @@ export const findNearestNodemodulesFile = (tryRelativeFilePath: string) => {
     const nodemodulePath = findNearestNodemodulesByPath(__dirname, tryRelativeFilePath);
     return path.join(nodemodulePath, tryRelativeFilePath);
   } catch (error) {
-    log(colors.red(`${tryRelativeFilePath} not found!`));
-    process.exit(0);
+    logFatal(`${tryRelativeFilePath} not found!`);
   }
 };
 

@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { logError } from './log';
+import { logFatal } from './log';
 import { ICommandRegister } from './plugins';
 
 export type TransferedRegisterCommand = { childs?: TransferedRegisterCommand[] } & ICommandRegister;
@@ -8,7 +8,7 @@ export type TransferedRegisterCommand = { childs?: TransferedRegisterCommand[] }
 export function transferCommandsArrayToMap(commandRegisters: ICommandRegister[]) {
   const duplicates = getDuplicatesCommand(commandRegisters);
   if (duplicates.length > 0) {
-    logError(`Duplicate commands:\n${duplicates.map(duplicate => duplicate).join('\n')}`);
+    logFatal(`Duplicate commands:\n${duplicates.map(duplicate => duplicate).join('\n')}`);
   }
 
   return createRootCommandRegisters(commandRegisters);

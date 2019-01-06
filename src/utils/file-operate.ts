@@ -1,9 +1,8 @@
-import * as colors from 'colors';
 import * as crypto from 'crypto';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import { exec } from './exec';
-import { log } from './log';
+import { logFatal, logText } from './log';
 
 export interface IPackageJson {
   main: string;
@@ -23,8 +22,7 @@ export async function runInTempFolderAndDestroyAfterFinished(fn: (tempPath?: str
   const tempFolderPath = getRandomFolderPath();
 
   if (fs.existsSync(tempFolderPath)) {
-    log(colors.red(`error code: 1`));
-    process.exit(0);
+    logFatal(`error code: 1`);
   }
 
   try {

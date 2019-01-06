@@ -1,4 +1,3 @@
-import * as colors from 'colors';
 import * as fs from 'fs-extra';
 import * as _ from 'lodash';
 import * as path from 'path';
@@ -10,7 +9,7 @@ import { pri } from '../../node';
 import { analyseProject } from '../../utils/analyse-project';
 import { createEntry } from '../../utils/create-entry';
 import { globalState } from '../../utils/global-state';
-import { log, spinner } from '../../utils/log';
+import { logInfo, logText, spinner } from '../../utils/log';
 import { getPluginsByOrder } from '../../utils/plugins';
 import { prettierConfig } from '../../utils/prettier-config';
 import { hasPluginsModified } from '../../utils/project-helper';
@@ -106,13 +105,13 @@ const debugProject = async (instance: typeof pri) => {
     stdoutOfAnyType.clearLine(0);
   } catch {}
 
-  log(colors.blue('\nStart dev server.\n'));
+  logInfo('\nStart dev server.\n');
 
   // Start dashboard server
   dashboardServer({ serverPort: dashboardServerPort, analyseInfo });
 
   if (globalState.projectConfig.useHttps) {
-    log(colors.blue(`you should set chrome://flags/#allow-insecure-localhost, to trust local certificate.`));
+    logInfo(`you should set chrome://flags/#allow-insecure-localhost, to trust local certificate.`);
   }
 
   // Start dashboard client production server

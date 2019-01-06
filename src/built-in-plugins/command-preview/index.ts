@@ -1,4 +1,3 @@
-import * as colors from 'colors';
 import * as fs from 'fs';
 import * as http from 'http';
 import * as https from 'https';
@@ -12,7 +11,7 @@ import { pri } from '../../node';
 import { ensureFiles } from '../../utils/ensure-files';
 import { ensureEndWithSlash } from '../../utils/functional';
 import { generateCertificate } from '../../utils/generate-certificate';
-import { log, spinner } from '../../utils/log';
+import { logText, spinner } from '../../utils/log';
 import text from '../../utils/text';
 import { buildProject } from '../command-build';
 

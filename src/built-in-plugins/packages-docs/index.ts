@@ -4,7 +4,7 @@ import * as inquirer from 'inquirer';
 import * as path from 'path';
 import { docsPath, pri } from '../../node';
 import { freshGlobalState, globalState } from '../../utils/global-state';
-import { logError } from '../../utils/log';
+import { logFatal } from '../../utils/log';
 import { ensurePackagesLinks, getPackages } from '../../utils/packages';
 import { devDocs } from '../command-docs';
 
@@ -38,7 +38,7 @@ async function packagesDocs(packageName: string) {
   const packageInfo = packages.find(eachPackage => eachPackage.name === packageName);
 
   if (!packageInfo) {
-    logError(`${packageName} not exist`);
+    logFatal(`${packageName} not exist`);
   }
 
   // await devDocs(pri, docsPath.dir);

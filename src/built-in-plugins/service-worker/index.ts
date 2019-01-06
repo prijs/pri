@@ -14,7 +14,9 @@ export default async (instance: typeof pri) => {
         instance.projectConfig.useServiceWorker
           ? `
         if (navigator.serviceWorker) {
-          navigator.serviceWorker.register('/sw.js', {scope: "${ensureStartWithSlash(ensureEndWithSlash(instance.projectConfig.baseHref))}"})
+          navigator.serviceWorker.register('/sw.js', {scope: "${ensureStartWithSlash(
+            ensureEndWithSlash(instance.projectConfig.baseHref)
+          )}"})
         }
       `
           : ''

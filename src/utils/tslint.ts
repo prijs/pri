@@ -1,11 +1,10 @@
-import * as colors from 'colors';
 import * as path from 'path';
 import { Configuration, Linter } from 'tslint';
 import * as yargs from 'yargs';
 import { plugin } from '../utils/plugins';
 import { tempPath } from '../utils/structor-config';
 import { globalState } from './global-state';
-import { log, spinner } from './log';
+import { logFatal, logText, logWarn, spinner } from './log';
 
 export async function lint(showBreakError = true) {
   if (yargs.argv['light']) {
@@ -41,22 +40,21 @@ export async function lint(showBreakError = true) {
 
     const results = linter.getResult();
     if (results.errorCount > 0) {
-      showBreakError ? log(colors.red(`Tslint errors:`)) : log(colors.yellow(`Tslint warnings:`));
       results.failures.forEach(failure => {
         const errorPosition = failure.getStartPosition().getLineAndCharacter();
-        log(
-          showBreakError ? colors.red(`${failure.getFailure()}`) : colors.yellow(`${failure.getFailure()}`),
-          ' at: ',
-          `${failure.getFileName()}:${errorPosition.line}:${errorPosition.character}`
-        );
-      });
+        const str = `${failure.getFailure()}\n at: \n ${failure.getFileName()}:${errorPosition.line}:${
+          errorPosition.character
+        }`;
 
-      if (showBreakError) {
-        process.exit(0);
-      }
+        if (showBreakError) {
+          logFatal(str);
+        } else {
+          logWarn(str);
+        }
+      });
     }
     if (results.fixes.length > 0) {
-      log(`Tslint auto fixed ${results.fixes.length} bugs`);
+      logText(`Tslint auto fixed ${results.fixes.length} bugs`);
     }
   });
 }

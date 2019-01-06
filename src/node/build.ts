@@ -1,4 +1,3 @@
-import * as webpack from 'webpack';
 import {
   IAfterProdBuild,
   IBuildConfigPipe,

@@ -6,7 +6,7 @@ import * as semver from 'semver';
 import { pri } from '../../node';
 import { writePackageJson } from '../../utils/file-operate';
 import { globalState } from '../../utils/global-state';
-import { log, logError, spinner } from '../../utils/log';
+import { logFatal, logText, spinner } from '../../utils/log';
 import { ensurePackagesLinks, getPackages } from '../../utils/packages';
 
 export default async (instance: typeof pri) => {
@@ -22,7 +22,7 @@ export default async (instance: typeof pri) => {
 
 async function packagesPublish(packageName: string, semverStr: semver.ReleaseType) {
   if (semverStr && ['patch', 'minor', 'major'].indexOf(semverStr) === -1) {
-    logError('semver must be patch | minor | major');
+    logFatal('semver must be patch | minor | major');
   }
 
   const packages = await getPackages();
@@ -43,7 +43,7 @@ async function packagesPublish(packageName: string, semverStr: semver.ReleaseTyp
   const packageInfo = packages.find(eachPackage => eachPackage.name === packageName);
 
   if (!packageInfo) {
-    logError(`${packageName} not exist`);
+    logFatal(`${packageName} not exist`);
   }
 
   const packagePath = path.join(globalState.projectRootPath, packageInfo.path);
@@ -51,7 +51,7 @@ async function packagesPublish(packageName: string, semverStr: semver.ReleaseTyp
   const projectType = _.get(packageInfo.packageJson, 'pri.type', null);
   if (projectType && projectType !== 'component') {
     // Is pri and only support component
-    logError(`${packageName} is a pri ${projectType}, only support publish component!`);
+    logFatal(`${packageName} is a pri ${projectType}, only support publish component!`);
   }
 
   if (!semverStr) {

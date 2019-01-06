@@ -1,4 +1,3 @@
-import * as colors from 'colors';
 import * as fs from 'fs';
 import * as inquirer from 'inquirer';
 import { get } from 'lodash';
@@ -9,7 +8,7 @@ import { exec } from '../../utils/exec';
 import { getPackageJson, runInTempFolderAndDestroyAfterFinished } from '../../utils/file-operate';
 import * as git from '../../utils/git-operate';
 import { globalState } from '../../utils/global-state';
-import { log, logError, spinner } from '../../utils/log';
+import { logFatal, logInfo, logText, logWarn, spinner } from '../../utils/log';
 import { ensurePackagesLinks, getExternalImportsFromProjectRoot, packagesPath } from '../../utils/packages';
 
 export default async (instance: typeof pri) => {
@@ -101,15 +100,13 @@ async function addPackages(gitUri: string) {
   });
 
   if (extraPackages.length > 0) {
-    log(colors.yellow(`Lose packages in current project, and you need to judge what needs to be added:`));
-    log(
-      colors.blue(
-        extraPackages
-          .map(extraPackage => {
-            return `${extraPackage.name}@${extraPackage.packageVersion}`;
-          })
-          .join(' ')
-      )
+    logWarn(`Lose packages in current project, and you need to judge what needs to be added:`);
+    logInfo(
+      extraPackages
+        .map(extraPackage => {
+          return `${extraPackage.name}@${extraPackage.packageVersion}`;
+        })
+        .join(' ')
     );
   }
 }

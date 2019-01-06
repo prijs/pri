@@ -1,7 +1,4 @@
-import * as fs from 'fs-extra';
 import * as _ from 'lodash';
-import * as path from 'path';
-import * as ts from 'typescript';
 import { pri } from '../../node';
 
 export default async (instance: typeof pri) => {

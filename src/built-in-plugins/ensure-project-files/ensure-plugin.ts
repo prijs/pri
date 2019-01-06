@@ -1,4 +1,3 @@
-import * as colors from 'colors';
 import * as fs from 'fs-extra';
 import * as _ from 'lodash';
 import * as path from 'path';
@@ -7,7 +6,7 @@ import * as pkg from '../../../package.json';
 import { componentEntry, pri } from '../../node';
 import { PRI_PACKAGE_NAME } from '../../utils/constants';
 import { globalState } from '../../utils/global-state';
-import { log } from '../../utils/log';
+import { logSuccess, logText } from '../../utils/log';
 import { prettierConfig } from '../../utils/prettier-config';
 
 export function ensurePluginFiles(instance: typeof pri) {
@@ -86,7 +85,7 @@ function ensureTest(instance: typeof pri) {
   const filePath = path.join(globalState.projectRootPath, fileName);
 
   if (fs.existsSync(filePath)) {
-    log(colors.green(`✔ Test file already exist.`));
+    logSuccess(`Test file already exist.`);
     return;
   }
 

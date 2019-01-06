@@ -1,4 +1,3 @@
-import * as colors from 'colors';
 import * as fs from 'fs-extra';
 import * as _ from 'lodash';
 import * as open from 'opn';
@@ -8,7 +7,7 @@ import * as webpackBundleAnalyzer from 'webpack-bundle-analyzer';
 import { pri } from '../../node';
 import { analyseProject } from '../../utils/analyse-project';
 import { createEntry } from '../../utils/create-entry';
-import { log, spinner } from '../../utils/log';
+import { spinner } from '../../utils/log';
 import text from '../../utils/text';
 import { runWebpack } from '../../utils/webpack';
 

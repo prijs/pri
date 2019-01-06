@@ -1,4 +1,3 @@
-import * as colors from 'colors';
 import * as fs from 'fs-extra';
 import * as _ from 'lodash';
 import * as path from 'path';
@@ -8,7 +7,7 @@ import { set } from '../node/pipe';
 import { Entry } from './create-entry';
 import { getDefault } from './es-module';
 import { globalState } from './global-state';
-import { log, logError, spinner } from './log';
+import { logFatal, logText, spinner } from './log';
 
 export interface IPluginPackageInfo {
   name: string;
@@ -197,7 +196,7 @@ function getPriPlugins(pluginRootPath: string, packageJsonPaths: string[], built
     .map(subPackageName => {
       // Can't allowed same name plugins
       if (Array.from(loadedPlugins).some(loadedPlugin => loadedPlugin.name === subPackageName)) {
-        logError(`There are two plugins named ${subPackageName}!`);
+        logFatal(`There are two plugins named ${subPackageName}!`);
       }
 
       const subPackageVersion = allDependencies[subPackageName];
@@ -242,9 +241,7 @@ export function getPluginsByOrder() {
         // Check plugin dependent, unless current project is plugin.
         if (globalState.projectType !== 'plugin') {
           if (!Array.from(loadedPlugins).some(eachLoadedPlugin => eachLoadedPlugin.name === depPluginName)) {
-            log(colors.red(`${loadedPlugin.name}: No dependent "${depPluginName}"`));
-            log(colors.blue(`Try: npm install ${depPluginName}.`));
-            process.exit(0);
+            logFatal(`${loadedPlugin.name}: No dependent "${depPluginName}"\nTry: npm install ${depPluginName}.`);
           }
         }
       });

@@ -1,19 +1,17 @@
 import { globalState } from '../utils/global-state';
 
-import * as colors from 'colors';
 import * as _ from 'lodash';
 import * as updateNotifier from 'update-notifier';
 import * as yargs from 'yargs';
 
 import * as semver from 'semver';
 import { transferCommandsArrayToMap, TransferedRegisterCommand } from '../utils/commands';
-import { log } from '../utils/log';
+import { logFatal, logText } from '../utils/log';
 import { loadPlugins, plugin } from '../utils/plugins';
 
 // Check node version
 if (semver.lte(process.version, '8.0.0')) {
-  log(colors.red(`nodejs version should be greater than 8, current is ${process.version}`));
-  process.exit(0);
+  logFatal(`nodejs version should be greater than 8, current is ${process.version}`);
 }
 
 export async function createCli(opts?: { pluginIncludeRoots: string[] }) {

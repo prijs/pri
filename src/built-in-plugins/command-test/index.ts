@@ -1,7 +1,7 @@
 import { execSync } from 'child_process';
 import * as path from 'path';
 import { pri } from '../../node';
-import { log } from '../../utils/log';
+import { logText } from '../../utils/log';
 import { findNearestNodemodulesFile } from '../../utils/npm-finder';
 import { tempPath, testsPath } from '../../utils/structor-config';
 
@@ -37,7 +37,7 @@ export const CommandTest = async (instance: typeof pri) => {
   );
 
   // Open test html in brower
-  log(
+  logText(
     `Open this url to see code coverage: file://${path.join(
       instance.projectRootPath,
       'coverage/lcov-report/index.html'

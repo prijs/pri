@@ -1,10 +1,9 @@
-import * as colors from 'colors';
 import * as fs from 'fs-extra';
 import * as _ from 'lodash';
 import * as path from 'path';
 import * as yargs from 'yargs';
 import { globalState } from './global-state';
-import { log } from './log';
+import { logInfo, logText, logWarn } from './log';
 import { plugin } from './plugins';
 import { priEvent } from './pri-events';
 
@@ -52,10 +51,10 @@ export async function ensureFile(
     if (exitFileContent === nextContent) {
       // skipped not log
     } else {
-      log(`${colors.yellow(`✔ ${fileRelativePath} exist, but the content is not correct, has been recovered.`)}`);
+      logWarn(`${fileRelativePath} exist, but the content is not correct, has been recovered.`);
     }
   } else {
-    log(`${colors.magenta(`⚠ ${fileRelativePath} not exist, created.`)}`);
+    logInfo(`${fileRelativePath} not exist, created.`);
   }
 
   fs.outputFileSync(filePath, nextContent);

@@ -11,7 +11,7 @@ import { CONFIG_FILE } from '../../../../utils/constants';
 import { createEntry } from '../../../../utils/create-entry';
 import { generateCertificate } from '../../../../utils/generate-certificate';
 import { freshProjectConfig, globalState } from '../../../../utils/global-state';
-import { log } from '../../../../utils/log';
+import { logText } from '../../../../utils/log';
 import { md5 } from '../../../../utils/md5';
 import { plugin } from '../../../../utils/plugins';
 import { ProjectConfig } from '../../../../utils/project-config-interface';

@@ -3,7 +3,7 @@ import * as inquirer from 'inquirer';
 import * as _ from 'lodash';
 import { pri } from '../../node';
 import { globalState } from '../../utils/global-state';
-import { log } from '../../utils/log';
+import { logText } from '../../utils/log';
 import text from '../../utils/text';
 import { addWhiteFilesByProjectType } from '../../utils/white-file-helper';
 
@@ -44,43 +44,43 @@ export default async (instance: typeof pri) => {
       await instance.project.ensureProjectFiles();
       await instance.project.checkProjectFiles();
 
-      log(`\n Success init your ${globalState.projectType}, you can run serval commands:\n`);
+      logText(`\n Success init your ${globalState.projectType}, you can run serval commands:\n`);
 
       switch (globalState.projectType) {
         case 'project':
         case 'plugin':
         case 'cli':
-          log(colors.blue('  npm start'));
-          log(`    ${text.commander.dev.description}\n`);
+          logText(colors.blue('  npm start'));
+          logText(`    ${text.commander.dev.description}\n`);
           break;
         case 'component':
-          log(colors.blue('  npm run docs'));
-          log(`    ${text.commander.docs.description}\n`);
+          logText(colors.blue('  npm run docs'));
+          logText(`    ${text.commander.docs.description}\n`);
           break;
         default:
       }
 
-      log(colors.blue('  npm run build'));
-      log(`    ${text.commander.build.description}\n`);
+      logText(colors.blue('  npm run build'));
+      logText(`    ${text.commander.build.description}\n`);
 
       switch (globalState.projectType) {
         case 'project':
-          log(colors.blue('  npm run preview'));
-          log(`    ${text.commander.dev.description}\n`);
+          logText(colors.blue('  npm run preview'));
+          logText(`    ${text.commander.dev.description}\n`);
           break;
         case 'component':
         case 'plugin':
         case 'cli':
-          log(colors.blue('  npm publish'));
-          log(`    Publish this component to npm package.\n`);
+          logText(colors.blue('  npm publish'));
+          logText(`    Publish this component to npm package.\n`);
           break;
         default:
       }
 
-      log(colors.blue('  npm test'));
-      log('    Run tests.\n');
+      logText(colors.blue('  npm test'));
+      logText('    Run tests.\n');
 
-      log('\n Happy hacking!');
+      logText('\n Happy hacking!');
 
       // For async register commander, process will be exit automatic.
       process.exit(0);

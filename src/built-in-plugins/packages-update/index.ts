@@ -4,7 +4,7 @@ import { pri } from '../../node';
 import { exec } from '../../utils/exec';
 import { addAllAndCommit, addAllAndCommitIfWorkingTreeNotClean, isWorkingTreeClean } from '../../utils/git-operate';
 import { globalState } from '../../utils/global-state';
-import { log, logError, spinner } from '../../utils/log';
+import { logFatal, logText, spinner } from '../../utils/log';
 import { ensurePackagesLinks, getPackages } from '../../utils/packages';
 
 export default async (instance: typeof pri) => {
@@ -37,7 +37,7 @@ async function packagesUpdate(packageName: string) {
   const packageInfo = packages.find(eachPackage => eachPackage.name === packageName);
 
   if (!packageInfo) {
-    logError(`${packageName} not exist`);
+    logFatal(`${packageName} not exist`);
   }
 
   const packagePath = path.join(globalState.projectRootPath, packageInfo.path);

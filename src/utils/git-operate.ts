@@ -1,7 +1,6 @@
-import * as colors from 'colors';
 import * as semver from 'semver';
 import { exec } from './exec';
-import { log } from './log';
+import { logFatal, logText, logWarn } from './log';
 
 let hasCheckGitVersion = false;
 const gitVersionWarning: string = null;
@@ -18,13 +17,9 @@ export const checkGitVersion = async (cwd?: string) => {
   try {
     const gitVersionPorcelain = /git\s+version\s+([0-9.]+)/g.exec(gitVersion)[1];
     if (semver.lte(gitVersionPorcelain, '2.14.0')) {
-      // tslint:disable-next-line:no-console
-      log(
-        colors.red(
-          `Your git version is outdate, should upgrade to 2.14.1 and above, current version: ${gitVersionPorcelain}`
-        )
+      logFatal(
+        `Your git version is outdate, should upgrade to 2.14.1 and above, current version: ${gitVersionPorcelain}`
       );
-      process.exit(0);
     }
   } catch {}
 
@@ -35,8 +30,7 @@ function validateGitVersion() {
   if (gitVersionWarning === null) {
     return;
   } else {
-    log(colors.red(gitVersionWarning));
-    process.exit(0);
+    logFatal(gitVersionWarning);
   }
 }
 
@@ -64,7 +58,7 @@ export const addAllAndCommit = async (message: string, cwd?: string) => {
 
 export const addAllAndCommitIfWorkingTreeNotClean = async (message: string, cwd?: string) => {
   if (!(await isWorkingTreeClean(cwd))) {
-    log(colors.yellow(`Working tree is not clean, auto add all and commit: "${message}"`));
+    logWarn(`Working tree is not clean, auto add all and commit: "${message}"`);
     try {
       await addAllAndCommit(message, cwd);
     } catch {

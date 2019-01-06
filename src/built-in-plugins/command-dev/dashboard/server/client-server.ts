@@ -8,7 +8,6 @@ import * as yargs from 'yargs';
 import * as zlib from 'zlib';
 import { generateCertificate } from '../../../../utils/generate-certificate';
 import { globalState } from '../../../../utils/global-state';
-import { log } from '../../../../utils/log';
 import { ProjectConfig } from '../../../../utils/project-config-interface';
 
 interface IOptions {

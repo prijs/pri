@@ -1,11 +1,10 @@
-import * as colors from 'colors';
 import * as gulp from 'gulp';
 import { globalState } from '../../utils/global-state';
-import { log } from '../../utils/log';
+import { logAwait, logComplete, logText } from '../../utils/log';
 import { tsPlusBabel } from '../../utils/ts-plus-babel';
 
 export const pluginDev = async () => {
-  log("Watching plugin's files.");
+  logText("Watching plugin's files.");
 
   const sourceBlob = 'src/**/*.{tsx,ts}';
   const watcher = gulp.watch(sourceBlob);
@@ -14,8 +13,8 @@ export const pluginDev = async () => {
 
   // TODO: On create delete?
   watcher.on('change', async () => {
-    log(colors.blue(`Start rebuild.`));
+    logAwait(`Start rebuild.`);
     await tsPlusBabel(globalState.projectConfig.distDir);
-    log(colors.green(`End rebuild.`));
+    logComplete(`End rebuild.`);
   });
 };

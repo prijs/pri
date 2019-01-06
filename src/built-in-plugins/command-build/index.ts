@@ -1,5 +1,3 @@
-import { execSync } from 'child_process';
-import * as colors from 'colors';
 import * as fs from 'fs-extra';
 import * as HtmlWebpackPlugin from 'html-webpack-plugin';
 import * as path from 'path';
@@ -10,7 +8,7 @@ import { analyseProject } from '../../utils/analyse-project';
 import { createEntry } from '../../utils/create-entry';
 import { exec } from '../../utils/exec';
 import { globalState } from '../../utils/global-state';
-import { log, spinner } from '../../utils/log';
+import { logInfo, logText, spinner } from '../../utils/log';
 import { findNearestNodemodulesFile } from '../../utils/npm-finder';
 import { plugin } from '../../utils/plugins';
 import { ProjectConfig } from '../../utils/project-config-interface';
@@ -115,7 +113,7 @@ async function copyAssets(instance: typeof pri) {
 
   const distAssetsPath = path.join(globalState.projectRootPath, instance.projectConfig.distDir, 'assets');
   if (fs.existsSync(distAssetsPath)) {
-    log(colors.yellow(`assets path exists in distDir, so skip /assets copy.`));
+    logInfo(`assets path exists in distDir, so skip /assets copy.`);
   } else {
     await fs.copy(sourceAssetsPath, distAssetsPath);
   }

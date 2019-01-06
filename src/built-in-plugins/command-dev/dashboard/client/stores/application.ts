@@ -138,9 +138,11 @@ export class ApplicationAction {
 
   @Action
   public loadPluginsByPosition(position: string, props?: any) {
-    return this.applicationStore.plugins.filter(plugin => plugin.position === position).map((plugin, index) => {
-      return React.createElement(plugin.view, { key: index, ...props });
-    });
+    return this.applicationStore.plugins
+      .filter(plugin => plugin.position === position)
+      .map((plugin, index) => {
+        return React.createElement(plugin.view, { key: index, ...props });
+      });
   }
 
   @Action
