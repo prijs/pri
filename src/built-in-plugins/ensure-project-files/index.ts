@@ -168,7 +168,7 @@ const ensureNpmignore = (instance: typeof pri) =>
       const values = prev.split('\n').filter(eachRule => !!eachRule);
       const npmIgnoresInRoot = npmIgnores.map(name => `/${name}`);
 
-      if (instance.projectConfig.ignoreSourceInNpm) {
+      if (instance.projectConfig.hideSourceCodeForNpm) {
         npmIgnoresInRoot.push('/src');
       }
 

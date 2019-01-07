@@ -90,5 +90,10 @@ export declare class ProjectConfig {
      * Enable package lock.
      */
     packageLock?: boolean;
+    /**
+     * Hide source code when publish npm package.
+     * Only take effect on `projectType = component`.
+     */
+    hideSourceCodeForNpm?: boolean;
 }
 export {};

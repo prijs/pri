@@ -127,7 +127,7 @@ export const buildComponent = async (instance: typeof pri) => {
     await copyAssets(instance);
 
     // Create d.ts if ignoreSourceInNpm
-    if (instance.projectConfig.ignoreSourceInNpm) {
+    if (instance.projectConfig.hideSourceCodeForNpm) {
       await exec(`npx tsc --declaration --declarationDir ./declaration`, { cwd: instance.projectRootPath });
     }
   });

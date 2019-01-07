@@ -90,8 +90,8 @@ export class ProjectConfig {
    */
   public packageLock?: boolean = false;
   /**
-   * npmIgnore source
+   * Hide source code when publish npm package.
    * Only take effect on `projectType = component`.
    */
-  public ignoreSourceInNpm?: boolean = false;
+  public hideSourceCodeForNpm?: boolean = false;
 }

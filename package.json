@@ -1,6 +1,6 @@
 {
   "name": "pri",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "types": "src/node/index.ts",
   "main": "built/node/index.js",
   "scripts": {
@@ -72,7 +72,7 @@
     "connect-history-api-fallback": "^1.5.0",
     "cors": "^2.8.5",
     "css-loader": "^1.0.1",
-    "dob": "^2.5.9",
+    "dob": "^2.5.10",
     "dob-react": "^2.4.15",
     "folder-hash": "^2.1.2",
     "fs-extra": "^7.0.1",
