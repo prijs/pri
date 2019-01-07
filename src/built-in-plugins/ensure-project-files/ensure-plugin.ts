@@ -141,8 +141,8 @@ export function ensurePackageJson(instance: typeof pri) {
         JSON.stringify(
           _.merge({}, prevJson, {
             main: `${instance.projectConfig.distDir}/index.js`,
-            types: path.format(componentEntry),
             scripts: { prepublishOnly: 'npm run build' },
+            types: path.format(componentEntry),
             dependencies: {
               '@babel/runtime': '^7.0.0'
             }

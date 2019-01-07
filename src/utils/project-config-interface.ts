@@ -89,4 +89,9 @@ export class ProjectConfig {
    * Enable package lock.
    */
   public packageLock?: boolean = false;
+  /**
+   * npmIgnore source
+   * Only take effect on `projectType = component`.
+   */
+  public ignoreSourceInNpm?: boolean = false;
 }

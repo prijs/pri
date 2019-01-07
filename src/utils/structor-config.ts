@@ -118,7 +118,8 @@ const gitIgnores: string[] = [
   '.DS_Store',
   'coverage',
   '.nyc_output',
-  'npm-debug.log'
+  'npm-debug.log',
+  'declaration'
 ];
 
 if (!globalState.projectConfig.packageLock) {
@@ -127,6 +128,7 @@ if (!globalState.projectConfig.packageLock) {
 
 export { gitIgnores };
 
+// npm ignores extends git ingores.
 let npmIgnores = gitIgnores.slice();
 npmIgnores.push(testsPath.dir);
 npmIgnores.push('packages');

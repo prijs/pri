@@ -25,12 +25,14 @@ export function ensurePackageJson(instance: typeof pri) {
       _.unset(prevJson, 'dependencies.pri');
       _.set(prevJson, `devDependencies.${PRI_PACKAGE_NAME}`, projectPriVersion);
 
+      const types = instance.projectConfig.ignoreSourceInNpm ? 'declaration/index.d.ts' : path.format(componentEntry);
+
       return (
         JSON.stringify(
           _.merge({}, prevJson, {
             main: `${instance.projectConfig.distDir}/index.js`,
-            types: path.format(componentEntry),
             scripts: { prepublishOnly: 'npm run build' },
+            types,
             dependencies: {
               '@babel/runtime': '^7.0.0'
             }

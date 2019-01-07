@@ -125,6 +125,11 @@ export const buildComponent = async (instance: typeof pri) => {
   await spinner('Building...', async () => {
     await tsPlusBabel(instance.projectConfig.distDir);
     await copyAssets(instance);
+
+    // Create d.ts if ignoreSourceInNpm
+    if (instance.projectConfig.ignoreSourceInNpm) {
+      await exec(`npx tsc --declaration --declarationDir ./declaration`, { cwd: instance.projectRootPath });
+    }
   });
 };
 

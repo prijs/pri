@@ -167,6 +167,11 @@ const ensureNpmignore = (instance: typeof pri) =>
     pipeContent: (prev = '') => {
       const values = prev.split('\n').filter(eachRule => !!eachRule);
       const npmIgnoresInRoot = npmIgnores.map(name => `/${name}`);
+
+      if (instance.projectConfig.ignoreSourceInNpm) {
+        npmIgnoresInRoot.push('/src');
+      }
+
       return _.union(values, npmIgnoresInRoot).join('\n');
     }
   });
