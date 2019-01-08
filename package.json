@@ -12,9 +12,6 @@
     "format": "tslint --fix './src/**/*.?(ts|tsx)' && prettier --write './src/**/*.?(ts|tsx)'",
     "generateDocument": "typedoc --out ./document --mode file --ignoreCompilerErrors ./src/node/index.ts"
   },
-  "pre-commit": [
-    "format"
-  ],
   "bin": {
     "pri": "built/bin.js"
   },
