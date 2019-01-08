@@ -25,7 +25,9 @@ export function ensurePackageJson(instance: typeof pri) {
       _.unset(prevJson, 'dependencies.pri');
       _.set(prevJson, `devDependencies.${PRI_PACKAGE_NAME}`, projectPriVersion);
 
-      const types = instance.projectConfig.hideSourceCodeForNpm ? 'declaration/index.d.ts' : path.format(componentEntry);
+      const types = instance.projectConfig.hideSourceCodeForNpm
+        ? 'declaration/index.d.ts'
+        : path.format(componentEntry);
 
       return (
         JSON.stringify(
