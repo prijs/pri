@@ -22,6 +22,7 @@ export default (opts: IOptions) => {
   const koaCompress = require('koa-compress');
   const KoaCors = require('@koa/cors');
   const KoaMount = require('koa-mount');
+  const KoaStatic = require('koa-static');
 
   const app = new Koa();
 
@@ -29,7 +30,7 @@ export default (opts: IOptions) => {
 
   app.use(koaCompress({ flush: zlib.Z_SYNC_FLUSH }));
 
-  app.use(KoaMount('/', KoaMount(opts.staticRootPath, { gzip: true })));
+  app.use(KoaMount('/', KoaStatic(opts.staticRootPath, { gzip: true })));
 
   app.use(async (ctx: any) => {
     ctx.set('Content-Type', 'text/html; charset=utf-8');

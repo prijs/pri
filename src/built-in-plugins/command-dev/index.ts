@@ -22,6 +22,8 @@ export default async (instance: typeof pri) => {
           break;
         case 'component':
           logFatal(`component not support 'npm start' yet, try 'npm run docs'!`);
+        case 'cli':
+          logFatal(`cli not support 'npm start' yet, try 'tsc -w'!`);
         case 'plugin':
           await pluginDev();
           break;

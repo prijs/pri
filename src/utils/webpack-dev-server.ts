@@ -67,7 +67,11 @@ export const runWebpackDevServer = async (opts: IOptions) => {
     https: globalState.projectConfig.useHttps,
     overlay: { warnings: true, errors: true },
     stats,
-    watchOptions: { ignored: /node_modules/ },
+    watchOptions: {
+      ...(!globalState.projectConfig.watchNodeModules && {
+        ignored: /node_modules/
+      })
+    },
     headers: { 'Access-Control-Allow-Origin': '*' },
     clientLogLevel: 'warning',
     disableHostCheck: true,

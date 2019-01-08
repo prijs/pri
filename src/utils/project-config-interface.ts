@@ -94,4 +94,8 @@ export class ProjectConfig {
    * Only take effect on `projectType = component`.
    */
   public hideSourceCodeForNpm?: boolean = false;
+  /**
+   * Watch node_modules
+   */
+  public watchNodeModules?: boolean = false;
 }
