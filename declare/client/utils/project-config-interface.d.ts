@@ -20,6 +20,10 @@ export declare class ProjectConfig {
      */
     outCssFileName?: string;
     /**
+     * Css extract.
+     */
+    cssExtract?: boolean;
+    /**
      * Bundle file name
      */
     bundleFileName?: string;

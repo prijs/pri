@@ -1,7 +1,9 @@
 import * as fs from 'fs-extra';
 import * as HtmlWebpackPlugin from 'html-webpack-plugin';
 import * as MiniCssExtractPlugin from 'mini-css-extract-plugin';
+import * as OptimizeCSSAssetsPlugin from 'optimize-css-assets-webpack-plugin';
 import * as path from 'path';
+import * as UglifyJsPlugin from 'uglifyjs-webpack-plugin';
 import * as webpack from 'webpack';
 import { globalState } from '../utils/global-state';
 import { plugin } from '../utils/plugins';
@@ -238,7 +240,22 @@ export const getWebpackConfig = async (opts: IOptions) => {
 
   if (!globalState.isDevelopment) {
     if (globalState.projectConfig.cssExtract) {
-      config.plugins.push(new MiniCssExtractPlugin());
+      config.plugins.push(
+        new MiniCssExtractPlugin({
+          filename: outCssFileName
+        })
+      );
+
+      config.optimization = {
+        ...config.optimization,
+        minimizer: [
+          new UglifyJsPlugin({
+            cache: true,
+            parallel: true
+          }),
+          new OptimizeCSSAssetsPlugin({})
+        ]
+      };
     }
 
     babelLoader.options.plugins.push(['import', { libraryName: 'antd' }]);

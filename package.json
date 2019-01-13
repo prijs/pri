@@ -1,6 +1,6 @@
 {
   "name": "pri",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "types": "src/node/index.ts",
   "main": "built/node/index.js",
   "scripts": {
@@ -90,6 +90,7 @@
     "node-forge": "0.7.6",
     "normalize-path": "3.0.0",
     "opn": "5.4.0",
+    "optimize-css-assets-webpack-plugin": "^5.0.1",
     "ora": "3.0.0",
     "portfinder": "1.0.20",
     "postcss-less": "^3.1.0",
@@ -113,6 +114,7 @@
     "tslint": "5.12.0",
     "tslint-config-prettier": "1.17.0",
     "typescript": "3.2.2",
+    "uglifyjs-webpack-plugin": "^2.1.1",
     "update-notifier": "2.5.0",
     "url-join": "4.0.0",
     "url-loader": "1.1.2",

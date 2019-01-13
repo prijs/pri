@@ -50,3 +50,5 @@ declare module 'babel-plugin-react-css-modules';
 declare module 'gulp-postcss';
 declare module 'postcss-modules';
 declare module 'webpack-node-externals';
+declare module 'optimize-css-assets-webpack-plugin';
+declare module 'uglifyjs-webpack-plugin';

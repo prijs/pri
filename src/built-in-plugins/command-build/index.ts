@@ -121,13 +121,13 @@ async function copyAssets(instance: typeof pri) {
 export const buildComponent = async (instance: typeof pri) => {
   await prepareBuild(instance);
 
-  // Build project
+  // Build component
   const stats = await runWebpack({
     mode: 'production',
     target: 'node',
     libraryTarget: 'commonjs2',
     entryPath: path.join(instance.projectRootPath, path.format(componentEntry)),
-    outFileName: 'main.js',
+    outFileName: 'index.js',
     externals: [nodeExternals()]
   });
 
