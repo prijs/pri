@@ -176,7 +176,11 @@ export const getWebpackConfig = async (opts: IOptions) => {
           ),
           exclude: plugin.buildConfigTsLoaderExcludePipes.reduce((options, fn) => fn(options), [])
         },
-        { test: /\.css$/, use: extraCssInProd(cssModuleLoader), include: defaultSourcePathToBeResolve },
+        {
+          test: /\.css$/,
+          use: extraCssInProd(globalState.projectConfig.enableCssModules ? cssModuleLoader : cssPureLoader),
+          include: defaultSourcePathToBeResolve
+        },
         { test: /\.css$/, use: extraCssInProd(cssPureLoader), include: selfAndProjectNodeModules },
         {
           test: /\.scss$/,
