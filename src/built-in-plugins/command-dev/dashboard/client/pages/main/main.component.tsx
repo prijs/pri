@@ -1,7 +1,6 @@
 import { Connect } from 'dob-react';
 import * as React from 'react';
 import { PureComponent } from '../../utils/react-helper';
-import * as S from './main.style';
 import { Props, State } from './main.type';
 
 import { ConfigComponent } from './config/config.component';

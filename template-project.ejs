@@ -5,6 +5,10 @@
   <title>
     <%= htmlWebpackPlugin.options.title %>
   </title>
+
+  <% if (htmlWebpackPlugin.options.htmlTemplateArgs && htmlWebpackPlugin.options.htmlTemplateArgs.appendHead) { %>
+    <%= htmlWebpackPlugin.options.htmlTemplateArgs.appendHead %>
+  <% } %>
 </head>
 
 <body>

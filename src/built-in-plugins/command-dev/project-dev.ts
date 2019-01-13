@@ -52,6 +52,7 @@ const debugDashboard = async () => {
 
   // Serve dashboard
   await runWebpackDevServer({
+    mode: 'development',
     publicPath: '/static/',
     entryPath: dashboardEntryFilePath,
     devServerPort: freePort,
@@ -124,6 +125,7 @@ const debugProject = async (instance: typeof pri) => {
 
   // Serve project
   await runWebpackDevServer({
+    mode: 'development',
     publicPath: globalState.projectConfig.publicPath,
     entryPath: path.join(globalState.projectRootPath, path.format(tempJsEntryPath)),
     devServerPort: freePort,

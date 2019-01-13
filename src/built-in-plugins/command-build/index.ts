@@ -2,19 +2,18 @@ import * as fs from 'fs-extra';
 import * as HtmlWebpackPlugin from 'html-webpack-plugin';
 import * as path from 'path';
 import * as prettier from 'prettier';
+import * as nodeExternals from 'webpack-node-externals';
 import { pri, tempPath } from '../../node';
 import * as pipe from '../../node/pipe';
 import { analyseProject } from '../../utils/analyse-project';
 import { createEntry } from '../../utils/create-entry';
 import { exec } from '../../utils/exec';
 import { globalState } from '../../utils/global-state';
-import { logInfo, logText, spinner } from '../../utils/log';
+import { logInfo, spinner } from '../../utils/log';
 import { findNearestNodemodulesFile } from '../../utils/npm-finder';
 import { plugin } from '../../utils/plugins';
-import { ProjectConfig } from '../../utils/project-config-interface';
 import { componentEntry } from '../../utils/structor-config';
 import text from '../../utils/text';
-import { tsPlusBabel } from '../../utils/ts-plus-babel';
 import { runWebpack } from '../../utils/webpack';
 import { getStaticHtmlPaths } from './generate-static-html';
 
@@ -122,15 +121,17 @@ async function copyAssets(instance: typeof pri) {
 export const buildComponent = async (instance: typeof pri) => {
   await prepareBuild(instance);
 
-  await spinner('Building...', async () => {
-    await tsPlusBabel(instance.projectConfig.distDir);
-    await copyAssets(instance);
-
-    // Create d.ts if ignoreSourceInNpm
-    if (instance.projectConfig.hideSourceCodeForNpm) {
-      await exec(`npx tsc --declaration --declarationDir ./declaration`, { cwd: instance.projectRootPath });
-    }
+  // Build project
+  const stats = await runWebpack({
+    mode: 'production',
+    target: 'node',
+    libraryTarget: 'commonjs2',
+    entryPath: path.join(instance.projectRootPath, path.format(componentEntry)),
+    outFileName: 'main.js',
+    externals: [nodeExternals()]
   });
+
+  plugin.buildAfterProdBuild.forEach(afterProdBuild => afterProdBuild(stats));
 };
 
 export default async (instance: typeof pri) => {

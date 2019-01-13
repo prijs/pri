@@ -2,7 +2,6 @@ import { Button, Form, Input } from 'antd';
 import { Connect } from 'dob-react';
 import * as React from 'react';
 import { PureComponent } from '../../../utils/react-helper';
-import * as S from '../menu.style';
 import { Props, State } from './new-page.type';
 
 const FormItem = Form.Item;

@@ -11,6 +11,7 @@ import babelPluginSyntaxImportMeta from '@babel/plugin-syntax-import-meta';
 import transformRuntime from '@babel/plugin-transform-runtime';
 import babelEnv from '@babel/preset-env';
 import babelReact from '@babel/preset-react';
+import babelPluginReactCssModules from 'babel-plugin-react-css-modules';
 
 export const babelOptions = {
   babelrc: false,
@@ -27,6 +28,19 @@ export const babelOptions = {
     [babelPluginSyntaxImportMeta],
     [babelPluginProposalClassProperties, { loose: false }],
     [babelPluginProposalJsonStrings],
-    [babelPluginProposalOptionalCatchBinding]
+    [babelPluginProposalOptionalCatchBinding],
+    [
+      babelPluginReactCssModules,
+      {
+        filetypes: {
+          '.scss': {
+            syntax: 'postcss-scss'
+          },
+          '.less': {
+            syntax: 'postcss-less'
+          }
+        }
+      }
+    ]
   ]
 };

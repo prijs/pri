@@ -1,20 +1,8 @@
 import * as webpack from 'webpack';
 import * as WebpackBar from 'webpackbar';
-import { getWebpackConfig } from './webpack-config';
+import { getWebpackConfig, IOptions } from './webpack-config';
 
-interface IOptions {
-  mode: 'production' | 'development';
-  entryPath: string;
-  htmlTemplatePath?: string;
-  publicPath?: string;
-  distDir?: string;
-  outFileName?: string;
-  outCssFileName?: string;
-  htmlTemplateArgs?: {
-    dashboardServerPort?: number;
-    dashboardClientPort?: number;
-    libraryStaticPath?: string;
-  };
+interface IExtraOptions {
   pipeConfig?: (config?: webpack.Configuration) => webpack.Configuration;
 }
 
@@ -28,17 +16,10 @@ const stats = {
   children: false
 };
 
-export const runWebpack = async (opts: IOptions): Promise<any> => {
-  let webpackConfig = await getWebpackConfig({
-    mode: opts.mode,
-    entryPath: opts.entryPath,
-    htmlTemplatePath: opts.htmlTemplatePath,
-    htmlTemplateArgs: opts.htmlTemplateArgs,
-    publicPath: opts.publicPath,
-    distDir: opts.distDir,
-    outFileName: opts.outFileName,
-    outCssFileName: opts.outCssFileName
-  });
+export const runWebpack = async (opts: IOptions<IExtraOptions>): Promise<any> => {
+  const {pipeConfig,...others} = opts
+
+  let webpackConfig = await getWebpackConfig(others);
 
   if (opts.pipeConfig) {
     webpackConfig = opts.pipeConfig(webpackConfig);

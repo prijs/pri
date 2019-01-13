@@ -2,7 +2,6 @@ import { Table } from 'antd';
 import { Connect } from 'dob-react';
 import * as React from 'react';
 import { PureComponent } from '../../../utils/react-helper';
-import * as S from './routes.style';
 import { Props, State } from './routes.type';
 
 const handleJumpPage = (pathStr: string) => {
@@ -21,7 +20,11 @@ const columns: any = [
     dataIndex: 'path',
     key: 'path',
     render: (pathStr: string) => {
-      return <S.PathLink onClick={handleJumpPage.bind(null, pathStr)}>{pathStr}</S.PathLink>;
+      return (
+        <span style={{ color: '#1890ff', cursor: 'pointer' }} onClick={handleJumpPage.bind(null, pathStr)}>
+          {pathStr}
+        </span>
+      );
     }
   }
 ];
@@ -52,9 +55,9 @@ export class RoutesComponent extends PureComponent<Props, State> {
       });
 
     return (
-      <S.Container>
+      <div>
         <Table dataSource={dataSource} columns={columns} pagination={false} />
-      </S.Container>
+      </div>
     );
   }
 }

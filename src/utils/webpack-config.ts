@@ -1,7 +1,6 @@
 import * as fs from 'fs-extra';
 import * as HtmlWebpackPlugin from 'html-webpack-plugin';
-// TODO:
-// import * as MiniCssExtractPlugin from 'mini-css-extract-plugin';
+import * as MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import * as path from 'path';
 import * as webpack from 'webpack';
 import { globalState } from '../utils/global-state';
@@ -9,19 +8,36 @@ import { plugin } from '../utils/plugins';
 import { docsPath, pagesPath, srcPath, tempPath } from '../utils/structor-config';
 import { babelOptions } from './babel-options';
 
-interface IOptions {
+export interface IHtmlTemplateArgs {
+  dashboardServerPort?: number;
+  libraryStaticPath?: string;
+  appendHead?: string;
+  appendBody?: string;
+}
+
+export type IOptions<T = {}> = {
   mode: 'development' | 'production';
   entryPath: string | string[];
   htmlTemplatePath?: string;
-  htmlTemplateArgs?: {
-    dashboardServerPort?: number;
-    libraryStaticPath?: string;
-  };
+  htmlTemplateArgs?: IHtmlTemplateArgs;
   publicPath?: string;
   distDir?: string;
   outFileName?: string;
   outCssFileName?: string;
-}
+  externals?: any[];
+  target?: webpack.Configuration['target'];
+  libraryTarget?: webpack.LibraryTarget;
+} & T;
+
+const defaultSourcePathToBeResolve = [
+  path.join(globalState.projectRootPath, srcPath.dir),
+  path.join(globalState.projectRootPath, tempPath.dir)
+];
+
+const selfAndProjectNodeModules = [
+  path.join(globalState.projectRootPath, 'node_modules'),
+  path.join(__dirname, '../../node_modules')
+];
 
 /**
  * Get webpack config.
@@ -35,9 +51,18 @@ export const getWebpackConfig = async (opts: IOptions) => {
     options: plugin.buildConfigStyleLoaderOptionsPipes.reduce((options, fn) => fn(options), {})
   };
 
-  const cssLoader = {
+  const cssPureLoader = {
     loader: 'css-loader',
     options: plugin.buildConfigCssLoaderOptionsPipes.reduce((options, fn) => fn(options), {})
+  };
+
+  const cssModuleLoader = {
+    loader: 'css-loader',
+    options: plugin.buildConfigCssLoaderOptionsPipes.reduce((options, fn) => fn(options), {
+      importLoaders: 1,
+      modules: true,
+      localIdentName: '[path][name]-[local]-[hash:base64:5]'
+    })
   };
 
   const sassLoader = {
@@ -66,13 +91,15 @@ export const getWebpackConfig = async (opts: IOptions) => {
    * Helper
    */
   function extraCssInProd(...loaders: any[]) {
-    return [styleLoader, ...loaders];
-    // TODO:
-    // if (globalState.isDevelopment) {
-    //   return [styleLoader, ...loaders];
-    // } else {
-    //   return [MiniCssExtractPlugin.loader, ...loaders];
-    // }
+    if (globalState.projectConfig.cssExtract) {
+      if (globalState.isDevelopment) {
+        return [styleLoader, ...loaders];
+      } else {
+        return [MiniCssExtractPlugin.loader, ...loaders];
+      }
+    } else {
+      return [styleLoader, ...loaders];
+    }
   }
 
   const distDir = opts.distDir || path.join(globalState.projectRootPath, globalState.projectConfig.distDir);
@@ -86,15 +113,12 @@ export const getWebpackConfig = async (opts: IOptions) => {
 
   const stats = { warnings: false, version: false, modules: false, entrypoints: false, hash: false };
 
-  const defaultSourcePathToBeResolve = [
-    path.join(globalState.projectRootPath, srcPath.dir),
-    path.join(globalState.projectRootPath, tempPath.dir)
-  ];
-
   const config: webpack.Configuration = {
     mode: opts.mode,
     entry: opts.entryPath,
     devtool: opts.mode === 'development' ? 'source-map' : false,
+    externals: opts.externals,
+    target: opts.target || 'web',
     output: {
       path: distDir,
       filename: outFileName,
@@ -103,7 +127,8 @@ export const getWebpackConfig = async (opts: IOptions) => {
       hotUpdateChunkFilename: 'hot~[id].[hash].chunk.js',
       hotUpdateMainFilename: 'hot-update.[hash].json',
       hashDigestLength: 4,
-      globalObject: `(typeof self !== 'undefined' ? self : this)`
+      globalObject: `(typeof self !== 'undefined' ? self : this)`,
+      libraryTarget: opts.libraryTarget || 'var'
     },
     module: {
       rules: [
@@ -149,10 +174,11 @@ export const getWebpackConfig = async (opts: IOptions) => {
           ),
           exclude: plugin.buildConfigTsLoaderExcludePipes.reduce((options, fn) => fn(options), [])
         },
-        { test: /\.css$/, use: extraCssInProd(cssLoader) },
+        { test: /\.css$/, use: extraCssInProd(cssModuleLoader), include: defaultSourcePathToBeResolve },
+        { test: /\.css$/, use: extraCssInProd(cssPureLoader), include: selfAndProjectNodeModules },
         {
           test: /\.scss$/,
-          use: extraCssInProd(cssLoader, sassLoader),
+          use: extraCssInProd(cssModuleLoader, sassLoader),
           include: plugin.buildConfigSassLoaderIncludePipes.reduce(
             (options, fn) => fn(options),
             defaultSourcePathToBeResolve
@@ -161,7 +187,7 @@ export const getWebpackConfig = async (opts: IOptions) => {
         },
         {
           test: /\.less$/,
-          use: extraCssInProd(cssLoader, lessLoader),
+          use: extraCssInProd(cssModuleLoader, lessLoader),
           include: plugin.buildConfigLessLoaderIncludePipes.reduce(
             (options, fn) => fn(options),
             defaultSourcePathToBeResolve
@@ -183,23 +209,14 @@ export const getWebpackConfig = async (opts: IOptions) => {
       ]
     },
     resolve: {
-      modules: [
-        // From project node_modules
-        path.join(globalState.projectRootPath, 'node_modules'),
-        path.join(__dirname, '../../node_modules')
-      ],
+      modules: selfAndProjectNodeModules,
       alias: {
         ...(globalState.projectType === 'project' && { '@': path.join(globalState.projectRootPath, '/src') })
       },
       extensions: ['.js', '.jsx', '.tsx', '.ts', '.scss', '.less', '.css', '.png', '.jpg', '.jpeg', '.gif']
     },
     resolveLoader: {
-      modules: [
-        // From project node_modules
-        // Self node_modules
-        path.join(globalState.projectRootPath, 'node_modules'),
-        path.join(__dirname, '../../node_modules')
-      ]
+      modules: selfAndProjectNodeModules
     },
     plugins: [],
     optimization: { namedChunks: false },
@@ -220,18 +237,12 @@ export const getWebpackConfig = async (opts: IOptions) => {
   }
 
   if (!globalState.isDevelopment) {
-    config.optimization.splitChunks = {
-      ...config.optimization.splitChunks,
-      cacheGroups: {
-        styles: { name: outCssFileName.replace(/\.css$/g, ''), test: /\.(s?css)$/, enforce: true }
-      }
-    };
-
-    // TODO:
-    // config.plugins.push(new MiniCssExtractPlugin());
+    if (globalState.projectConfig.cssExtract) {
+      config.plugins.push(new MiniCssExtractPlugin());
+    }
 
     babelLoader.options.plugins.push(['import', { libraryName: 'antd' }]);
-    (cssLoader.options as any).minimize = true;
+    (cssModuleLoader.options as any).minimize = true;
   }
 
   if (globalState.isDevelopment) {

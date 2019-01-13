@@ -3,7 +3,6 @@ import { Connect } from 'dob-react';
 import * as React from 'react';
 import { pipeEvent } from '../../utils/functional';
 import { PureComponent } from '../../utils/react-helper';
-import * as S from './struct.style';
 import { Props, State } from './struct.type';
 
 interface ITreeNode {
@@ -36,7 +35,7 @@ const getParentKey = (key: string, tree: ITreeNode[]): string => {
 const TreeIcon = (props: any) => <Icon style={{ marginRight: 5 }} {...props} />;
 
 const PlusIcon = (props: any) => (
-  <S.PlusIconContainer>
+  <span style={{ transition: 'all 0.2s', marginRight: 5 }}>
     <Icon
       style={{
         color: '#369',
@@ -46,7 +45,7 @@ const PlusIcon = (props: any) => (
       type="plus"
       {...props}
     />
-  </S.PlusIconContainer>
+  </span>
 );
 
 @Connect
@@ -64,12 +63,12 @@ export class StructComponent extends PureComponent<Props, State> {
     }
 
     return (
-      <S.Container>
-        <S.SearchContainer>
+      <div style={{ display: 'flex', flexDirection: 'column', padding: 10 }}>
+        <div style={{ display: 'flex', height: 30, minHeight: 30 }}>
           <Search placeholder="Search.." onChange={pipeEvent(this.onChange)} />
-        </S.SearchContainer>
+        </div>
 
-        <S.TreeContainer>
+        <div style={{ overflowY: 'auto' }}>
           <Tree
             onExpand={this.onExpand}
             expandedKeys={this.state.expandedKeys}
@@ -79,8 +78,8 @@ export class StructComponent extends PureComponent<Props, State> {
           >
             {this.loop((this.props.ApplciationStore.treeData as any).$raw)}
           </Tree>
-        </S.TreeContainer>
-      </S.Container>
+        </div>
+      </div>
     );
   }
 

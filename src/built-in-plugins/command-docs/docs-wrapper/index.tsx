@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import * as S from './style';
 import { Props, State } from './type';
 
 export default class Docs extends React.PureComponent<Props, State> {
@@ -36,37 +35,106 @@ export default class Docs extends React.PureComponent<Props, State> {
 
     const currentDoc = this.props.docs[this.state.currentDocIndex];
     const DocInstance = currentDoc.element.default;
+
     return (
-      <S.Container>
-        <S.GlobalStyles />
+      <div
+        style={{
+          backgroundColor: 'whitesmokesmoke',
+          width: '100vw',
+          height: '100vh',
+          display: 'flex',
+          padding: 10,
+          boxSizing: 'border-box'
+        }}
+      >
+        {this.props.docs.length > 1 && (
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              width: 300,
+              minWidth: 300,
+              boxSizing: 'border-box',
+              paddingRight: 10
+            }}
+          >
+            {this.renderLeftMenus()}
+          </div>
+        )}
 
-        {this.props.docs.length > 1 && <S.LeftContainer>{this.renderLeftMenus()}</S.LeftContainer>}
-
-        <S.RightContainer>
-          <S.DocInstanceContainer>
+        <div style={{ display: 'flex', flexDirection: 'column', flexGrow: 1, boxSizing: 'border-box' }}>
+          <div
+            style={{
+              width: '100%',
+              backgroundColor: 'white',
+              border: '1px solid #ddd',
+              borderRadius: 3,
+              flexGrow: 1,
+              flexBasis: 0,
+              overflowY: 'auto',
+              overflowX: 'hidden',
+              boxSizing: 'border-box'
+            }}
+          >
             <DocInstance />
-          </S.DocInstanceContainer>
+          </div>
 
-          <S.DocInfoContainer style={{ display: this.state.showDocInfo ? 'block' : 'none' }}>
-            <S.DocEditorInstance ref={(ref: any) => (this.editorRef = ref)} />
-          </S.DocInfoContainer>
+          <div
+            style={{
+              display: this.state.showDocInfo ? 'block' : 'none',
+              height: 200,
+              backgroundColor: 'white',
+              minHeight: 200,
+              width: '100%',
+              border: '1px solid #ddd',
+              borderRadius: 3,
+              marginTop: 10,
+              boxSizing: 'border-box'
+            }}
+          >
+            <div style={{ width: '100%', height: 180 }} ref={(ref: any) => (this.editorRef = ref)} />
+          </div>
 
-          <S.ToggleDocInfoContainer onClick={this.handleToggleSHowDocInfo}>Show code</S.ToggleDocInfoContainer>
-        </S.RightContainer>
-      </S.Container>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              height: 30,
+              backgroundColor: 'white',
+              marginTop: 10,
+              border: '1px solid #ddd',
+              fontSize: 14,
+              cursor: 'pointer'
+            }}
+            onClick={this.handleToggleSHowDocInfo}
+          >
+            Show code
+          </div>
+        </div>
+      </div>
     );
   }
 
   private renderLeftMenus = () => {
     return this.props.docs.map((doc, index) => {
       return (
-        <S.DocMenuItem
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            height: 30,
+            cursor: 'pointer',
+            borderRadius: 5,
+            paddingLeft: 10,
+            boxSizing: 'border-box',
+            backgroundColor: this.state.currentDocIndex === index ? 'white' : null
+          }}
           onClick={this.selectDoc.bind(this, index)}
           key={index}
-          theme={{ active: this.state.currentDocIndex === index }}
         >
           {doc.name}
-        </S.DocMenuItem>
+        </div>
       );
     });
   };

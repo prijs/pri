@@ -15,11 +15,15 @@ export class ProjectConfig {
   /**
    * Output main file name.
    */
-  public outFileName?: string = 'main.[hash].js';
+  public outFileName?: string = 'index.js';
   /**
    * Output main css file name.
    */
-  public outCssFileName?: string = 'main.[hash].css';
+  public outCssFileName?: string = 'index.css';
+  /**
+   * Css extract.
+   */
+  public cssExtract?: boolean = false;
   /**
    * Bundle file name
    */

@@ -68,11 +68,20 @@ export async function devDocs(instance: typeof pri, realDocsPath: string) {
   // Serve docs
   const freePort = await portfinder.getPortPromise();
   await runWebpackDevServer({
+    mode: 'development',
     publicPath: '/',
     entryPath: docsEntryPath,
     devServerPort: freePort,
     htmlTemplatePath: path.join(__dirname, '../../../template-project.ejs'),
     htmlTemplateArgs: {
+      appendHead: `
+        <style>
+          html, body {
+            padding: 0;
+            margin: 0;
+          }
+        </style>
+      `,
       appendBody: `
             <script src="https://g.alicdn.com/dt/fbi/0.0.292/monaco-editor/vs/loader.js"></script>
           `

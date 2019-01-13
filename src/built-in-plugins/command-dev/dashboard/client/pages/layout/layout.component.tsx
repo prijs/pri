@@ -1,6 +1,5 @@
 import { Connect } from 'dob-react';
 import * as React from 'react';
-import * as S from './layout.style';
 import { Props, State } from './layout.type';
 
 import { PureComponent } from '../../utils/react-helper';
@@ -20,29 +19,37 @@ export class LayoutComponent extends PureComponent<Props, State> {
 
   public render() {
     return (
-      <S.Container>
-        <S.GlobalStyles />
-        <S.ContainerLeft>
-          <S.TopContainer>
+      <div style={{ display: 'flex', height: '100%' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', width: 250, borderRight: '1px solid #eee' }}>
+          <div style={topContainerStyle}>
             <NavComponent />
-          </S.TopContainer>
+          </div>
 
-          <S.BottomContainer>
+          <div style={bottomContainerStyle}>
             <StructComponent />
-          </S.BottomContainer>
-        </S.ContainerLeft>
+          </div>
+        </div>
 
-        <S.ContainerRight>
-          <S.TopContainer>
+        <div style={{ display: 'flex', flexDirection: 'column', flexGrow: 1, flexBasis: 0 }}>
+          <div style={topContainerStyle}>
             <MenuComponent />
             {this.props.ApplicationAction.loadPluginsByPosition('menu')}
-          </S.TopContainer>
+          </div>
 
-          <S.BottomContainer>
+          <div style={bottomContainerStyle}>
             <MainComponent />
-          </S.BottomContainer>
-        </S.ContainerRight>
-      </S.Container>
+          </div>
+        </div>
+      </div>
     );
   }
 }
+
+const topContainerStyle: React.CSSProperties = { display: 'flex', height: 40, borderBottom: '1px solid #eee' };
+
+const bottomContainerStyle: React.CSSProperties = {
+  display: 'flex',
+  flexDirection: 'column',
+  flexGrow: 1,
+  flexBasis: 0
+};

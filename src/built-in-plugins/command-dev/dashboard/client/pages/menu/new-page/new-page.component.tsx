@@ -1,11 +1,24 @@
-import { Modal } from 'antd';
+import { Icon, Modal } from 'antd';
 import { Connect } from 'dob-react';
 import * as React from 'react';
 import { PureComponent } from '../../../utils/react-helper';
-import * as S from '../menu.style';
 import { Props, State } from './new-page.type';
 
 import FormComponent from './form';
+
+export const MenuIcon = (props: any) => <Icon style={{ fontSize: 15, marginRight: 10 }} {...props} />;
+
+const buttonStyle = {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  fontSize: 14,
+  color: '#666',
+  borderRight: '1px solid #eee',
+  padding: '0 10px',
+  cursor: 'pointer',
+  transition: 'background-color 0.2s'
+};
 
 @Connect
 export class NewPageComponent extends PureComponent<Props, State> {
@@ -14,11 +27,11 @@ export class NewPageComponent extends PureComponent<Props, State> {
 
   public render() {
     return (
-      <S.Container>
-        <S.Button onClick={this.showModal}>
-          <S.MenuIcon type="file-add" />
+      <div style={{ display: 'flex' }}>
+        <div onClick={this.showModal} style={buttonStyle}>
+          <MenuIcon style={buttonStyle} type="file-add" />
           New Page
-        </S.Button>
+        </div>
 
         <Modal
           title="New Page"
@@ -29,7 +42,7 @@ export class NewPageComponent extends PureComponent<Props, State> {
         >
           <FormComponent onSuccess={this.handleCancel} />
         </Modal>
-      </S.Container>
+      </div>
     );
   }
 

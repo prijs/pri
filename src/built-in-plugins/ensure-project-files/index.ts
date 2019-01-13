@@ -188,6 +188,19 @@ const ensurePackageJson = (instance: typeof pri) =>
     pipeContent: (prev: string) => {
       const prevJson = prev ? JSON.parse(prev) : {};
 
+      const priDeps = pkg.dependencies || {};
+
+      // Remove packages which already exists in priDeps
+      if (prevJson.dependencies) {
+        prevJson.dependencies = _.omit(prevJson.dependencies, Object.keys(priDeps));
+      }
+      if (prevJson.devDependencies) {
+        prevJson.devDependencies = _.omit(prevJson.devDependencies, Object.keys(priDeps));
+      }
+      if (prevJson.peerDependencies) {
+        prevJson.peerDependencies = _.omit(prevJson.peerDependencies, Object.keys(priDeps));
+      }
+
       return (
         JSON.stringify(
           _.merge({}, prevJson, {

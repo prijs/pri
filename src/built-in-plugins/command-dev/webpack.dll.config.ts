@@ -37,7 +37,6 @@ export default (opts: IOptions) =>
         'markdown-it',
         'react-loadable',
         'react-router',
-        'styled-components',
         'history',
         PRI_PACKAGE_NAME + '/client'
       ])

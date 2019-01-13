@@ -8,21 +8,12 @@ import * as webpackDevServer from 'webpack-dev-server';
 import * as WebpackBar from 'webpackbar';
 import { globalState } from '../utils/global-state';
 import { tempPath } from '../utils/structor-config';
-import { getWebpackConfig } from './webpack-config';
+import { getWebpackConfig, IHtmlTemplateArgs, IOptions } from './webpack-config';
 
-interface IOptions {
-  entryPath: string;
-  htmlTemplatePath: string;
+interface IExtraOptions {
+  pipeConfig?: (config?: webpack.Configuration) => webpack.Configuration;
   devServerPort: number;
   publicPath: string;
-  distDir?: string;
-  outFileName?: string;
-  htmlTemplateArgs?: {
-    dashboardServerPort?: number;
-    libraryStaticPath?: string;
-    appendBody?: string;
-  };
-  pipeConfig?: (config?: webpack.Configuration) => webpack.Configuration;
   webpackBarOptions?: any;
 }
 
@@ -36,16 +27,10 @@ const stats = {
   children: false
 };
 
-export const runWebpackDevServer = async (opts: IOptions) => {
-  let webpackConfig = await getWebpackConfig({
-    mode: 'development',
-    entryPath: opts.entryPath,
-    htmlTemplatePath: opts.htmlTemplatePath,
-    htmlTemplateArgs: opts.htmlTemplateArgs,
-    publicPath: opts.publicPath,
-    distDir: opts.distDir,
-    outFileName: opts.outFileName
-  });
+export const runWebpackDevServer = async (opts: IOptions<IExtraOptions>) => {
+  const { pipeConfig, devServerPort, publicPath, webpackBarOptions, ...others } = opts;
+
+  let webpackConfig = await getWebpackConfig(others);
 
   if (opts.pipeConfig) {
     webpackConfig = opts.pipeConfig(webpackConfig);

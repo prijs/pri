@@ -46,3 +46,7 @@ declare module '@babel/plugin-proposal-class-properties';
 declare module '@babel/plugin-proposal-json-strings';
 declare module '@babel/plugin-proposal-optional-catch-binding';
 declare module 'signale';
+declare module 'babel-plugin-react-css-modules';
+declare module 'gulp-postcss';
+declare module 'postcss-modules';
+declare module 'webpack-node-externals';

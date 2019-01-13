@@ -1,9 +1,14 @@
 import * as path from 'path';
 import { componentEntry, pri } from '../../node';
+import { logFatal } from '../../utils/log';
 import text from '../../utils/text';
 import { runWebpack } from '../../utils/webpack';
 
 async function bundle(instance: typeof pri) {
+  if (instance.projectType !== 'component') {
+    logFatal(`Only component support 'npm run bundle', try 'npm start'!`);
+  }
+
   await instance.project.ensureProjectFiles();
   await instance.project.lint();
   await instance.project.checkProjectFiles();
