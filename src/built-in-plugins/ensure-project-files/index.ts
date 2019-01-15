@@ -128,7 +128,8 @@ const ensureTslint = (instance: typeof pri) =>
             'no-implicit-dependencies': false,
             'no-object-literal-type-assertion': false,
             'no-submodule-imports': false,
-            'no-empty': true
+            'no-empty': true,
+            'interface-name': [true, 'never-prefix']
           }
         },
         null,

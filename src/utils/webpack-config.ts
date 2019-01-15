@@ -178,7 +178,7 @@ export const getWebpackConfig = async (opts: IOptions) => {
         },
         {
           test: /\.css$/,
-          use: extraCssInProd(globalState.projectConfig.enableCssModules ? cssModuleLoader : cssPureLoader),
+          use: extraCssInProd(cssModuleLoader),
           include: defaultSourcePathToBeResolve
         },
         { test: /\.css$/, use: extraCssInProd(cssPureLoader), include: selfAndProjectNodeModules },
