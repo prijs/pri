@@ -12,6 +12,7 @@ import transformRuntime from '@babel/plugin-transform-runtime';
 import babelEnv from '@babel/preset-env';
 import babelReact from '@babel/preset-react';
 import babelPluginReactCssModules from 'babel-plugin-react-css-modules';
+import { globalState } from './global-state';
 
 export const babelOptions = {
   babelrc: false,
@@ -29,18 +30,20 @@ export const babelOptions = {
     [babelPluginProposalClassProperties, { loose: false }],
     [babelPluginProposalJsonStrings],
     [babelPluginProposalOptionalCatchBinding],
-    [
-      babelPluginReactCssModules,
-      {
-        filetypes: {
-          '.scss': {
-            syntax: 'postcss-scss'
-          },
-          '.less': {
-            syntax: 'postcss-less'
+    globalState.projectConfig.enableCssModules
+      ? [
+          babelPluginReactCssModules,
+          {
+            filetypes: {
+              '.scss': {
+                syntax: 'postcss-scss'
+              },
+              '.less': {
+                syntax: 'postcss-less'
+              }
+            }
           }
-        }
-      }
-    ]
-  ]
+        ]
+      : null
+  ].filter(each => each !== null)
 };

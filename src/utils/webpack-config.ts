@@ -63,7 +63,8 @@ export const getWebpackConfig = async (opts: IOptions) => {
     options: plugin.buildConfigCssLoaderOptionsPipes.reduce((options, fn) => fn(options), {
       importLoaders: 1,
       modules: true,
-      localIdentName: '[path][name]-[local]-[hash:base64:5]'
+      localIdentName: '[path][name]-[local]-[hash:base64:5]',
+      minimize: globalState.isDevelopment ? false : true
     })
   };
 
@@ -178,13 +179,13 @@ export const getWebpackConfig = async (opts: IOptions) => {
         },
         {
           test: /\.css$/,
-          use: extraCssInProd(cssModuleLoader),
+          use: extraCssInProd(globalState.projectConfig.enableCssModules ? cssModuleLoader : cssPureLoader),
           include: defaultSourcePathToBeResolve
         },
         { test: /\.css$/, use: extraCssInProd(cssPureLoader), include: selfAndProjectNodeModules },
         {
           test: /\.scss$/,
-          use: extraCssInProd(cssModuleLoader, sassLoader),
+          use: extraCssInProd(globalState.projectConfig.enableCssModules ? cssModuleLoader : cssPureLoader, sassLoader),
           include: plugin.buildConfigSassLoaderIncludePipes.reduce(
             (options, fn) => fn(options),
             defaultSourcePathToBeResolve
@@ -193,7 +194,7 @@ export const getWebpackConfig = async (opts: IOptions) => {
         },
         {
           test: /\.less$/,
-          use: extraCssInProd(cssModuleLoader, lessLoader),
+          use: extraCssInProd(globalState.projectConfig.enableCssModules ? cssModuleLoader : cssPureLoader, lessLoader),
           include: plugin.buildConfigLessLoaderIncludePipes.reduce(
             (options, fn) => fn(options),
             defaultSourcePathToBeResolve
@@ -263,7 +264,6 @@ export const getWebpackConfig = async (opts: IOptions) => {
     }
 
     babelLoader.options.plugins.push(['import', { libraryName: 'antd' }]);
-    (cssModuleLoader.options as any).minimize = true;
   }
 
   if (globalState.isDevelopment) {
