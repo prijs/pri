@@ -42,6 +42,7 @@ export default async (instance: typeof pri) => {
         `
         ),
         { semi: true, singleQuote: true, parser: 'babylon' }
+        // { semi: true, singleQuote: true, parser: 'babel' }
       )
     );
   });

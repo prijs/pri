@@ -93,6 +93,7 @@ export const buildProject = async (
         semi: true,
         singleQuote: true,
         parser: 'babylon'
+        // parser: 'babel'
       })
     );
   }

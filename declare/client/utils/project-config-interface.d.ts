@@ -103,5 +103,9 @@ export declare class ProjectConfig {
      * Watch node_modules
      */
     watchNodeModules?: boolean;
+    /**
+     * Enable css modules
+     */
+    enableCssModules?: boolean;
 }
 export {};
