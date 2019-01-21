@@ -60,5 +60,7 @@ export async function lint(showBreakError = true) {
   // });
   logInfo('Format code..');
 
-  execSync(`npm run format`);
+  execSync(`npm run format`, {
+    stdio: 'inherit'
+  });
 }
