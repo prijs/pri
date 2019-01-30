@@ -26,24 +26,26 @@ export default async (instance: typeof pri) => {
     `
     );
 
-    fs.outputFileSync(
-      path.join(instance.projectRootPath, tempPath.dir, 'static', 'sw.js'),
-      prettier.format(
-        entry.pipe.get(
-          'serviceWorker',
+    if (instance.projectConfig.useServiceWorker) {
+      fs.outputFileSync(
+        path.join(instance.projectRootPath, tempPath.dir, 'static', 'sw.js'),
+        prettier.format(
+          entry.pipe.get(
+            'serviceWorker',
+            `
+            self.addEventListener("install", event => {
+              self.skipWaiting()
+            })
+  
+            self.addEventListener("activate", event => {
+              self.clients.claim()
+            });
           `
-          self.addEventListener("install", event => {
-            self.skipWaiting()
-          })
-
-          self.addEventListener("activate", event => {
-            self.clients.claim()
-          });
-        `
-        ),
-        { semi: true, singleQuote: true, parser: 'babylon' }
-        // { semi: true, singleQuote: true, parser: 'babel' }
-      )
-    );
+          ),
+          { semi: true, singleQuote: true, parser: 'babylon' }
+          // { semi: true, singleQuote: true, parser: 'babel' }
+        )
+      );
+    }
   });
 };

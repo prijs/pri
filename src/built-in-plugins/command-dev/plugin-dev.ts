@@ -1,4 +1,5 @@
 import { logFatal } from '../../utils/log';
+import { runWebpackDevServer } from '../../utils/webpack-dev-server';
 
 export const pluginDev = async () => {
   // logText("Watching plugin's files.");
@@ -14,5 +15,21 @@ export const pluginDev = async () => {
   //   await tsPlusBabel(globalState.projectConfig.distDir);
   //   logComplete(`End rebuild.`);
   // });
-  logFatal('Not support yet');
+
+
+  // await runWebpackDevServer({
+  //   mode: 'development',
+  //   publicPath: '/static/',
+  //   entryPath: dashboardEntryFilePath,
+  //   devServerPort: freePort,
+  //   outFileName: 'main.[hash].js',
+  //   htmlTemplatePath: path.join(__dirname, '../../../template-dashboard.ejs'),
+  //   htmlTemplateArgs: {
+  //     dashboardServerPort,
+  //     libraryStaticPath
+  //   },
+  //   webpackBarOptions: {
+  //     name: 'dashboard'
+  //   }
+  // });
 };
