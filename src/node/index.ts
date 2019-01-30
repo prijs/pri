@@ -40,42 +40,14 @@ const pri = {
   ...self
 };
 
-const outputPri = pri as typeof pri & {
-  projectType: typeof globalState.projectType;
-  projectRootPath: typeof globalState.projectRootPath;
-  isDevelopment: typeof globalState.isDevelopment;
-  majorCommand: typeof globalState.majorCommand;
-  projectConfig: typeof globalState.projectConfig;
-};
+const outputPri = pri as typeof pri & typeof globalState;
 
-Object.defineProperty(pri, 'projectType', {
-  get() {
-    return globalState.projectType;
-  }
-});
-
-Object.defineProperty(pri, 'projectRootPath', {
-  get() {
-    return globalState.projectRootPath;
-  }
-});
-
-Object.defineProperty(pri, 'isDevelopment', {
-  get() {
-    return globalState.isDevelopment;
-  }
-});
-
-Object.defineProperty(pri, 'majorCommand', {
-  get() {
-    return globalState.majorCommand;
-  }
-});
-
-Object.defineProperty(pri, 'projectConfig', {
-  get() {
-    return globalState.projectConfig;
-  }
+Object.keys(globalState).forEach(globalStateKey => {
+  Object.defineProperty(pri, globalStateKey, {
+    get() {
+      return (globalState as any)[globalStateKey];
+    }
+  });
 });
 
 export { outputPri as pri, createCli };

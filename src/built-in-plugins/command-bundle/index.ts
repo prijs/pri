@@ -5,7 +5,7 @@ import text from '../../utils/text';
 import { runWebpack } from '../../utils/webpack';
 
 async function bundle(instance: typeof pri) {
-  if (instance.projectType !== 'component') {
+  if (instance.projectPackageJson.pri.type !== 'component') {
     logFatal(`Only component support 'npm run bundle', try 'npm start'!`);
   }
 

@@ -7,9 +7,9 @@ import { srcPath } from './structor-config';
 // For component/plugin/cli, add `src` to white list.
 export function addWhiteFilesByProjectType(instance: typeof pri) {
   if (
-    globalState.projectType === 'component' ||
-    globalState.projectType === 'plugin' ||
-    globalState.projectType === 'cli'
+    globalState.projectPackageJson.pri.type === 'component' ||
+    globalState.projectPackageJson.pri.type === 'plugin' ||
+    globalState.projectPackageJson.pri.type === 'cli'
   ) {
     const ignoreSrc: IWhiteFile = projectFiles => {
       const relativePath = path.relative(globalState.projectRootPath, projectFiles.dir);

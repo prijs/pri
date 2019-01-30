@@ -161,7 +161,7 @@ export default async (instance: typeof pri) => {
     },
     description: text.commander.build.description,
     action: async (options: any) => {
-      switch (instance.projectType) {
+      switch (instance.projectPackageJson.pri.type) {
         case 'project':
           await buildProject(instance, options);
           break;

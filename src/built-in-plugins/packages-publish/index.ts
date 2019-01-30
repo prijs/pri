@@ -46,8 +46,6 @@ async function packagesPublish(packageName: string, semverStr: semver.ReleaseTyp
     logFatal(`${packageName} not exist`);
   }
 
-  const packagePath = path.join(globalState.projectRootPath, packageInfo.path);
-
   const projectType = _.get(packageInfo.packageJson, 'pri.type', null);
   if (projectType && projectType !== 'component') {
     // Is pri and only support component

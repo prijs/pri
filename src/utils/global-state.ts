@@ -30,7 +30,12 @@ export function freshGlobalState(projectRootPath: string) {
   const projectPackageJsonPath = path.join(globalState.projectRootPath, 'package.json');
   if (fs.existsSync(projectPackageJsonPath)) {
     const projectPackageJson = fs.readJsonSync(projectPackageJsonPath, { throws: false }) || {};
-    globalState.projectType = get(projectPackageJson, 'pri.type', null);
+
+    if (!projectPackageJson.pri) {
+      projectPackageJson.pri = {};
+    }
+
+    globalState.projectPackageJson = projectPackageJson;
   }
 }
 

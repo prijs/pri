@@ -3,6 +3,18 @@ export declare class GlobalState {
     projectRootPath: string;
     projectConfig: ProjectConfig;
     priPackageJson: any;
+    projectPackageJson: {
+        pri?: {
+            /**
+             * Project type
+             */
+            type: 'project' | 'component' | 'plugin' | 'cli' | null;
+            /**
+             * Current used pri version
+             */
+            version: string;
+        };
+    };
     /**
      * majorCommand
      * for example: pri dev -d, the major command is "dev"
@@ -12,8 +24,4 @@ export declare class GlobalState {
      * Development enviroment.
      */
     isDevelopment: boolean;
-    /**
-     * Project type
-     */
-    projectType: 'project' | 'component' | 'plugin' | 'cli' | null;
 }

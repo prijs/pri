@@ -176,7 +176,10 @@ export const loadPlugins = async (pluginIncludeRoots: string[] = []) => {
 function getPriPlugins(pluginRootPath: string, packageJsonPaths: string[], builtInPlugins: any = {}) {
   let loadOtherPlugins = false;
   // Load other plugins only when project type is 'project' or 'component'
-  if (globalState.projectType === 'project' || globalState.projectType === 'component') {
+  if (
+    globalState.projectPackageJson.pri.type === 'project' ||
+    globalState.projectPackageJson.pri.type === 'component'
+  ) {
     loadOtherPlugins = true;
   }
 
@@ -239,7 +242,7 @@ export function getPluginsByOrder() {
     if (loadedPlugin.config && loadedPlugin.config.dependencies) {
       loadedPlugin.config.dependencies.forEach(depPluginName => {
         // Check plugin dependent, unless current project is plugin.
-        if (globalState.projectType !== 'plugin') {
+        if (globalState.projectPackageJson.pri.type !== 'plugin') {
           if (!Array.from(loadedPlugins).some(eachLoadedPlugin => eachLoadedPlugin.name === depPluginName)) {
             logFatal(`${loadedPlugin.name}: No dependent "${depPluginName}"\nTry: npm install ${depPluginName}.`);
           }

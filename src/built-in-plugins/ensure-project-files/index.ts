@@ -26,7 +26,7 @@ export default async (instance: typeof pri) => {
 
     ensureDeclares(instance.projectRootPath);
 
-    switch (instance.projectType) {
+    switch (instance.projectPackageJson.pri.type) {
       case 'project':
         ensureProjectFiles(instance);
         break;
@@ -77,7 +77,7 @@ const ensureTsconfig = (instance: typeof pri) =>
               lib: ['dom', 'es5', 'es6', 'scripthost'],
               paths: {
                 [PRI_PACKAGE_NAME + '/*']: [PRI_PACKAGE_NAME, path.join(tempTypesPath.dir, '*')],
-                ...(instance.projectType === 'project' && { '@/*': ['src/*'] })
+                ...(instance.projectPackageJson.pri.type === 'project' && { '@/*': ['src/*'] })
               }
             },
             include: ['.temp/**/*', ...['src/**/*'].map(each => path.join(globalState.projectConfig.sourceRoot, each))],
@@ -215,7 +215,7 @@ const ensurePackageJson = (instance: typeof pri) =>
               test: 'pri test',
               format: "tslint --fix './src/**/*.?(ts|tsx)' && prettier --write './src/**/*.?(ts|tsx)'"
             },
-            pri: { type: instance.projectType }
+            pri: { type: instance.projectPackageJson.pri.type, version: instance.version }
           }),
           null,
           2

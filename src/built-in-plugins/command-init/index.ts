@@ -12,7 +12,7 @@ export default async (instance: typeof pri) => {
     name: ['init'],
     description: text.commander.init.description,
     action: async () => {
-      if (!globalState.projectType) {
+      if (!globalState.projectPackageJson.pri.type) {
         const inquirerInfo = await inquirer.prompt([
           {
             message: `Choose project type`,
@@ -24,16 +24,16 @@ export default async (instance: typeof pri) => {
 
         switch (inquirerInfo.projectType) {
           case 'Project':
-            globalState.projectType = 'project';
+            globalState.projectPackageJson.pri.type = 'project';
             break;
           case 'Component':
-            globalState.projectType = 'component';
+            globalState.projectPackageJson.pri.type = 'component';
             break;
           case 'Pri Plugin':
-            globalState.projectType = 'plugin';
+            globalState.projectPackageJson.pri.type = 'plugin';
             break;
           case 'Cli':
-            globalState.projectType = 'cli';
+            globalState.projectPackageJson.pri.type = 'cli';
             break;
         }
       }
@@ -44,9 +44,9 @@ export default async (instance: typeof pri) => {
       await instance.project.ensureProjectFiles();
       await instance.project.checkProjectFiles();
 
-      logText(`\n Success init your ${globalState.projectType}, you can run serval commands:\n`);
+      logText(`\n Success init your ${globalState.projectPackageJson.pri.type}, you can run serval commands:\n`);
 
-      switch (globalState.projectType) {
+      switch (globalState.projectPackageJson.pri.type) {
         case 'project':
         case 'plugin':
         case 'cli':
@@ -63,7 +63,7 @@ export default async (instance: typeof pri) => {
       logText(colors.blue('  npm run build'));
       logText(`    ${text.commander.build.description}\n`);
 
-      switch (globalState.projectType) {
+      switch (globalState.projectPackageJson.pri.type) {
         case 'project':
           logText(colors.blue('  npm run preview'));
           logText(`    ${text.commander.dev.description}\n`);
