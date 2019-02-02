@@ -5,7 +5,7 @@ import { IWhiteFile } from './plugins';
 import { srcPath } from './structor-config';
 
 // For component/plugin/cli, add `src` to white list.
-export function addWhiteFilesByProjectType(instance: typeof pri) {
+export function addWhiteFilesByProjectType() {
   if (
     globalState.projectPackageJson.pri.type === 'component' ||
     globalState.projectPackageJson.pri.type === 'plugin' ||
@@ -15,6 +15,6 @@ export function addWhiteFilesByProjectType(instance: typeof pri) {
       const relativePath = path.relative(globalState.projectRootPath, projectFiles.dir);
       return relativePath.startsWith(srcPath.dir);
     };
-    instance.project.whiteFileRules.add(ignoreSrc);
+    pri.project.whiteFileRules.add(ignoreSrc);
   }
 }

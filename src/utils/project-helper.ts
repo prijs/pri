@@ -19,37 +19,6 @@ export const hasNodeModulesModified = () => {
   return hasChanged(key, nextModifiedTime);
 };
 
-export const hasPluginsModified = async () => {
-  const key = 'plugins-modified-time-hash';
-
-  const pluginsHash: Array<{
-    name: string;
-    hash: string;
-  }> = [];
-  for (const loadedPlugin of Array.from(loadedPlugins)) {
-    try {
-      const packageJsonPath = require.resolve(path.join(loadedPlugin.pathOrModuleName, 'package.json'), {
-        paths: [__dirname, globalState.projectRootPath]
-      });
-      const pathInfo = path.parse(packageJsonPath);
-      const dirHash = await getFolderHash(pathInfo.dir);
-      pluginsHash.push({ name: loadedPlugin.pathOrModuleName, hash: md5(dirHash) });
-    } catch (error) {
-      // no package.json
-    }
-  }
-
-  _.sortBy(pluginsHash, 'name');
-
-  const nextHash = md5(
-    pluginsHash.reduce((hash, pluginHash) => {
-      return hash + pluginHash.name + pluginHash.hash;
-    }, '')
-  );
-
-  return hasChanged(key, nextHash);
-};
-
 function getFolderHash(dir: string): Promise<string> {
   return new Promise((resolve, reject) => {
     const walker = walk.walk(dir, { filters: [path.join(dir, 'node_modules'), path.join(dir, '.git')] });

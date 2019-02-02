@@ -1,4 +1,5 @@
 import * as fs from 'fs-extra';
+// TODO: 初始化性能损耗
 import * as ts from 'typescript';
 
 export const pipeEvent = (func: any) => {

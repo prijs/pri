@@ -4,7 +4,7 @@
  */
 
 import * as fs from 'fs-extra';
-import { get, merge } from 'lodash';
+import { merge } from 'lodash';
 import * as path from 'path';
 import * as yargs from 'yargs';
 import * as pkg from '../../package.json';

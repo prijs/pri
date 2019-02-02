@@ -9,47 +9,64 @@ import * as project from './project/index';
 import * as self from './self';
 import * as serviceWorker from './service-worker';
 
-const pri = {
-  /**
-   * Operate cli commands
-   */
-  commands,
-  /**
-   * Build configs
-   */
-  build,
-  /**
-   * Project management
-   */
-  project,
-  /**
-   * Context operate
-   */
-  context,
-  /**
-   * Register dev service
-   */
-  devService,
-  /**
-   * Control service worker
-   */
-  serviceWorker,
+type IPri = typeof globalState &
+  typeof self & {
+    /**
+     * Operate cli commands
+     */
+    commands: typeof commands;
+    /**
+     * Build configs
+     */
+    build: typeof build;
+    /**
+     * Project management
+     */
+    project: typeof project;
+    /**
+     * Context operate
+     */
+    context: typeof context;
+    /**
+     * Register dev service
+     */
+    devService: typeof devService;
+    /**
+     * Control service worker
+     */
+    serviceWorker: typeof serviceWorker;
 
-  event: priEvent,
+    event: typeof priEvent;
+  };
 
-  ...self
-};
+const outputPri: IPri = null;
 
-const outputPri = pri as typeof pri & typeof globalState;
+const globalWithPri = global as typeof global & { pri: IPri };
 
-Object.keys(globalState).forEach(globalStateKey => {
-  Object.defineProperty(pri, globalStateKey, {
-    get() {
-      return (globalState as any)[globalStateKey];
-    }
+if (globalWithPri.pri) {
+} else {
+  globalWithPri.pri = {
+    commands,
+    build,
+    project,
+    context,
+    devService,
+    serviceWorker,
+    event: priEvent,
+    ...self
+  } as any;
+
+  Object.keys(globalState).forEach(globalStateKey => {
+    Object.defineProperty((global as any).pri, globalStateKey, {
+      get() {
+        return (globalState as any)[globalStateKey];
+      }
+    });
   });
-});
+}
 
-export { outputPri as pri, createCli };
+export const pri = globalWithPri.pri;
+
+export { createCli };
 
 export * from '../utils/structor-config';

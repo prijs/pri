@@ -2,67 +2,76 @@ import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as prettier from 'prettier';
 import * as pipe from '../node/pipe';
-import { IProjectInfo } from './analyse-project-interface';
 import { PRI_PACKAGE_NAME } from './constants';
+import { PipeCallback } from './create-entry-d';
 import { globalState } from './global-state';
 import { plugin } from './plugins';
 import { prettierConfig } from './prettier-config';
 import { tempEnvironmentPath, tempJsAppPath, tempJsEntryPath } from './structor-config';
 
 export class Entry {
-  public getApp() {
-    return [this.getAppHeader(), this.getAppBody(), this.getAppComponent()].join('\n');
+  public async getApp() {
+    const appHeader = await this.getAppHeader();
+    const appBody = await this.getAppBody();
+    const appComponent = await this.getAppComponent();
+
+    return [appHeader, appBody, appComponent].join('\n');
   }
 
-  public getEntry() {
-    return [this.getEntryHeader(), this.getEntryRender()].join('\n');
+  public async getEntry() {
+    const entryHeader = await this.getEntryHeader();
+    const entryRender = await this.getEntryRender();
+
+    return [entryHeader, entryRender].join('\n');
   }
 
-  public getEnvironment() {
-    return [this.getEnvironmentBody()].join('\n');
+  public async getEnvironment() {
+    const environmentBody = await this.getEnvironmentBody();
+
+    return [environmentBody].join('\n');
   }
 
   public get pipe() {
     return pipe;
   }
 
-  public pipeAppHeader(fn: (header: string) => string) {
+  public pipeAppHeader(fn: PipeCallback) {
     pipe.set('appHeader', fn);
   }
 
-  public pipeAppBody(fn: (body: string) => string) {
+  public pipeAppBody(fn: PipeCallback) {
     pipe.set('appBody', fn);
   }
 
-  public pipeAppComponent(fn: (entryComponent: string) => string) {
+  public pipeAppComponent(fn: PipeCallback) {
     pipe.set('appComponent', fn);
   }
 
-  public pipeAppClassDidMount(fn: (renderRouter: string) => string) {
+  public pipeAppClassDidMount(fn: PipeCallback) {
     pipe.set('appClassDidMount', fn);
   }
 
-  public pipeAppRoutes(fn: (renderRoutes: string) => string) {
+  public pipeAppRoutes(fn: PipeCallback) {
     pipe.set('appRoutes', fn);
   }
 
-  public pipeAppRouter(fn: (renderRouter: string) => string) {
+  public pipeAppRouter(fn: PipeCallback) {
     pipe.set('appRouter', fn);
   }
 
-  public pipeEntryHeader(fn: (render: string) => string) {
+  public pipeEntryHeader(fn: PipeCallback) {
     pipe.set('entryHeader', fn);
   }
 
-  public pipeEntryRender(fn: (render: string) => string) {
+  public pipeEntryRender(fn: PipeCallback) {
     pipe.set('entryRender', fn);
   }
 
-  public pipeEnvironmentBody(fn: (render: string) => string) {
+  public pipeEnvironmentBody(fn: PipeCallback) {
     pipe.set('environmentBody', fn);
   }
 
-  protected getAppHeader() {
+  protected async getAppHeader() {
     return pipe.get(
       'appHeader',
       `
@@ -78,7 +87,7 @@ export class Entry {
     );
   }
 
-  protected getAppBody() {
+  protected async getAppBody() {
     return pipe.get(
       'appBody',
       `
@@ -87,18 +96,18 @@ export class Entry {
     );
   }
 
-  protected getAppComponent() {
+  protected async getAppComponent() {
     return pipe.get(
       'appComponent',
       `
       export default class App extends React.PureComponent<any, any> {
         public componentDidMount() {
-          ${this.getAppClassDidMount()}
+          ${await this.getAppClassDidMount()}
         }
 
         public render() {
           return (
-            ${this.getAppRouter()}
+            ${await this.getAppRouter()}
           )
         }
       }
@@ -106,16 +115,16 @@ export class Entry {
     );
   }
 
-  protected getAppRoutes() {
+  protected async getAppRoutes() {
     return pipe.get('appRoutes', '');
   }
 
-  protected getAppRouter() {
+  protected async getAppRouter() {
     const routerName = globalState.projectConfig.useHashRouter ? 'HashRouter' : 'Router';
     const historyInfo = globalState.projectConfig.useHashRouter
       ? ''
       : `
-      history={${pipe.get('appRouterHistory', 'customHistory')}}
+      history={${await pipe.get('appRouterHistory', 'customHistory')}}
     `;
 
     return pipe.get(
@@ -123,18 +132,18 @@ export class Entry {
       `
       <${routerName} ${historyInfo}>
         <Switch>
-          ${this.getAppRoutes()}
+          ${await this.getAppRoutes()}
         </Switch>
       </${routerName}>
     `
     );
   }
 
-  protected getAppClassDidMount() {
+  protected async getAppClassDidMount() {
     return pipe.get('appClassDidMount', '');
   }
 
-  protected getEntryHeader() {
+  protected async getEntryHeader() {
     return pipe.get(
       'entryHeader',
       `
@@ -148,7 +157,7 @@ export class Entry {
     );
   }
 
-  protected getEntryRender() {
+  protected async getEntryRender() {
     return pipe.get(
       'entryRender',
       `
@@ -162,18 +171,18 @@ export class Entry {
       if ((window as any).enableSsr) {
         // Need wait preloadAll, because we already have ssr html.
         Loadable.preloadAll().then(() => {
-          (ReactDOM as any).hydrate(${pipe.get('entryRenderApp', '<App />')}, document.getElementById(ROOT_ID))
+          (ReactDOM as any).hydrate(${await pipe.get('entryRenderApp', '<App />')}, document.getElementById(ROOT_ID))
         })
       } else {
         // Don't need wait preloadAll.
         Loadable.preloadAll()
-        ReactDOM.render(${pipe.get('entryRenderApp', '<App />')}, document.getElementById(ROOT_ID))
+        ReactDOM.render(${await pipe.get('entryRenderApp', '<App />')}, document.getElementById(ROOT_ID))
       }
     `
     );
   }
 
-  protected getEnvironmentBody() {
+  protected async getEnvironmentBody() {
     return pipe.get(
       'environmentBody',
       `
@@ -190,7 +199,7 @@ export class Entry {
   }
 }
 
-export function createEntry() {
+export async function createEntry() {
   const newEntryObject = new Entry();
 
   plugin.projectCreateEntrys.forEach(projectCreateEntry => {
@@ -202,16 +211,17 @@ export function createEntry() {
   const entryPath = path.join(globalState.projectRootPath, path.format(tempJsEntryPath));
   const appPath = path.join(globalState.projectRootPath, path.format(tempJsAppPath));
 
-  fs.outputFileSync(
-    environmentPath,
-    prettier.format(newEntryObject.getEnvironment(), { ...prettierConfig, parser: 'typescript' })
-  );
+  const environment = await newEntryObject.getEnvironment();
+  const app = await newEntryObject.getApp();
+  const entry = await newEntryObject.getEntry();
 
-  fs.outputFileSync(appPath, prettier.format(newEntryObject.getApp(), { ...prettierConfig, parser: 'typescript' }));
+  fs.outputFileSync(environmentPath, prettier.format(environment, { ...prettierConfig, parser: 'typescript' }));
+
+  fs.outputFileSync(appPath, prettier.format(app, { ...prettierConfig, parser: 'typescript' }));
 
   fs.outputFileSync(
     entryPath,
-    prettier.format(newEntryObject.getEntry(), {
+    prettier.format(entry, {
       ...prettierConfig,
       parser: 'typescript'
     })

@@ -17,7 +17,7 @@ const stats = {
 };
 
 export const runWebpack = async (opts: IOptions<IExtraOptions>): Promise<any> => {
-  const {pipeConfig,...others} = opts
+  const { pipeConfig, ...others } = opts;
 
   let webpackConfig = await getWebpackConfig(others);
 
@@ -29,6 +29,21 @@ export const runWebpack = async (opts: IOptions<IExtraOptions>): Promise<any> =>
   const compiler = webpack(webpackConfig);
 
   return runCompiler(compiler);
+};
+
+export const watchWebpack = async (opts: IOptions<IExtraOptions>): Promise<any> => {
+  const { pipeConfig, ...others } = opts;
+
+  let webpackConfig = await getWebpackConfig(others);
+
+  if (opts.pipeConfig) {
+    webpackConfig = opts.pipeConfig(webpackConfig);
+  }
+
+  webpackConfig.plugins.push(new WebpackBar());
+  const compiler = webpack(webpackConfig);
+
+  compiler.watch({}, () => {});
 };
 
 function runCompiler(compiler: webpack.Compiler) {

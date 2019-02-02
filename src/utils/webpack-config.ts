@@ -208,7 +208,9 @@ export const getWebpackConfig = async (opts: IOptions) => {
     resolve: {
       modules: selfAndProjectNodeModules,
       alias: {
-        ...(globalState.projectPackageJson.pri.type === 'project' && { '@': path.join(globalState.projectRootPath, '/src') })
+        ...(globalState.projectPackageJson.pri.type === 'project' && {
+          '@': path.join(globalState.projectRootPath, '/src')
+        })
       },
       extensions: ['.js', '.jsx', '.tsx', '.ts', '.scss', '.less', '.css', '.png', '.jpg', '.jpeg', '.gif']
     },

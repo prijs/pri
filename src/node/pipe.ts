@@ -1,16 +1,20 @@
-const pipes = new Map<string, any[]>();
+import { PipeCallback } from '../utils/create-entry-d';
 
-export const get = (pipeName: string, defaultValue: any) => {
+const pipes = new Map<string, PipeCallback[]>();
+
+export const get = async (pipeName: string, defaultValue: string) => {
   if (!pipes.has(pipeName)) {
     return defaultValue;
   }
 
-  return pipes.get(pipeName).reduce((value, pipe) => {
-    return pipe(value);
-  }, defaultValue);
+  const content = await pipes.get(pipeName).reduce(async (value, pipe) => {
+    return Promise.resolve(pipe(await value));
+  }, Promise.resolve(defaultValue));
+
+  return content;
 };
 
-export const set = (pipeName: string, callback: (text?: string) => string) => {
+export const set = (pipeName: string, callback: PipeCallback) => {
   if (!pipes.has(pipeName)) {
     pipes.set(pipeName, [callback]);
   } else {

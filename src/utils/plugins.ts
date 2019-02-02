@@ -2,60 +2,50 @@ import * as fs from 'fs-extra';
 import * as _ from 'lodash';
 import * as path from 'path';
 import * as webpack from 'webpack';
-import { pri } from '../node/index';
 import { set } from '../node/pipe';
 import { Entry } from './create-entry';
-import { getDefault } from './es-module';
 import { globalState } from './global-state';
-import { logFatal, logText, spinner } from './log';
+import { logFatal } from './log';
 
-export interface IPluginPackageInfo {
-  name: string;
-  version: string;
-  instance: any;
-  pathOrModuleName: string;
-  config: {
-    dependencies: string[];
+import * as pluginClientSsr from '../built-in-plugins/client-ssr';
+import * as pluginCommandAnalyse from '../built-in-plugins/command-analyse';
+import * as pluginCommandBuild from '../built-in-plugins/command-build';
+import * as pluginCommandBundle from '../built-in-plugins/command-bundle';
+import * as pluginCommandDev from '../built-in-plugins/command-dev';
+import * as pluginCommandDocs from '../built-in-plugins/command-docs';
+import * as pluginCommandInit from '../built-in-plugins/command-init';
+import * as pluginCommandPreview from '../built-in-plugins/command-preview';
+import * as pluginCommandTest from '../built-in-plugins/command-test';
+import * as pluginEnsureProjectFiles from '../built-in-plugins/ensure-project-files';
+import * as pluginMocks from '../built-in-plugins/mocks';
+import * as pluginPackages from '../built-in-plugins/packages';
+import * as pluginPackagesAdd from '../built-in-plugins/packages-add';
+import * as pluginPackagesDocs from '../built-in-plugins/packages-docs';
+import * as pluginPackagesPublish from '../built-in-plugins/packages-publish';
+import * as pluginPackagesPush from '../built-in-plugins/packages-push';
+import * as pluginPackagesRemove from '../built-in-plugins/packages-remove';
+import * as pluginPackagesUpdate from '../built-in-plugins/packages-update';
+import * as pluginProjectAnalyseConfig from '../built-in-plugins/project-analyse-config';
+import * as pluginProjectAnalyseLayouts from '../built-in-plugins/project-analyse-layouts';
+import * as pluginProjectAnalyseMarkdownLayouts from '../built-in-plugins/project-analyse-markdown-layouts';
+import * as pluginProjectAnalyseMarkdownPages from '../built-in-plugins/project-analyse-markdown-pages';
+import * as pluginProjectAnalyseNotFound from '../built-in-plugins/project-analyse-not-found';
+import * as pluginProjectAnalysePages from '../built-in-plugins/project-analyse-pages';
+import * as pluginServiceWorker from '../built-in-plugins/service-worker';
+import * as whiteFiles from '../built-in-plugins/white-files';
+
+export interface IPluginModule {
+  getConfig?: () => {
+    // Plugin name
+    name: string;
+    // Dependent plugin names
+    dependencies?: string[];
   };
+  getPlugin?: () => Promise<any>;
+  getUIPlugins?: () => Array<Promise<any>>;
 }
 
-export const loadedPlugins = new Set<IPluginPackageInfo>();
-
-const getBuiltInPlugins = () => {
-  const plugins = [
-    ['pri-plugin-command-dev', '../built-in-plugins/command-dev/index.js'],
-    ['pri-plugin-command-docs', '../built-in-plugins/command-docs/index.js'],
-    ['pri-plugin-command-build', '../built-in-plugins/command-build/index.js'],
-    ['pri-plugin-command-bundle', '../built-in-plugins/command-bundle/index.js'],
-    ['pri-plugin-command-init', '../built-in-plugins/command-init/index.js'],
-    ['pri-plugin-command-preview', '../built-in-plugins/command-preview/index.js'],
-    ['pri-plugin-command-test', '../built-in-plugins/command-test/index.js'],
-    ['pri-plugin-project-analyse-config', '../built-in-plugins/project-analyse-config/index.js'],
-    ['pri-plugin-project-analyse-layouts', '../built-in-plugins/project-analyse-layouts/index.js'],
-    ['pri-plugin-project-analyse-markdown-layouts', '../built-in-plugins/project-analyse-markdown-layouts/index.js'],
-    ['pri-plugin-project-analyse-markdown-pages', '../built-in-plugins/project-analyse-markdown-pages/index.js'],
-    ['pri-plugin-project-analyse-not-found', '../built-in-plugins/project-analyse-not-found/index.js'],
-    ['pri-plugin-project-analyse-pages', '../built-in-plugins/project-analyse-pages/index.js'],
-    ['pri-plugin-white-files', '../built-in-plugins/white-files/index.js'],
-    ['pri-plugin-ensure-project-files', '../built-in-plugins/ensure-project-files/index.js'],
-    ['pri-plugin-service-worker', '../built-in-plugins/service-worker/index.js'],
-    ['pri-plugin-mocks', '../built-in-plugins/mocks/index.js'],
-    ['pri-plugin-client-ssr', '../built-in-plugins/client-ssr/index.js'],
-    ['pri-plugin-command-analyse', '../built-in-plugins/command-analyse/index.js'],
-    ['pri-plugin-packages', '../built-in-plugins/packages/index.js'],
-    ['pri-plugin-packages-add', '../built-in-plugins/packages-add/index.js'],
-    ['pri-plugin-packages-docs', '../built-in-plugins/packages-docs/index.js'],
-    ['pri-plugin-packages-publish', '../built-in-plugins/packages-publish/index.js'],
-    ['pri-plugin-packages-push', '../built-in-plugins/packages-push/index.js'],
-    ['pri-plugin-packages-remove', '../built-in-plugins/packages-remove/index.js'],
-    ['pri-plugin-packages-update', '../built-in-plugins/packages-update/index.js']
-  ];
-
-  return plugins.reduce((obj: any, right) => {
-    obj[right[0]] = 'file:' + path.relative(globalState.projectRootPath, path.join(__dirname, right[1]));
-    return obj;
-  }, {});
-};
+export const loadedPlugins = new Set<IPluginModule>();
 
 export interface ICommandRegister<
   T = {
@@ -149,56 +139,77 @@ export class IPluginConfig {
 export const plugin: IPluginConfig = new IPluginConfig();
 
 export const loadPlugins = async (pluginIncludeRoots: string[] = []) => {
-  await spinner('load plugins', async () => {
-    if (hasInitPlugins) {
-      return;
-    }
-    hasInitPlugins = true;
+  if (hasInitPlugins) {
+    return;
+  }
+  hasInitPlugins = true;
 
-    const builtInPlugins = getBuiltInPlugins();
-
-    getPriPlugins(
-      globalState.projectRootPath,
-      pluginIncludeRoots
-        .concat(globalState.projectRootPath)
-        .map(pluginIncludeRoot => path.join(pluginIncludeRoot, 'package.json')),
-      builtInPlugins
-    );
-
-    if (loadedPlugins.size > 1) {
-      for (const eachPlugin of getPluginsByOrder()) {
-        await Promise.resolve(eachPlugin.instance(pri));
-      }
-    }
+  const builtInPlugins: IPluginModule[] = [
+    pluginClientSsr,
+    pluginCommandAnalyse,
+    pluginCommandBuild,
+    pluginCommandBundle,
+    pluginCommandDev,
+    pluginCommandDocs,
+    pluginCommandInit,
+    pluginCommandPreview,
+    pluginCommandTest,
+    pluginEnsureProjectFiles,
+    pluginMocks,
+    whiteFiles,
+    pluginPackages,
+    pluginPackagesAdd,
+    pluginPackagesDocs,
+    pluginPackagesPublish,
+    pluginPackagesPush,
+    pluginPackagesRemove,
+    pluginPackagesUpdate,
+    pluginProjectAnalyseConfig,
+    pluginProjectAnalyseLayouts,
+    pluginProjectAnalyseMarkdownLayouts,
+    pluginProjectAnalyseMarkdownPages,
+    pluginProjectAnalyseNotFound,
+    pluginProjectAnalysePages,
+    pluginServiceWorker
+  ];
+  builtInPlugins.forEach(eachPlugin => {
+    loadedPlugins.add(eachPlugin);
   });
+
+  getPriPlugins(
+    globalState.projectRootPath,
+    pluginIncludeRoots
+      .concat(globalState.projectRootPath)
+      .map(pluginIncludeRoot => path.join(pluginIncludeRoot, 'package.json'))
+  );
+
+  if (loadedPlugins.size > 1) {
+    for (const eachPlugin of getPluginsByOrder()) {
+      await eachPlugin.getPlugin();
+    }
+  }
 };
 
-function getPriPlugins(pluginRootPath: string, packageJsonPaths: string[], builtInPlugins: any = {}) {
-  let loadOtherPlugins = false;
+function getPriPlugins(pluginRootPath: string, packageJsonPaths: string[]) {
   // Load other plugins only when project type is 'project' or 'component'
   if (
-    globalState.projectPackageJson.pri.type === 'project' ||
-    globalState.projectPackageJson.pri.type === 'component'
+    globalState.projectPackageJson.pri.type !== 'project' &&
+    globalState.projectPackageJson.pri.type !== 'component'
   ) {
-    loadOtherPlugins = true;
+    return;
   }
 
   const deps = packageJsonPaths.map(packageJsonPath => getDependencesByPackageJsonPath(packageJsonPath));
-  const flatDeps = deps.reduce((obj, next) => {
+  const allDependencies = deps.reduce((obj, next) => {
     Object.assign(obj, next);
     return obj;
   }, {});
-
-  const allDependencies = {
-    ...(loadOtherPlugins && flatDeps),
-    ...builtInPlugins
-  };
 
   Object.keys(allDependencies)
     .filter(subPackageName => subPackageName.startsWith('pri-plugin') || subPackageName.startsWith('@ali/pri-plugin'))
     .map(subPackageName => {
       // Can't allowed same name plugins
-      if (Array.from(loadedPlugins).some(loadedPlugin => loadedPlugin.name === subPackageName)) {
+      if (Array.from(loadedPlugins).some(loadedPlugin => loadedPlugin.getConfig().name === subPackageName)) {
         logFatal(`There are two plugins named ${subPackageName}!`);
       }
 
@@ -215,17 +226,22 @@ function getPriPlugins(pluginRootPath: string, packageJsonPaths: string[], built
         ? getPackageJsonPathByPathOrNpmName(subPackageName, pluginRootPath)
         : path.resolve(pluginRootPath, subPackageVersion.replace(/^file\:/g, ''), 'package.json');
 
-      const subPackageJson = fs.readJsonSync(subPackageAbsolutePath, { throws: false });
-      // Waste time
-      const instance = getDefault(require(subPackageRealEntryFilePath));
+      // TODO: Waste time
+      const instance: IPluginModule = require(subPackageRealEntryFilePath);
 
-      loadedPlugins.add({
-        instance,
-        pathOrModuleName: subPackageRealEntry,
-        name: subPackageName,
-        version: subPackageVersion,
-        config: subPackageJson && subPackageJson.pri
-      });
+      if (!instance.getConfig) {
+        logFatal(`Plugin must impletement getConfig method!`);
+      }
+
+      if (!instance.getPlugin) {
+        logFatal(`Plugin must impletement getPlugin method!`);
+      }
+
+      if (!instance.getConfig().name) {
+        logFatal(`Plugin must have name!`);
+      }
+
+      loadedPlugins.add(instance);
 
       if (subPackageAbsolutePath) {
         getPriPlugins(path.resolve(subPackageAbsolutePath, '..'), [subPackageAbsolutePath]);
@@ -235,23 +251,22 @@ function getPriPlugins(pluginRootPath: string, packageJsonPaths: string[], built
 
 export function getPluginsByOrder() {
   const instantiatedPluginNames = new Set<string>();
-  const outputPlugins: IPluginPackageInfo[] = [];
+  const outputPlugins: IPluginModule[] = [];
 
   // Check deps has been loaded
   loadedPlugins.forEach(loadedPlugin => {
-    if (loadedPlugin.config && loadedPlugin.config.dependencies) {
-      loadedPlugin.config.dependencies.forEach(depPluginName => {
-        // Check plugin dependent, unless current project is plugin.
-        if (globalState.projectPackageJson.pri.type !== 'plugin') {
-          if (!Array.from(loadedPlugins).some(eachLoadedPlugin => eachLoadedPlugin.name === depPluginName)) {
-            logFatal(`${loadedPlugin.name}: No dependent "${depPluginName}"\nTry: npm install ${depPluginName}.`);
-          }
+    if (loadedPlugin.getConfig().dependencies) {
+      loadedPlugin.getConfig().dependencies.forEach(depPluginName => {
+        if (!Array.from(loadedPlugins).some(eachLoadedPlugin => eachLoadedPlugin.getConfig().name === depPluginName)) {
+          logFatal(
+            `${loadedPlugin.getConfig().name}: No dependent "${depPluginName}"\nTry: npm install ${depPluginName}.`
+          );
         }
       });
     }
   });
 
-  // Init plugins
+  // Push to plugin quene.
   while (instantiatedPluginNames.size !== loadedPlugins.size) {
     const currentInstantiatedPlugins = getPluginWithPreloadDependences(Array.from(instantiatedPluginNames));
     currentInstantiatedPlugins.forEach(eachPlugin => outputPlugins.push(eachPlugin));
@@ -260,7 +275,7 @@ export function getPluginsByOrder() {
       throw Error('Plugin loop dependency.');
     }
 
-    currentInstantiatedPlugins.forEach(eachPlugin => instantiatedPluginNames.add(eachPlugin.name));
+    currentInstantiatedPlugins.forEach(eachPlugin => instantiatedPluginNames.add(eachPlugin.getConfig().name));
   }
 
   return outputPlugins;
@@ -275,18 +290,18 @@ function getPluginWithPreloadDependences(preInstantiatedDependences: string[]) {
           return true;
         }
 
-        return preInstantiatedDependences.findIndex(pluginName => loadedPlugin.name === pluginName) === -1;
+        return preInstantiatedDependences.findIndex(pluginName => loadedPlugin.getConfig().name === pluginName) === -1;
       })
       // Filter plugins who satisfied the dependence condition.
       .filter(loadedPlugin => {
         // No dependences obvious can pass.
-        if (!loadedPlugin.config || !loadedPlugin.config.dependencies) {
+        if (!loadedPlugin.getConfig().dependencies) {
           return true;
         }
         if (
-          loadedPlugin.config.dependencies.every(
-            depPluginName => preInstantiatedDependences.indexOf(depPluginName) > -1
-          )
+          loadedPlugin
+            .getConfig()
+            .dependencies.every(depPluginName => preInstantiatedDependences.indexOf(depPluginName) > -1)
         ) {
           return true;
         }
