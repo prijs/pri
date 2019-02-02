@@ -12,7 +12,7 @@ import { globalState } from '../../../utils/global-state';
 import { logInfo, spinner } from '../../../utils/log';
 import { findNearestNodemodulesFile } from '../../../utils/npm-finder';
 import { plugin } from '../../../utils/plugins';
-import { componentEntry } from '../../../utils/structor-config';
+import { pluginEntry } from '../../../utils/structor-config';
 import { runWebpack } from '../../../utils/webpack';
 import { getStaticHtmlPaths } from './generate-static-html';
 
@@ -84,7 +84,7 @@ export const buildComponent = async () => {
     mode: 'production',
     target: 'node',
     libraryTarget: 'commonjs2',
-    entryPath: path.join(pri.projectRootPath, path.format(componentEntry)),
+    entryPath: path.join(pri.projectRootPath, path.format(pluginEntry)),
     outFileName: 'index.js',
     externals: [nodeExternals()]
   });

@@ -104,6 +104,12 @@ export const cliEntry = {
   ext: '.ts'
 };
 
+export const pluginEntry = {
+  dir: path.join(srcPath.dir),
+  name: 'index',
+  ext: '.ts'
+};
+
 /**
  * Ignores.
  */

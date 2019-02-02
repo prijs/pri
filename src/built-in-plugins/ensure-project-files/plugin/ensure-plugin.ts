@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 import * as path from 'path';
 import * as prettier from 'prettier';
 import * as pkg from '../../../../package.json';
-import { componentEntry, pri } from '../../../node';
+import { pluginEntry, pri } from '../../../node';
 import { PRI_PACKAGE_NAME } from '../../../utils/constants';
 import { globalState } from '../../../utils/global-state';
 import { logSuccess, logText } from '../../../utils/log';
@@ -17,7 +17,7 @@ export function ensurePluginFiles() {
 
 function ensureEntry() {
   pri.project.addProjectFiles({
-    fileName: path.format(componentEntry),
+    fileName: path.format(pluginEntry),
     pipeContent: text =>
       text
         ? text
@@ -94,32 +94,9 @@ function ensureTest() {
     pipeContent: prev =>
       prettier.format(
         `
-          import * as path from "path"
-          import { judgeHasComponents } from "../src"
-
-          const testProjectRootPath = "/Users/someOne/workspace"
-
-          const testFilePaths = (filePaths: string[]) =>
-            filePaths.map(filePath => path.join(testProjectRootPath, filePath)).map(filePath => path.parse(filePath))
-
-          test("Single file", () => {
-            const relativeProjectFiles = ["src/components"]
-            expect(judgeHasComponents(testProjectRootPath, testFilePaths(relativeProjectFiles))).toBe(true)
-          })
-
-          test("Multiple files", () => {
-            const relativeProjectFiles = [
-              "src/components/index.tsx",
-              "src/components/button/index.tsx",
-              "src/components/select/index.tsx"
-            ]
-            expect(judgeHasComponents(testProjectRootPath, testFilePaths(relativeProjectFiles))).toBe(true)
-          })
-
-          test("hasn't components", () => {
-            const relativeProjectFiles = ["src/pages/index.tsx"]
-            expect(judgeHasComponents(testProjectRootPath, testFilePaths(relativeProjectFiles))).toBe(false)
-          })
+        test('test', () => {
+          expect(true).toBe(true);
+        });
         `,
         { ...prettierConfig, parser: 'typescript' }
       )
@@ -142,7 +119,7 @@ export function ensurePackageJson() {
           _.merge({}, prevJson, {
             main: `${pri.projectConfig.distDir}/index.js`,
             scripts: { prepublishOnly: 'npm run build' },
-            types: path.format(componentEntry),
+            types: path.format(pluginEntry),
             dependencies: {
               '@babel/runtime': '^7.0.0'
             }
