@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { logFatal } from './log';
-import { ICommandRegister } from './plugins';
+import { ICommandRegister } from './plugins-interface';
 
 export type TransferedRegisterCommand = { childs?: TransferedRegisterCommand[] } & ICommandRegister;
 

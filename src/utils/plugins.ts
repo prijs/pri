@@ -1,11 +1,23 @@
 import * as fs from 'fs-extra';
 import * as _ from 'lodash';
 import * as path from 'path';
-import * as webpack from 'webpack';
-import { set } from '../node/pipe';
-import { Entry } from './create-entry';
 import { globalState } from './global-state';
 import { logFatal } from './log';
+import {
+  IAfterProdBuild,
+  IAnalyseProject,
+  IBuildConfigPipe,
+  ICommandRegister,
+  ICreateEntry,
+  IDevDllList,
+  IEnsureProjectFilesQueue,
+  ILintFilter,
+  ILoaderExcludePipe,
+  ILoaderIncludePipe,
+  ILoaderOptionsPipe,
+  IPluginModule,
+  IWhiteFile
+} from './plugins-interface';
 
 import * as pluginClientSsr from '../built-in-plugins/client-ssr';
 import * as pluginCommandAnalyse from '../built-in-plugins/command-analyse';
@@ -34,67 +46,7 @@ import * as pluginProjectAnalysePages from '../built-in-plugins/project-analyse-
 import * as pluginServiceWorker from '../built-in-plugins/service-worker';
 import * as whiteFiles from '../built-in-plugins/white-files';
 
-export interface IPluginModule {
-  getConfig?: () => {
-    // Plugin name
-    name: string;
-    // Dependent plugin names
-    dependencies?: string[];
-  };
-  getPlugin?: () => Promise<any>;
-  getUIPlugins?: () => Array<Promise<any>>;
-}
-
 export const loadedPlugins = new Set<IPluginModule>();
-
-export interface ICommandRegister<
-  T = {
-    [optionName: string]: {
-      alias?: string;
-      description?: string;
-      required?: boolean;
-    };
-  }
-> {
-  name: string[];
-  // TODO:
-  action?: (options?: any) => void;
-  beforeAction?: any;
-  afterAction?: any;
-  alias?: string | string[];
-  description?: string;
-  options?: T;
-}
-
-export type IDevDllList = (list: string[]) => string[];
-
-export type IAnalyseProject = (
-  projectFilesParsedPaths?: Array<path.ParsedPath & { isDir: boolean }>,
-  setPipe?: typeof set
-) => any;
-
-export type ICreateEntry = (analyseInfo?: any, entry?: Entry) => void;
-
-export type IBuildConfigPipe = (
-  config: webpack.Configuration
-) => webpack.Configuration | Promise<webpack.Configuration>;
-
-export type ILoaderOptionsPipe = (options: any) => any;
-export type ILoaderIncludePipe = (paths: string[]) => any;
-export type ILoaderExcludePipe = (paths: string[]) => any;
-
-export type IAfterProdBuild = (stats?: any) => any;
-
-let hasInitPlugins = false;
-
-export type IWhiteFile = (file: path.ParsedPath & { isDir: boolean }) => boolean;
-
-export interface IEnsureProjectFilesQueue {
-  fileName: string;
-  pipeContent: (prev?: string) => string | Promise<string>;
-}
-
-export type ILintFilter = (filePath?: string) => boolean;
 
 export class IPluginConfig {
   public analyseInfo?: any = {};
@@ -137,6 +89,8 @@ export class IPluginConfig {
 }
 
 export const plugin: IPluginConfig = new IPluginConfig();
+
+let hasInitPlugins = false;
 
 export const loadPlugins = async (pluginIncludeRoots: string[] = []) => {
   if (hasInitPlugins) {

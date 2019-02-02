@@ -1,12 +1,12 @@
+import { plugin } from '../utils/plugins';
 import {
   IAfterProdBuild,
   IBuildConfigPipe,
   IDevDllList,
   ILoaderExcludePipe,
   ILoaderIncludePipe,
-  ILoaderOptionsPipe,
-  plugin
-} from '../utils/plugins';
+  ILoaderOptionsPipe
+} from '../utils/plugins-interface';
 
 export const pipeConfig = (pipe: IBuildConfigPipe) => {
   plugin.buildConfigPipes.push(pipe);

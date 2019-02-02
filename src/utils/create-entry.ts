@@ -1,6 +1,5 @@
 import * as fs from 'fs-extra';
 import * as path from 'path';
-import * as prettier from 'prettier';
 import * as pipe from '../node/pipe';
 import { PRI_PACKAGE_NAME } from './constants';
 import { PipeCallback } from './create-entry-d';
@@ -214,6 +213,8 @@ export async function createEntry() {
   const environment = await newEntryObject.getEnvironment();
   const app = await newEntryObject.getApp();
   const entry = await newEntryObject.getEntry();
+
+  const prettier = await import('prettier');
 
   fs.outputFileSync(environmentPath, prettier.format(environment, { ...prettierConfig, parser: 'typescript' }));
 

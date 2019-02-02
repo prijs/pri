@@ -1,7 +1,6 @@
 import * as fs from 'fs-extra';
 import * as _ from 'lodash';
 import * as path from 'path';
-import * as ts from 'typescript';
 import * as walk from 'walk';
 import { exec } from './exec';
 import { getPackageJson, IPackageJson } from './file-operate';
@@ -79,14 +78,17 @@ function getAllTsFiles(rootPath: string): Promise<string[]> {
   });
 }
 
-function createProgram(entryFilePaths: string[]) {
+async function createProgram(entryFilePaths: string[]) {
+  const ts = await import('typescript');
+
   return ts.createProgram(entryFilePaths, {
     target: ts.ScriptTarget.ESNext,
     module: ts.ModuleKind.CommonJS
   });
 }
 
-async function getExternalImportsFromEntrys(program: ts.Program, entryFilePaths: string[]) {
+// TODO: any -> ts.Program
+async function getExternalImportsFromEntrys(program: any, entryFilePaths: string[]) {
   return entryFilePaths.reduce(async (allImportPathsPromise, entryFilePath) => {
     let allImportPaths = await allImportPathsPromise;
     allImportPaths = allImportPaths.concat(await getExternalImportsFromEntry(program, entryFilePath));
@@ -94,8 +96,9 @@ async function getExternalImportsFromEntrys(program: ts.Program, entryFilePaths:
   }, Promise.resolve([]));
 }
 
+// TODO: any -> ts.Program
 async function getExternalImportsFromEntry(
-  program: ts.Program,
+  program: any,
   entryFilePath: string,
   importPaths: string[] = [],
   handledEntryFilePaths: string[] = []
@@ -135,7 +138,7 @@ export async function getExternalImportsFromProjectRoot(projectRootPath: string)
   const packageJson = await getPackageJson(projectRootPath);
   const allTsFiles = await getAllTsFiles(projectRootPath);
   const entryRelativePath = packageJson.types || packageJson.typings;
-  const program = createProgram(allTsFiles);
+  const program = await createProgram(allTsFiles);
 
   if (entryRelativePath) {
     // Only one entry declared in package.json types | typings

@@ -1,11 +1,6 @@
 import { execSync } from 'child_process';
-import * as path from 'path';
-import { Configuration, Linter } from 'tslint';
 import * as yargs from 'yargs';
-import { plugin } from '../utils/plugins';
-import { tempPath } from '../utils/structor-config';
-import { globalState } from './global-state';
-import { logFatal, logInfo, logText, logWarn, spinner } from './log';
+import { logInfo } from './log';
 
 export async function lint(showBreakError = true) {
   if (yargs.argv['light']) {

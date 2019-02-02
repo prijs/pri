@@ -1,4 +1,5 @@
-import { IAnalyseProject, ICreateEntry, plugin } from '../../utils/plugins';
+import { plugin } from '../../utils/plugins';
+import { IAnalyseProject, ICreateEntry } from '../../utils/plugins-interface';
 import { checkProjectFiles } from './check-project-files';
 import { lint, lintFilter } from './lint';
 import * as whiteFileRules from './white-file-rules';

@@ -1,22 +1,21 @@
 import * as fs from 'fs-extra';
 import * as _ from 'lodash';
-import * as normalizePath from 'normalize-path';
 import * as path from 'path';
-import * as prettier from 'prettier';
 import { analyseProject } from './analyse-project';
 import { CONFIG_FILE } from './constants';
 import { globalState } from './global-state';
-import { plugin } from './plugins';
 import { prettierConfig } from './prettier-config';
-import { helperPath, layoutPath, notFoundPath, pagesPath, storesPath } from './structor-config';
+import { layoutPath, notFoundPath, pagesPath, storesPath } from './structor-config';
 
 export async function addPage(options: { path: string }) {
-  const projectInfo = await analyseProject();
+  await analyseProject();
   const fileFullPath = path.join(globalState.projectRootPath, pagesPath.dir, options.path, 'index') + '.tsx';
 
   if (fs.existsSync(fileFullPath)) {
     throw Error(`${options.path} already exist!`);
   }
+
+  const prettier = await import('prettier');
 
   fs.outputFileSync(
     fileFullPath,
@@ -57,6 +56,8 @@ export async function createLayout() {
     throw Error(`layout already exist!`);
   }
 
+  const prettier = await import('prettier');
+
   fs.outputFileSync(
     pathFullPath,
     prettier.format(
@@ -95,6 +96,8 @@ export async function create404() {
   if (fs.existsSync(pathFullPath)) {
     throw Error(`404 page already exist!`);
   }
+
+  const prettier = await import('prettier');
 
   fs.outputFileSync(
     pathFullPath,
@@ -135,6 +138,8 @@ export async function createConfig() {
     throw Error(`config already exist!`);
   }
 
+  const prettier = await import('prettier');
+
   const fileContent = prettier.format(
     `
     import { ProjectConfig } from "pri/client"
@@ -158,6 +163,8 @@ export async function addStore(options: { name: string; withDemo: boolean }) {
   if (fs.existsSync(fileFullPath)) {
     throw Error(`${kebabName} already exist!`);
   }
+
+  const prettier = await import('prettier');
 
   fs.outputFileSync(
     fileFullPath,

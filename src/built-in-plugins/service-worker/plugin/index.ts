@@ -1,12 +1,9 @@
 import * as fs from 'fs-extra';
 import * as _ from 'lodash';
 import * as path from 'path';
-import * as prettier from 'prettier';
 import { pri } from '../../../node';
 import { ensureEndWithSlash, ensureStartWithSlash } from '../../../utils/functional';
 import { tempPath } from '../../../utils/structor-config';
-
-// TODO: 把 prettier 抽走
 
 pri.project.onCreateEntry(async (analyseInfo, entry) => {
   entry.pipeEntryRender(
@@ -28,6 +25,8 @@ pri.project.onCreateEntry(async (analyseInfo, entry) => {
   );
 
   if (pri.projectConfig.useServiceWorker) {
+    const prettier = await import('prettier');
+
     fs.outputFileSync(
       path.join(pri.projectRootPath, tempPath.dir, 'static', 'sw.js'),
       prettier.format(

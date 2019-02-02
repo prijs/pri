@@ -9,7 +9,6 @@ import * as path from 'path';
 import * as yargs from 'yargs';
 import * as pkg from '../../package.json';
 import { CONFIG_FILE } from './constants';
-import { execTsByPath } from './functional';
 import { GlobalState } from './global-state-class';
 import { ProjectConfig } from './project-config-interface';
 
@@ -45,12 +44,7 @@ export function freshProjectConfig() {
 
 function getProjectConfig(isDevelopment: boolean) {
   const configFilePath = path.join(globalState.projectRootPath, CONFIG_FILE);
-  let userProjectConfig: ProjectConfig | ((isDevelopment: boolean) => ProjectConfig) =
-    execTsByPath(configFilePath) || {};
-
-  if (typeof userProjectConfig === 'function') {
-    userProjectConfig = userProjectConfig(isDevelopment);
-  }
+  const userProjectConfig: ProjectConfig = fs.readJsonSync(configFilePath, { throws: false }) || {};
 
   return merge(new ProjectConfig(), userProjectConfig);
 }

@@ -6,7 +6,7 @@ import * as yargs from 'yargs';
 
 import * as semver from 'semver';
 import { transferCommandsArrayToMap, TransferedRegisterCommand } from '../utils/commands';
-import { logFatal, logText } from '../utils/log';
+import { logFatal } from '../utils/log';
 import { loadPlugins, plugin } from '../utils/plugins';
 
 // Check node version

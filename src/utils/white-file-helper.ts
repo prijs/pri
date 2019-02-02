@@ -1,7 +1,7 @@
 import * as path from 'path';
 import { pri } from '../node';
 import { globalState } from './global-state';
-import { IWhiteFile } from './plugins';
+import { IWhiteFile } from './plugins-interface';
 import { srcPath } from './structor-config';
 
 // For component/plugin/cli, add `src` to white list.
