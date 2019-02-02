@@ -33,10 +33,12 @@ pri.commands.registerCommand({
         await projectBuildModule.buildProject(options);
         break;
       case 'component':
+        const componentBuildModule = await import('./build');
+        await componentBuildModule.buildComponent();
       case 'plugin':
       case 'cli':
-        const otherBuildModule = await import('./build');
-        await otherBuildModule.buildComponent();
+        const pluginBuildModule = await import('./build');
+        await pluginBuildModule.buildPlugin();
       default:
     }
   }

@@ -12,7 +12,7 @@ import { globalState } from '../../../utils/global-state';
 import { logInfo, spinner } from '../../../utils/log';
 import { findNearestNodemodulesFile } from '../../../utils/npm-finder';
 import { plugin } from '../../../utils/plugins';
-import { pluginEntry } from '../../../utils/structor-config';
+import { componentEntry, pluginEntry } from '../../../utils/structor-config';
 import { runWebpack } from '../../../utils/webpack';
 import { getStaticHtmlPaths } from './generate-static-html';
 
@@ -77,6 +77,22 @@ export const buildProject = async (
 };
 
 export const buildComponent = async () => {
+  await prepareBuild();
+
+  // Build component
+  const stats = await runWebpack({
+    mode: 'production',
+    target: 'node',
+    libraryTarget: 'commonjs2',
+    entryPath: path.join(pri.projectRootPath, path.format(componentEntry)),
+    outFileName: 'index.js',
+    externals: [nodeExternals()]
+  });
+
+  plugin.buildAfterProdBuild.forEach(afterProdBuild => afterProdBuild(stats));
+};
+
+export const buildPlugin = async () => {
   await prepareBuild();
 
   // Build component
