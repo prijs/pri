@@ -6,6 +6,7 @@ import * as nodeExternals from 'webpack-node-externals';
 import { pri, tempPath } from '../../../node';
 import * as pipe from '../../../node/pipe';
 import { analyseProject } from '../../../utils/analyse-project';
+import { cleanDist } from '../../../utils/clean';
 import { createEntry } from '../../../utils/create-entry';
 import { exec } from '../../../utils/exec';
 import { globalState } from '../../../utils/global-state';
@@ -126,19 +127,7 @@ async function copyAssets() {
 
 async function prepareBuild() {
   await spinner('Clean project.', async () => {
-    // Clean dist dir
-    await exec(
-      `${findNearestNodemodulesFile('.bin/rimraf')} ${path.join(
-        globalState.projectRootPath,
-        pri.projectConfig.distDir
-      )}`
-    );
-    await exec(
-      `${findNearestNodemodulesFile('.bin/rimraf')} ${path.join(
-        globalState.projectRootPath,
-        globalState.projectConfig.distDir
-      )}`
-    );
+    await cleanDist();
 
     // Clean .temp dir
     await exec(`${findNearestNodemodulesFile('.bin/rimraf')} ${path.join(globalState.projectRootPath, '.temp')}`);

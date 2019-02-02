@@ -1,6 +1,5 @@
 import * as _ from 'lodash';
 import * as path from 'path';
-import * as prettier from 'prettier';
 import * as pkg from '../../../../package.json';
 import { cliEntry, docsPath, pri, srcPath } from '../../../node';
 import { PRI_PACKAGE_NAME } from '../../../utils/constants';
@@ -16,18 +15,24 @@ export function ensureCliFiles() {
 const ensureEntryFile = () =>
   pri.project.addProjectFiles({
     fileName: path.format(cliEntry),
-    pipeContent: text =>
-      text
-        ? text
-        : '#!/usr/bin/env node\n\n' +
-          prettier.format(
-            `
-            import { createCli } from 'pri';
+    pipeContent: async text => {
+      if (text) {
+        return text;
+      }
 
-            createCli();
-          `,
-            { ...prettierConfig, parser: 'typescript' }
-          )
+      const prettier = await import('prettier');
+      return (
+        '#!/usr/bin/env node\n\n' +
+        prettier.format(
+          `
+        import { createCli } from 'pri';
+
+        createCli();
+      `,
+          { ...prettierConfig, parser: 'typescript' }
+        )
+      );
+    }
   });
 
 export function ensurePackageJson() {

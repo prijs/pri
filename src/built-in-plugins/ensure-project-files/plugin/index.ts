@@ -7,6 +7,10 @@ import { PRI_PACKAGE_NAME } from '../../../utils/constants';
 import { globalState } from '../../../utils/global-state';
 import { prettierConfig } from '../../../utils/prettier-config';
 import { declarePath, gitIgnores, npmIgnores, tempTypesPath } from '../../../utils/structor-config';
+import { ensureCliFiles } from './ensure-cli';
+import { ensureComponentFiles } from './ensure-component';
+import { ensurePluginFiles } from './ensure-plugin';
+import { ensureProjectFiles } from './ensure-project';
 
 pri.event.once('beforeEnsureFiles', async () => {
   ensureGitignore();
@@ -23,20 +27,16 @@ pri.event.once('beforeEnsureFiles', async () => {
 
   switch (pri.projectPackageJson.pri.type) {
     case 'project':
-      const ensureProjectFilesModule = await import('./ensure-project');
-      ensureProjectFilesModule.ensureProjectFiles();
+      ensureProjectFiles();
       break;
     case 'component':
-      const ensureComponentFilesModule = await import('./ensure-component');
-      ensureComponentFilesModule.ensureComponentFiles();
+      ensureComponentFiles();
       break;
     case 'plugin':
-      const ensurePluginFilesModule = await import('./ensure-plugin');
-      ensurePluginFilesModule.ensurePluginFiles();
+      ensurePluginFiles();
       break;
     case 'cli':
-      const ensureCliFilesModule = await import('./ensure-cli');
-      ensureCliFilesModule.ensureCliFiles();
+      ensureCliFiles();
       break;
     default:
   }

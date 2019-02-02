@@ -1,6 +1,5 @@
 import * as _ from 'lodash';
 import * as path from 'path';
-import * as prettier from 'prettier';
 import * as pkg from '../../../../package.json';
 import { componentEntry, docsPath, pri, srcPath } from '../../../node';
 import { PRI_PACKAGE_NAME } from '../../../utils/constants';
@@ -48,16 +47,20 @@ export function ensurePackageJson() {
 const ensureEntryFile = () =>
   pri.project.addProjectFiles({
     fileName: path.format(componentEntry),
-    pipeContent: text =>
-      text
-        ? text
-        : prettier.format(
-            `
-            import * as React from 'react'
-            export default () => <div>My Component</div>
-          `,
-            { ...prettierConfig, parser: 'typescript' }
-          )
+    pipeContent: async text => {
+      if (text) {
+        return text;
+      }
+
+      const prettier = await import('prettier');
+      return prettier.format(
+        `
+  import * as React from 'react'
+  export default () => <div>My Component</div>
+`,
+        { ...prettierConfig, parser: 'typescript' }
+      );
+    }
   });
 
 const ensureDocs = () => {
@@ -68,34 +71,38 @@ const ensureDocs = () => {
   );
   pri.project.addProjectFiles({
     fileName: basicDocsPath,
-    pipeContent: text =>
-      text
-        ? text
-        : prettier.format(
-            `
-              import Component from "${relativeToEntryPath}"
-              import * as React from "react"
+    pipeContent: async text => {
+      if (text) {
+        return text;
+      }
 
-              class Props {
+      const prettier = await import('prettier');
+      return prettier.format(
+        `
+          import Component from "${relativeToEntryPath}"
+          import * as React from "react"
 
-              }
+          class Props {
 
-              class State {
+          }
 
-              }
+          class State {
 
-              export default class Page extends React.PureComponent<Props, State> {
-                public static defaultProps = new Props()
-                public state = new State()
+          }
 
-                public render() {
-                  return (
-                    <Component />
-                  )
-                }
-              }
-            `,
-            { ...prettierConfig, parser: 'typescript' }
-          )
+          export default class Page extends React.PureComponent<Props, State> {
+            public static defaultProps = new Props()
+            public state = new State()
+
+            public render() {
+              return (
+                <Component />
+              )
+            }
+          }
+        `,
+        { ...prettierConfig, parser: 'typescript' }
+      );
+    }
   });
 };

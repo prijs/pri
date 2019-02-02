@@ -43,8 +43,7 @@ const outputPri: IPri = null;
 
 const globalWithPri = global as typeof global & { pri: IPri };
 
-if (globalWithPri.pri) {
-} else {
+if (!globalWithPri.pri) {
   globalWithPri.pri = {
     commands,
     build,

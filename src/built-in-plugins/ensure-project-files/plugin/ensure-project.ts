@@ -1,7 +1,6 @@
 import * as fs from 'fs';
 import * as _ from 'lodash';
 import * as path from 'path';
-import * as prettier from 'prettier';
 import * as pkg from '../../../../package.json';
 import { pagesPath, pri, testsPath } from '../../../node';
 import { PRI_PACKAGE_NAME } from '../../../utils/constants';
@@ -22,8 +21,9 @@ const ensureProjectEntry = () => {
   if (!fs.existsSync(homePageAbsolutePath) && !fs.existsSync(homeMarkdownPageAbsolutePath)) {
     pri.project.addProjectFiles({
       fileName: homePagePath,
-      pipeContent: () =>
-        prettier.format(
+      pipeContent: async () => {
+        const prettier = await import('prettier');
+        return prettier.format(
           `
             import { isDevelopment } from "${PRI_PACKAGE_NAME}/client"
             import * as React from "react"
@@ -55,7 +55,8 @@ const ensureProjectEntry = () => {
             }
           `,
           { ...prettierConfig, parser: 'typescript' }
-        )
+        );
+      }
     });
   }
 };
@@ -63,17 +64,21 @@ const ensureProjectEntry = () => {
 export const ensureTest = () =>
   pri.project.addProjectFiles({
     fileName: path.join(testsPath.dir, 'index.ts'),
-    pipeContent: (prev: string) =>
-      prev
-        ? prev
-        : prettier.format(
-            `
-              test("Example", () => {
-                expect(true).toBe(true)
-              })
-            `,
-            { ...prettierConfig, parser: 'typescript' }
-          )
+    pipeContent: async (prev: string) => {
+      if (prev) {
+        return prev;
+      }
+
+      const prettier = await import('prettier');
+      return prettier.format(
+        `
+          test("Example", () => {
+            expect(true).toBe(true)
+          })
+        `,
+        { ...prettierConfig, parser: 'typescript' }
+      );
+    }
   });
 
 export function ensurePackageJson() {

@@ -1,7 +1,6 @@
 import * as fs from 'fs-extra';
 import * as _ from 'lodash';
 import * as path from 'path';
-import * as prettier from 'prettier';
 import * as pkg from '../../../../package.json';
 import { pluginEntry, pri } from '../../../node';
 import { PRI_PACKAGE_NAME } from '../../../utils/constants';
@@ -18,65 +17,69 @@ export function ensurePluginFiles() {
 function ensureEntry() {
   pri.project.addProjectFiles({
     fileName: path.format(pluginEntry),
-    pipeContent: text =>
-      text
-        ? text
-        : prettier.format(
-            `
-            import * as path from "path"
-            import { pri } from "${PRI_PACKAGE_NAME}"
+    pipeContent: async text => {
+      if (text) {
+        return text;
+      }
 
-            interface IResult {
-              customPlugin: {
-                hasComponents: boolean
-              }
+      const prettier = await import('prettier');
+      return prettier.format(
+        `
+        import * as path from "path"
+        import { pri } from "${PRI_PACKAGE_NAME}"
+
+        interface IResult {
+          customPlugin: {
+            hasComponents: boolean
+          }
+        }
+
+        export default async () => {
+          pri.commands.registerCommand({
+            name: ["deploy"],
+            action: async () => {
+              //
+            }
+          })
+
+          pri.commands.expandCommand({
+            name: ["init"],
+            beforeAction: async (...args: any[]) => {
+              //
+            }
+          })
+
+          pri.project.onAnalyseProject(files => {
+            return { customPlugin: { hasComponents: judgeHasComponents(pri.projectRootPath, files) } } as IResult
+          })
+
+          pri.project.onCreateEntry((analyseInfo: IResult, entry) => {
+            if (!analyseInfo.customPlugin.hasComponents) {
+              return
             }
 
-            export default async () => {
-              pri.commands.registerCommand({
-                name: ["deploy"],
-                action: async () => {
-                  //
-                }
-              })
+            entry.pipeAppHeader(header => {
+              return \`
+                \${header}
+                import "src/components/xxx"
+              \`
+            })
+          })
+        }
 
-              pri.commands.expandCommand({
-                name: ["init"],
-                beforeAction: async (...args: any[]) => {
-                  //
-                }
-              })
-
-              pri.project.onAnalyseProject(files => {
-                return { customPlugin: { hasComponents: judgeHasComponents(pri.projectRootPath, files) } } as IResult
-              })
-
-              pri.project.onCreateEntry((analyseInfo: IResult, entry) => {
-                if (!analyseInfo.customPlugin.hasComponents) {
-                  return
-                }
-
-                entry.pipeAppHeader(header => {
-                  return \`
-                    \${header}
-                    import "src/components/xxx"
-                  \`
-                })
-              })
+        export function judgeHasComponents(projectRootPath: string, files: path.ParsedPath[]) {
+          return files.some(file => {
+            const relativePath = path.relative(projectRootPath, path.join(file.dir, file.name))
+            if (relativePath.startsWith("src/components")) {
+              return true
             }
-
-            export function judgeHasComponents(projectRootPath: string, files: path.ParsedPath[]) {
-              return files.some(file => {
-                const relativePath = path.relative(projectRootPath, path.join(file.dir, file.name))
-                if (relativePath.startsWith("src/components")) {
-                  return true
-                }
-                return false
-              })
-            }
-          `,
-            { ...prettierConfig, parser: 'typescript' }
-          )
+            return false
+          })
+        }
+      `,
+        { ...prettierConfig, parser: 'typescript' }
+      );
+    }
   });
 }
 
@@ -91,15 +94,17 @@ function ensureTest() {
 
   pri.project.addProjectFiles({
     fileName,
-    pipeContent: prev =>
-      prettier.format(
+    pipeContent: async prev => {
+      const prettier = await import('prettier');
+      return prettier.format(
         `
-        test('test', () => {
-          expect(true).toBe(true);
-        });
-        `,
+          test('test', () => {
+            expect(true).toBe(true);
+          });
+          `,
         { ...prettierConfig, parser: 'typescript' }
-      )
+      );
+    }
   });
 }
 
