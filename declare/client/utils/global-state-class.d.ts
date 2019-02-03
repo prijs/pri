@@ -4,6 +4,8 @@ export declare class GlobalState {
     projectConfig: ProjectConfig;
     priPackageJson: any;
     projectPackageJson: {
+        name?: string;
+        version?: string;
         pri?: {
             /**
              * Project type

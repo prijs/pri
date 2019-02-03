@@ -139,7 +139,11 @@ export const loadPlugins = async (pluginIncludeRoots: string[] = []) => {
 
   if (loadedPlugins.size > 1) {
     for (const eachPlugin of getPluginsByOrder()) {
-      await eachPlugin.getPlugin();
+      const pluginInstance = await eachPlugin.getPlugin();
+      // If plugin has export main, await it.
+      if (pluginInstance.main) {
+        await pluginInstance.main();
+      }
     }
   }
 };
