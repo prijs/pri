@@ -2,7 +2,7 @@ import * as fs from 'fs-extra';
 import * as _ from 'lodash';
 import * as path from 'path';
 import * as pkg from '../../../../package.json';
-import { pluginEntry, pri } from '../../../node';
+import { pluginEntry, pri, srcPath } from '../../../node';
 import { PRI_PACKAGE_NAME } from '../../../utils/constants';
 import { globalState } from '../../../utils/global-state';
 import { logSuccess, logText } from '../../../utils/log';
@@ -23,6 +23,26 @@ function ensureEntry() {
       }
 
       const prettier = await import('prettier');
+
+      return prettier.format(`
+        export const getPlugin = () => import('./plugin');
+
+        export const getConfig = () => ({
+          name: 'pri-plugin-${pri.projectPackageJson.name}'
+        });
+      `);
+    }
+  });
+
+  pri.project.addProjectFiles({
+    fileName: path.join(path.format(srcPath), 'plugin/index.ts'),
+    pipeContent: async text => {
+      if (text) {
+        return text;
+      }
+
+      const prettier = await import('prettier');
+
       return prettier.format(
         `
         import * as path from "path"
@@ -34,38 +54,36 @@ function ensureEntry() {
           }
         }
 
-        export default async () => {
-          pri.commands.registerCommand({
-            name: ["deploy"],
-            action: async () => {
-              //
-            }
-          })
+        pri.commands.registerCommand({
+          name: ["deploy"],
+          action: async () => {
+            //
+          }
+        })
 
-          pri.commands.expandCommand({
-            name: ["init"],
-            beforeAction: async (...args: any[]) => {
-              //
-            }
-          })
+        pri.commands.expandCommand({
+          name: ["init"],
+          beforeAction: async (...args: any[]) => {
+            //
+          }
+        })
 
-          pri.project.onAnalyseProject(files => {
-            return { customPlugin: { hasComponents: judgeHasComponents(pri.projectRootPath, files) } } as IResult
-          })
+        pri.project.onAnalyseProject(files => {
+          return { customPlugin: { hasComponents: judgeHasComponents(pri.projectRootPath, files) } } as IResult
+        })
 
-          pri.project.onCreateEntry((analyseInfo: IResult, entry) => {
-            if (!analyseInfo.customPlugin.hasComponents) {
-              return
-            }
+        pri.project.onCreateEntry((analyseInfo: IResult, entry) => {
+          if (!analyseInfo.customPlugin.hasComponents) {
+            return
+          }
 
-            entry.pipeAppHeader(header => {
-              return \`
-                \${header}
-                import "src/components/xxx"
-              \`
-            })
+          entry.pipeAppHeader(header => {
+            return \`
+              \${header}
+              import "src/components/xxx"
+            \`
           })
-        }
+        })
 
         export function judgeHasComponents(projectRootPath: string, files: path.ParsedPath[]) {
           return files.some(file => {

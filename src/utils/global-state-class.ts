@@ -5,6 +5,8 @@ export class GlobalState {
   public projectConfig = new ProjectConfig();
   public priPackageJson: any;
   public projectPackageJson: {
+    name?: string;
+    version?: string;
     pri?: {
       /**
        * Project type
