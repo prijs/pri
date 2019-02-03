@@ -15,6 +15,6 @@ export const pluginDev = async () => {
     libraryTarget: 'commonjs2',
     entryPath: path.join(globalState.projectRootPath, path.format(pluginEntry)),
     externals: [nodeExternals()],
-    outFileName: 'main.js'
+    outFileName: 'index.js'
   });
 };
