@@ -108,23 +108,27 @@ pri.project.onCreateEntry((analyseInfo: IResult, entry) => {
 
   entry.pipeAppComponent(async entryComponent => {
     return `
-        ${(await Promise.all( analyseInfo.projectAnalysePages.pages.map(async page => {
-          const pageRequirePath = normalizePath(path.relative(tempPath.dir, path.join(page.file.dir, page.file.name)));
+        ${(await Promise.all(
+          analyseInfo.projectAnalysePages.pages.map(async page => {
+            const pageRequirePath = normalizePath(
+              path.relative(tempPath.dir, path.join(page.file.dir, page.file.name))
+            );
 
-          const importCode = `import(/* webpackChunkName: "${page.chunkName}" */ "${pageRequirePath}").then(code => {
+            const importCode = `import(/* webpackChunkName: "${page.chunkName}" */ "${pageRequirePath}").then(code => {
                 const filePath = "${path.format(page.file)}"
 
                 ${await entry.pipe.get('afterPageLoad', '')}
-                return code.default
+                ${await entry.pipe.get('returnPageInstance', 'return code.default')}
               })`;
 
-          return `
+            return `
               const ${page.componentName} = Loadable({
                 loader: () => ${importCode},
                 loading: (): any => null
               })\n
             `;
-        }))).join('\n')}
+          })
+        )).join('\n')}
           ${entryComponent}
       `;
   });
