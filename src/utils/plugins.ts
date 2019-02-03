@@ -45,6 +45,7 @@ import * as pluginProjectAnalyseNotFound from '../built-in-plugins/project-analy
 import * as pluginProjectAnalysePages from '../built-in-plugins/project-analyse-pages';
 import * as pluginServiceWorker from '../built-in-plugins/service-worker';
 import * as whiteFiles from '../built-in-plugins/white-files';
+import { IProjectType } from './global-state-class';
 
 export const loadedPlugins = new Set<IPluginModule>();
 
@@ -86,6 +87,9 @@ export class IPluginConfig {
   public lintFilters: ILintFilter[] = [];
 
   public devDllPipes: IDevDllList[] = [];
+
+  // Lock init type
+  public initType: IProjectType = null;
 }
 
 export const plugin: IPluginConfig = new IPluginConfig();

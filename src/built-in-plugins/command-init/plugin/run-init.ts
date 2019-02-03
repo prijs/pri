@@ -3,32 +3,56 @@ import * as inquirer from 'inquirer';
 import * as _ from 'lodash';
 import { pri } from '../../../node';
 import { globalState } from '../../../utils/global-state';
+import { IProjectType } from '../../../utils/global-state-class';
 import { logText } from '../../../utils/log';
+import { plugin } from '../../../utils/plugins';
 import text from '../../../utils/text';
 import { addWhiteFilesByProjectType } from '../../../utils/white-file-helper';
 
 export const runInit = async () => {
   if (!globalState.projectPackageJson.pri.type) {
-    const inquirerInfo = await inquirer.prompt([
-      {
-        message: `Choose project type`,
-        name: 'projectType',
-        type: 'list',
-        choices: ['Project', 'Component', 'Pri Plugin', 'Cli']
-      }
-    ]);
+    let userSelectType: IProjectType = null;
 
-    switch (inquirerInfo.projectType) {
-      case 'Project':
+    if (!plugin.initType) {
+      const inquirerInfo = await inquirer.prompt([
+        {
+          message: `Choose project type`,
+          name: 'projectType',
+          type: 'list',
+          choices: ['Project', 'Component', 'Pri Plugin', 'Cli']
+        }
+      ]);
+
+      switch (inquirerInfo.projectType) {
+        case 'Project':
+          userSelectType = 'project';
+          break;
+        case 'Component':
+          userSelectType = 'component';
+          break;
+        case 'Pri Plugin':
+          userSelectType = 'plugin';
+          break;
+        case 'Cli':
+          userSelectType = 'cli';
+          break;
+        default:
+      }
+    } else {
+      userSelectType = plugin.initType;
+    }
+
+    switch (userSelectType) {
+      case 'project':
         globalState.projectPackageJson.pri.type = 'project';
         break;
-      case 'Component':
+      case 'component':
         globalState.projectPackageJson.pri.type = 'component';
         break;
-      case 'Pri Plugin':
+      case 'plugin':
         globalState.projectPackageJson.pri.type = 'plugin';
         break;
-      case 'Cli':
+      case 'cli':
         globalState.projectPackageJson.pri.type = 'cli';
         break;
     }

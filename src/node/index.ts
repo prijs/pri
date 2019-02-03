@@ -1,6 +1,7 @@
 import { globalState } from '../utils/global-state';
 import { priEvent } from '../utils/pri-events';
 import * as build from './build';
+import * as cli from './cli';
 import * as commands from './commands';
 import * as context from './context';
 import { createCli } from './create-cli';
@@ -35,6 +36,10 @@ type IPri = typeof globalState &
      * Control service worker
      */
     serviceWorker: typeof serviceWorker;
+    /**
+     * Cli control
+     */
+    cli: typeof cli;
 
     event: typeof priEvent;
   };
@@ -52,6 +57,7 @@ if (!globalWithPri.pri) {
     devService,
     serviceWorker,
     event: priEvent,
+    cli,
     ...self
   } as any;
 

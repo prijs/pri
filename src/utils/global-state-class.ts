@@ -11,7 +11,7 @@ export class GlobalState {
       /**
        * Project type
        */
-      type: 'project' | 'component' | 'plugin' | 'cli' | null;
+      type: IProjectType;
       /**
        * Current used pri version
        */
@@ -28,3 +28,5 @@ export class GlobalState {
    */
   public isDevelopment: boolean;
 }
+
+export type IProjectType = 'project' | 'component' | 'plugin' | 'cli' | null;
