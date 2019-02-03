@@ -21,6 +21,7 @@ pri.commands.registerCommand({
       case 'component':
         const componentDevModule = await import('./component-dev');
         await componentDevModule.componentDev();
+        break;
       case 'cli':
         logFatal(`cli not support 'npm start' yet, try 'tsc -w'!`);
       case 'plugin':
