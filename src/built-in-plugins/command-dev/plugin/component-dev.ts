@@ -5,8 +5,8 @@ import { cleanDist } from '../../../utils/clean';
 import { globalState } from '../../../utils/global-state';
 import { watchWebpack } from '../../../utils/webpack';
 
-export const pluginDev = async () => {
-  // Because plugin need create files, so clear dist first.
+export const componentDev = async () => {
+  // Because component need create files, so clear dist first.
   await cleanDist();
 
   await watchWebpack({

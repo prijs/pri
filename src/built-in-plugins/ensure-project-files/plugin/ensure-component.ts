@@ -29,7 +29,7 @@ export function ensurePackageJson() {
       return (
         JSON.stringify(
           _.merge({}, prevJson, {
-            main: `${pri.projectConfig.distDir}/index.js`,
+            main: `${pri.projectConfig.distDir}/${pri.projectConfig.outFileName}`,
             scripts: { prepublishOnly: 'npm run build' },
             types,
             dependencies: {

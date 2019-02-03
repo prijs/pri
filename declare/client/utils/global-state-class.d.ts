@@ -10,7 +10,7 @@ export declare class GlobalState {
             /**
              * Project type
              */
-            type: 'project' | 'component' | 'plugin' | 'cli' | null;
+            type: IProjectType;
             /**
              * Current used pri version
              */
@@ -27,3 +27,4 @@ export declare class GlobalState {
      */
     isDevelopment: boolean;
 }
+export declare type IProjectType = 'project' | 'component' | 'plugin' | 'cli' | null;

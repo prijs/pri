@@ -153,11 +153,9 @@ export const loadPlugins = async (pluginIncludeRoots: string[] = []) => {
 };
 
 function getPriPlugins(pluginRootPath: string, packageJsonPaths: string[]) {
-  // Load other plugins only when project type is 'project' or 'component'
-  if (
-    globalState.projectPackageJson.pri.type !== 'project' &&
-    globalState.projectPackageJson.pri.type !== 'component'
-  ) {
+  // Do not load plugins when type is 'plugin' or 'cli'.
+  // Load plugin even when type is undefined.
+  if (globalState.projectPackageJson.pri.type === 'plugin' || globalState.projectPackageJson.pri.type !== 'cli') {
     return;
   }
 

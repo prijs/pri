@@ -86,7 +86,7 @@ export const buildComponent = async () => {
     target: 'node',
     libraryTarget: 'commonjs2',
     entryPath: path.join(pri.projectRootPath, path.format(componentEntry)),
-    outFileName: 'index.js',
+    outFileName: pri.projectConfig.outFileName,
     externals: [nodeExternals()]
   });
 
@@ -102,7 +102,7 @@ export const buildPlugin = async () => {
     target: 'node',
     libraryTarget: 'commonjs2',
     entryPath: path.join(pri.projectRootPath, path.format(pluginEntry)),
-    outFileName: 'index.js',
+    outFileName: pri.projectConfig.outFileName,
     externals: [nodeExternals()]
   });
 
