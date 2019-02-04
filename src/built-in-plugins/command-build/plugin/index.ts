@@ -35,6 +35,7 @@ pri.commands.registerCommand({
       case 'component':
         const componentBuildModule = await import('./build');
         await componentBuildModule.buildComponent();
+        break;
       case 'plugin':
       case 'cli':
         const pluginBuildModule = await import('./build');
