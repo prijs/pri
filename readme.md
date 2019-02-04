@@ -18,11 +18,13 @@ Pri can help you develop **project** and **component**.
 - [Auto dll](https://prijs.github.io/pri-docs/usage/auto-dlls/). Speed up hot loader.
 - For more, [see Docs](https://prijs.github.io/pri-docs/).
 
-## Using pri as npm package
+## Using pri
+
+**Pri is used as a npm package installed in your project.**
 
 ```shell
 # 1. Create an empty folder, install pri locally.
-$ npm i pri --save
+$ npm i pri --save # /workspace/my-empty-folder
 
 # 2. Init project files, and you will have following npm scripts.
 $ npx pri init # Choose project or component.
@@ -64,47 +66,13 @@ $ npm run format
 
 Installing the pri plugin into the project will take effect.
 
-For example, to use [pri-plugin-dob](https://github.com/prijs/pri-plugin-dob):
+For example, using [pri-plugin-dob](https://github.com/prijs/pri-plugin-dob):
 
 ```shell
 npm i pri-plugin-dob --save
 
 # Now all plugin works
 npm start
-```
-
-## Using pri to create a new cli
-
-You can use pri to create a new cli tool, in addition to owning your own brand, you can also build in pri plugins in it!
-
-For example, create a tool named `appx`:
-
-```shell
-npm i pri pri-plugin-dob --save
-
-npx pri init # Choose cli
-```
-
-Then, open `src/index.tsx`, here is the simplest way to write it, equals to pri:
-
-```typescript
-#!/usr/bin/env node
-
-import { createCli } from 'pri';
-
-const cli = createCli({
-  rootDir: __dirname
-});
-
-export default cli;
-```
-
-Finally, add `bin` to `package.json`:
-
-```json
-"bin": {
-  "appx": "built/index.js"
-}
 ```
 
 ## File Structure
