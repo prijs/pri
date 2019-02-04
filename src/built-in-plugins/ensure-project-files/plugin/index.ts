@@ -7,7 +7,6 @@ import { PRI_PACKAGE_NAME } from '../../../utils/constants';
 import { globalState } from '../../../utils/global-state';
 import { prettierConfig } from '../../../utils/prettier-config';
 import { declarePath, gitIgnores, npmIgnores, tempTypesPath } from '../../../utils/structor-config';
-import { ensureCliFiles } from './ensure-cli';
 import { ensureComponentFiles } from './ensure-component';
 import { ensurePluginFiles } from './ensure-plugin';
 import { ensureProjectFiles } from './ensure-project';
@@ -34,9 +33,6 @@ pri.event.once('beforeEnsureFiles', async () => {
       break;
     case 'plugin':
       ensurePluginFiles();
-      break;
-    case 'cli':
-      ensureCliFiles();
       break;
     default:
   }

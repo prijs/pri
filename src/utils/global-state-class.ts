@@ -29,4 +29,4 @@ export class GlobalState {
   public isDevelopment: boolean;
 }
 
-export type IProjectType = 'project' | 'component' | 'plugin' | 'cli' | null;
+export type IProjectType = 'project' | 'component' | 'plugin' | null;

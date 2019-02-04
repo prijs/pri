@@ -1,7 +1,6 @@
 import * as path from 'path';
 import { componentEntry, pri } from '../../../node';
 import { logFatal } from '../../../utils/log';
-import text from '../../../utils/text';
 import { runWebpack } from '../../../utils/webpack';
 
 export const commandBundle = async()=>{

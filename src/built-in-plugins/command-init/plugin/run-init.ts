@@ -19,7 +19,7 @@ export const runInit = async () => {
           message: `Choose project type`,
           name: 'projectType',
           type: 'list',
-          choices: ['Project', 'Component', 'Pri Plugin', 'Cli']
+          choices: ['Project', 'Component', 'Pri Plugin']
         }
       ]);
 
@@ -32,9 +32,6 @@ export const runInit = async () => {
           break;
         case 'Pri Plugin':
           userSelectType = 'plugin';
-          break;
-        case 'Cli':
-          userSelectType = 'cli';
           break;
         default:
       }
@@ -52,9 +49,7 @@ export const runInit = async () => {
       case 'plugin':
         globalState.projectPackageJson.pri.type = 'plugin';
         break;
-      case 'cli':
-        globalState.projectPackageJson.pri.type = 'cli';
-        break;
+      default:
     }
   }
 
@@ -69,7 +64,6 @@ export const runInit = async () => {
   switch (globalState.projectPackageJson.pri.type) {
     case 'project':
     case 'plugin':
-    case 'cli':
       logText(colors.blue('  npm start'));
       logText(`    ${text.commander.dev.description}\n`);
       break;
@@ -90,7 +84,6 @@ export const runInit = async () => {
       break;
     case 'component':
     case 'plugin':
-    case 'cli':
       logText(colors.blue('  npm publish'));
       logText(`    Publish this component to npm package.\n`);
       break;
