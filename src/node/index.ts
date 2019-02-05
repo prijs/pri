@@ -9,6 +9,7 @@ import * as devService from './dev-service';
 import * as project from './project/index';
 import * as self from './self';
 import * as serviceWorker from './service-worker';
+import * as webpackCommand from './webpack';
 
 type IPri = typeof globalState &
   typeof self & {
@@ -40,11 +41,13 @@ type IPri = typeof globalState &
      * Cli control
      */
     cli: typeof cli;
+    /**
+     * run or watch webpack directly
+     */
+    webpack: typeof webpackCommand;
 
     event: typeof priEvent;
   };
-
-const outputPri: IPri = null;
 
 const globalWithPri = global as typeof global & { pri: IPri };
 
@@ -57,6 +60,7 @@ if (!globalWithPri.pri) {
     devService,
     serviceWorker,
     event: priEvent,
+    webpack: webpackCommand,
     cli,
     ...self
   } as any;
