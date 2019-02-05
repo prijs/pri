@@ -52,6 +52,8 @@ const debugDashboard = async () => {
   // Serve dashboard
   await runWebpackDevServer({
     mode: 'development',
+    autoOpenBrowser: true,
+    hot: true,
     publicPath: '/static/',
     entryPath: dashboardEntryFilePath,
     devServerPort: freePort,
@@ -125,6 +127,8 @@ const debugProject = async () => {
   // Serve project
   await runWebpackDevServer({
     mode: 'development',
+    autoOpenBrowser: true,
+    hot: true,
     publicPath: globalState.projectConfig.publicPath,
     entryPath: path.join(globalState.projectRootPath, path.format(tempJsEntryPath)),
     devServerPort: freePort,

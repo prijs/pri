@@ -58,6 +58,8 @@ export async function devDocs(realDocsPath: string) {
   await runWebpackDevServer({
     mode: 'development',
     publicPath: '/',
+    autoOpenBrowser: true,
+    hot: true,
     entryPath: docsEntryPath,
     devServerPort: freePort,
     htmlTemplatePath: path.join(__dirname, '../../../../template-project.ejs'),

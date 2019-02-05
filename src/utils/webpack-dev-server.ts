@@ -8,12 +8,17 @@ import * as webpackDevServer from 'webpack-dev-server';
 import * as WebpackBar from 'webpackbar';
 import { globalState } from '../utils/global-state';
 import { tempPath } from '../utils/structor-config';
+import { logInfo } from './log';
 import { getWebpackConfig, IHtmlTemplateArgs, IOptions } from './webpack-config';
 
 interface IExtraOptions {
   pipeConfig?: (config?: webpack.Configuration) => Promise<webpack.Configuration>;
   devServerPort: number;
   publicPath: string;
+  jsOnly?: boolean;
+  hot?: boolean;
+  devUrl?: string;
+  autoOpenBrowser?: boolean;
   webpackBarOptions?: any;
 }
 
@@ -41,14 +46,16 @@ export const runWebpackDevServer = async (opts: IOptions<IExtraOptions>) => {
 
   const webpackDevServerConfig: webpackDevServer.Configuration = {
     host: '127.0.0.1',
-    hot: true,
-    hotOnly: true,
+    hot: opts.hot,
+    hotOnly: opts.hot,
     publicPath: opts.publicPath,
     before: (app: any) => {
       app.use('/', express.static(path.join(globalState.projectRootPath, tempPath.dir, 'static')));
     },
     compress: true,
-    historyApiFallback: { rewrites: [{ from: '/', to: normalizePath(path.join(opts.publicPath, 'index.html')) }] },
+    ...(!opts.jsOnly && {
+      historyApiFallback: { rewrites: [{ from: '/', to: normalizePath(path.join(opts.publicPath, 'index.html')) }] }
+    }),
     https: globalState.projectConfig.useHttps,
     overlay: { warnings: true, errors: true },
     stats,
@@ -69,15 +76,25 @@ export const runWebpackDevServer = async (opts: IOptions<IExtraOptions>) => {
   const devServer = new webpackDevServer(compiler, webpackDevServerConfig);
 
   devServer.listen(opts.devServerPort, '127.0.0.1', () => {
-    if (globalState.projectConfig.devUrl) {
-      open(globalState.projectConfig.devUrl);
+    let devUrl: string = '';
+
+    if (opts.devUrl) {
+      devUrl = opts.devUrl;
     } else {
-      open(
-        urlJoin(
+      if (globalState.projectConfig.devUrl) {
+        devUrl = globalState.projectConfig.devUrl;
+      } else {
+        devUrl = urlJoin(
           `${globalState.projectConfig.useHttps ? 'https' : 'http'}://localhost:${opts.devServerPort}`,
           globalState.projectConfig.baseHref
-        )
-      );
+        );
+      }
+    }
+
+    logInfo(`Serve on ${devUrl}`);
+
+    if (opts.autoOpenBrowser) {
+      open(devUrl);
     }
   });
 };
