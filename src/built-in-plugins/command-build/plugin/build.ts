@@ -90,6 +90,17 @@ export const buildComponent = async () => {
     externals: [nodeExternals()]
   });
 
+  // Add bin file to dist dir.
+  const binJsPath = path.join(pri.projectRootPath, pri.projectConfig.distDir, 'bin.js');
+  fs.writeFileSync(
+    binJsPath,
+    `
+    #!/usr/bin/env node
+
+    require("./${path.parse(pri.projectConfig.outFileName).name}")
+  `.trim()
+  );
+
   plugin.buildAfterProdBuild.forEach(afterProdBuild => afterProdBuild(stats));
 };
 

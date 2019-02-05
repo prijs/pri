@@ -1,15 +1,21 @@
 import * as colors from 'colors';
+import * as fs from 'fs-extra';
 import * as inquirer from 'inquirer';
 import * as _ from 'lodash';
+import * as path from 'path';
 import { pri } from '../../../node';
 import { globalState } from '../../../utils/global-state';
 import { IProjectType } from '../../../utils/global-state-class';
-import { logText } from '../../../utils/log';
+import { logFatal, logText } from '../../../utils/log';
 import { plugin } from '../../../utils/plugins';
 import text from '../../../utils/text';
 import { addWhiteFilesByProjectType } from '../../../utils/white-file-helper';
 
 export const runInit = async () => {
+  if (!fs.existsSync(path.join(pri.projectRootPath, 'package.json'))) {
+    logFatal(`No package.json! please run "npm init" first.`);
+  }
+
   if (!globalState.projectPackageJson.pri.type) {
     let userSelectType: IProjectType = null;
 
