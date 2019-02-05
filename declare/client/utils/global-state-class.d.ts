@@ -27,4 +27,4 @@ export declare class GlobalState {
      */
     isDevelopment: boolean;
 }
-export declare type IProjectType = 'project' | 'component' | 'plugin' | 'cli' | null;
+export declare type IProjectType = 'project' | 'component' | 'plugin' | null;
