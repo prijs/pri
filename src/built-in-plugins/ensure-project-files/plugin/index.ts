@@ -185,15 +185,22 @@ const ensurePackageJson = () =>
 
       const priDeps = pkg.dependencies || {};
 
-      // Remove packages which already exists in priDeps
-      if (prevJson.dependencies) {
-        prevJson.dependencies = _.omit(prevJson.dependencies, Object.keys(priDeps));
-      }
-      if (prevJson.devDependencies) {
-        prevJson.devDependencies = _.omit(prevJson.devDependencies, Object.keys(priDeps));
-      }
-      if (prevJson.peerDependencies) {
-        prevJson.peerDependencies = _.omit(prevJson.peerDependencies, Object.keys(priDeps));
+      if (pri.projectPackageJson.pri.type === 'project') {
+        // Remove all packages which already exists in pri dependencies.
+        if (prevJson.dependencies) {
+          prevJson.dependencies = _.omit(prevJson.dependencies, Object.keys(priDeps));
+        }
+        if (prevJson.devDependencies) {
+          prevJson.devDependencies = _.omit(prevJson.devDependencies, Object.keys(priDeps));
+        }
+        if (prevJson.peerDependencies) {
+          prevJson.peerDependencies = _.omit(prevJson.peerDependencies, Object.keys(priDeps));
+        }
+      } else {
+        // Not project type, just reset it's version if exist.
+        setVersionIfExist(prevJson, 'dependencies', priDeps);
+        setVersionIfExist(prevJson, 'devDependencies', priDeps);
+        setVersionIfExist(prevJson, 'peerDependencies', priDeps);
       }
 
       return (
@@ -217,3 +224,13 @@ const ensurePackageJson = () =>
       );
     }
   });
+
+function setVersionIfExist(sourceObj: any, key: string, targetObj: any) {
+  if (!_.isEmpty(_.get(sourceObj, key))) {
+    Object.keys(_.get(sourceObj, key)).forEach(sourceObjKey => {
+      if (targetObj[sourceObjKey]) {
+        _.set(sourceObj, [key, sourceObjKey], targetObj[sourceObjKey]);
+      }
+    });
+  }
+}
