@@ -56,8 +56,10 @@ function runCompiler(compiler: webpack.Compiler) {
       } else {
         if (err && err.message) {
           throw Error(err.message);
+          process.exit(1);
         } else {
           throw Error(status.toString());
+          process.exit(1);
         }
       }
     });
