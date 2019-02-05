@@ -55,6 +55,8 @@ export class IPluginConfig {
   public commands?: ICommandRegister[] = [];
 
   public buildConfigPipes: IBuildConfigPipe[] = [];
+  public bundleConfigPipes: IBuildConfigPipe[] = [];
+
   public buildConfigStyleLoaderOptionsPipes: ILoaderOptionsPipe[] = [];
   public buildConfigCssLoaderOptionsPipes: ILoaderOptionsPipe[] = [];
   public buildConfigSassLoaderOptionsPipes: ILoaderOptionsPipe[] = [];

@@ -135,7 +135,7 @@ const debugProject = async () => {
     webpackBarOptions: {
       name: 'dev'
     },
-    pipeConfig: config => {
+    pipeConfig: async config => {
       const dllHttpPath = urlJoin(
         `${globalState.projectConfig.useHttps ? 'https' : 'http'}://127.0.0.1:${freePort}`,
         libraryStaticPath

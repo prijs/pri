@@ -40,7 +40,7 @@ export const buildProject = async (
     mode: 'production',
     entryPath: result.entryPath,
     publicPath: opts.publicPath, // If unset, use config value.
-    pipeConfig: config => {
+    pipeConfig: async config => {
       staticHtmlPaths.forEach(staticHtmlPath => {
         config.plugins.push(
           new HtmlWebpackPlugin({

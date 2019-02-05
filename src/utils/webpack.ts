@@ -3,7 +3,7 @@ import * as WebpackBar from 'webpackbar';
 import { getWebpackConfig, IOptions } from './webpack-config';
 
 interface IExtraOptions {
-  pipeConfig?: (config?: webpack.Configuration) => webpack.Configuration;
+  pipeConfig?: (config?: webpack.Configuration) => Promise<webpack.Configuration>;
 }
 
 const stats = {
@@ -22,7 +22,7 @@ export const runWebpack = async (opts: IOptions<IExtraOptions>): Promise<any> =>
   let webpackConfig = await getWebpackConfig(others);
 
   if (opts.pipeConfig) {
-    webpackConfig = opts.pipeConfig(webpackConfig);
+    webpackConfig = await opts.pipeConfig(webpackConfig);
   }
 
   webpackConfig.plugins.push(new WebpackBar());
@@ -37,7 +37,7 @@ export const watchWebpack = async (opts: IOptions<IExtraOptions>): Promise<any> 
   let webpackConfig = await getWebpackConfig(others);
 
   if (opts.pipeConfig) {
-    webpackConfig = opts.pipeConfig(webpackConfig);
+    webpackConfig = await opts.pipeConfig(webpackConfig);
   }
 
   webpackConfig.plugins.push(new WebpackBar());

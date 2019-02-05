@@ -11,7 +11,7 @@ import { tempPath } from '../utils/structor-config';
 import { getWebpackConfig, IHtmlTemplateArgs, IOptions } from './webpack-config';
 
 interface IExtraOptions {
-  pipeConfig?: (config?: webpack.Configuration) => webpack.Configuration;
+  pipeConfig?: (config?: webpack.Configuration) => Promise<webpack.Configuration>;
   devServerPort: number;
   publicPath: string;
   webpackBarOptions?: any;
@@ -33,7 +33,7 @@ export const runWebpackDevServer = async (opts: IOptions<IExtraOptions>) => {
   let webpackConfig = await getWebpackConfig(others);
 
   if (opts.pipeConfig) {
-    webpackConfig = opts.pipeConfig(webpackConfig);
+    webpackConfig = await opts.pipeConfig(webpackConfig);
   }
 
   webpackConfig.plugins.push(new webpack.HotModuleReplacementPlugin());

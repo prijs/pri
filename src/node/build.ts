@@ -12,6 +12,10 @@ export const pipeConfig = (pipe: IBuildConfigPipe) => {
   plugin.buildConfigPipes.push(pipe);
 };
 
+export const pipeBundleConfig = (pipe: IBuildConfigPipe) => {
+  plugin.bundleConfigPipes.push(pipe);
+};
+
 export const pipeStyleLoaderOptions = (pipe: ILoaderOptionsPipe) => {
   plugin.buildConfigStyleLoaderOptionsPipes.push(pipe);
 };

@@ -16,7 +16,7 @@ export const commandAnalyse = async () => {
   await runWebpack({
     mode: 'production',
     entryPath: result.entryPath,
-    pipeConfig: config => {
+    pipeConfig: async config => {
       config.plugins.push(new webpackBundleAnalyzer.BundleAnalyzerPlugin());
       return config;
     }

@@ -74,7 +74,7 @@ export async function devDocs(realDocsPath: string) {
             <script src="https://g.alicdn.com/dt/fbi/0.0.292/monaco-editor/vs/loader.js"></script>
           `
     },
-    pipeConfig: config => {
+    pipeConfig: async config => {
       const dllHttpPath = urlJoin(
         `${pri.projectConfig.useHttps ? 'https' : 'http'}://127.0.0.1:${freePort}`,
         libraryStaticPath
