@@ -1,61 +1,25 @@
 import { execSync } from 'child_process';
 import * as yargs from 'yargs';
 import { logInfo } from './log';
+import { findNearestNodemodulesFile } from './npm-finder';
 
 export async function lint(showBreakError = true) {
   if (yargs.argv['light']) {
     return;
   }
 
-  // await spinner('Lint project', async () => {
-  //   const configurationFilename = 'tslint.json';
-  //   const lintOptions = {
-  //     fix: true,
-  //     formatter: 'json'
-  //   };
-  //   const program = Linter.createProgram('tsconfig.json', globalState.projectRootPath);
-  //   const linter = new Linter(lintOptions, program);
-  //   const files = Linter.getFileNames(program);
+  logInfo('Lint and format code..');
 
-  //   files
-  //     .filter(filePath => {
-  //       return !filePath.startsWith(path.join(globalState.projectRootPath, tempPath.dir));
-  //     })
-  //     .filter(filePath => {
-  //       if (plugin.lintFilters.some(lintFilter => !lintFilter(filePath))) {
-  //         return false;
-  //       }
+  const forceTslint = showBreakError ? '' : '--force';
 
-  //       return true;
-  //     })
-  //     .forEach(filePath => {
-  //       const fileContents = program.getSourceFile(filePath).getFullText();
-  //       const configuration = Configuration.findConfiguration(configurationFilename, filePath).results;
-  //       linter.lint(filePath, fileContents, configuration);
-  //     });
-
-  //   const results = linter.getResult();
-  //   if (results.errorCount > 0) {
-  //     results.failures.forEach(failure => {
-  //       const errorPosition = failure.getStartPosition().getLineAndCharacter();
-  //       const str = `${failure.getFailure()}\n at: \n ${failure.getFileName()}:${errorPosition.line}:${
-  //         errorPosition.character
-  //       }`;
-
-  //       if (showBreakError) {
-  //         logFatal(str);
-  //       } else {
-  //         logWarn(str);
-  //       }
-  //     });
-  //   }
-  //   if (results.fixes.length > 0) {
-  //     logText(`Tslint auto fixed ${results.fixes.length} bugs`);
-  //   }
-  // });
-  logInfo('Format code..');
-
-  execSync(`npm run format`, {
-    stdio: 'inherit'
-  });
+  execSync(
+    `${findNearestNodemodulesFile(
+      '.bin/tslint'
+    )} ${forceTslint} --fix './src/**/*.?(ts|tsx)' && ${findNearestNodemodulesFile(
+      '.bin/prettier'
+    )} --write './src/**/*.?(ts|tsx)'`,
+    {
+      stdio: 'inherit'
+    }
+  );
 }
