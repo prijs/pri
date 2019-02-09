@@ -15,10 +15,8 @@ export function ensureProjectFiles() {
 const ensureProjectEntry = () => {
   const homePagePath = path.join(pagesPath.dir, 'index.tsx');
   const homePageAbsolutePath = path.join(pri.projectRootPath, homePagePath);
-  const homeMarkdownPagePath = path.join(pagesPath.dir, 'index.md');
-  const homeMarkdownPageAbsolutePath = path.join(pri.projectRootPath, homeMarkdownPagePath);
 
-  if (!fs.existsSync(homePageAbsolutePath) && !fs.existsSync(homeMarkdownPageAbsolutePath)) {
+  if (!fs.existsSync(homePageAbsolutePath)) {
     pri.project.addProjectFiles({
       fileName: homePagePath,
       pipeContent: async () => {

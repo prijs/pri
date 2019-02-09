@@ -7,7 +7,6 @@ export class IProjectInfo {
   public hasConfigFile = false;
   public hasLayout = false;
   public has404File = false;
-  public hasMarkdownLayout = false;
   public stores: Array<{
     filePath: string;
     name: string;

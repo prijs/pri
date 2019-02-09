@@ -78,18 +78,8 @@ export const layoutPath = {
   ext: '.tsx'
 };
 
-export const markdownLayoutPath = {
-  dir: layoutPath.dir,
-  name: 'markdown',
-  ext: '.tsx'
-};
-
 export const storesPath = {
   dir: path.join(srcPath.dir, `stores`)
-};
-
-export const markdownTempPath = {
-  dir: path.join(tempPath.dir, 'markdowns')
 };
 
 export const componentEntry = {

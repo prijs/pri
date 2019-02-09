@@ -3,9 +3,8 @@ import { globalState } from '../../../utils/global-state';
 
 export function getStaticHtmlPaths(analyseInfo: any) {
   const pages = analyseInfo.projectAnalysePages ? analyseInfo.projectAnalysePages.pages : [];
-  const markdownPages = analyseInfo.projectAnalyseMarkdownPages ? analyseInfo.projectAnalyseMarkdownPages.pages : [];
 
-  const allPages = [...pages, ...markdownPages];
+  const allPages = [...pages];
 
   return allPages.map(page => {
     const relativePathWithSuffix = path.join(page.routerPath, 'index.html');

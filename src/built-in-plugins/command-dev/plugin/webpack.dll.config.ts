@@ -34,7 +34,6 @@ export default (opts: IOptions) =>
         'antd',
         'antd/dist/antd.css',
         'highlight.js',
-        'markdown-it',
         'react-loadable',
         'react-router',
         'history',

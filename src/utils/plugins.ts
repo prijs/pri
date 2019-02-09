@@ -39,8 +39,6 @@ import * as pluginPackagesRemove from '../built-in-plugins/packages-remove';
 import * as pluginPackagesUpdate from '../built-in-plugins/packages-update';
 import * as pluginProjectAnalyseConfig from '../built-in-plugins/project-analyse-config';
 import * as pluginProjectAnalyseLayouts from '../built-in-plugins/project-analyse-layouts';
-import * as pluginProjectAnalyseMarkdownLayouts from '../built-in-plugins/project-analyse-markdown-layouts';
-import * as pluginProjectAnalyseMarkdownPages from '../built-in-plugins/project-analyse-markdown-pages';
 import * as pluginProjectAnalyseNotFound from '../built-in-plugins/project-analyse-not-found';
 import * as pluginProjectAnalysePages from '../built-in-plugins/project-analyse-pages';
 import * as pluginServiceWorker from '../built-in-plugins/service-worker';
@@ -126,8 +124,6 @@ export const loadPlugins = async (pluginIncludeRoots: string[] = []) => {
     pluginPackagesUpdate,
     pluginProjectAnalyseConfig,
     pluginProjectAnalyseLayouts,
-    pluginProjectAnalyseMarkdownLayouts,
-    pluginProjectAnalyseMarkdownPages,
     pluginProjectAnalyseNotFound,
     pluginProjectAnalysePages,
     pluginServiceWorker

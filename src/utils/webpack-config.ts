@@ -168,6 +168,15 @@ export const getWebpackConfig = async (opts: IOptions) => {
           exclude: plugin.buildConfigTsLoaderExcludePipes.reduce((options, fn) => fn(options), [])
         },
         {
+          test: /\.mdx?$/,
+          use: [babelLoader, { loader: '@mdx-js/loader', options: { className: 'mdx' } }],
+          include: plugin.buildConfigTsLoaderIncludePipes.reduce(
+            (options, fn) => fn(options),
+            defaultSourcePathToBeResolve
+          ),
+          exclude: plugin.buildConfigTsLoaderExcludePipes.reduce((options, fn) => fn(options), [])
+        },
+        {
           test: /\.css$/,
           use: extraCssInProd(globalState.projectConfig.enableCssModules ? cssModuleLoader : cssPureLoader),
           include: defaultSourcePathToBeResolve
@@ -212,7 +221,21 @@ export const getWebpackConfig = async (opts: IOptions) => {
           '@': path.join(globalState.projectRootPath, '/src')
         })
       },
-      extensions: ['.js', '.jsx', '.tsx', '.ts', '.scss', '.less', '.css', '.png', '.jpg', '.jpeg', '.gif']
+      extensions: [
+        '.js',
+        '.jsx',
+        '.tsx',
+        '.ts',
+        '.md',
+        '.mdx',
+        '.scss',
+        '.less',
+        '.css',
+        '.png',
+        '.jpg',
+        '.jpeg',
+        '.gif'
+      ]
     },
     resolveLoader: {
       modules: selfAndProjectNodeModules

@@ -7,7 +7,7 @@
 Pri can help you develop **project** and **component**.
 
 - [Convention routing](https://prijs.github.io/pri-docs/usage/pages/). Create pages according to convention without writing routing configuration.
-- [Markdown support](https://prijs.github.io/pri-docs/usage/markdown-page/). Write markdown page easily, just create a file using `.md` as suffixes.
+- [Mdx support](https://prijs.github.io/pri-docs/usage/markdown-page/). Write markdown page easily, just create a file using `.md` or `.mdx` as suffixes.
 - [Static export](https://prijs.github.io/pri-docs/usage/deploy-to-github-pages/). Very easy to deploy to github pages.
 - [Plugin mechanism](https://prijs.github.io/pri-docs/plugin/). 20+ built-in plugins, and more community plug-ins.
 - [Mocks](https://prijs.github.io/pri-docs/usage/mock-request/). Using service worker to mock request!

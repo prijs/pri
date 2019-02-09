@@ -88,10 +88,8 @@ export class StructComponent extends PureComponent<Props, State> {
     const pages = this.props.ApplciationStore.status.analyseInfo.projectAnalysePages
       ? this.props.ApplciationStore.status.analyseInfo.projectAnalysePages.pages
       : [];
-    const markdownPages = this.props.ApplciationStore.status.analyseInfo.projectAnalyseMarkdownPages
-      ? this.props.ApplciationStore.status.analyseInfo.projectAnalyseMarkdownPages.pages
-      : [];
-    const allPages = [...pages, ...markdownPages];
+
+    const allPages = [...pages];
     if (allPages) {
       this.props.ApplicationAction.pipeTreeNode(treeData => {
         treeData[0].children.push({

@@ -23,7 +23,12 @@ pri.project.whiteFileRules.add(file => {
   return (
     relativePath.startsWith(pagesPath.dir) &&
     file.name === 'index' &&
-    (file.ext === '.tsx' || file.ext === '.css' || file.ext === '.scss' || file.ext === '.less')
+    (file.ext === '.tsx' ||
+      file.ext === '.md' ||
+      file.ext === '.mdx' ||
+      file.ext === '.css' ||
+      file.ext === '.scss' ||
+      file.ext === '.less')
   );
 });
 
@@ -43,7 +48,7 @@ pri.project.onAnalyseProject(files => {
               return false;
             }
 
-            if (['.tsx'].indexOf(file.ext) === -1) {
+            if (['.tsx', '.md', '.mdx'].indexOf(file.ext) === -1) {
               return false;
             }
 
@@ -70,8 +75,10 @@ pri.project.onAnalyseProject(files => {
             const componentFile = files.find(file => {
               const relativePath = path.relative(pri.projectRootPath, path.join(file.dir, file.name));
               return (
-                (route.component === relativePath && !file.isDir && file.ext === '.tsx') ||
-                (path.join(route.component, 'index') === relativePath && !file.isDir && file.ext === '.tsx')
+                (route.component === relativePath && !file.isDir && ['.tsx', '.md', '.mdx'].indexOf(file.ext) > -1) ||
+                (path.join(route.component, 'index') === relativePath &&
+                  !file.isDir &&
+                  ['.tsx', '.md', '.mdx'].indexOf(file.ext) > -1)
               );
             });
 
