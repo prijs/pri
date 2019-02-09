@@ -143,6 +143,7 @@ export const ignoreScanFiles = [
   '.prettierrc',
   '.git',
   '.DS_Store',
+  '.cache',
   'package-lock.json',
   'package.json',
   'tsconfig.json',

@@ -9,6 +9,7 @@ import { globalState } from '../utils/global-state';
 import { plugin } from '../utils/plugins';
 import { docsPath, pagesPath, srcPath, tempPath } from '../utils/structor-config';
 import { babelOptions } from './babel-options';
+import * as HardSourceWebpackPlugin from 'hard-source-webpack-plugin';
 
 export interface IHtmlTemplateArgs {
   dashboardServerPort?: number;
@@ -90,6 +91,13 @@ export const getWebpackConfig = async (opts: IOptions) => {
     })
   };
 
+  const cacheLoader = {
+    loader: 'cache-loader',
+    options: {
+      cacheDirectory: path.join(globalState.projectRootPath, '.cache/cache-loader')
+    }
+  };
+
   /**
    * Helper
    */
@@ -137,12 +145,15 @@ export const getWebpackConfig = async (opts: IOptions) => {
       rules: [
         {
           test: /\.worker\.tsx?$/,
-          use: {
-            loader: 'worker-loader',
-            options: {
-              inline: true
+          use: [
+            cacheLoader,
+            {
+              loader: 'worker-loader',
+              options: {
+                inline: true
+              }
             }
-          },
+          ],
           include: plugin.buildConfigTsLoaderIncludePipes.reduce(
             (options, fn) => fn(options),
             defaultSourcePathToBeResolve
@@ -151,7 +162,7 @@ export const getWebpackConfig = async (opts: IOptions) => {
         },
         {
           test: /\.jsx?$/,
-          use: [babelLoader],
+          use: [cacheLoader, babelLoader],
           include: plugin.buildConfigJsLoaderIncludePipes.reduce(
             (options, fn) => fn(options),
             defaultSourcePathToBeResolve
@@ -160,7 +171,7 @@ export const getWebpackConfig = async (opts: IOptions) => {
         },
         {
           test: /\.tsx?$/,
-          use: [babelLoader, tsLoader],
+          use: [cacheLoader, babelLoader, tsLoader],
           include: plugin.buildConfigTsLoaderIncludePipes.reduce(
             (options, fn) => fn(options),
             defaultSourcePathToBeResolve
@@ -169,7 +180,7 @@ export const getWebpackConfig = async (opts: IOptions) => {
         },
         {
           test: /\.mdx?$/,
-          use: [babelLoader, '@mdx-js/loader'],
+          use: [cacheLoader, babelLoader, '@mdx-js/loader'],
           include: plugin.buildConfigTsLoaderIncludePipes.reduce(
             (options, fn) => fn(options),
             defaultSourcePathToBeResolve
@@ -240,7 +251,11 @@ export const getWebpackConfig = async (opts: IOptions) => {
     resolveLoader: {
       modules: selfAndProjectNodeModules
     },
-    plugins: [],
+    plugins: [
+      new HardSourceWebpackPlugin({
+        cacheDirectory: path.join(globalState.projectRootPath, '.cache/hard-source-webpack-plugin')
+      })
+    ],
     optimization: { namedChunks: false },
     stats
   };
