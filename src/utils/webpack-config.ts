@@ -169,7 +169,7 @@ export const getWebpackConfig = async (opts: IOptions) => {
         },
         {
           test: /\.mdx?$/,
-          use: [babelLoader, { loader: '@mdx-js/loader', options: { className: 'mdx' } }],
+          use: [babelLoader, '@mdx-js/loader'],
           include: plugin.buildConfigTsLoaderIncludePipes.reduce(
             (options, fn) => fn(options),
             defaultSourcePathToBeResolve
