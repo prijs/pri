@@ -253,7 +253,7 @@ export const getWebpackConfig = async (opts: IOptions) => {
     },
     plugins: [
       new HardSourceWebpackPlugin({
-        cacheDirectory: path.join(globalState.projectRootPath, '.cache/hard-source-webpack-plugin')
+        cacheDirectory: path.join(globalState.projectRootPath, '.cache/hard-source/[confighash]')
       })
     ],
     optimization: { namedChunks: false },
