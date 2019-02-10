@@ -3,7 +3,7 @@ import * as path from 'path';
 import { pri } from '../../../node';
 import { logText } from '../../../utils/log';
 import { findNearestNodemodulesFile } from '../../../utils/npm-finder';
-import { tempPath, testsPath } from '../../../utils/structor-config';
+import { testsPath } from '../../../utils/structor-config';
 
 export const runTest = async () => {
   execSync(

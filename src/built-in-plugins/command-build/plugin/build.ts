@@ -141,7 +141,7 @@ async function prepareBuild() {
     await cleanDist();
 
     // Clean .temp dir
-    await exec(`${findNearestNodemodulesFile('.bin/rimraf')} ${path.join(globalState.projectRootPath, '.temp')}`);
+    await exec(`${findNearestNodemodulesFile('.bin/rimraf')} ${path.join(globalState.projectRootPath, tempPath.dir)}`);
 
     await pri.project.ensureProjectFiles();
     await pri.project.lint();

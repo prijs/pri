@@ -17,7 +17,7 @@ function getRandomFolderPath() {
   return path.join(process.env.HOME, '.cardTemp' + ramdomId);
 }
 
-export async function runInTempFolderAndDestroyAfterFinished(fn: (tempPath?: string) => any) {
+export async function runInTempFolderAndDestroyAfterFinished(fn: (tempFolderPath?: string) => any) {
   // 获取一个临时文件夹路径
   const tempFolderPath = getRandomFolderPath();
 

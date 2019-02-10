@@ -3,10 +3,7 @@ import * as _ from 'lodash';
 import * as path from 'path';
 import * as walk from 'walk';
 import { globalState } from './global-state';
-import { md5 } from './md5';
-import { loadedPlugins } from './plugins';
 import * as projectState from './project-state';
-import { tempPath } from './structor-config';
 
 export const hasNodeModules = () => {
   return fs.existsSync(path.join(globalState.projectRootPath, 'node_modules'));

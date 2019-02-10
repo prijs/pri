@@ -2,7 +2,7 @@ import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as walk from 'walk';
 import { globalState } from './global-state';
-import { gitIgnores as gitIgnoreNames, ignoreScanFiles, pagesPath, tempPath } from './structor-config';
+import { gitIgnores as gitIgnoreNames, ignoreScanFiles } from './structor-config';
 
 type WalkStats = fs.Stats & {
   name: string;

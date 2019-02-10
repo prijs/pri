@@ -6,7 +6,7 @@ import { pri } from '../../../node';
 import { PRI_PACKAGE_NAME } from '../../../utils/constants';
 import { globalState } from '../../../utils/global-state';
 import { prettierConfig } from '../../../utils/prettier-config';
-import { declarePath, gitIgnores, npmIgnores, tempTypesPath } from '../../../utils/structor-config';
+import { declarePath, gitIgnores, npmIgnores, tempPath, tempTypesPath } from '../../../utils/structor-config';
 import { ensureComponentFiles } from './ensure-component';
 import { ensurePluginFiles } from './ensure-plugin';
 import { ensureProjectFiles } from './ensure-project';
@@ -74,7 +74,10 @@ const ensureTsconfig = () =>
                 ...(pri.projectPackageJson.pri.type === 'project' && { '@/*': ['src/*'] })
               }
             },
-            include: ['.temp/**/*', ...['src/**/*'].map(each => path.join(globalState.projectConfig.sourceRoot, each))],
+            include: [
+              `${tempPath.dir}/**/*`,
+              ...['src/**/*'].map(each => path.join(globalState.projectConfig.sourceRoot, each))
+            ],
             exclude: ['node_modules', globalState.projectConfig.distDir]
           },
           null,

@@ -3,11 +3,12 @@ import * as path from 'path';
 import * as webpack from 'webpack';
 import { globalState } from '../../../utils/global-state';
 import { hasNodeModules, hasNodeModulesModified } from '../../../utils/project-helper';
+import { tempPath } from '../../../utils/structor-config';
 import getWebpackDllConfig from './webpack.dll.config';
 
 export const dllFileName = 'main.dll.js';
 export const dllMainfestName = 'mainfest.json';
-export const dllOutPath = path.join(globalState.projectRootPath, '.temp/static/dlls');
+export const dllOutPath = path.join(globalState.projectRootPath, `${tempPath.dir}/static/dlls`);
 export const libraryStaticPath = '/dlls/' + dllFileName;
 
 const stats = {

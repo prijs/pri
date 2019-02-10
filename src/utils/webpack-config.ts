@@ -1,4 +1,5 @@
 import * as fs from 'fs-extra';
+import * as HardSourceWebpackPlugin from 'hard-source-webpack-plugin';
 import * as HtmlWebpackPlugin from 'html-webpack-plugin';
 import * as MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import * as OptimizeCSSAssetsPlugin from 'optimize-css-assets-webpack-plugin';
@@ -7,9 +8,8 @@ import * as UglifyJsPlugin from 'uglifyjs-webpack-plugin';
 import * as webpack from 'webpack';
 import { globalState } from '../utils/global-state';
 import { plugin } from '../utils/plugins';
-import { docsPath, pagesPath, srcPath, tempPath } from '../utils/structor-config';
+import { srcPath, tempPath } from '../utils/structor-config';
 import { babelOptions } from './babel-options';
-import * as HardSourceWebpackPlugin from 'hard-source-webpack-plugin';
 
 export interface IHtmlTemplateArgs {
   dashboardServerPort?: number;
@@ -94,7 +94,7 @@ export const getWebpackConfig = async (opts: IOptions) => {
   const cacheLoader = {
     loader: 'cache-loader',
     options: {
-      cacheDirectory: path.join(globalState.projectRootPath, '.cache/cache-loader')
+      cacheDirectory: path.join(globalState.projectRootPath, `${tempPath.dir}/cache/cache-loader`)
     }
   };
 
@@ -253,7 +253,7 @@ export const getWebpackConfig = async (opts: IOptions) => {
     },
     plugins: [
       new HardSourceWebpackPlugin({
-        cacheDirectory: path.join(globalState.projectRootPath, '.cache/hard-source/[confighash]')
+        cacheDirectory: path.join(globalState.projectRootPath, `${tempPath.dir}/cache/hard-source/[confighash]`)
       })
     ],
     optimization: { namedChunks: false },

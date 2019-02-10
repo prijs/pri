@@ -18,6 +18,7 @@ import { generateCertificate } from '../../../../../utils/generate-certificate';
 import { freshProjectConfig, globalState } from '../../../../../utils/global-state';
 import { plugin } from '../../../../../utils/plugins';
 import * as projectManage from '../../../../../utils/project-manager';
+import { tempPath } from '../../../../../utils/structor-config';
 
 interface IOptions {
   serverPort: number;
@@ -31,7 +32,7 @@ export default (opts: IOptions) => {
 
   app.use(KoaCompress({ flush: zlib.Z_SYNC_FLUSH }));
 
-  app.use(KoaMount('/static', KoaStatic(path.join(globalState.projectRootPath, '.temp'), { gzip: true })));
+  app.use(KoaMount('/static', KoaStatic(path.join(globalState.projectRootPath, tempPath.dir), { gzip: true })));
 
   const server = globalState.projectConfig.useHttps
     ? https.createServer(generateCertificate(), app.callback())
