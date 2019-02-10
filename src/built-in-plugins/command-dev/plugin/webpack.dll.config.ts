@@ -35,7 +35,7 @@ export default (opts: IOptions) =>
         'antd/dist/antd.css',
         'highlight.js',
         'react-loadable',
-        'react-router',
+        'react-router-dom',
         'history',
         PRI_PACKAGE_NAME + '/client'
       ])
