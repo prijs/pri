@@ -118,3 +118,10 @@ npm start
 ### Using in windows
 
 [fedora](https://getfedora.org/). Using windows subsystem for Linux.
+
+### Migrate from 0.x/1.x to 2.x
+
+Two steps:
+
+1. Run `npx pri-migrate-one-to-two` in your project root path.
+2. Reinstall node_modules.
