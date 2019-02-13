@@ -10,6 +10,7 @@ import * as yargs from 'yargs';
 import * as pkg from '../../package.json';
 import { CONFIG_FILE } from './constants';
 import { GlobalState } from './global-state-class';
+import { logFatal } from './log.js';
 import { ProjectConfig } from './project-config-interface';
 
 const globalState = new GlobalState();
@@ -35,6 +36,8 @@ export function freshGlobalState(projectRootPath: string) {
     }
 
     globalState.projectPackageJson = projectPackageJson;
+  } else {
+    logFatal(`No package.json, please run "npm init" first.`);
   }
 }
 
