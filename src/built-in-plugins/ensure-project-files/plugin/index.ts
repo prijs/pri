@@ -206,6 +206,15 @@ const ensurePackageJson = () =>
         setVersionIfExist(prevJson, 'peerDependencies', priDeps);
       }
 
+      // Mv pri-plugins to devDeps except plugin
+      if (pri.projectPackageJson.pri.type === 'plugin') {
+        mvPriPlugins(prevJson, 'devDependencies', 'dependencies');
+        mvPriPlugins(prevJson, 'peerDependencies', 'dependencies');
+      } else {
+        mvPriPlugins(prevJson, 'dependencies', 'devDependencies');
+        mvPriPlugins(prevJson, 'peerDependencies', 'devDependencies');
+      }
+
       return (
         JSON.stringify(
           _.merge({}, prevJson, {
@@ -236,4 +245,26 @@ function setVersionIfExist(sourceObj: any, key: string, targetObj: any) {
       }
     });
   }
+}
+
+function mvPriPlugins(obj: any, sourceKey: string, targetKey: string) {
+  if (!obj[sourceKey]) {
+    obj[sourceKey] = {};
+  }
+
+  if (!obj[targetKey]) {
+    obj[targetKey] = {};
+  }
+
+  const priPlugins = Object.keys(obj[sourceKey]).filter(
+    packageName => packageName.startsWith('pri-plugin') || packageName.startsWith('@ali/pri-plugin')
+  );
+
+  // Add plugins to targetKey
+  priPlugins.forEach(packageName => {
+    obj[targetKey][packageName] = obj[sourceKey][packageName];
+  });
+
+  // Remove plugins from sourceKey
+  obj[sourceKey] = _.omit(obj[sourceKey], priPlugins);
 }
