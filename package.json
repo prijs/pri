@@ -106,7 +106,6 @@
     "socket.io": "2.2.0",
     "socket.io-client": "2.2.0",
     "style-loader": "0.23.1",
-    "ts-jest": "23.10.5",
     "ts-loader": "5.3.3",
     "tslint": "5.12.1",
     "tslint-config-prettier": "1.18.0",
