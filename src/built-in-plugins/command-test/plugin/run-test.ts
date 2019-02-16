@@ -7,27 +7,7 @@ import { testsPath } from '../../../utils/structor-config';
 
 export const runTest = async () => {
   execSync(
-    [
-      findNearestNodemodulesFile('/.bin/jest'),
-      `--testRegex "/${testsPath.dir}/.*\\.tsx?$"`,
-      `
-      --transform '${JSON.stringify({
-        '^.+\\.tsx?$': 'ts-jest'
-      })}'
-      `,
-      `--moduleFileExtensions ts tsx js jsx`,
-      `
-      --globals '${JSON.stringify({
-        'ts-jest': {
-          babelConfig: {
-            presets: [['@babel/preset-env']],
-            plugins: [['@babel/plugin-transform-runtime', { regenerator: true }]]
-          }
-        }
-      })}'
-      `,
-      `--coverage`
-    ]
+    [findNearestNodemodulesFile('/.bin/jest'), `--testRegex "/${testsPath.dir}/.*\\.tsx?$"`, `--coverage`]
       .map(each => each.trim())
       .join(' '),
     {
