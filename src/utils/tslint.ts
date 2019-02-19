@@ -17,7 +17,7 @@ export async function lint(showBreakError = true) {
       '.bin/tslint'
     )} ${forceTslint} --fix './src/**/*.?(ts|tsx)' && ${findNearestNodemodulesFile(
       '.bin/prettier'
-    )} --write './src/**/*.?(ts|tsx)'`,
+    )} --write './src/**/*.?(ts|tsx|css|less|scss|sass|md|mdx)'`,
     {
       stdio: 'inherit'
     }
