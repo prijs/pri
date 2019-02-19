@@ -228,7 +228,12 @@ const ensurePackageJson = () =>
               test: 'pri test',
               format: "tslint --fix './src/**/*.?(ts|tsx)' && prettier --write './src/**/*.?(ts|tsx)'"
             },
-            pri: { type: pri.projectPackageJson.pri.type, version: pri.version }
+            pri: { type: pri.projectPackageJson.pri.type, version: pri.version },
+            husky: {
+              hooks: {
+                'pre-commit': 'npm test'
+              }
+            }
           }),
           null,
           2
