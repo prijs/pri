@@ -13,7 +13,7 @@ export function logWarn(message: string) {
 
 export function logFatal(message: string) {
   signale.fatal(new Error(message));
-  process.exit(0);
+  process.exit(1);
 }
 
 export function logInfo(message: string) {
