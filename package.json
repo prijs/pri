@@ -12,6 +12,11 @@
     "format": "tslint --fix './src/**/*.?(ts|tsx)' && prettier --write './src/**/*.?(ts|tsx)'",
     "generateDocument": "typedoc --out ./document --mode file --ignoreCompilerErrors ./src/node/index.ts"
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run format"
+    }
+  },
   "bin": {
     "pri": "built/bin.js"
   },
@@ -74,6 +79,7 @@
     "hard-source-webpack-plugin": "^0.13.1",
     "highlight.js": "9.14.2",
     "html-webpack-plugin": "3.2.0",
+    "husky": "^1.3.1",
     "inquirer": "6.2.2",
     "isomorphic-fetch": "2.2.1",
     "jest": "24.1.0",
