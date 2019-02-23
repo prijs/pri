@@ -14,16 +14,6 @@ if (semver.lte(process.version, '8.0.0')) {
   logFatal(`Nodejs version should be greater than 8, current is ${process.version}`);
 }
 
-if (globalState.projectPackageJson.pri.version) {
-  if (semver.lt(globalState.priPackageJson.version, globalState.projectPackageJson.pri.version)) {
-    logFatal(
-      `Current pri version: ${globalState.priPackageJson.version} is less then this project's: ${
-        globalState.projectPackageJson.pri.version
-      }`
-    );
-  }
-}
-
 export async function createCli(opts?: { pluginIncludeRoots: string[] }) {
   await loadPlugins(opts && opts.pluginIncludeRoots);
 

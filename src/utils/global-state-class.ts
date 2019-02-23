@@ -12,10 +12,6 @@ export class GlobalState {
        * Project type
        */
       type: IProjectType;
-      /**
-       * Current used pri version
-       */
-      version: string;
     };
   } = {};
   /**
