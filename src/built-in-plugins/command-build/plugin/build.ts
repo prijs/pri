@@ -74,6 +74,11 @@ export const buildProject = async (
 
   await copyAssets();
 
+  // Create d.ts if ignoreSourceInNpm
+  if (pri.projectConfig.ignoreSourceInNpm) {
+    await exec(`npx tsc --declaration --declarationDir ./declaration`, { cwd: instance.projectRootPath });
+  }
+
   plugin.buildAfterProdBuild.forEach(afterProdBuild => afterProdBuild(stats));
 };
 
