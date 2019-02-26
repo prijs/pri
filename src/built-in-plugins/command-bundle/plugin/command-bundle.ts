@@ -10,7 +10,7 @@ export const commandBundle = async () => {
   }
 
   await pri.project.ensureProjectFiles();
-  await pri.project.lint(false);
+  await pri.project.lint();
   await pri.project.checkProjectFiles();
 
   await runWebpack({

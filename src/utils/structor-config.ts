@@ -1,3 +1,4 @@
+import * as fs from 'fs-extra';
 import * as _ from 'lodash';
 import * as path from 'path';
 import { globalState } from './global-state';
@@ -82,10 +83,14 @@ export const storesPath = {
   dir: path.join(srcPath.dir, `stores`)
 };
 
+// Try to find project's entry's ext
+const projectEntryExt = path.join(globalState.projectRootPath, path.join(srcPath.dir), 'index');
+const componentEntryExt = fs.existsSync(projectEntryExt + '.tsx') ? '.tsx' : '.ts';
+
 export const componentEntry = {
   dir: path.join(srcPath.dir),
   name: 'index',
-  ext: '.tsx'
+  ext: componentEntryExt
 };
 
 export const cliEntry = {
