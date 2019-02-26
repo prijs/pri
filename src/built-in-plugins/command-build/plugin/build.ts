@@ -74,10 +74,7 @@ export const buildProject = async (
 
   await copyAssets();
 
-  // Create d.ts if ignoreSourceInNpm
-  if (pri.projectConfig.ignoreSourceInNpm) {
-    await exec(`npx tsc --declaration --declarationDir ./declaration`, { cwd: pri.projectRootPath });
-  }
+  await buildDeclaration();
 
   plugin.buildAfterProdBuild.forEach(afterProdBuild => afterProdBuild(stats));
 };
@@ -105,6 +102,8 @@ export const buildComponent = async () => {
     require("./${path.parse(pri.projectConfig.outFileName).name}")
   `.trim()
   );
+
+  await buildDeclaration();
 
   plugin.buildAfterProdBuild.forEach(afterProdBuild => afterProdBuild(stats));
 };
@@ -152,4 +151,11 @@ async function prepareBuild() {
     await pri.project.lint();
     await pri.project.checkProjectFiles();
   });
+}
+
+async function buildDeclaration() {
+  // Create d.ts if ignoreSourceInNpm
+  if (pri.projectConfig.ignoreSourceInNpm) {
+    await exec(`npx tsc --declaration --declarationDir ./declaration`, { cwd: pri.projectRootPath });
+  }
 }
