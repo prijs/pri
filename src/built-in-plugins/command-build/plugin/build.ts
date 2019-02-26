@@ -67,7 +67,6 @@ export const buildProject = async (
         semi: true,
         singleQuote: true,
         parser: 'babylon'
-        // parser: 'babel'
       })
     );
   }
@@ -154,8 +153,8 @@ async function prepareBuild() {
 }
 
 async function buildDeclaration() {
-  // Create d.ts if ignoreSourceInNpm
-  if (pri.projectConfig.ignoreSourceInNpm) {
+  // Create d.ts if hideSourceCodeForNpm
+  if (pri.projectConfig.hideSourceCodeForNpm) {
     await exec(`npx tsc --declaration --declarationDir ./declaration`, { cwd: pri.projectRootPath });
   }
 }

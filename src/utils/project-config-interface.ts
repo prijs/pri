@@ -110,5 +110,5 @@ export class ProjectConfig {
    * npmIgnore source
    * Only take effect on `projectType = component`.
    */
-  public ignoreSourceInNpm?: boolean = false;
+  public hideSourceCodeForNpm?: boolean = false;
 }

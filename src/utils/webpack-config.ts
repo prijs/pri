@@ -1,4 +1,3 @@
-import * as fs from 'fs-extra';
 import * as HardSourceWebpackPlugin from 'hard-source-webpack-plugin';
 import * as HtmlWebpackPlugin from 'html-webpack-plugin';
 import * as MiniCssExtractPlugin from 'mini-css-extract-plugin';
