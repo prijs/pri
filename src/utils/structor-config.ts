@@ -119,8 +119,7 @@ const gitIgnores: string[] = [
   '.DS_Store',
   'coverage',
   '.nyc_output',
-  'npm-debug.log',
-  'declaration'
+  'npm-debug.log'
 ];
 
 if (!globalState.projectConfig.packageLock) {
@@ -168,3 +167,6 @@ export const ignoreScanFiles = [
   'history.md',
   'HISTORY.md'
 ];
+
+// Gitignore 独有
+gitIgnores.push('declaration');

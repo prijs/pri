@@ -107,5 +107,10 @@ export declare class ProjectConfig {
      * Enable css modules
      */
     enableCssModules?: boolean;
+    /**
+     * npmIgnore source
+     * Only take effect on `projectType = component`.
+     */
+    ignoreSourceInNpm?: boolean;
 }
 export {};
