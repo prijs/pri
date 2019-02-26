@@ -1,4 +1,3 @@
-import * as HardSourceWebpackPlugin from 'hard-source-webpack-plugin';
 import * as HtmlWebpackPlugin from 'html-webpack-plugin';
 import * as MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import * as OptimizeCSSAssetsPlugin from 'optimize-css-assets-webpack-plugin';
@@ -250,11 +249,7 @@ export const getWebpackConfig = async (opts: IOptions) => {
     resolveLoader: {
       modules: selfAndProjectNodeModules
     },
-    plugins: [
-      new HardSourceWebpackPlugin({
-        cacheDirectory: path.join(globalState.projectRootPath, `${tempPath.dir}/cache/hard-source/[confighash]`)
-      })
-    ],
+    plugins: [],
     optimization: { namedChunks: false },
     stats
   };
