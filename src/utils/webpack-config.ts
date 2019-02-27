@@ -144,7 +144,6 @@ export const getWebpackConfig = async (opts: IOptions) => {
         {
           test: /\.worker\.tsx?$/,
           use: [
-            cacheLoader,
             {
               loader: 'worker-loader',
               options: {
