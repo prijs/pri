@@ -211,12 +211,12 @@ export const getWebpackConfig = async (opts: IOptions) => {
         },
         { test: /\.html$/, use: ['raw-loader'] },
         {
-          test: /\.(png|jpg|jpeg|gif)$/,
+          test: /\.(png|jpg|jpeg|gif|woff|woff2|eot|ttf|svg)$/,
           use: [
             {
               loader: 'url-loader',
               options: {
-                limit: 81920000
+                limit: 1024 * 100
               }
             }
           ]
@@ -243,7 +243,12 @@ export const getWebpackConfig = async (opts: IOptions) => {
         '.png',
         '.jpg',
         '.jpeg',
-        '.gif'
+        '.gif',
+        'woff',
+        'woff2',
+        'eot',
+        'ttf',
+        'svg'
       ]
     },
     resolveLoader: {
