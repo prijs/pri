@@ -205,28 +205,35 @@ export const getWebpackConfig = async (opts: IOptions) => {
           exclude: plugin.buildConfigTsLoaderExcludePipes.reduce((options, fn) => fn(options), [])
         },
         {
-          test: /\.css$/,
+          test: /(?<!\.module)\.css$/,
           use: extraCssInProd(cssPureLoader),
-          include: defaultSourcePathToBeResolve
+          ...cssLoaderConfig
+        },
+        {
+          test: /\.module\.css$/,
+          use: extraCssInProd(cssModuleLoader),
+          ...cssLoaderConfig
         },
         { test: /\.css$/, use: extraCssInProd(cssPureLoader), include: selfAndProjectNodeModules },
         {
-          test: /\.scss$/,
+          test: /(?<!\.module)\.s[a|c]ss$/,
           use: extraCssInProd(cssPureLoader, sassLoader),
-          include: plugin.buildConfigSassLoaderIncludePipes.reduce(
-            (options, fn) => fn(options),
-            defaultSourcePathToBeResolve
-          ),
-          exclude: plugin.buildConfigSassLoaderExcludePipes.reduce((options, fn) => fn(options), [])
+          ...scssLoaderConfig
         },
         {
-          test: /\.less$/,
+          test: /\.module\.s[a|c]ss$/,
+          use: extraCssInProd(cssModuleLoader, sassLoader),
+          ...scssLoaderConfig
+        },
+        {
+          test: /(?<!\.module)\.less$/,
           use: extraCssInProd(cssPureLoader, lessLoader),
-          include: plugin.buildConfigLessLoaderIncludePipes.reduce(
-            (options, fn) => fn(options),
-            defaultSourcePathToBeResolve
-          ),
-          exclude: plugin.buildConfigLessLoaderExcludePipes.reduce((options, fn) => fn(options), [])
+          ...lessLoaderConfig
+        },
+        {
+          test: /\.module\.less$/,
+          use: extraCssInProd(cssModuleLoader, lessLoader),
+          ...lessLoaderConfig
         },
         { test: /\.html$/, use: ['raw-loader'] },
         {
