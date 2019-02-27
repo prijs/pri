@@ -4,6 +4,7 @@ import * as path from 'path';
 import * as pkg from '../../../../package.json';
 import { pri } from '../../../node';
 import { PRI_PACKAGE_NAME } from '../../../utils/constants';
+import { safeJsonParse } from '../../../utils/functional.js';
 import { globalState } from '../../../utils/global-state';
 import { prettierConfig } from '../../../utils/prettier-config';
 import { declarePath, gitIgnores, npmIgnores, tempPath, tempTypesPath } from '../../../utils/structor-config';
@@ -138,7 +139,7 @@ const ensureVscode = () =>
     fileName: '.vscode/settings.json',
     pipeContent: (prev: string) =>
       JSON.stringify(
-        _.merge({}, prev ? JSON.parse(prev) : {}, {
+        _.merge({}, safeJsonParse(prev), {
           'editor.formatOnSave': true,
           'tslint.autoFixOnSave': true,
           'typescript.tsdk': 'node_modules/typescript/lib'
@@ -183,7 +184,7 @@ const ensurePackageJson = () =>
   pri.project.addProjectFiles({
     fileName: 'package.json',
     pipeContent: (prev: string) => {
-      const prevJson = prev ? JSON.parse(prev) : {};
+      const prevJson = safeJsonParse(prev);
 
       const priDeps = pkg.dependencies || {};
 

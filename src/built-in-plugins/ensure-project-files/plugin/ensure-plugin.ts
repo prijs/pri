@@ -7,6 +7,7 @@ import { PRI_PACKAGE_NAME } from '../../../utils/constants';
 import { globalState } from '../../../utils/global-state';
 import { logSuccess, logText } from '../../../utils/log';
 import { prettierConfig } from '../../../utils/prettier-config';
+import { safeJsonParse } from '../../../utils/functional.js';
 
 export function ensurePluginFiles() {
   ensurePackageJson();
@@ -130,7 +131,7 @@ export function ensurePackageJson() {
   pri.project.addProjectFiles({
     fileName: 'package.json',
     pipeContent: prev => {
-      const prevJson = prev ? JSON.parse(prev) : {};
+      const prevJson = safeJsonParse(prev);
       const projectPriVersion =
         _.get(prevJson, 'devDependencies.pri') || _.get(prevJson, 'dependencies.pri') || pkg.version;
 

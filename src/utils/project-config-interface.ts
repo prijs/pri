@@ -102,8 +102,4 @@ export class ProjectConfig {
    * Watch node_modules
    */
   public watchNodeModules?: boolean = false;
-  /**
-   * Enable css modules
-   */
-  public enableCssModules?: boolean = false;
 }

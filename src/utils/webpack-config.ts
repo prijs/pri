@@ -122,6 +122,26 @@ export const getWebpackConfig = async (opts: IOptions) => {
 
   const stats = { warnings: false, version: false, modules: false, entrypoints: false, hash: false };
 
+  const cssLoaderConfig = {
+    include: defaultSourcePathToBeResolve
+  };
+
+  const scssLoaderConfig = {
+    include: plugin.buildConfigSassLoaderIncludePipes.reduce(
+      (options, fn) => fn(options),
+      defaultSourcePathToBeResolve
+    ),
+    exclude: plugin.buildConfigSassLoaderExcludePipes.reduce((options, fn) => fn(options), [])
+  };
+
+  const lessLoaderConfig = {
+    include: plugin.buildConfigLessLoaderIncludePipes.reduce(
+      (options, fn) => fn(options),
+      defaultSourcePathToBeResolve
+    ),
+    exclude: plugin.buildConfigLessLoaderExcludePipes.reduce((options, fn) => fn(options), [])
+  };
+
   const config: webpack.Configuration = {
     mode: opts.mode,
     entry: opts.entryPath,
@@ -185,28 +205,34 @@ export const getWebpackConfig = async (opts: IOptions) => {
           exclude: plugin.buildConfigTsLoaderExcludePipes.reduce((options, fn) => fn(options), [])
         },
         {
-          test: /\.css$/,
-          use: extraCssInProd(globalState.projectConfig.enableCssModules ? cssModuleLoader : cssPureLoader),
-          include: defaultSourcePathToBeResolve
-        },
-        { test: /\.css$/, use: extraCssInProd(cssPureLoader), include: selfAndProjectNodeModules },
-        {
-          test: /\.scss$/,
-          use: extraCssInProd(globalState.projectConfig.enableCssModules ? cssModuleLoader : cssPureLoader, sassLoader),
-          include: plugin.buildConfigSassLoaderIncludePipes.reduce(
-            (options, fn) => fn(options),
-            defaultSourcePathToBeResolve
-          ),
-          exclude: plugin.buildConfigSassLoaderExcludePipes.reduce((options, fn) => fn(options), [])
+          test: /(?<!\.module)\.css$/,
+          use: extraCssInProd(cssPureLoader),
+          ...cssLoaderConfig
         },
         {
-          test: /\.less$/,
-          use: extraCssInProd(globalState.projectConfig.enableCssModules ? cssModuleLoader : cssPureLoader, lessLoader),
-          include: plugin.buildConfigLessLoaderIncludePipes.reduce(
-            (options, fn) => fn(options),
-            defaultSourcePathToBeResolve
-          ),
-          exclude: plugin.buildConfigLessLoaderExcludePipes.reduce((options, fn) => fn(options), [])
+          test: /\.module\.css$/,
+          use: extraCssInProd(cssModuleLoader),
+          ...cssLoaderConfig
+        },
+        {
+          test: /(?<!\.module)\.s[a|c]ss$/,
+          use: extraCssInProd(cssPureLoader, sassLoader),
+          ...scssLoaderConfig
+        },
+        {
+          test: /\.module\.s[a|c]ss$/,
+          use: extraCssInProd(cssModuleLoader, sassLoader),
+          ...scssLoaderConfig
+        },
+        {
+          test: /(?<!\.module)\.less$/,
+          use: extraCssInProd(cssPureLoader, lessLoader),
+          ...lessLoaderConfig
+        },
+        {
+          test: /\.module\.less$/,
+          use: extraCssInProd(cssModuleLoader, lessLoader),
+          ...lessLoaderConfig
         },
         { test: /\.html$/, use: ['raw-loader'] },
         {

@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
 import * as path from 'path';
 import { pri } from '../../../node';
+import { safeJsonParse } from '../../../utils/functional';
 import { getPackages, packagesPath } from '../../../utils/packages';
 
 export const initPackages = async () => {
@@ -20,7 +21,7 @@ export const initPackages = async () => {
         return obj;
       }, {});
 
-      const jsonData = prev ? JSON.parse(prev) : {};
+      const jsonData = safeJsonParse(prev);
 
       _.set(jsonData, 'compilerOptions.paths', { ..._.get(jsonData, 'compilerOptions.paths'), ...packagePaths });
 

@@ -34,8 +34,8 @@ export type ICreateEntry = (analyseInfo?: any, entry?: Entry) => void;
 export type IBuildConfigPipe = (config: Configuration) => Configuration | Promise<Configuration>;
 
 export type ILoaderOptionsPipe = (options: any) => any;
-export type ILoaderIncludePipe = (paths: string[]) => any;
-export type ILoaderExcludePipe = (paths: string[]) => any;
+export type ILoaderIncludePipe = (paths: Array<string | RegExp>) => any;
+export type ILoaderExcludePipe = (paths: Array<string | RegExp>) => any;
 
 export type IAfterProdBuild = (stats?: any) => any;
 

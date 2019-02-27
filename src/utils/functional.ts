@@ -31,3 +31,11 @@ export function ensureStartWithWebpackRelativePoint(str: string) {
     return str;
   }
 }
+
+export function safeJsonParse(text: string) {
+  try {
+    return JSON.parse(text);
+  } catch {
+    return {};
+  }
+}

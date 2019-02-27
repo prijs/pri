@@ -30,20 +30,18 @@ export const babelOptions = {
     [babelPluginProposalClassProperties, { loose: false }],
     [babelPluginProposalJsonStrings],
     [babelPluginProposalOptionalCatchBinding],
-    globalState.projectConfig.enableCssModules
-      ? [
-          babelPluginReactCssModules,
-          {
-            filetypes: {
-              '.scss': {
-                syntax: 'postcss-scss'
-              },
-              '.less': {
-                syntax: 'postcss-less'
-              }
-            }
+    [
+      babelPluginReactCssModules,
+      {
+        filetypes: {
+          '.scss': {
+            syntax: 'postcss-scss'
+          },
+          '.less': {
+            syntax: 'postcss-less'
           }
-        ]
-      : null
+        }
+      }
+    ]
   ].filter(each => each !== null)
 };
