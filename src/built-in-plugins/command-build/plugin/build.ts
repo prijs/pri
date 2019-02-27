@@ -155,6 +155,8 @@ async function prepareBuild() {
 async function buildDeclaration() {
   // Create d.ts if hideSourceCodeForNpm
   if (pri.projectConfig.hideSourceCodeForNpm) {
-    await exec(`npx tsc --declaration --declarationDir ./declaration`, { cwd: pri.projectRootPath });
+    await exec(`npx tsc --declaration --declarationDir ./declaration --emitDeclarationOnly`, {
+      cwd: pri.projectRootPath
+    });
   }
 }
