@@ -4,10 +4,10 @@ import * as path from 'path';
 import * as pkg from '../../../../package.json';
 import { pluginEntry, pri, srcPath } from '../../../node';
 import { PRI_PACKAGE_NAME } from '../../../utils/constants';
+import { safeJsonParse } from '../../../utils/functional.js';
 import { globalState } from '../../../utils/global-state';
 import { logSuccess, logText } from '../../../utils/log';
 import { prettierConfig } from '../../../utils/prettier-config';
-import { safeJsonParse } from '../../../utils/functional.js';
 
 export function ensurePluginFiles() {
   ensurePackageJson();

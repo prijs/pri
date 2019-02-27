@@ -206,14 +206,14 @@ export const getWebpackConfig = async (opts: IOptions) => {
         },
         {
           test: /(?<!\.module)\.css$/,
-          use: extraCssInProd(cssPureLoader),
-          ...cssLoaderConfig
+          use: extraCssInProd(cssPureLoader)
         },
         {
           test: /\.module\.css$/,
           use: extraCssInProd(cssModuleLoader),
           ...cssLoaderConfig
         },
+        { test: /\.css$/, use: extraCssInProd(cssPureLoader), include: selfAndProjectNodeModules },
         {
           test: /(?<!\.module)\.s[a|c]ss$/,
           use: extraCssInProd(cssPureLoader, sassLoader),
