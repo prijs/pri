@@ -66,7 +66,6 @@ const ensureTsconfig = () =>
               experimentalDecorators: true,
               skipLibCheck: true,
               outDir: globalState.projectConfig.distDir,
-              rootDir: './src',
               baseUrl: '.',
               lib: ['dom', 'es5', 'es6', 'scripthost'],
               paths: {
