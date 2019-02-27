@@ -62,8 +62,7 @@ export const getWebpackConfig = async (opts: IOptions) => {
     options: plugin.buildConfigCssLoaderOptionsPipes.reduce((options, fn) => fn(options), {
       importLoaders: 1,
       modules: true,
-      localIdentName: '[path][name]-[local]-[hash:base64:5]',
-      minimize: globalState.isDevelopment ? false : true
+      localIdentName: '[path][name]-[local]-[hash:base64:5]'
     })
   };
 
