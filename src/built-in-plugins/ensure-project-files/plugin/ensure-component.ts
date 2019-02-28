@@ -31,7 +31,7 @@ export function ensurePackageJson() {
         JSON.stringify(
           _.merge({}, prevJson, {
             main: `${pri.projectConfig.distDir}/${pri.projectConfig.outFileName}`,
-            scripts: { prepublishOnly: 'npm run build && npm run bundle' },
+            scripts: { prepublishOnly: 'npm run build && npm run bundle --skipLint' },
             types,
             dependencies: {
               '@babel/runtime': '^7.0.0'
