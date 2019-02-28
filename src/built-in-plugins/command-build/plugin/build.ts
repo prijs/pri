@@ -16,13 +16,10 @@ import { plugin } from '../../../utils/plugins';
 import { componentEntry, pluginEntry } from '../../../utils/structor-config';
 import { runWebpack } from '../../../utils/webpack';
 import { getStaticHtmlPaths } from './generate-static-html';
+import { IOpts } from './interface';
 
-export const buildProject = async (
-  opts: {
-    publicPath?: string;
-  } = {}
-) => {
-  await prepareBuild();
+export const buildProject = async (opts: IOpts = {}) => {
+  await prepareBuild(opts);
 
   const result = await spinner('Analyse project', async () => {
     const analyseInfo = await analyseProject();
@@ -78,8 +75,8 @@ export const buildProject = async (
   plugin.buildAfterProdBuild.forEach(afterProdBuild => afterProdBuild(stats));
 };
 
-export const buildComponent = async () => {
-  await prepareBuild();
+export const buildComponent = async (opts: IOpts = {}) => {
+  await prepareBuild(opts);
 
   // Build component
   const stats = await runWebpack({
@@ -107,8 +104,8 @@ export const buildComponent = async () => {
   plugin.buildAfterProdBuild.forEach(afterProdBuild => afterProdBuild(stats));
 };
 
-export const buildPlugin = async () => {
-  await prepareBuild();
+export const buildPlugin = async (opts: IOpts = {}) => {
+  await prepareBuild(opts);
 
   // Build component
   const stats = await runWebpack({
@@ -139,7 +136,7 @@ async function copyAssets() {
   }
 }
 
-async function prepareBuild() {
+async function prepareBuild(opts: IOpts = {}) {
   await spinner('Clean project.', async () => {
     await cleanDist();
 
@@ -147,7 +144,11 @@ async function prepareBuild() {
     await exec(`${findNearestNodemodulesFile('.bin/rimraf')} ${path.join(globalState.projectRootPath, tempPath.dir)}`);
 
     await pri.project.ensureProjectFiles();
-    await pri.project.lint();
+
+    if (!opts.skipLint) {
+      await pri.project.lint();
+    }
+
     await pri.project.checkProjectFiles();
   });
 }

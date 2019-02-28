@@ -1,6 +1,7 @@
 import { pri } from '../../../node';
 import { globalState } from '../../../utils/global-state';
 import text from '../../../utils/text';
+import { IOpts } from './interface';
 
 pri.project.onCreateEntry((analyseInfo, entry) => {
   if (!pri.isDevelopment) {
@@ -22,11 +23,14 @@ pri.commands.registerCommand({
     },
     publicPath: {
       alias: 'p',
-      description: 'rewrite publicPath'
+      description: 'Rewrite publicPath'
+    },
+    skipLint: {
+      description: 'Skip lint'
     }
   },
   description: text.commander.build.description,
-  action: async (options: any) => {
+  action: async (options: IOpts) => {
     switch (pri.projectPackageJson.pri.type) {
       case 'project':
         const projectBuildModule = await import('./build');
@@ -34,11 +38,11 @@ pri.commands.registerCommand({
         break;
       case 'component':
         const componentBuildModule = await import('./build');
-        await componentBuildModule.buildComponent();
+        await componentBuildModule.buildComponent(options);
         break;
       case 'plugin':
         const pluginBuildModule = await import('./build');
-        await pluginBuildModule.buildPlugin();
+        await pluginBuildModule.buildPlugin(options);
       default:
     }
   }
