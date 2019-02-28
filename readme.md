@@ -6,17 +6,19 @@
 
 Pri can help you develop **project** and **component**.
 
-- [Convention routing](https://prijs.github.io/pri-docs/usage/pages/). Create pages according to convention without writing routing configuration.
-- [Mdx support](https://prijs.github.io/pri-docs/usage/markdown-page/). Write markdown page easily, just create a file using `.md` or `.mdx` as suffixes.
-- [Static export](https://prijs.github.io/pri-docs/usage/deploy-to-github-pages/). Very easy to deploy to github pages.
-- [Plugin mechanism](https://prijs.github.io/pri-docs/plugin/). 20+ built-in plugins, and more community plug-ins.
-- [Mocks](https://prijs.github.io/pri-docs/usage/mock-request/). Using service worker to mock request!
-- [WebUI](https://prijs.github.io/pri-docs/usage/webui/). You can create page, or config files by click button in webui!
-- [Dynamic Import](https://prijs.github.io/pri-docs/usage/dynamic-import/). Automatic page level dynamic routing.
-- [Typescript](https://prijs.github.io/pri-docs/usage/typescript/). 100% typescript source code, for project maintainability considerations, only TS projects are supported!
-- [Configuration file auto creator](https://prijs.github.io/pri-docs/usage/project-files/). Never worry about configuration files and updates of configuration files. This is automatic.
-- [Auto dll](https://prijs.github.io/pri-docs/usage/auto-dlls/). Speed up hot loader.
-- For more, [see Docs](https://prijs.github.io/pri-docs/).
+- 🌱 [Auto router](https://prijs.github.io/pri-docs/usage/pages/). Create pages according to convention without writing routing configuration.
+- 📝 [Mdx support](https://prijs.github.io/pri-docs/usage/markdown-page/). Write markdown page easily, just create a file using `.md` or `.mdx` as suffixes.
+- 🎉 [Static export](https://prijs.github.io/pri-docs/usage/deploy-to-github-pages/). Very easy to deploy to github pages.
+- 🔢 [Mocks](https://prijs.github.io/pri-docs/usage/mock-request/). Using service worker to mock request!
+- 📄 [WebUI](https://prijs.github.io/pri-docs/usage/webui/). You can create page, or config files by click button in webui!
+- 🚀 [Dynamic Import](https://prijs.github.io/pri-docs/usage/dynamic-import/). Automatic page level dynamic routing.
+- 🔥 [Typescript](https://prijs.github.io/pri-docs/usage/typescript/). 100% typescript source code, for project maintainability considerations, only TS projects are supported!
+- 🛏️ [Configuration file auto creator](https://prijs.github.io/pri-docs/usage/project-files/). Never worry about configuration files and updates of configuration files. This is automatic.
+- 🚄 [Auto dll](https://prijs.github.io/pri-docs/usage/auto-dlls/). Speed up hot loader.
+- 🔌 [Pluginable](https://prijs.github.io/pri-docs/plugin/). 20+ built-in plugins, and more community plug-ins.
+- 0️⃣ Zero-config.
+
+[see Docs](https://prijs.github.io/pri-docs/)
 
 ## Using pri
 
