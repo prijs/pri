@@ -1,6 +1,6 @@
 {
   "name": "pri",
-  "version": "2.0.56",
+  "version": "2.0.57",
   "types": "src/node/index.ts",
   "main": "built/node/index.js",
   "scripts": {
@@ -74,7 +74,7 @@
     "cors": "2.8.5",
     "css-loader": "2.1.0",
     "dob": "2.5.10",
-    "dob-react": "2.4.15",
+    "dob-react": "2.4.16",
     "file-loader": "^3.0.1",
     "fs-extra": "7.0.1",
     "highlight.js": "9.14.2",
