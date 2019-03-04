@@ -85,7 +85,7 @@ export const storesPath = {
 
 // Try to find project's entry's ext
 const projectEntryExt = path.join(globalState.projectRootPath, path.join(srcPath.dir), 'index');
-const componentEntryExt = fs.existsSync(projectEntryExt + '.tsx') ? '.tsx' : '.ts';
+const componentEntryExt = fs.existsSync(projectEntryExt + '.ts') ? '.ts' : '.tsx';
 
 export const componentEntry = {
   dir: path.join(srcPath.dir),
