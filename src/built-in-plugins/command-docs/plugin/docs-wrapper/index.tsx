@@ -1,31 +1,17 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { Props, State } from './type';
+
+const urlSearchParams = new URLSearchParams(location.search);
 
 export default class Docs extends React.PureComponent<Props, State> {
   public state = new State();
 
-  private editorRef: React.ReactInstance;
-
-  private monacoEditor: any;
-
-  public componentDidMount() {
-    if (this.props.docs.length === 0) {
-      return;
-    }
-
-    const currentDoc = this.props.docs[this.state.currentDocIndex];
-
-    const vsRequire: any = (window as any).require;
-    vsRequire.config({ paths: { vs: 'https://g.alicdn.com/dt/fbi/0.0.292/monaco-editor/vs' } });
-    vsRequire(['vs/editor/editor.main'], (info: any) => {
-      const monaco: any = (window as any).monaco;
-      const editorDOM = ReactDOM.findDOMNode(this.editorRef);
-      this.monacoEditor = monaco.editor.create(editorDOM, {
-        value: currentDoc.text,
-        language: 'typescript'
+  public componentWillMount() {
+    if (urlSearchParams.has('index')) {
+      this.setState({
+        currentDocIndex: Number(urlSearchParams.get('index'))
       });
-    });
+    }
   }
 
   public render() {
@@ -39,11 +25,10 @@ export default class Docs extends React.PureComponent<Props, State> {
     return (
       <div
         style={{
-          backgroundColor: 'whitesmokesmoke',
+          backgroundColor: 'whitesmoke',
           width: '100vw',
           height: '100vh',
           display: 'flex',
-          padding: 10,
           boxSizing: 'border-box'
         }}
       >
@@ -52,10 +37,10 @@ export default class Docs extends React.PureComponent<Props, State> {
             style={{
               display: 'flex',
               flexDirection: 'column',
-              width: 300,
-              minWidth: 300,
-              boxSizing: 'border-box',
-              paddingRight: 10
+              width: 200,
+              minWidth: 200,
+              borderRight: '1px solid #eee',
+              boxSizing: 'border-box'
             }}
           >
             {this.renderLeftMenus()}
@@ -67,8 +52,6 @@ export default class Docs extends React.PureComponent<Props, State> {
             style={{
               width: '100%',
               backgroundColor: 'white',
-              border: '1px solid #ddd',
-              borderRadius: 3,
               flexGrow: 1,
               flexBasis: 0,
               overflowY: 'auto',
@@ -77,39 +60,6 @@ export default class Docs extends React.PureComponent<Props, State> {
             }}
           >
             <DocInstance />
-          </div>
-
-          <div
-            style={{
-              display: this.state.showDocInfo ? 'block' : 'none',
-              height: 200,
-              backgroundColor: 'white',
-              minHeight: 200,
-              width: '100%',
-              border: '1px solid #ddd',
-              borderRadius: 3,
-              marginTop: 10,
-              boxSizing: 'border-box'
-            }}
-          >
-            <div style={{ width: '100%', height: 180 }} ref={(ref: any) => (this.editorRef = ref)} />
-          </div>
-
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              height: 30,
-              backgroundColor: 'white',
-              marginTop: 10,
-              border: '1px solid #ddd',
-              fontSize: 14,
-              cursor: 'pointer'
-            }}
-            onClick={this.handleToggleSHowDocInfo}
-          >
-            Show code
           </div>
         </div>
       </div>
@@ -125,10 +75,12 @@ export default class Docs extends React.PureComponent<Props, State> {
             alignItems: 'center',
             height: 30,
             cursor: 'pointer',
-            borderRadius: 5,
             paddingLeft: 10,
             boxSizing: 'border-box',
-            backgroundColor: this.state.currentDocIndex === index ? 'white' : null
+            backgroundColor: this.state.currentDocIndex === index ? 'white' : null,
+            fontSize: 14,
+            color: '#333',
+            borderBottom: '1px solid #eee'
           }}
           onClick={this.selectDoc.bind(this, index)}
           key={index}
@@ -140,27 +92,18 @@ export default class Docs extends React.PureComponent<Props, State> {
   };
 
   private selectDoc = (index: number) => {
-    this.setState(
-      {
-        currentDocIndex: index
-      },
-      () => {
-        const currentDoc = this.props.docs[this.state.currentDocIndex];
-        this.monacoEditor.setValue(currentDoc.text);
-      }
-    );
-  };
+    urlSearchParams.set('index', index.toString());
+    const newurl =
+      window.location.protocol +
+      '//' +
+      window.location.host +
+      window.location.pathname +
+      '?' +
+      urlSearchParams.toString();
+    window.history.pushState({ path: newurl }, '', newurl);
 
-  private handleToggleSHowDocInfo = () => {
-    this.setState(
-      {
-        showDocInfo: !this.state.showDocInfo
-      },
-      () => {
-        if (this.state.showDocInfo) {
-          this.monacoEditor.layout();
-        }
-      }
-    );
+    this.setState({
+      currentDocIndex: index
+    });
   };
 }
