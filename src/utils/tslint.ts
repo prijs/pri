@@ -16,9 +16,9 @@ export async function lint(showBreakError = true) {
     execSync(
       `${findNearestNodemodulesFile(
         '.bin/tslint'
-      )} ${forceTslint} --fix './src/**/*.?(ts|tsx)' && ${findNearestNodemodulesFile(
+      )} ${forceTslint} --fix './?(src|docs|tests)/**/*.?(ts|tsx)' && ${findNearestNodemodulesFile(
         '.bin/prettier'
-      )} --write './src/**/*.?(ts|tsx|css|less|scss|sass|md|mdx)'`,
+      )} --write './?(src|docs|tests)/**/*.?(ts|tsx|css|less|scss|sass|md|mdx)'`,
       {
         stdio: 'inherit'
       }
