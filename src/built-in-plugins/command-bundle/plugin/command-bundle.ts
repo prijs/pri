@@ -30,6 +30,21 @@ export const commandBundle = async (opts: IOpts = {}) => {
         Promise.resolve(config)
       );
 
+      // external React & ReactDOM
+      if (!config.externals) {
+        config.externals = {};
+      }
+
+      const externals = ['react', 'react-dom'];
+
+      externals.forEach(eachExternal => {
+        (config.externals as any)[eachExternal] = {
+          amd: eachExternal,
+          commonjs: eachExternal,
+          commonjs2: eachExternal
+        };
+      });
+
       return config;
     }
   });
