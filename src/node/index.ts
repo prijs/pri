@@ -3,7 +3,7 @@ import { priEvent } from '../utils/pri-events';
 import * as build from './build';
 import * as cli from './cli';
 import * as commands from './commands';
-import * as context from './context';
+import { context } from './context';
 import { createCli } from './create-cli';
 import * as devService from './dev-service';
 import * as project from './project/index';
