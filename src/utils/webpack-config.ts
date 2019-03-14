@@ -171,7 +171,7 @@ export const getWebpackConfig = async (opts: IOptions) => {
         },
         {
           test: /\.jsx?$/,
-          use: [cacheLoader, babelLoader],
+          use: [babelLoader],
           include: plugin.buildConfigJsLoaderIncludePipes.reduce(
             (options, fn) => fn(options),
             defaultSourcePathToBeResolve
@@ -180,7 +180,7 @@ export const getWebpackConfig = async (opts: IOptions) => {
         },
         {
           test: /\.tsx?$/,
-          use: [cacheLoader, babelLoader, tsLoader],
+          use: [babelLoader, tsLoader],
           include: plugin.buildConfigTsLoaderIncludePipes.reduce(
             (options, fn) => fn(options),
             defaultSourcePathToBeResolve
@@ -189,7 +189,7 @@ export const getWebpackConfig = async (opts: IOptions) => {
         },
         {
           test: /\.mdx?$/,
-          use: [cacheLoader, babelLoader, '@mdx-js/loader'],
+          use: [babelLoader, '@mdx-js/loader'],
           include: plugin.buildConfigTsLoaderIncludePipes.reduce(
             (options, fn) => fn(options),
             defaultSourcePathToBeResolve
