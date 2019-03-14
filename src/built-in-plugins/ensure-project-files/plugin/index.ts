@@ -226,7 +226,8 @@ const ensurePackageJson = () =>
               preview: 'pri preview',
               analyse: 'pri analyse',
               test: 'pri test',
-              format: "tslint --fix './src/**/*.?(ts|tsx)' && prettier --write './src/**/*.?(ts|tsx)'"
+              format:
+                "tslint --fix './?(src|docs|tests)/**/*.?(ts|tsx)' && prettier --write './?(src|docs|tests)/**/*.?(ts|tsx)'"
             },
             pri: { type: pri.projectPackageJson.pri.type },
             husky: {

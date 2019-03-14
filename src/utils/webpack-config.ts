@@ -88,13 +88,6 @@ export const getWebpackConfig = async (opts: IOptions) => {
     })
   };
 
-  const cacheLoader = {
-    loader: 'cache-loader',
-    options: {
-      cacheDirectory: path.join(globalState.projectRootPath, `${tempPath.dir}/cache/cache-loader`)
-    }
-  };
-
   /**
    * Helper
    */
