@@ -76,7 +76,7 @@ export class Entry {
       `
       import './environment'
 
-      import createBrowserHistory from "history/createBrowserHistory"
+      import { createBrowserHistory } from "history"
       import { history as customHistory } from "${PRI_PACKAGE_NAME}/client"
       import * as React from "react"
       import * as ReactDOM from "react-dom"

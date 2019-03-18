@@ -1,4 +1,4 @@
-import createBrowserHistory from 'history/createBrowserHistory';
+import { createBrowserHistory } from 'history';
 import { GlobalState } from '../utils/global-state-class';
 
 const priStore = (window as any)['pri'];
