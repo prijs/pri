@@ -36,12 +36,8 @@ export const pipeBabelLoaderOptions = (pipe: ILoaderOptionsPipe) => {
   plugin.buildConfigBabelLoaderOptionsPipes.push(pipe);
 };
 
-export const pipeTsLoaderOptions = (pipe: ILoaderOptionsPipe) => {
-  plugin.buildConfigTsLoaderOptionsPipes.push(pipe);
-};
-
-export const pipeTsInclude = (pipe: ILoaderIncludePipe) => {
-  plugin.buildConfigTsLoaderIncludePipes.push(pipe);
+export const pipeJsInclude = (pipe: ILoaderIncludePipe) => {
+  plugin.buildConfigJsLoaderIncludePipes.push(pipe);
 };
 
 export const pipeSassInclude = (pipe: ILoaderIncludePipe) => {
@@ -50,10 +46,6 @@ export const pipeSassInclude = (pipe: ILoaderIncludePipe) => {
 
 export const pipeLessInclude = (pipe: ILoaderIncludePipe) => {
   plugin.buildConfigLessLoaderIncludePipes.push(pipe);
-};
-
-export const pipeTsExclude = (pipe: ILoaderExcludePipe) => {
-  plugin.buildConfigTsLoaderExcludePipes.push(pipe);
 };
 
 export const pipeSassExclude = (pipe: ILoaderExcludePipe) => {

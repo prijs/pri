@@ -40,7 +40,7 @@ export const initPackages = async () => {
     return config;
   });
 
-  pri.build.pipeTsInclude(includes => {
+  pri.build.pipeJsInclude(includes => {
     includes.push(path.join(pri.projectRootPath, packagesPath));
     return includes;
   });

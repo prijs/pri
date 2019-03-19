@@ -81,13 +81,6 @@ export const getWebpackConfig = async (opts: IOptions) => {
     options: plugin.buildConfigBabelLoaderOptionsPipes.reduce((options, fn) => fn(options), babelOptions)
   };
 
-  const tsLoader = {
-    loader: 'ts-loader',
-    options: plugin.buildConfigTsLoaderOptionsPipes.reduce((options, fn) => fn(options), {
-      happyPackMode: true
-    })
-  };
-
   /**
    * Helper
    */
@@ -163,38 +156,29 @@ export const getWebpackConfig = async (opts: IOptions) => {
               }
             }
           ],
-          include: plugin.buildConfigTsLoaderIncludePipes.reduce(
+          include: plugin.buildConfigJsLoaderIncludePipes.reduce(
             (options, fn) => fn(options),
             defaultSourcePathToBeResolve
           ),
-          exclude: plugin.buildConfigTsLoaderExcludePipes.reduce((options, fn) => fn(options), [])
+          exclude: plugin.buildConfigJsLoaderIncludePipes.reduce((options, fn) => fn(options), [])
         },
         {
-          test: /\.jsx?$/,
+          test: /\.tsx?$/,
           use: [babelLoader],
           include: plugin.buildConfigJsLoaderIncludePipes.reduce(
             (options, fn) => fn(options),
             defaultSourcePathToBeResolve
           ),
-          exclude: plugin.buildConfigJsLoaderExcludePipes.reduce((options, fn) => fn(options), [])
-        },
-        {
-          test: /\.tsx?$/,
-          use: [babelLoader, tsLoader],
-          include: plugin.buildConfigTsLoaderIncludePipes.reduce(
-            (options, fn) => fn(options),
-            defaultSourcePathToBeResolve
-          ),
-          exclude: plugin.buildConfigTsLoaderExcludePipes.reduce((options, fn) => fn(options), [])
+          exclude: plugin.buildConfigJsLoaderIncludePipes.reduce((options, fn) => fn(options), [])
         },
         {
           test: /\.mdx?$/,
           use: [babelLoader, '@mdx-js/loader'],
-          include: plugin.buildConfigTsLoaderIncludePipes.reduce(
+          include: plugin.buildConfigJsLoaderIncludePipes.reduce(
             (options, fn) => fn(options),
             defaultSourcePathToBeResolve
           ),
-          exclude: plugin.buildConfigTsLoaderExcludePipes.reduce((options, fn) => fn(options), [])
+          exclude: plugin.buildConfigJsLoaderIncludePipes.reduce((options, fn) => fn(options), [])
         },
         {
           test: /(?<!\.module)\.css$/,
@@ -246,6 +230,9 @@ export const getWebpackConfig = async (opts: IOptions) => {
       alias: {
         ...(globalState.projectPackageJson.pri.type === 'project' && {
           '@': path.join(globalState.projectRootPath, '/src')
+        }),
+        ...(globalState.isDevelopment && {
+          'react-dom': '@hot-loader/react-dom'
         })
       },
       extensions: [

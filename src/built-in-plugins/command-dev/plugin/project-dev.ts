@@ -190,23 +190,25 @@ function debugProjectPrepare(dashboardClientPort: number) {
       });
 
       // React hot loader
-      entry.pipeEntryHeader(
+      entry.pipeAppHeader(
         header => `
         ${header}
-        import { hot, setConfig } from "react-hot-loader"
+        import { hot } from "react-hot-loader/root"
+        import { setConfig } from "react-hot-loader"
       `
       );
 
-      entry.pipeEntryRender(
+      entry.pipeAppBody(
         str => `
-        setConfig({ pureSFC: true })
-
-        const HotApp = hot(module)(App)
+        setConfig({
+          ignoreSFC: true, // RHL will be __completely__ disabled for SFC
+          pureRender: true, // RHL will not change render method
+        })
         ${str}
       `
       );
 
-      entry.pipe.set('entryRenderApp', () => `<HotApp />`);
+      entry.pipe.set('appExportName', () => `hot(App)`);
 
       // Load webui iframe
       entry.pipeEntryRender(

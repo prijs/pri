@@ -60,15 +60,12 @@ export class IPluginConfig {
   public buildConfigSassLoaderOptionsPipes: ILoaderOptionsPipe[] = [];
   public buildConfigLessLoaderOptionsPipes: ILoaderOptionsPipe[] = [];
   public buildConfigBabelLoaderOptionsPipes: ILoaderOptionsPipe[] = [];
-  public buildConfigTsLoaderOptionsPipes: ILoaderOptionsPipe[] = [];
 
   public buildConfigJsLoaderIncludePipes: ILoaderIncludePipe[] = [];
-  public buildConfigTsLoaderIncludePipes: ILoaderIncludePipe[] = [];
   public buildConfigSassLoaderIncludePipes: ILoaderIncludePipe[] = [];
   public buildConfigLessLoaderIncludePipes: ILoaderIncludePipe[] = [];
 
   public buildConfigJsLoaderExcludePipes: ILoaderExcludePipe[] = [];
-  public buildConfigTsLoaderExcludePipes: ILoaderExcludePipe[] = [];
   public buildConfigSassLoaderExcludePipes: ILoaderExcludePipe[] = [];
   public buildConfigLessLoaderExcludePipes: ILoaderExcludePipe[] = [];
 

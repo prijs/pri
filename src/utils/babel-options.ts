@@ -9,17 +9,20 @@ import babelPluginProposalThrowExpressions from '@babel/plugin-proposal-throw-ex
 import babelPluginSyntaxDynamicImport from '@babel/plugin-syntax-dynamic-import';
 import babelPluginSyntaxImportMeta from '@babel/plugin-syntax-import-meta';
 import transformRuntime from '@babel/plugin-transform-runtime';
-import babelEnv from '@babel/preset-env';
-import babelReact from '@babel/preset-react';
+import babelPresetEnv from '@babel/preset-env';
+import babelPresetReact from '@babel/preset-react';
+import babelPresetTypescript from '@babel/preset-typescript';
 import babelPluginReactCssModules from 'babel-plugin-react-css-modules';
+import * as babelPluginReactHotLoader from 'react-hot-loader/babel';
 import { globalState } from './global-state';
 
 export const babelOptions = {
   babelrc: false,
   comments: true,
-  presets: [[babelEnv], [babelReact]],
+  presets: [[babelPresetEnv], [babelPresetReact], [babelPresetTypescript]],
   plugins: [
-    [transformRuntime],
+    ...(globalState.isDevelopment ? [[transformRuntime]] : []),
+    [babelPluginReactHotLoader],
     [babelPluginProposalDecorators, { legacy: true }],
     [babelPluginProposalExportNamespace],
     [babelPluginProposalFunctionSent],
@@ -27,7 +30,7 @@ export const babelOptions = {
     [babelPluginProposalThrowExpressions],
     [babelPluginSyntaxDynamicImport],
     [babelPluginSyntaxImportMeta],
-    [babelPluginProposalClassProperties, { loose: false }],
+    [babelPluginProposalClassProperties, { loose: true }],
     [babelPluginProposalJsonStrings],
     [babelPluginProposalOptionalCatchBinding],
     [

@@ -99,7 +99,7 @@ export class Entry {
     return pipe.get(
       'appComponent',
       `
-      export default class App extends React.PureComponent<any, any> {
+      class App extends React.PureComponent<any, any> {
         public componentDidMount() {
           ${await this.getAppClassDidMount()}
         }
@@ -110,6 +110,8 @@ export class Entry {
           )
         }
       }
+
+      export default ${await pipe.get('appExportName', 'App')}
     `
     );
   }

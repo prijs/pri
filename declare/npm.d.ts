@@ -54,3 +54,5 @@ declare module 'optimize-css-assets-webpack-plugin';
 declare module 'uglifyjs-webpack-plugin';
 declare module 'prettier';
 declare module 'hard-source-webpack-plugin';
+declare module 'react-hot-loader/babel';
+declare module '@babel/preset-typescript';

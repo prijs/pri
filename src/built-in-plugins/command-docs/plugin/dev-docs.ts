@@ -101,7 +101,7 @@ export async function devDocs(realDocsPath: string) {
 }
 
 function prepare(realDocsPath: string, docsEntryPath: string) {
-  pri.build.pipeTsInclude(paths => {
+  pri.build.pipeJsInclude(paths => {
     paths.push(path.join(pri.projectRootPath, realDocsPath));
     return paths;
   });
@@ -163,7 +163,13 @@ function prepare(realDocsPath: string, docsEntryPath: string) {
       `
       import * as React from "react"
       import * as ReactDOM from 'react-dom'
-      import { hot, setConfig } from 'react-hot-loader'
+      import { hot } from "react-hot-loader/root"
+      import { setConfig } from "react-hot-loader"
+
+      setConfig({
+        ignoreSFC: true, // RHL will be __completely__ disabled for SFC
+        pureRender: true, // RHL will not change render method
+      })
       
       const DocsWrapper = require("${path.join(__dirname, 'docs-wrapper')}").default
 
@@ -201,9 +207,9 @@ function prepare(realDocsPath: string, docsEntryPath: string) {
 
       const ROOT_ID = 'root';
 
-      setConfig({ pureSFC: true })
+      setConfig({ pureSFC: true, pureRender: true })
 
-      const HotDocs = hot(module)(Docs);
+      const HotDocs = hot(Docs);
 
       // Create entry div if not exist.
       if (!document.getElementById(ROOT_ID)) {
