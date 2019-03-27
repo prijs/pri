@@ -9,7 +9,7 @@ import getWebpackDllConfig from './webpack.dll.config';
 export const dllFileName = 'main.dll.js';
 export const dllMainfestName = 'mainfest.json';
 export const dllOutPath = path.join(globalState.projectRootPath, `${tempPath.dir}/static/dlls`);
-export const libraryStaticPath = '/dlls/' + dllFileName;
+export const libraryStaticPath = `/dlls/${  dllFileName}`;
 
 const stats = {
   warnings: false,
@@ -36,16 +36,14 @@ function runCompiler(compiler: webpack.Compiler) {
   return new Promise(resolve => {
     compiler.run((err, status) => {
       if (!err && !status.hasErrors()) {
-        process.stdout.write(status.toString(stats) + '\n\n');
+        process.stdout.write(`${status.toString(stats)  }\n\n`);
 
         resolve(status.toJson());
-      } else {
-        if (err && err.message) {
+      } else if (err && err.message) {
           throw Error(err.message);
         } else {
           throw Error(status.toString());
         }
-      }
     });
   });
 }

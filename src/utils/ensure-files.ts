@@ -8,7 +8,7 @@ import { plugin } from './plugins';
 import { priEvent } from './pri-events';
 
 export const ensureFiles = async () => {
-  if (yargs.argv['light']) {
+  if (yargs.argv.light) {
     return;
   }
 
@@ -30,7 +30,7 @@ export const ensureFiles = async () => {
 
 export async function ensureFile(
   fileRelativePath: string,
-  pipeContents: Array<(prev: string) => string | Promise<string>>
+  pipeContents: ((prev: string) => string | Promise<string>)[]
 ) {
   const filePath = path.join(globalState.projectRootPath, fileRelativePath);
   const fileExist = fs.existsSync(filePath);

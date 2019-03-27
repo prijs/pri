@@ -93,13 +93,9 @@ export default class Docs extends React.PureComponent<Props, State> {
 
   private selectDoc = (index: number) => {
     urlSearchParams.set('index', index.toString());
-    const newurl =
-      window.location.protocol +
-      '//' +
-      window.location.host +
-      window.location.pathname +
-      '?' +
-      urlSearchParams.toString();
+    const newurl = `${window.location.protocol}//${window.location.host}${
+      window.location.pathname
+    }?${urlSearchParams.toString()}`;
     window.history.pushState({ path: newurl }, '', newurl);
 
     this.setState({

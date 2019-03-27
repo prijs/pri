@@ -20,7 +20,7 @@ export async function addPackages(gitUri: string) {
     gitUri = inquirerInfo.gitUri;
   }
 
-  const extraPackages: Array<{ name: string; packageVersion: string }> = [];
+  const extraPackages: { name: string; packageVersion: string }[] = [];
 
   let packageName = '';
 

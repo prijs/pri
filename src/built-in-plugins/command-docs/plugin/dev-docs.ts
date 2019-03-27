@@ -16,9 +16,9 @@ import { bundleDlls, dllMainfestName, dllOutPath, libraryStaticPath } from '../.
 
 interface IResult {
   projectAnalyseDocs: {
-    docs: Array<{
+    docs: {
       file: path.ParsedPath;
-    }>;
+    }[];
   };
 }
 

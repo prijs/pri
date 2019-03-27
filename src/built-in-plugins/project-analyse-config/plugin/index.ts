@@ -1,5 +1,4 @@
 import * as fs from 'fs-extra';
-import * as _ from 'lodash';
 import * as path from 'path';
 import { pri } from '../../../node';
 import { CONFIG_FILE } from '../../../utils/constants';

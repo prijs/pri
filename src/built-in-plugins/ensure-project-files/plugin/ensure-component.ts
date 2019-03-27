@@ -28,7 +28,7 @@ export function ensurePackageJson() {
       const types = pri.projectConfig.hideSourceCodeForNpm ? 'declaration/index.d.ts' : path.format(componentEntry);
 
       return (
-        JSON.stringify(
+        `${JSON.stringify(
           _.merge({}, prevJson, {
             main: `${pri.projectConfig.distDir}/${pri.projectConfig.outFileName}`,
             scripts: { prepublishOnly: 'npm run build && npm run bundle --skipLint' },
@@ -39,7 +39,7 @@ export function ensurePackageJson() {
           }),
           null,
           2
-        ) + '\n'
+        )  }\n`
       );
     }
   });

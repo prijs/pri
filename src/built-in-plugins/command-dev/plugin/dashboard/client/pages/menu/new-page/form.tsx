@@ -37,6 +37,7 @@ function hasErrors(fieldsError: any) {
 @Connect
 class FormComponent extends PureComponent<Props, State> {
   public static defaultProps = new Props();
+
   public state = new State();
 
   public render() {

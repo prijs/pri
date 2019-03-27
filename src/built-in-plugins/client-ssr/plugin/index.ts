@@ -1,4 +1,3 @@
-import * as _ from 'lodash';
 import { pri } from '../../../node';
 
 pri.project.onCreateEntry((analyseInfo, entry) => {

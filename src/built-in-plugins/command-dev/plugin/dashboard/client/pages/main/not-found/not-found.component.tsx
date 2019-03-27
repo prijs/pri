@@ -6,6 +6,7 @@ import { Props, State } from './not-found.type';
 @Connect
 export class NotFoundComponent extends PureComponent<Props, State> {
   public static defaultProps = new Props();
+
   public state = new State();
 
   public render() {

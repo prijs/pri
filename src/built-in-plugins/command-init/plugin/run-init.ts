@@ -1,7 +1,6 @@
 import * as colors from 'colors';
 import * as fs from 'fs-extra';
 import * as inquirer from 'inquirer';
-import * as _ from 'lodash';
 import * as path from 'path';
 import { pri } from '../../../node';
 import { globalState } from '../../../utils/global-state';

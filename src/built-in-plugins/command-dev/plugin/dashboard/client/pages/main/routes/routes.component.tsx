@@ -32,6 +32,7 @@ const columns: any = [
 @Connect
 export class RoutesComponent extends PureComponent<Props, State> {
   public static defaultProps = new Props();
+
   public state = new State();
 
   public render() {

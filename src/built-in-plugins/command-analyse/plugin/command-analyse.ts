@@ -1,4 +1,3 @@
-import * as _ from 'lodash';
 import * as webpackBundleAnalyzer from 'webpack-bundle-analyzer';
 import { analyseProject } from '../../../utils/analyse-project';
 import { createEntry } from '../../../utils/create-entry';

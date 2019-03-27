@@ -139,7 +139,7 @@ export function ensurePackageJson() {
       _.set(prevJson, `devDependencies.${PRI_PACKAGE_NAME}`, projectPriVersion);
 
       return (
-        JSON.stringify(
+        `${JSON.stringify(
           _.merge({}, prevJson, {
             main: `${pri.projectConfig.distDir}/${pri.projectConfig.outFileName}`,
             scripts: { prepublishOnly: 'npm run build' },
@@ -150,7 +150,7 @@ export function ensurePackageJson() {
           }),
           null,
           2
-        ) + '\n'
+        )  }\n`
       );
     }
   });

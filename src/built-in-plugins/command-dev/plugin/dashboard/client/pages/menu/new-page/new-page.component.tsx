@@ -23,6 +23,7 @@ const buttonStyle = {
 @Connect
 export class NewPageComponent extends PureComponent<Props, State> {
   public static defaultProps = new Props();
+
   public state = new State();
 
   public render() {
@@ -51,11 +52,13 @@ export class NewPageComponent extends PureComponent<Props, State> {
       visible: true
     });
   };
+
   private handleOk = () => {
     this.setState({
       visible: false
     });
   };
+
   private handleCancel = () => {
     this.setState({
       visible: false

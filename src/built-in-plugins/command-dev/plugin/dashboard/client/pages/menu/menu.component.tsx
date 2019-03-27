@@ -8,6 +8,7 @@ import { NewPageComponent } from './new-page/new-page.component';
 @Connect
 export class MenuComponent extends PureComponent<Props, State> {
   public static defaultProps = new Props();
+
   public state = new State();
 
   public componentDidMount() {

@@ -6,6 +6,7 @@ import { Props, State } from './nav.type';
 @Connect
 export class NavComponent extends PureComponent<Props, State> {
   public static defaultProps = new Props();
+
   public state = new State();
 
   public render() {

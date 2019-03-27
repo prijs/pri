@@ -103,5 +103,9 @@ export declare class ProjectConfig {
      * Watch node_modules
      */
     watchNodeModules?: boolean;
+    /**
+     * Check deps * ^ ~
+     */
+    allowDepsSemver?: 'major' | 'minor' | 'patch' | 'fixed';
 }
 export {};

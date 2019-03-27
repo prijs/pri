@@ -1,5 +1,4 @@
 import * as fs from 'fs-extra';
-import * as _ from 'lodash';
 import * as path from 'path';
 import { globalState } from './global-state';
 import * as projectState from './project-state';
@@ -20,12 +19,12 @@ function hasChanged(key: string, nextValue: string) {
   if (!previewValue) {
     projectState.set(key, nextValue);
     return true;
-  } else {
+  } 
     projectState.set(key, nextValue);
     if (previewValue !== nextValue) {
       return true;
-    } else {
+    } 
       return false;
-    }
-  }
+    
+  
 }

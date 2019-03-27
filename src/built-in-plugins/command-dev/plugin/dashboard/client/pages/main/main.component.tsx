@@ -12,6 +12,7 @@ import { RoutesComponent } from './routes/routes.component';
 @Connect
 export class MainComponent extends PureComponent<Props, State> {
   public static defaultProps = new Props();
+
   public state = new State();
 
   public render() {
@@ -28,7 +29,7 @@ export class MainComponent extends PureComponent<Props, State> {
         return <ConfigComponent />;
       default:
         return this.props.ApplicationAction.loadPluginsByPosition(
-          'tree-' + this.props.ApplciationStore.selectedTreeKey
+          `tree-${  this.props.ApplciationStore.selectedTreeKey}`
         );
     }
   }

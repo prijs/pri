@@ -4,13 +4,14 @@ import * as path from 'path';
 import * as pkg from '../../../../package.json';
 import { pri } from '../../../node';
 import { PRI_PACKAGE_NAME } from '../../../utils/constants';
-import { safeJsonParse } from '../../../utils/functional.js';
+import { safeJsonParse } from '../../../utils/functional';
 import { globalState } from '../../../utils/global-state';
 import { prettierConfig } from '../../../utils/prettier-config';
 import { declarePath, gitIgnores, npmIgnores, tempPath, tempTypesPath } from '../../../utils/structor-config';
 import { ensureComponentFiles } from './ensure-component';
 import { ensurePluginFiles } from './ensure-plugin';
 import { ensureProjectFiles } from './ensure-project';
+import { tslintParam, prettierParam } from '../../../utils/lint';
 
 pri.event.once('beforeEnsureFiles', async () => {
   ensureGitignore();
@@ -44,73 +45,72 @@ function ensureDeclares(projectRootPath: string) {
   fs.copySync(path.join(__dirname, '../../../../declare'), declareAbsolutePath);
 }
 
-const ensurePrettierrc = () =>
+function ensurePrettierrc() {
   pri.project.addProjectFiles({
     fileName: '.prettierrc',
-    pipeContent: () => JSON.stringify(prettierConfig, null, 2) + '\n'
+    pipeContent: () => `${JSON.stringify(prettierConfig, null, 2)}\n`
   });
+}
 
-const ensureTsconfig = () =>
+function ensureTsconfig() {
   pri.project.addProjectFiles({
     fileName: 'tsconfig.json',
     pipeContent: async () => {
-      return (
-        JSON.stringify(
-          {
-            compilerOptions: {
-              module: 'esnext',
-              moduleResolution: 'node',
-              strict: true,
-              strictNullChecks: false,
-              jsx: 'react',
-              target: 'esnext',
-              experimentalDecorators: true,
-              skipLibCheck: true,
-              outDir: globalState.projectConfig.distDir,
-              baseUrl: '.',
-              lib: ['dom', 'es5', 'es6', 'scripthost'],
-              paths: {
-                [PRI_PACKAGE_NAME + '/*']: [PRI_PACKAGE_NAME, path.join(tempTypesPath.dir, '*')],
-                ...(pri.projectPackageJson.pri.type === 'project' && { '@/*': ['src/*'] })
-              }
-            },
-            include: [
-              `${tempPath.dir}/**/*`,
-              ...['src/**/*'].map(each => path.join(globalState.projectConfig.sourceRoot, each))
-            ],
-            exclude: ['node_modules', globalState.projectConfig.distDir]
+      return `${JSON.stringify(
+        {
+          compilerOptions: {
+            module: 'esnext',
+            moduleResolution: 'node',
+            strict: true,
+            strictNullChecks: false,
+            jsx: 'react',
+            target: 'esnext',
+            experimentalDecorators: true,
+            skipLibCheck: true,
+            outDir: globalState.projectConfig.distDir,
+            baseUrl: '.',
+            lib: ['dom', 'es5', 'es6', 'scripthost'],
+            paths: {
+              [`${PRI_PACKAGE_NAME}/*`]: [PRI_PACKAGE_NAME, path.join(tempTypesPath.dir, '*')],
+              ...(pri.projectPackageJson.pri.type === 'project' && { '@/*': ['src/*'] })
+            }
           },
-          null,
-          2
-        ) + '\n'
-      ); // Make sure ./src structor. # https://github.com/Microsoft/TypeScript/issues/5134
+          include: [
+            `${tempPath.dir}/**/*`,
+            ...['src/**/*'].map(each => path.join(globalState.projectConfig.sourceRoot, each))
+          ],
+          exclude: ['node_modules', globalState.projectConfig.distDir]
+        },
+        null,
+        2
+      )}\n`; // Make sure ./src structor. # https://github.com/Microsoft/TypeScript/issues/5134
     }
   });
+}
 
-const ensureJestTsconfig = () =>
+function ensureJestTsconfig() {
   pri.project.addProjectFiles({
     fileName: 'tsconfig.jest.json',
     pipeContent: async () => {
-      return (
-        JSON.stringify(
-          {
-            extends: './tsconfig',
-            compilerOptions: {
-              module: 'commonjs'
-            }
-          },
-          null,
-          2
-        ) + '\n'
-      );
+      return `${JSON.stringify(
+        {
+          extends: './tsconfig',
+          compilerOptions: {
+            module: 'commonjs'
+          }
+        },
+        null,
+        2
+      )}\n`;
     }
   });
+}
 
-const ensureTslint = () =>
+function ensureTslint() {
   pri.project.addProjectFiles({
     fileName: 'tslint.json',
     pipeContent: () =>
-      JSON.stringify(
+      `${JSON.stringify(
         {
           extends: ['tslint:latest', 'tslint-config-prettier'],
           defaultSeverity: 'error',
@@ -131,14 +131,15 @@ const ensureTslint = () =>
         },
         null,
         2
-      ) + '\n'
+      )}\n`
   });
+}
 
-const ensureVscode = () =>
+function ensureVscode() {
   pri.project.addProjectFiles({
     fileName: '.vscode/settings.json',
     pipeContent: (prev: string) =>
-      JSON.stringify(
+      `${JSON.stringify(
         _.merge({}, safeJsonParse(prev), {
           'editor.formatOnSave': true,
           'tslint.autoFixOnSave': true,
@@ -146,10 +147,11 @@ const ensureVscode = () =>
         }),
         null,
         2
-      ) + '\n'
+      )}\n`
   });
+}
 
-const ensureGitignore = () =>
+function ensureGitignore() {
   pri.project.addProjectFiles({
     fileName: '.gitignore',
     pipeContent: (prev = '') => {
@@ -158,8 +160,9 @@ const ensureGitignore = () =>
       return _.union(values, gitIgnoresInRoot).join('\n');
     }
   });
+}
 
-const ensureNpmignore = () =>
+function ensureNpmignore() {
   pri.project.addProjectFiles({
     fileName: '.npmignore',
     pipeContent: (prev = '') => {
@@ -173,14 +176,16 @@ const ensureNpmignore = () =>
       return _.union(values, npmIgnoresInRoot).join('\n');
     }
   });
+}
 
-const ensureNpmrc = () =>
+function ensureNpmrc() {
   pri.project.addProjectFiles({
     fileName: '.npmrc',
     pipeContent: () => `package-lock=${globalState.projectConfig.packageLock ? 'true' : 'false'}`
   });
+}
 
-const ensurePackageJson = () =>
+function ensurePackageJson() {
   pri.project.addProjectFiles({
     fileName: 'package.json',
     pipeContent: (prev: string) => {
@@ -215,33 +220,31 @@ const ensurePackageJson = () =>
         mvPriPlugins(prevJson, 'peerDependencies', 'devDependencies');
       }
 
-      return (
-        JSON.stringify(
-          _.merge({}, prevJson, {
-            scripts: {
-              start: 'pri dev',
-              docs: 'pri docs',
-              build: 'pri build',
-              bundle: 'pri bundle',
-              preview: 'pri preview',
-              analyse: 'pri analyse',
-              test: 'pri test',
-              format:
-                "tslint --fix './?(src|docs|tests)/**/*.?(ts|tsx)' && prettier --write './?(src|docs|tests)/**/*.?(ts|tsx)'"
-            },
-            pri: { type: pri.projectPackageJson.pri.type },
-            husky: {
-              hooks: {
-                'pre-commit': 'npm test'
-              }
+      return `${JSON.stringify(
+        _.merge({}, prevJson, {
+          scripts: {
+            start: 'pri dev',
+            docs: 'pri docs',
+            build: 'pri build',
+            bundle: 'pri bundle',
+            preview: 'pri preview',
+            analyse: 'pri analyse',
+            test: 'pri test',
+            format: `tslint ${tslintParam} && prettier ${prettierParam}`
+          },
+          pri: { type: pri.projectPackageJson.pri.type },
+          husky: {
+            hooks: {
+              'pre-commit': 'npm test'
             }
-          }),
-          null,
-          2
-        ) + '\n'
-      );
+          }
+        }),
+        null,
+        2
+      )}\n`;
     }
   });
+}
 
 function setVersionIfExist(sourceObj: any, key: string, targetObj: any) {
   if (!_.isEmpty(_.get(sourceObj, key))) {

@@ -4,7 +4,7 @@ import * as path from 'path';
 import * as pkg from '../../../../package.json';
 import { pagesPath, pri, testsPath } from '../../../node';
 import { PRI_PACKAGE_NAME } from '../../../utils/constants';
-import { safeJsonParse } from '../../../utils/functional.js';
+import { safeJsonParse } from '../../../utils/functional';
 import { prettierConfig } from '../../../utils/prettier-config';
 
 export function ensureProjectFiles() {
@@ -13,7 +13,7 @@ export function ensureProjectFiles() {
   ensurePackageJson();
 }
 
-const ensureProjectEntry = () => {
+function ensureProjectEntry() {
   const homePagePath = path.join(pagesPath.dir, 'index.tsx');
   const homePageAbsolutePath = path.join(pri.projectRootPath, homePagePath);
 
@@ -58,9 +58,9 @@ const ensureProjectEntry = () => {
       }
     });
   }
-};
+}
 
-export const ensureTest = () =>
+export function ensureTest() {
   pri.project.addProjectFiles({
     fileName: path.join(testsPath.dir, 'index.ts'),
     pipeContent: async (prev: string) => {
@@ -79,6 +79,7 @@ export const ensureTest = () =>
       );
     }
   });
+}
 
 export function ensurePackageJson() {
   pri.project.addProjectFiles({
@@ -91,7 +92,7 @@ export function ensurePackageJson() {
       _.unset(prevJson, 'devDependencies.pri');
       _.set(prevJson, `dependencies.${PRI_PACKAGE_NAME}`, projectPriVersion);
 
-      return JSON.stringify(prevJson, null, 2) + '\n';
+      return `${JSON.stringify(prevJson, null, 2)}\n`;
     }
   });
 }

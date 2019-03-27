@@ -9,14 +9,14 @@ import { globalState } from './global-state';
 export const packagesPath = `packages`;
 
 export const getPackages = (() => {
-  let result: Array<{
+  let result: {
     name: string;
     path: string;
     packageJson: IPackageJson;
     pri?: {
       type: 'project' | 'component' | 'plugin';
     };
-  }> = null;
+  }[] = null;
 
   // Ensure run once in each command.
   return async function foo(useCache = true) {
@@ -106,9 +106,9 @@ async function getExternalImportsFromEntry(
   if (handledEntryFilePaths.some(handledEntryFilePath => handledEntryFilePath === entryFilePath)) {
     // Ignore handled file.
     return;
-  } else {
+  } 
     handledEntryFilePaths.push(entryFilePath);
-  }
+  
 
   const sourceFile = program.getSourceFile(entryFilePath);
 
@@ -144,10 +144,10 @@ export async function getExternalImportsFromProjectRoot(projectRootPath: string)
     // Only one entry declared in package.json types | typings
     const entryFilePath = path.join(projectRootPath, packageJson.types || packageJson.typings);
     return getExternalImportsFromEntrys(program, [entryFilePath]);
-  } else {
+  } 
     // All ts files is entry
     return getExternalImportsFromEntrys(program, allTsFiles);
-  }
+  
 }
 
 export async function ensurePackagesLinks(useCache: boolean) {

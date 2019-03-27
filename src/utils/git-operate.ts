@@ -1,6 +1,6 @@
 import * as semver from 'semver';
 import { exec } from './exec';
-import { logFatal, logText, logWarn } from './log';
+import { logFatal, logWarn } from './log';
 
 let hasCheckGitVersion = false;
 const gitVersionWarning: string = null;
@@ -28,7 +28,7 @@ export const checkGitVersion = async (cwd?: string) => {
 
 function validateGitVersion() {
   if (gitVersionWarning === null) {
-    return;
+    
   } else {
     logFatal(gitVersionWarning);
   }
@@ -44,7 +44,7 @@ export const getStatus = async (cwd?: string) => {
 
 export const isWorkingTreeClean = async (cwd?: string) => {
   const status = await getStatus(cwd);
-  if (status === '') {
+  if (status.trim() === '') {
     return true;
   }
   return false;

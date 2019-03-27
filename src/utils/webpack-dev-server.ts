@@ -1,15 +1,16 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
 import * as express from 'express';
 import * as normalizePath from 'normalize-path';
 import * as open from 'opn';
 import * as path from 'path';
 import * as urlJoin from 'url-join';
 import * as webpack from 'webpack';
-import * as webpackDevServer from 'webpack-dev-server';
+import * as WebpackDevServer from 'webpack-dev-server';
 import * as WebpackBar from 'webpackbar';
-import { globalState } from '../utils/global-state';
-import { tempPath } from '../utils/structor-config';
+import { globalState } from './global-state';
+import { tempPath } from './structor-config';
 import { logInfo } from './log';
-import { getWebpackConfig, IHtmlTemplateArgs, IOptions } from './webpack-config';
+import { getWebpackConfig, IOptions } from './webpack-config';
 
 interface IExtraOptions {
   pipeConfig?: (config?: webpack.Configuration) => Promise<webpack.Configuration>;
@@ -44,7 +45,7 @@ export const runWebpackDevServer = async (opts: IOptions<IExtraOptions>) => {
   webpackConfig.plugins.push(new webpack.HotModuleReplacementPlugin());
   webpackConfig.plugins.push(new WebpackBar(opts.webpackBarOptions));
 
-  const webpackDevServerConfig: webpackDevServer.Configuration = {
+  const webpackDevServerConfig: WebpackDevServer.Configuration = {
     host: '127.0.0.1',
     hot: opts.hot,
     hotOnly: opts.hot,
@@ -70,25 +71,23 @@ export const runWebpackDevServer = async (opts: IOptions<IExtraOptions>) => {
     port: opts.devServerPort
   } as any;
 
-  webpackDevServer.addDevServerEntrypoints(webpackConfig, webpackDevServerConfig);
+  WebpackDevServer.addDevServerEntrypoints(webpackConfig, webpackDevServerConfig);
   const compiler = webpack(webpackConfig);
 
-  const devServer = new webpackDevServer(compiler, webpackDevServerConfig);
+  const devServer = new WebpackDevServer(compiler, webpackDevServerConfig);
 
   devServer.listen(opts.devServerPort, '127.0.0.1', () => {
-    let devUrl: string = '';
+    let devUrl = '';
 
     if (opts.devUrl) {
       devUrl = opts.devUrl;
+    } else if (globalState.projectConfig.devUrl) {
+      devUrl = globalState.projectConfig.devUrl;
     } else {
-      if (globalState.projectConfig.devUrl) {
-        devUrl = globalState.projectConfig.devUrl;
-      } else {
-        devUrl = urlJoin(
-          `${globalState.projectConfig.useHttps ? 'https' : 'http'}://localhost:${opts.devServerPort}`,
-          globalState.projectConfig.baseHref
-        );
-      }
+      devUrl = urlJoin(
+        `${globalState.projectConfig.useHttps ? 'https' : 'http'}://localhost:${opts.devServerPort}`,
+        globalState.projectConfig.baseHref
+      );
     }
 
     logInfo(`Serve on ${devUrl}`);

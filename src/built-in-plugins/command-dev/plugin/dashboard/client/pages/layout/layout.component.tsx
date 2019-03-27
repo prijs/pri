@@ -11,6 +11,7 @@ import { StructComponent } from '../struct/struct.component';
 @Connect
 export class LayoutComponent extends PureComponent<Props, State> {
   public static defaultProps = new Props();
+
   public state = new State();
 
   public componentDidMount() {

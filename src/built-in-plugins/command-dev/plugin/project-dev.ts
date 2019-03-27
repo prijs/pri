@@ -90,7 +90,7 @@ const debugProject = async () => {
 
   // Bundle dashboard if plugins changed or dashboard bundle not exist.
   const dashboardDistDir = path.join(globalState.projectRootPath, tempPath.dir, 'static/dashboard-bundle');
-  if (!fs.existsSync(path.join(dashboardDistDir, dashboardBundleFileName + '.js'))) {
+  if (!fs.existsSync(path.join(dashboardDistDir, `${dashboardBundleFileName  }.js`))) {
     const dashboardEntryFilePath = createDashboardEntry();
 
     const status = await runWebpack({

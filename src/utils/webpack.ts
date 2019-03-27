@@ -17,9 +17,7 @@ const stats = {
 };
 
 export const runWebpack = async (opts: IOptions<IExtraOptions>): Promise<any> => {
-  const { pipeConfig, ...others } = opts;
-
-  let webpackConfig = await getWebpackConfig(others);
+  let webpackConfig = await getWebpackConfig(opts);
 
   if (opts.pipeConfig) {
     webpackConfig = await opts.pipeConfig(webpackConfig);
@@ -32,9 +30,7 @@ export const runWebpack = async (opts: IOptions<IExtraOptions>): Promise<any> =>
 };
 
 export const watchWebpack = async (opts: IOptions<IExtraOptions>): Promise<any> => {
-  const { pipeConfig, ...others } = opts;
-
-  let webpackConfig = await getWebpackConfig(others);
+  let webpackConfig = await getWebpackConfig(opts);
 
   if (opts.pipeConfig) {
     webpackConfig = await opts.pipeConfig(webpackConfig);
@@ -50,17 +46,13 @@ function runCompiler(compiler: webpack.Compiler) {
   return new Promise(resolve => {
     compiler.run((err, status) => {
       if (!err && !status.hasErrors()) {
-        process.stdout.write(status.toString(stats) + '\n\n');
+        process.stdout.write(`${status.toString(stats)}\n\n`);
 
         resolve(status.toJson());
+      } else if (err && err.message) {
+        throw Error(err.message);
       } else {
-        if (err && err.message) {
-          throw Error(err.message);
-          process.exit(1);
-        } else {
-          throw Error(status.toString());
-          process.exit(1);
-        }
+        throw Error(status.toString());
       }
     });
   });

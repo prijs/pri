@@ -1,17 +1,15 @@
-import { globalState } from '../utils/global-state';
-
-import * as _ from 'lodash';
 import * as updateNotifier from 'update-notifier';
 import * as yargs from 'yargs';
 
 import * as semver from 'semver';
+import { globalState } from '../utils/global-state';
 import { transferCommandsArrayToMap, TransferedRegisterCommand } from '../utils/commands';
 import { logFatal } from '../utils/log';
 import { loadPlugins, plugin } from '../utils/plugins';
 
 // Check node version
-if (semver.lte(process.version, '8.0.0')) {
-  logFatal(`Nodejs version should be greater than 8, current is ${process.version}`);
+if (semver.lte(process.version, '9.9.99')) {
+  logFatal(`Nodejs version should be greater than 10, current is ${process.version}`);
 }
 
 export async function createCli(opts?: { pluginIncludeRoots: string[] }) {
@@ -21,7 +19,7 @@ export async function createCli(opts?: { pluginIncludeRoots: string[] }) {
 
   registerYargs(yargs, commandRegisterMap);
 
-  // tslint:disable-next-line:no-unused-expression
+  // eslint-disable-next-line no-unused-expressions
   yargs.alias('help', 'h').alias('version', 'v').argv;
 
   /**

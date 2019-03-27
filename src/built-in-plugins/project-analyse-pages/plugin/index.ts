@@ -7,12 +7,12 @@ import { pagesPath, tempPath } from '../../../utils/structor-config';
 
 interface IResult {
   projectAnalysePages: {
-    pages: Array<{
+    pages: {
       routerPath: string;
       file: path.ParsedPath;
       chunkName: string;
       componentName: string;
-    }>;
+    }[];
   };
 }
 
@@ -56,17 +56,17 @@ pri.project.onAnalyseProject(files => {
           })
           .map(file => {
             const relativePathWithoutIndex = path.relative(pri.projectRootPath, file.dir);
-            const routerPath = normalizePath('/' + path.relative(pagesPath.dir, relativePathWithoutIndex));
+            const routerPath = normalizePath(`/${  path.relative(pagesPath.dir, relativePathWithoutIndex)}`);
             const chunkName = _.camelCase(routerPath) || 'index';
 
-            const relativePageFilePath = path.relative(pri.projectRootPath, file.dir + '/' + file.name);
+            const relativePageFilePath = path.relative(pri.projectRootPath, `${file.dir  }/${  file.name}`);
             const componentName = safeName(relativePageFilePath) + md5(relativePageFilePath).slice(0, 5);
 
             return { routerPath, file, chunkName, componentName };
           })
       }
     } as IResult;
-  } else {
+  } 
     return {
       projectAnalysePages: {
         pages: pri.projectConfig.routes
@@ -91,7 +91,7 @@ pri.project.onAnalyseProject(files => {
 
             const relativePageFilePath = path.relative(
               pri.projectRootPath,
-              componentFile.dir + '/' + componentFile.name
+              `${componentFile.dir  }/${  componentFile.name}`
             );
             const componentName = safeName(relativePageFilePath) + md5(relativePageFilePath).slice(0, 5);
 
@@ -105,7 +105,7 @@ pri.project.onAnalyseProject(files => {
           .filter(route => route !== null)
       }
     };
-  }
+  
 });
 
 pri.project.onCreateEntry((analyseInfo: IResult, entry) => {

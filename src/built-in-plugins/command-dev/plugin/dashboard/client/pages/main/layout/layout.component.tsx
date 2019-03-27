@@ -6,6 +6,7 @@ import { Props, State } from './layout.type';
 @Connect
 export class LayoutComponent extends PureComponent<Props, State> {
   public static defaultProps = new Props();
+
   public state = new State();
 
   public render() {

@@ -9,7 +9,7 @@ import { layoutPath, notFoundPath, pagesPath, storesPath } from './structor-conf
 
 export async function addPage(options: { path: string }) {
   await analyseProject();
-  const fileFullPath = path.join(globalState.projectRootPath, pagesPath.dir, options.path, 'index') + '.tsx';
+  const fileFullPath = `${path.join(globalState.projectRootPath, pagesPath.dir, options.path, 'index')  }.tsx`;
 
   if (fs.existsSync(fileFullPath)) {
     throw Error(`${options.path} already exist!`);
@@ -158,7 +158,7 @@ export async function addStore(options: { name: string; withDemo: boolean }) {
   const camelName = _.camelCase(options.name);
   const camelUpperFirstName = _.upperFirst(camelName);
   const kebabName = _.kebabCase(options.name);
-  const fileFullPath = path.join(globalState.projectRootPath, storesPath.dir, kebabName) + '.tsx';
+  const fileFullPath = `${path.join(globalState.projectRootPath, storesPath.dir, kebabName)  }.tsx`;
 
   if (fs.existsSync(fileFullPath)) {
     throw Error(`${kebabName} already exist!`);

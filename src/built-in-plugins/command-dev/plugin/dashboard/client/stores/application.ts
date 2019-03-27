@@ -13,7 +13,7 @@ const TreeIcon = (props: any) =>
     }
   });
 
-const serverPort = (window as any)['serverPort'];
+const {serverPort} = window as any;
 
 interface ITreeNode {
   children?: ITreeNode[];
@@ -35,14 +35,17 @@ export class ApplciationStore {
    * Project status
    */
   public status: IProjectStatus;
+
   /**
    * Selected key in left tree
    */
   public selectedTreeKey: string = 'project-root';
+
   /**
    * Plugins
    */
   public plugins: IPlugin[] = [];
+
   /**
    * Project tree data
    */

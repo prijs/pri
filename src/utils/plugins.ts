@@ -53,20 +53,29 @@ export class IPluginConfig {
   public commands?: ICommandRegister[] = [];
 
   public buildConfigPipes: IBuildConfigPipe[] = [];
+
   public bundleConfigPipes: IBuildConfigPipe[] = [];
 
   public buildConfigStyleLoaderOptionsPipes: ILoaderOptionsPipe[] = [];
+
   public buildConfigCssLoaderOptionsPipes: ILoaderOptionsPipe[] = [];
+
   public buildConfigSassLoaderOptionsPipes: ILoaderOptionsPipe[] = [];
+
   public buildConfigLessLoaderOptionsPipes: ILoaderOptionsPipe[] = [];
+
   public buildConfigBabelLoaderOptionsPipes: ILoaderOptionsPipe[] = [];
 
   public buildConfigJsLoaderIncludePipes: ILoaderIncludePipe[] = [];
+
   public buildConfigSassLoaderIncludePipes: ILoaderIncludePipe[] = [];
+
   public buildConfigLessLoaderIncludePipes: ILoaderIncludePipe[] = [];
 
   public buildConfigJsLoaderExcludePipes: ILoaderExcludePipe[] = [];
+
   public buildConfigSassLoaderExcludePipes: ILoaderExcludePipe[] = [];
+
   public buildConfigLessLoaderExcludePipes: ILoaderExcludePipe[] = [];
 
   public buildAfterProdBuild: IAfterProdBuild[] = [];
@@ -79,7 +88,7 @@ export class IPluginConfig {
 
   public ensureProjectFilesQueue: IEnsureProjectFilesQueue[] = [];
 
-  public devServices: { socketListeners: Array<{ name: string; callback: () => void }> } = { socketListeners: [] };
+  public devServices: { socketListeners: { name: string; callback: () => void }[] } = { socketListeners: [] };
 
   public lintFilters: ILintFilter[] = [];
 
@@ -181,7 +190,6 @@ function getPriPlugins(pluginRootPath: string, packageJsonPaths: string[]) {
         ? getPackageJsonPathByPathOrNpmName(subPackageName, pluginRootPath)
         : path.resolve(pluginRootPath, subPackageVersion.replace(/^file\:/g, ''), 'package.json');
 
-      // TODO: Waste time
       const instance: IPluginModule = require(subPackageRealEntryFilePath);
 
       if (!instance.getConfig) {

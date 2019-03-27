@@ -14,7 +14,7 @@ export interface IPackageJson {
 
 function getRandomFolderPath() {
   const ramdomId = crypto.randomBytes(20).toString('hex');
-  return path.join(process.env.HOME, '.cardTemp' + ramdomId);
+  return path.join(process.env.HOME, `.cardTemp${  ramdomId}`);
 }
 
 export async function runInTempFolderAndDestroyAfterFinished(fn: (tempFolderPath?: string) => any) {
@@ -49,5 +49,5 @@ export async function getPackageJson(projectPath: string): Promise<IPackageJson>
 
 export async function writePackageJson(projectPath: string, packageJson: IPackageJson) {
   const packageJsonPath = path.join(projectPath, 'package.json');
-  fs.outputFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2) + '\n');
+  fs.outputFileSync(packageJsonPath, `${JSON.stringify(packageJson, null, 2)  }\n`);
 }

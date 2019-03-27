@@ -1,6 +1,6 @@
+import { lint } from '../../utils/lint';
 import { plugin } from '../../utils/plugins';
 import { ILintFilter } from '../../utils/plugins-interface';
-import { lint } from '../../utils/tslint';
 
 export { lint };
 

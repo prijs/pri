@@ -1,9 +1,8 @@
 import * as fs from 'fs-extra';
-import * as _ from 'lodash';
 import * as ts from 'typescript';
 import { pri } from '../../../node';
 
-function compile(fileNames: string[], options: ts.CompilerOptions) {
+function compile(fileNames: string[]) {
   return fileNames.map((fileName, index) => {
     const fileContent = fs.readFileSync(fileName).toString();
     const result = ts.transpileModule(fileContent, { compilerOptions: { module: ts.ModuleKind.CommonJS } });
@@ -18,12 +17,7 @@ function compile(fileNames: string[], options: ts.CompilerOptions) {
 }
 
 export function onAnalyseProject(mockFilesPath: string[]) {
-  const mocks = compile(mockFilesPath, {
-    noEmitOnError: true,
-    noImplicitAny: true,
-    target: ts.ScriptTarget.ES5,
-    module: ts.ModuleKind.CommonJS
-  });
+  const mocks = compile(mockFilesPath);
 
   pri.serviceWorker.pipe(
     text => `

@@ -1,4 +1,3 @@
-import * as _ from 'lodash';
 import * as normalizePath from 'normalize-path';
 import * as path from 'path';
 import { pri } from '../../../node';

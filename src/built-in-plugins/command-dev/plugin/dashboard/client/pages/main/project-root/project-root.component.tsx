@@ -6,6 +6,7 @@ import { Props, State } from './project-root.type';
 @Connect
 export class ProjectRootComponent extends PureComponent<Props, State> {
   public static defaultProps = new Props();
+
   public state = new State();
 
   public render() {

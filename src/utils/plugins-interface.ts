@@ -25,7 +25,7 @@ export interface ICommandRegister<
 export type IDevDllList = (list: string[]) => string[];
 
 export type IAnalyseProject = (
-  projectFilesParsedPaths?: Array<path.ParsedPath & { isDir: boolean }>,
+  projectFilesParsedPaths?: (path.ParsedPath & { isDir: boolean })[],
   setPipe?: typeof set
 ) => any;
 
@@ -34,8 +34,8 @@ export type ICreateEntry = (analyseInfo?: any, entry?: Entry) => void;
 export type IBuildConfigPipe = (config: Configuration) => Configuration | Promise<Configuration>;
 
 export type ILoaderOptionsPipe = (options: any) => any;
-export type ILoaderIncludePipe = (paths: Array<string | RegExp>) => any;
-export type ILoaderExcludePipe = (paths: Array<string | RegExp>) => any;
+export type ILoaderIncludePipe = (paths: (string | RegExp)[]) => any;
+export type ILoaderExcludePipe = (paths: (string | RegExp)[]) => any;
 
 export type IAfterProdBuild = (stats?: any) => any;
 
@@ -56,5 +56,5 @@ export interface IPluginModule {
     dependencies?: string[];
   };
   getPlugin?: () => Promise<any>;
-  getUIPlugins?: () => Array<Promise<any>>;
+  getUIPlugins?: () => Promise<any>[];
 }

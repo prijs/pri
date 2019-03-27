@@ -11,7 +11,7 @@ type WalkStats = fs.Stats & {
 type ICustomParsedPath = path.ParsedPath & { isDir: boolean };
 
 export function walkProjectFiles(): Promise<ICustomParsedPath[]> {
-  return new Promise((resolve, reject) => {
+  return new Promise(resolve => {
     const gitIgnores = gitIgnoreNames.map(dir => path.join(globalState.projectRootPath, dir));
     const scanIgnores = ignoreScanFiles.map(addon => path.join(globalState.projectRootPath, addon));
 

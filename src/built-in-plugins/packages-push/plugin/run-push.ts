@@ -3,7 +3,7 @@ import * as path from 'path';
 import { exec } from '../../../utils/exec';
 import { addAllAndCommit, isWorkingTreeClean } from '../../../utils/git-operate';
 import { globalState } from '../../../utils/global-state';
-import { logFatal, logText, spinner } from '../../../utils/log';
+import { logFatal, spinner } from '../../../utils/log';
 import { getPackages } from '../../../utils/packages';
 
 export async function packagesPush(packageName: string, message: string) {

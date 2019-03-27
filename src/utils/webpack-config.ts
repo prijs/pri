@@ -1,12 +1,10 @@
 import * as HtmlWebpackPlugin from 'html-webpack-plugin';
 import * as MiniCssExtractPlugin from 'mini-css-extract-plugin';
-import * as OptimizeCSSAssetsPlugin from 'optimize-css-assets-webpack-plugin';
 import * as path from 'path';
-import * as UglifyJsPlugin from 'uglifyjs-webpack-plugin';
 import * as webpack from 'webpack';
-import { globalState } from '../utils/global-state';
-import { plugin } from '../utils/plugins';
-import { srcPath, tempPath } from '../utils/structor-config';
+import { globalState } from './global-state';
+import { plugin } from './plugins';
+import { srcPath, tempPath } from './structor-config';
 import { babelOptions } from './babel-options';
 
 export interface IHtmlTemplateArgs {
@@ -88,12 +86,10 @@ export const getWebpackConfig = async (opts: IOptions) => {
     if (globalState.projectConfig.cssExtract) {
       if (globalState.isDevelopment) {
         return [styleLoader, ...loaders];
-      } else {
-        return [MiniCssExtractPlugin.loader, ...loaders];
       }
-    } else {
-      return [styleLoader, ...loaders];
+      return [MiniCssExtractPlugin.loader, ...loaders];
     }
+    return [styleLoader, ...loaders];
   }
 
   const distDir = opts.distDir || path.join(globalState.projectRootPath, globalState.projectConfig.distDir);
@@ -285,16 +281,17 @@ export const getWebpackConfig = async (opts: IOptions) => {
         })
       );
 
-      config.optimization = {
-        ...config.optimization,
-        minimizer: [
-          new UglifyJsPlugin({
-            cache: true,
-            parallel: true
-          }),
-          new OptimizeCSSAssetsPlugin({})
-        ]
-      };
+      // TODO: fix css bug
+      // config.optimization = {
+      //   ...config.optimization,
+      //   minimizer: [
+      //     new UglifyJsPlugin({
+      //       cache: true,
+      //       parallel: true
+      //     }),
+      //     new OptimizeCSSAssetsPlugin({})
+      //   ]
+      // };
     }
 
     babelLoader.options.plugins.push(['import', { libraryName: 'antd' }]);

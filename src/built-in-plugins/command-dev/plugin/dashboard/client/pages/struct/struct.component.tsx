@@ -13,8 +13,8 @@ interface ITreeNode {
   disabled?: boolean;
 }
 
-const TreeNode = Tree.TreeNode;
-const Search = Input.Search;
+const {TreeNode} = Tree;
+const {Search} = Input;
 
 const getParentKey = (key: string, tree: ITreeNode[]): string => {
   let parentKey: string;
@@ -51,6 +51,7 @@ const PlusIcon = (props: any) => (
 @Connect
 export class StructComponent extends PureComponent<Props, State> {
   public static defaultProps = new Props();
+
   public state = new State();
 
   public componentDidMount() {
@@ -164,10 +165,10 @@ export class StructComponent extends PureComponent<Props, State> {
   };
 
   private getFlatData = () => {
-    const dataList: Array<{
+    const dataList: {
       key: string;
       title: string;
-    }> = [];
+    }[] = [];
     function setFlatData(eachTreeData: ITreeNode[]) {
       eachTreeData.forEach(each => {
         dataList.push({ key: each.key, title: each.title });
@@ -203,7 +204,7 @@ export class StructComponent extends PureComponent<Props, State> {
     });
   };
 
-  private loop = (data: ITreeNode[]): Array<React.ReactElement<any>> =>
+  private loop = (data: ITreeNode[]): React.ReactElement<any>[] =>
     data.map(item => {
       const index = item.title.indexOf(this.state.searchValue);
       const beforeStr = item.title.substr(0, index);

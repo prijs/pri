@@ -3,8 +3,8 @@ import * as ora from 'ora';
 import * as signale from 'signale';
 
 export function logText(...message: string[]) {
-  // tslint:disable-next-line:no-console
-  (console.log as any).apply(null, message);
+  // eslint-disable-next-line no-console
+  console.log(...message);
 }
 
 export function logWarn(message: string) {
@@ -47,10 +47,9 @@ export async function spinner<T>(message: string, fn: (error: (message?: string)
     if (errorMessage) {
       oraSpinner.fail(colors.red(errorMessage));
       return null;
-    } else {
-      oraSpinner.succeed(colors.green(message));
-      return result;
     }
+    oraSpinner.succeed(colors.green(message));
+    return result;
   } catch (error) {
     signale.fatal(error);
     return process.exit(0);

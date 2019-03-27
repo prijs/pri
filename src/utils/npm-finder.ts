@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { logFatal, logText } from './log';
+import { logFatal } from './log';
 
 export const findNearestNodemodules = () => {
   return findNearestNodemodulesByPath(__dirname);
@@ -25,11 +25,10 @@ function findNearestNodemodulesByPath(filePath: string, tryRelativeFilePath?: st
   if (fs.existsSync(findPath)) {
     if (!tryRelativeFilePath) {
       return findPath;
-    } else {
-      const tryAbsoluteFilePath = path.join(findPath, tryRelativeFilePath);
-      if (fs.existsSync(tryAbsoluteFilePath)) {
-        return findPath;
-      }
+    }
+    const tryAbsoluteFilePath = path.join(findPath, tryRelativeFilePath);
+    if (fs.existsSync(tryAbsoluteFilePath)) {
+      return findPath;
     }
   }
 

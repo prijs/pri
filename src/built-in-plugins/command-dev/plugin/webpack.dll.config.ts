@@ -37,7 +37,7 @@ export default (opts: IOptions) =>
         'react-loadable',
         'react-router-dom',
         'history',
-        PRI_PACKAGE_NAME + '/client'
+        `${PRI_PACKAGE_NAME  }/client`
       ])
     },
 

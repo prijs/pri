@@ -40,12 +40,12 @@ function createRootCommandRegisters(
     );
     if (commandRegisterExactByName) {
       return { ...commandRegisterExactByName, childs: createRootCommandRegisters(childs) };
-    } else {
+    } 
       return {
         name: [rootName],
         childs: createRootCommandRegisters(childs)
       };
-    }
+    
   });
 }
 
