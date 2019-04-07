@@ -22,26 +22,11 @@ export async function addPage(options: { path: string }) {
       `
       import * as React from "react"
 
-      class Props {
-
-      }
-
-      class State {
-
-      }
-
-      export default class Page extends React.PureComponent<Props, State> {
-        public static defaultProps = new Props()
-        public state = new State()
-
-        public render() {
-          return (
-            <div>
-              New page for ${options.path}
-            </div>
-          )
-        }
-      }
+      export default const Page = () => (
+        <div>
+          New page for ${options.path}
+        </div>
+      )
     `,
       { ...prettierConfig, parser: 'typescript' }
     )
@@ -61,28 +46,13 @@ export async function createLayout() {
     pathFullPath,
     prettier.format(
       `
-    import * as React from "react"
+      import * as React from "react"
 
-    class Props {
-
-    }
-
-    class State {
-
-    }
-
-    export default class Page extends React.PureComponent<Props, State> {
-      public static defaultProps = new Props()
-      public state = new State()
-
-      public render() {
-        return (
-          <div>
-            {this.props.children}
-          </div>
-        )
-      }
-    }
+      export default const Page = () => (
+        <div>
+          {this.props.children}
+        </div>
+      )
   `,
       { ...prettierConfig, parser: 'typescript' }
     )
@@ -102,28 +72,13 @@ export async function create404() {
     pathFullPath,
     prettier.format(
       `
-    import * as React from "react"
+      import * as React from "react"
 
-    class Props {
-
-    }
-
-    class State {
-
-    }
-
-    export default class Page extends React.PureComponent<Props, State> {
-      public static defaultProps = new Props()
-      public state = new State()
-
-      public render() {
-        return (
-          <div>
-            Page not found
-          </div>
-        )
-      }
-    }
+      export default const Page = () => (
+        <div>
+        Page not found
+        </div>
+      )
   `,
       { ...prettierConfig, parser: 'typescript' }
     )

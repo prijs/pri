@@ -197,13 +197,7 @@ function prepare(realDocsPath: string, docsEntryPath: string) {
 
       const DocComponents: any[] = [${docList.join(',')}]
 
-      class Docs extends React.PureComponent {
-        public render() {
-          return (
-            <DocsWrapper docs={DocComponents}/>
-          )
-        }
-      }
+      const Docs = () => <DocsWrapper docs={DocComponents}/>
 
       const ROOT_ID = 'root';
 
