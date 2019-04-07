@@ -1,11 +1,10 @@
 import * as fs from 'fs-extra';
-import * as _ from 'lodash';
 import * as path from 'path';
 import { analyseProject } from './analyse-project';
 import { CONFIG_FILE } from './constants';
 import { globalState } from './global-state';
 import { prettierConfig } from './prettier-config';
-import { layoutPath, notFoundPath, pagesPath, storesPath } from './structor-config';
+import { layoutPath, notFoundPath, pagesPath } from './structor-config';
 
 export async function addPage(options: { path: string }) {
   await analyseProject();
