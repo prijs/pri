@@ -14,7 +14,14 @@ import {
 } from '../../../utils/structor-config';
 import { addWhiteFilesByProjectType } from '../../../utils/white-file-helper';
 
-const whiteList = [CONFIG_FILE, srcPath.dir, docsPath.dir, '.git', `src${path.sep}components`];
+const whiteList = [
+  CONFIG_FILE,
+  srcPath.dir,
+  docsPath.dir,
+  '.git',
+  `src${path.sep}components`,
+  ...(pri.projectConfig.packageLock ? ['package-lock.json'] : [])
+];
 
 const allIgnores = _.union(gitIgnores, npmIgnores);
 

@@ -179,7 +179,7 @@ function getPriPlugins(pluginRootPath: string, packageJsonPaths: string[]) {
 
       const subPackageVersion = allDependencies[subPackageName];
       const subPackageRealEntry = subPackageVersion.startsWith('file:')
-        ? path.join(pluginRootPath, subPackageVersion.replace(/^file\:/g, ''))
+        ? path.join(pluginRootPath, subPackageVersion.replace(/^file:/g, ''))
         : subPackageName;
 
       const subPackageRealEntryFilePath = require.resolve(subPackageRealEntry, {
@@ -188,7 +188,7 @@ function getPriPlugins(pluginRootPath: string, packageJsonPaths: string[]) {
 
       const subPackageAbsolutePath = !subPackageVersion.startsWith('file:')
         ? getPackageJsonPathByPathOrNpmName(subPackageName, pluginRootPath)
-        : path.resolve(pluginRootPath, subPackageVersion.replace(/^file\:/g, ''), 'package.json');
+        : path.resolve(pluginRootPath, subPackageVersion.replace(/^file:/g, ''), 'package.json');
 
       const instance: IPluginModule = require(subPackageRealEntryFilePath);
 

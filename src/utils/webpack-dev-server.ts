@@ -34,9 +34,7 @@ const stats = {
 };
 
 export const runWebpackDevServer = async (opts: IOptions<IExtraOptions>) => {
-  const { pipeConfig, devServerPort, publicPath, webpackBarOptions, ...others } = opts;
-
-  let webpackConfig = await getWebpackConfig(others);
+  let webpackConfig = await getWebpackConfig(opts);
 
   if (opts.pipeConfig) {
     webpackConfig = await opts.pipeConfig(webpackConfig);

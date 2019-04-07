@@ -40,16 +40,16 @@ export async function devDocs(realDocsPath: string) {
 
   chokidar
     .watch(path.join(pri.projectRootPath, realDocsPath, '/**'), {
-      ignored: /(^|[\/\\])\../,
+      ignored: /(^|[/\\])\../,
       ignoreInitial: true
     })
-    .on('add', async filePath => {
+    .on('add', async () => {
       await analyseProject();
     })
-    .on('unlink', async filePath => {
+    .on('unlink', async () => {
       await analyseProject();
     })
-    .on('unlinkDir', async filePath => {
+    .on('unlinkDir', async () => {
       await analyseProject();
     });
 
@@ -154,7 +154,7 @@ function prepare(realDocsPath: string, docsEntryPath: string) {
             return { file };
           })
       }
-    } as IResult;
+    };
 
     // Create entry file for docs
     const docList: string[] = [];

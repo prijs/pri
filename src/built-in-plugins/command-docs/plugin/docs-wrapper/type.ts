@@ -1,5 +1,3 @@
-import * as React from 'react';
-
 export class Props {
   public docs?: { name: string; element: any; text: string }[] = [];
 }

@@ -3,12 +3,6 @@ import * as path from 'path';
 import { pri } from '../../../node';
 import { CONFIG_FILE } from '../../../utils/constants';
 
-interface IResult {
-  projectAnalyseConfig: {
-    hasConfig: boolean;
-  };
-}
-
 // config
 const whiteList = ['config'];
 pri.project.whiteFileRules.add(file => {
@@ -25,10 +19,10 @@ pri.project.whiteFileRules.add(file => {
   );
 });
 
-pri.project.onAnalyseProject(files => {
+pri.project.onAnalyseProject(() => {
   return {
     projectAnalyseConfig: {
       hasConfig: fs.existsSync(path.join(pri.projectRootPath, CONFIG_FILE))
     }
-  } as IResult;
+  };
 });

@@ -1,9 +1,9 @@
 import { execSync } from 'child_process';
 import * as yargs from 'yargs';
-import { logFatal, logInfo } from './log';
+import { logInfo } from './log';
 import { findNearestNodemodulesFile } from './npm-finder';
 
-export const tslintParam = `--fix './?(src|docs|tests)/**/*.?(ts|tsx)'`;
+export const eslintParam = `--fix './?(src|docs|tests)/**/*.?(ts|tsx)'`;
 export const prettierParam = `--write './?(src|docs|tests)/**/*.?(ts|tsx|css|less|scss|sass|md|mdx)'`;
 
 export async function lint(showBreakError = true) {
@@ -13,11 +13,9 @@ export async function lint(showBreakError = true) {
 
   logInfo('Lint and format code..');
 
-  const forceTslint = showBreakError ? '' : '--force';
-
   try {
     execSync(
-      `${findNearestNodemodulesFile('.bin/tslint')} ${forceTslint} ${tslintParam} && ${findNearestNodemodulesFile(
+      `${findNearestNodemodulesFile('.bin/eslint')} ${eslintParam} && ${findNearestNodemodulesFile(
         '.bin/prettier'
       )} ${prettierParam}`,
       {
@@ -25,7 +23,11 @@ export async function lint(showBreakError = true) {
       }
     );
   } catch (error) {
-    logFatal(error);
+    if (showBreakError) {
+      process.exit(1);
+    } else {
+      // Ignore
+    }
   }
 
   // Maybe change project files after lint, so `git add` and `git commit` if necessary.

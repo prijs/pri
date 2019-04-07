@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 import * as path from 'path';
 import * as yargs from 'yargs';
 import { globalState } from './global-state';
-import { logInfo, logText, logWarn } from './log';
+import { logInfo, logWarn } from './log';
 import { plugin } from './plugins';
 import { priEvent } from './pri-events';
 

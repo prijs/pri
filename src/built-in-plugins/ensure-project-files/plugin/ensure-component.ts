@@ -3,7 +3,7 @@ import * as path from 'path';
 import * as pkg from '../../../../package.json';
 import { componentEntry, docsPath, pri, srcPath } from '../../../node';
 import { PRI_PACKAGE_NAME } from '../../../utils/constants';
-import { safeJsonParse } from '../../../utils/functional.js';
+import { safeJsonParse } from '../../../utils/functional';
 import { prettierConfig } from '../../../utils/prettier-config';
 import { ensureTest } from './ensure-project';
 
@@ -27,25 +27,23 @@ export function ensurePackageJson() {
 
       const types = pri.projectConfig.hideSourceCodeForNpm ? 'declaration/index.d.ts' : path.format(componentEntry);
 
-      return (
-        `${JSON.stringify(
-          _.merge({}, prevJson, {
-            main: `${pri.projectConfig.distDir}/${pri.projectConfig.outFileName}`,
-            scripts: { prepublishOnly: 'npm run build && npm run bundle --skipLint' },
-            types,
-            dependencies: {
-              '@babel/runtime': '^7.0.0'
-            }
-          }),
-          null,
-          2
-        )  }\n`
-      );
+      return `${JSON.stringify(
+        _.merge({}, prevJson, {
+          main: `${pri.projectConfig.distDir}/${pri.projectConfig.outFileName}`,
+          scripts: { prepublishOnly: 'npm run build && npm run bundle --skipLint' },
+          types,
+          dependencies: {
+            '@babel/runtime': '^7.0.0'
+          }
+        }),
+        null,
+        2
+      )}\n`;
     }
   });
 }
 
-const ensureEntryFile = () =>
+function ensureEntryFile() {
   pri.project.addProjectFiles({
     fileName: path.format(componentEntry),
     pipeContent: async text => {
@@ -63,8 +61,9 @@ const ensureEntryFile = () =>
       );
     }
   });
+}
 
-const ensureDocs = () => {
+function ensureDocs() {
   const basicDocsPath = path.join(docsPath.dir, 'basic.tsx');
   const relativeToEntryPath = path.relative(
     path.parse(path.join(pri.projectRootPath, basicDocsPath)).dir,
@@ -106,4 +105,4 @@ const ensureDocs = () => {
       );
     }
   });
-};
+}

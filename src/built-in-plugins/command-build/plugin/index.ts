@@ -32,17 +32,21 @@ pri.commands.registerCommand({
   description: text.commander.build.description,
   action: async (options: IOpts) => {
     switch (pri.projectPackageJson.pri.type) {
-      case 'project':
+      case 'project': {
         const projectBuildModule = await import('./build');
         await projectBuildModule.buildProject(options);
         break;
-      case 'component':
+      }
+      case 'component': {
         const componentBuildModule = await import('./build');
         await componentBuildModule.buildComponent(options);
         break;
-      case 'plugin':
+      }
+      case 'plugin': {
         const pluginBuildModule = await import('./build');
         await pluginBuildModule.buildPlugin(options);
+        break;
+      }
       default:
     }
   }

@@ -1,21 +1,31 @@
 import 'antd/dist/antd.css';
-import { useStrict } from 'dob';
-import { Provider } from 'dob-react';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { LayoutComponent } from './pages/layout/layout.component';
-import stores from './stores';
+import { LayoutComponent } from './pages/layout';
+import { ApplicationContext, ApplicationReducer } from './stores';
+import { IPlugin } from './define';
 
-useStrict();
-
-export default (plugins?: any[]) => {
-  stores.ApplicationAction.loadUiPlugins(plugins);
-
-  const Root = () => (
-    <Provider {...stores}>
-      <LayoutComponent />
-    </Provider>
-  );
-
-  ReactDOM.render(<Root />, document.getElementById('root'));
+export default (plugins?: IPlugin[]) => {
+  ReactDOM.render(<Root plugins={plugins} />, document.getElementById('root'));
 };
+
+const Root = React.memo((props: { plugins: IPlugin[] }) => {
+  const [state, dispatch] = React.useReducer(ApplicationReducer, {
+    plugins: [],
+    status: null,
+    selectedTreeKey: null
+  });
+
+  React.useEffect(() => {
+    dispatch({
+      type: 'loadUiPlugins',
+      plugins: props.plugins
+    });
+  }, [props.plugins]);
+
+  return (
+    <ApplicationContext.Provider value={[state, dispatch]}>
+      <LayoutComponent />
+    </ApplicationContext.Provider>
+  );
+});

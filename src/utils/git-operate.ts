@@ -21,14 +21,16 @@ export const checkGitVersion = async (cwd?: string) => {
         `Your git version is outdate, should upgrade to 2.14.1 and above, current version: ${gitVersionPorcelain}`
       );
     }
-  } catch {}
+  } catch {
+    //
+  }
 
   validateGitVersion();
 };
 
 function validateGitVersion() {
   if (gitVersionWarning === null) {
-    
+    //
   } else {
     logFatal(gitVersionWarning);
   }
@@ -53,7 +55,9 @@ export const isWorkingTreeClean = async (cwd?: string) => {
 export const addAllAndCommit = async (message: string, cwd?: string) => {
   try {
     await exec(`git add -A; git commit -m "${message}"`, { cwd });
-  } catch {}
+  } catch {
+    //
+  }
 };
 
 export const addAllAndCommitIfWorkingTreeNotClean = async (message: string, cwd?: string) => {

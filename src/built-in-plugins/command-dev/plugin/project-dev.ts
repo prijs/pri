@@ -1,5 +1,4 @@
 import * as fs from 'fs-extra';
-import * as _ from 'lodash';
 import * as path from 'path';
 import * as portfinder from 'portfinder';
 import * as prettier from 'prettier';
@@ -9,7 +8,7 @@ import { pri } from '../../../node';
 import { analyseProject } from '../../../utils/analyse-project';
 import { createEntry } from '../../../utils/create-entry';
 import { globalState } from '../../../utils/global-state';
-import { logInfo, logText, spinner } from '../../../utils/log';
+import { logInfo, spinner } from '../../../utils/log';
 import { getPluginsByOrder } from '../../../utils/plugins';
 import { prettierConfig } from '../../../utils/prettier-config';
 import * as projectState from '../../../utils/project-state';
@@ -31,7 +30,7 @@ export const projectDev = async (options: any) => {
   }
 };
 
-const debugDashboard = async () => {
+async function debugDashboard() {
   const analyseInfo = await spinner('Analyse project', async () => {
     const scopeAnalyseInfo = await analyseProject();
     await createEntry();
@@ -58,7 +57,7 @@ const debugDashboard = async () => {
     entryPath: dashboardEntryFilePath,
     devServerPort: freePort,
     outFileName: 'main.[hash].js',
-    htmlTemplatePath: path.join(__dirname, '../../../template-dashboard.ejs'),
+    htmlTemplatePath: path.join(__dirname, '../../../../template-dashboard.ejs'),
     htmlTemplateArgs: {
       dashboardServerPort,
       libraryStaticPath
@@ -67,9 +66,9 @@ const debugDashboard = async () => {
       name: 'dashboard'
     }
   });
-};
+}
 
-const debugProject = async () => {
+async function debugProject() {
   const freePort = pri.projectConfig.devPort || (await portfinder.getPortPromise());
   const dashboardServerPort = await portfinder.getPortPromise({ port: freePort + 1 });
   const dashboardClientPort = await portfinder.getPortPromise({ port: freePort + 2 });
@@ -90,7 +89,7 @@ const debugProject = async () => {
 
   // Bundle dashboard if plugins changed or dashboard bundle not exist.
   const dashboardDistDir = path.join(globalState.projectRootPath, tempPath.dir, 'static/dashboard-bundle');
-  if (!fs.existsSync(path.join(dashboardDistDir, `${dashboardBundleFileName  }.js`))) {
+  if (!fs.existsSync(path.join(dashboardDistDir, `${dashboardBundleFileName}.js`))) {
     const dashboardEntryFilePath = createDashboardEntry();
 
     const status = await runWebpack({
@@ -105,7 +104,9 @@ const debugProject = async () => {
   const stdoutOfAnyType = process.stdout as any;
   try {
     stdoutOfAnyType.clearLine(0);
-  } catch {}
+  } catch {
+    //
+  }
 
   logInfo('\nStart dev server.\n');
 
@@ -161,7 +162,7 @@ const debugProject = async () => {
       return config;
     }
   });
-};
+}
 
 function debugProjectPrepare(dashboardClientPort: number) {
   pri.project.onCreateEntry((__, entry) => {
@@ -327,7 +328,7 @@ function createDashboardEntry() {
 
   const webUiEntries: string[] = [];
 
-  Array.from(getPluginsByOrder()).forEach(plugin => {
+  Array.from(getPluginsByOrder()).forEach(() => {
     // try {
     //   const packageJsonPath = require.resolve(path.join(plugin.pathOrModuleName, 'package.json'), {
     //     paths: [__dirname, globalState.projectRootPath]
@@ -341,7 +342,6 @@ function createDashboardEntry() {
     //       const parsedPath = path.parse(webEntryAbsolutePath);
     //       const importPath = path.join(parsedPath.dir, parsedPath.name);
     //       webUiEntries.push(`
-    //       // tslint:disable-next-line:no-var-requires
     //       const plugin${webUiEntries.length} = require("${importPath}").default`);
     //     });
     //   }
@@ -354,7 +354,6 @@ function createDashboardEntry() {
     dashboardEntryFilePath,
     prettier.format(
       `
-      // tslint:disable-next-line:no-var-requires
       const dashboard = require("${dashboardEntryMainPath}").default
 
       ${

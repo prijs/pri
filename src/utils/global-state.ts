@@ -10,7 +10,7 @@ import * as yargs from 'yargs';
 import * as pkg from '../../package.json';
 import { CONFIG_FILE } from './constants';
 import { GlobalState } from './global-state-class';
-import { logFatal } from './log.js';
+import { logFatal } from './log';
 import { ProjectConfig } from './project-config-interface';
 
 const globalState = new GlobalState();
@@ -42,10 +42,10 @@ export function freshGlobalState(projectRootPath: string) {
 }
 
 export function freshProjectConfig() {
-  globalState.projectConfig = getProjectConfig(globalState.isDevelopment);
+  globalState.projectConfig = getProjectConfig();
 }
 
-function getProjectConfig(isDevelopment: boolean) {
+function getProjectConfig() {
   const configFilePath = path.join(globalState.projectRootPath, CONFIG_FILE);
   const userProjectConfig: ProjectConfig = fs.readJsonSync(configFilePath, { throws: false }) || {};
 

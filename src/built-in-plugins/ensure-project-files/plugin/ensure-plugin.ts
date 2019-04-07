@@ -4,9 +4,9 @@ import * as path from 'path';
 import * as pkg from '../../../../package.json';
 import { pluginEntry, pri, srcPath } from '../../../node';
 import { PRI_PACKAGE_NAME } from '../../../utils/constants';
-import { safeJsonParse } from '../../../utils/functional.js';
+import { safeJsonParse } from '../../../utils/functional';
 import { globalState } from '../../../utils/global-state';
-import { logSuccess, logText } from '../../../utils/log';
+import { logSuccess } from '../../../utils/log';
 import { prettierConfig } from '../../../utils/prettier-config';
 
 export function ensurePluginFiles() {
@@ -113,7 +113,7 @@ function ensureTest() {
 
   pri.project.addProjectFiles({
     fileName,
-    pipeContent: async prev => {
+    pipeContent: async () => {
       const prettier = await import('prettier');
       return prettier.format(
         `
@@ -138,20 +138,18 @@ export function ensurePackageJson() {
       _.unset(prevJson, 'dependencies.pri');
       _.set(prevJson, `devDependencies.${PRI_PACKAGE_NAME}`, projectPriVersion);
 
-      return (
-        `${JSON.stringify(
-          _.merge({}, prevJson, {
-            main: `${pri.projectConfig.distDir}/${pri.projectConfig.outFileName}`,
-            scripts: { prepublishOnly: 'npm run build' },
-            types: path.format(pluginEntry),
-            dependencies: {
-              '@babel/runtime': '^7.0.0'
-            }
-          }),
-          null,
-          2
-        )  }\n`
-      );
+      return `${JSON.stringify(
+        _.merge({}, prevJson, {
+          main: `${pri.projectConfig.distDir}/${pri.projectConfig.outFileName}`,
+          scripts: { prepublishOnly: 'npm run build' },
+          types: path.format(pluginEntry),
+          dependencies: {
+            '@babel/runtime': '^7.0.0'
+          }
+        }),
+        null,
+        2
+      )}\n`;
     }
   });
 }

@@ -56,56 +56,53 @@ pri.project.onAnalyseProject(files => {
           })
           .map(file => {
             const relativePathWithoutIndex = path.relative(pri.projectRootPath, file.dir);
-            const routerPath = normalizePath(`/${  path.relative(pagesPath.dir, relativePathWithoutIndex)}`);
+            const routerPath = normalizePath(`/${path.relative(pagesPath.dir, relativePathWithoutIndex)}`);
             const chunkName = _.camelCase(routerPath) || 'index';
 
-            const relativePageFilePath = path.relative(pri.projectRootPath, `${file.dir  }/${  file.name}`);
+            const relativePageFilePath = path.relative(pri.projectRootPath, `${file.dir}/${file.name}`);
             const componentName = safeName(relativePageFilePath) + md5(relativePageFilePath).slice(0, 5);
 
             return { routerPath, file, chunkName, componentName };
           })
       }
-    } as IResult;
-  } 
-    return {
-      projectAnalysePages: {
-        pages: pri.projectConfig.routes
-          .filter(route => route.component && route.path)
-          .map((route, index) => {
-            const componentFile = files.find(file => {
-              const relativePath = path.relative(pri.projectRootPath, path.join(file.dir, file.name));
-              return (
-                (route.component === relativePath && !file.isDir && ['.tsx', '.md', '.mdx'].indexOf(file.ext) > -1) ||
-                (path.join(route.component, 'index') === relativePath &&
-                  !file.isDir &&
-                  ['.tsx', '.md', '.mdx'].indexOf(file.ext) > -1)
-              );
-            });
-
-            if (!componentFile) {
-              return null;
-            }
-
-            const routerPath = route.path;
-            const chunkName = _.camelCase(routerPath) || 'index';
-
-            const relativePageFilePath = path.relative(
-              pri.projectRootPath,
-              `${componentFile.dir  }/${  componentFile.name}`
-            );
-            const componentName = safeName(relativePageFilePath) + md5(relativePageFilePath).slice(0, 5);
-
-            return {
-              routerPath,
-              file: componentFile,
-              chunkName: chunkName + index,
-              componentName: componentName + index
-            };
-          })
-          .filter(route => route !== null)
-      }
     };
-  
+  }
+
+  return {
+    projectAnalysePages: {
+      pages: pri.projectConfig.routes
+        .filter(route => route.component && route.path)
+        .map((route, index) => {
+          const componentFile = files.find(file => {
+            const relativePath = path.relative(pri.projectRootPath, path.join(file.dir, file.name));
+            return (
+              (route.component === relativePath && !file.isDir && ['.tsx', '.md', '.mdx'].indexOf(file.ext) > -1) ||
+              (path.join(route.component, 'index') === relativePath &&
+                !file.isDir &&
+                ['.tsx', '.md', '.mdx'].indexOf(file.ext) > -1)
+            );
+          });
+
+          if (!componentFile) {
+            return null;
+          }
+
+          const routerPath = route.path;
+          const chunkName = _.camelCase(routerPath) || 'index';
+
+          const relativePageFilePath = path.relative(pri.projectRootPath, `${componentFile.dir}/${componentFile.name}`);
+          const componentName = safeName(relativePageFilePath) + md5(relativePageFilePath).slice(0, 5);
+
+          return {
+            routerPath,
+            file: componentFile,
+            chunkName: chunkName + index,
+            componentName: componentName + index
+          };
+        })
+        .filter(route => route !== null)
+    }
+  };
 });
 
 pri.project.onCreateEntry((analyseInfo: IResult, entry) => {

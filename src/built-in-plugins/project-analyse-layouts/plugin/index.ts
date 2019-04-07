@@ -27,7 +27,7 @@ pri.project.onAnalyseProject(files => {
         })
         .some(file => file.name === 'index')
     }
-  } as IResult;
+  };
 });
 
 pri.project.onCreateEntry((analyseInfo: IResult, entry) => {
@@ -64,7 +64,7 @@ pri.project.onCreateEntry((analyseInfo: IResult, entry) => {
       `;
   });
 
-  entry.pipe.set('commonRoute', route => {
+  entry.pipe.set('commonRoute', () => {
     return LAYOUT_ROUTE;
   });
 });

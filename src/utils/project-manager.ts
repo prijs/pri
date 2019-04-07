@@ -9,7 +9,7 @@ import { layoutPath, notFoundPath, pagesPath, storesPath } from './structor-conf
 
 export async function addPage(options: { path: string }) {
   await analyseProject();
-  const fileFullPath = `${path.join(globalState.projectRootPath, pagesPath.dir, options.path, 'index')  }.tsx`;
+  const fileFullPath = `${path.join(globalState.projectRootPath, pagesPath.dir, options.path, 'index')}.tsx`;
 
   if (fs.existsSync(fileFullPath)) {
     throw Error(`${options.path} already exist!`);
@@ -138,27 +138,14 @@ export async function createConfig() {
     throw Error(`config already exist!`);
   }
 
-  const prettier = await import('prettier');
-
-  const fileContent = prettier.format(
-    `
-    import { ProjectConfig } from "pri/client"
-
-    export default {
-
-    } as ProjectConfig
-  `,
-    { ...prettierConfig, parser: 'typescript' }
-  );
-
-  fs.outputFileSync(configFilePath, fileContent);
+  fs.outputJSONSync(configFilePath, {});
 }
 
 export async function addStore(options: { name: string; withDemo: boolean }) {
   const camelName = _.camelCase(options.name);
   const camelUpperFirstName = _.upperFirst(camelName);
   const kebabName = _.kebabCase(options.name);
-  const fileFullPath = `${path.join(globalState.projectRootPath, storesPath.dir, kebabName)  }.tsx`;
+  const fileFullPath = `${path.join(globalState.projectRootPath, storesPath.dir, kebabName)}.tsx`;
 
   if (fs.existsSync(fileFullPath)) {
     throw Error(`${kebabName} already exist!`);

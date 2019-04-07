@@ -11,7 +11,7 @@ import { declarePath, gitIgnores, npmIgnores, tempPath, tempTypesPath } from '..
 import { ensureComponentFiles } from './ensure-component';
 import { ensurePluginFiles } from './ensure-plugin';
 import { ensureProjectFiles } from './ensure-project';
-import { tslintParam, prettierParam } from '../../../utils/lint';
+import { eslintParam, prettierParam } from '../../../utils/lint';
 
 pri.event.once('beforeEnsureFiles', async () => {
   ensureGitignore();
@@ -21,7 +21,7 @@ pri.event.once('beforeEnsureFiles', async () => {
   ensureJestTsconfig();
   ensureVscode();
   ensurePrettierrc();
-  ensureTslint();
+  ensureEslint();
   ensurePackageJson();
 
   ensureDeclares(pri.projectRootPath);
@@ -106,27 +106,62 @@ function ensureJestTsconfig() {
   });
 }
 
-function ensureTslint() {
+function ensureEslint() {
   pri.project.addProjectFiles({
-    fileName: 'tslint.json',
+    fileName: '.eslintrc',
     pipeContent: () =>
       `${JSON.stringify(
         {
-          extends: ['tslint:latest', 'tslint-config-prettier'],
-          defaultSeverity: 'error',
+          parser: '@typescript-eslint/parser',
+          parserOptions: {
+            project: './tsconfig.json'
+          },
+          env: {
+            jest: true,
+            browser: true
+          },
+          settings: {
+            react: {
+              version: '16.8'
+            },
+            'import/resolver': {
+              node: {
+                extensions: ['.js', '.jsx', '.ts', '.tsx', '.eslintrc']
+              }
+            }
+          },
+          plugins: ['@typescript-eslint', 'react-hooks'],
+          extends: [
+            'eslint:recommended',
+            'plugin:@typescript-eslint/recommended',
+            'plugin:react/recommended',
+            'airbnb-base',
+            'prettier',
+            'prettier/@typescript-eslint'
+          ],
           rules: {
-            'object-literal-sort-keys': false,
-            'max-classes-per-file': [true, 5],
-            'trailing-comma': [false],
-            'no-string-literal': true,
-            'arrow-parens': false,
-            'no-var-requires': true,
-            'prefer-conditional-expression': false,
-            'no-implicit-dependencies': false,
-            'no-object-literal-type-assertion': false,
-            'no-submodule-imports': false,
-            'no-empty': true,
-            'interface-name': false
+            'import/prefer-default-export': false,
+            '@typescript-eslint/explicit-function-return-type': 0,
+            '@typescript-eslint/interface-name-prefix': 0,
+            'no-use-before-define': ['error', { functions: false }],
+            '@typescript-eslint/no-use-before-define': 0,
+            'class-methods-use-this': 0,
+            'import/no-dynamic-require': false,
+            'consistent-return': 0,
+            'no-param-reassign': 'off',
+            '@typescript-eslint/no-explicit-any': 0,
+            'prefer-destructuring': 'off',
+            'import/no-extraneous-dependencies': false,
+            'react-hooks/rules-of-hooks': 'error',
+            'react-hooks/exhaustive-deps': 'warn',
+            'no-invalid-this': 'error',
+            'react/display-name': false,
+            'no-await-in-loop': 'off',
+            'no-restricted-syntax': 'off',
+            'array-callback-return': 'off',
+            'global-require': 'off',
+            '@typescript-eslint/no-var-requires': 0,
+            'no-unused-vars': 0
           }
         },
         null,
@@ -142,8 +177,15 @@ function ensureVscode() {
       `${JSON.stringify(
         _.merge({}, safeJsonParse(prev), {
           'editor.formatOnSave': true,
-          'tslint.autoFixOnSave': true,
-          'typescript.tsdk': 'node_modules/typescript/lib'
+          'typescript.tsdk': 'node_modules/typescript/lib',
+          'eslint.autoFixOnSave': true,
+          'eslint.validate': [
+            'javascript',
+            'javascriptreact',
+            { language: 'typescript', autoFix: true },
+            { language: 'typescriptreact', autoFix: true }
+          ],
+          'eslint.provideLintTask': true
         }),
         null,
         2
@@ -230,7 +272,7 @@ function ensurePackageJson() {
             preview: 'pri preview',
             analyse: 'pri analyse',
             test: 'pri test',
-            format: `tslint ${tslintParam} && prettier ${prettierParam}`
+            format: `eslint ${eslintParam} && prettier ${prettierParam}`
           },
           pri: { type: pri.projectPackageJson.pri.type },
           husky: {

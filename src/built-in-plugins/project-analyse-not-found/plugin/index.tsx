@@ -1,4 +1,3 @@
-import * as _ from 'lodash';
 import * as normalizePath from 'normalize-path';
 import * as path from 'path';
 import { pri } from '../../../node';
@@ -26,7 +25,7 @@ pri.project.onAnalyseProject(files => {
 
   return {
     projectAnalyseNotFound: { hasNotFound: notFoundFiles.length === 1 }
-  } as IResult;
+  };
 });
 
 pri.project.onCreateEntry((analyseInfo: IResult, entry) => {

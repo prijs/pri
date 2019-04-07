@@ -24,7 +24,7 @@ export async function packagesRemove(packageName: string) {
     logFatal(`Package ${packageName} not exist.`);
   }
 
-  await spinner(`remove ${packageName}`, async error => {
+  await spinner(`remove ${packageName}`, async () => {
     await exec(
       [
         `git submodule deinit -f -- ${path.join(packagesPath, packageName)}`,

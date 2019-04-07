@@ -1,4 +1,3 @@
-import * as _ from 'lodash';
 import { pri } from '../../../node';
 import text from '../../../utils/text';
 

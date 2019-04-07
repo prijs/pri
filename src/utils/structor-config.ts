@@ -108,54 +108,35 @@ export const pluginEntry = {
 /**
  * Ignores.
  */
-
-const gitIgnores: string[] = [
+const ignores = [
   'node_modules',
   '.cache',
   '.vscode',
   '.idea',
   tempPath.dir,
-  globalState.projectConfig.distDir,
   '.DS_Store',
   'coverage',
   '.nyc_output',
-  'npm-debug.log'
+  'npm-debug.log',
+  '.node'
 ];
 
-if (!globalState.projectConfig.packageLock) {
-  gitIgnores.push('package-lock.json');
-}
-
-export { gitIgnores };
+export const gitIgnores = _.union([...ignores, globalState.projectConfig.distDir, 'declaration']);
 
 // npm ignores extends git ingores.
-let npmIgnores = gitIgnores.slice();
-npmIgnores.push(testsPath.dir);
-npmIgnores.push('packages');
+export const npmIgnores = _.union([...ignores, testsPath.dir, 'packages']);
 
-// Npm do not ignore built path!
-const builtPathIndex = npmIgnores.findIndex(name => name === globalState.projectConfig.distDir);
-npmIgnores.splice(builtPathIndex, 1);
-npmIgnores = _.union(npmIgnores);
-
-export { npmIgnores };
-
-export const ignoreScanFiles = [
+export const ignoreScanFiles = _.union([
+  ...ignores,
   '.gitignore',
   '.gitmodules',
   '.npmignore',
   '.prettierrc',
   '.git',
-  '.DS_Store',
-  '.cache',
-  'package-lock.json',
   'package.json',
   'tsconfig.json',
   'tsconfig.jest.json',
-  'tslint.json',
-  'npm-debug.log',
-  '.idea',
-  '.node',
+  '.eslintrc',
   '.npmrc',
   '.travis.yml',
   '.prettierignore',
@@ -166,7 +147,4 @@ export const ignoreScanFiles = [
   'README.md',
   'history.md',
   'HISTORY.md'
-];
-
-// Gitignore 独有
-gitIgnores.push('declaration');
+]);

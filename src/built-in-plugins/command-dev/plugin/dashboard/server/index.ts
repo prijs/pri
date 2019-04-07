@@ -7,7 +7,6 @@ import * as Koa from 'koa';
 import * as KoaCompress from 'koa-compress';
 import * as KoaMount from 'koa-mount';
 import * as KoaStatic from 'koa-static';
-import * as _ from 'lodash';
 import * as path from 'path';
 import * as socketIo from 'socket.io';
 import * as zlib from 'zlib';
@@ -41,15 +40,11 @@ export default (opts: IOptions) => {
   const io = socketIo(server);
 
   io.on('connection', async socket => {
-    const projectStatus = { analyseInfo: opts.analyseInfo, projectConfig: globalState.projectConfig };
-    socket.emit('freshProjectStatus', projectStatus);
-    socket.emit('initProjectStatus', projectStatus);
-
     function socketListen(name: string, fn: (data: any) => any) {
       socket.on(name, (data, callback) => {
         Promise.resolve(fn(data))
-          .then(res => callback({ success: true, data: res }))
-          .catch(err => callback({ success: false, data: err.toString() }));
+          .then(res => callback && callback({ success: true, data: res }))
+          .catch(err => callback && callback({ success: false, data: err.toString() }));
       });
     }
 
@@ -57,16 +52,20 @@ export default (opts: IOptions) => {
       await projectManage.addPage(data);
     });
 
-    socketListen('createLayout', async data => {
+    socketListen('createLayout', async () => {
       await projectManage.createLayout();
     });
 
-    socketListen('create404', async data => {
+    socketListen('create404', async () => {
       await projectManage.create404();
     });
 
-    socketListen('createConfig', async data => {
+    socketListen('createConfig', async () => {
       await projectManage.createConfig();
+    });
+
+    socketListen('getProjectStatus', async () => {
+      await fresh();
     });
 
     // Load plugin's services
@@ -77,14 +76,14 @@ export default (opts: IOptions) => {
 
   // Watch project file's change
   chokidar
-    .watch(path.join(globalState.projectRootPath, '/**'), { ignored: /(^|[\/\\])\../, ignoreInitial: true })
-    .on('add', async filePath => {
+    .watch(path.join(globalState.projectRootPath, '/**'), { ignored: /(^|[/\\])\../, ignoreInitial: true })
+    .on('add', async () => {
       await fresh();
     })
-    .on('unlink', async filePath => {
+    .on('unlink', async () => {
       await fresh();
     })
-    .on('unlinkDir', async filePath => {
+    .on('unlinkDir', async () => {
       await fresh();
     })
     .on('change', async filePath => {
