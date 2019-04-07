@@ -75,8 +75,6 @@
     "colors": "1.3.3",
     "cors": "2.8.5",
     "css-loader": "2.1.0",
-    "dob": "2.5.10",
-    "dob-react": "2.4.17",
     "eslint": "5.15.3",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-config-prettier": "4.1.0",
