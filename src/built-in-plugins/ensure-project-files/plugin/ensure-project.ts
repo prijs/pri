@@ -27,7 +27,7 @@ function ensureProjectEntry() {
             import { isDevelopment } from "${PRI_PACKAGE_NAME}/client"
             import * as React from "react"
 
-            export default const Page = () => {
+            export default () => {
               return (
                 <div>
                   <h1 style={{ display: "flex", alignItems: "center", justifyContent: "center"}}>

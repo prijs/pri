@@ -82,7 +82,7 @@ function ensureDocs() {
           import Component from "${relativeToEntryPath}"
           import * as React from "react"
 
-          export default const Page = () => <Component />
+          export default () => <Component />
         `,
         { ...prettierConfig, parser: 'typescript' }
       );

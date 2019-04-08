@@ -22,7 +22,7 @@ export async function addPage(options: { path: string }) {
       `
       import * as React from "react"
 
-      export default const Page = () => (
+      export default () => (
         <div>
           New page for ${options.path}
         </div>
@@ -48,9 +48,9 @@ export async function createLayout() {
       `
       import * as React from "react"
 
-      export default const Page = () => (
+      export default (props: React.Props<any>) => (
         <div>
-          {this.props.children}
+          {props.children}
         </div>
       )
   `,
@@ -74,7 +74,7 @@ export async function create404() {
       `
       import * as React from "react"
 
-      export default const Page = () => (
+      export default () => (
         <div>
         Page not found
         </div>

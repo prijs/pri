@@ -27,8 +27,6 @@ export default (opts: IOptions): webpack.Configuration => ({
       'react',
       'react-dom',
       'lodash',
-      'dob',
-      'dob-react',
       'antd',
       'antd/dist/antd.css',
       'highlight.js',
