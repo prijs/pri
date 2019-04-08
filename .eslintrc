@@ -58,6 +58,7 @@
     "global-require": "off",
     "@typescript-eslint/no-var-requires": 0,
     "no-unused-vars": 0,
-    "no-script-url": "off"
+    "no-script-url": "off",
+    "import/no-unresolved": [0]
   }
 }

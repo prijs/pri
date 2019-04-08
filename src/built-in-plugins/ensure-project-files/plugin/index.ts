@@ -154,14 +154,16 @@ function ensureEslint() {
             'import/no-extraneous-dependencies': false,
             'react-hooks/rules-of-hooks': 'error',
             'react-hooks/exhaustive-deps': 'warn',
-            'no-invalid-this': 'error',
+            'no-invalid-this': 'off',
             'react/display-name': false,
             'no-await-in-loop': 'off',
             'no-restricted-syntax': 'off',
             'array-callback-return': 'off',
             'global-require': 'off',
             '@typescript-eslint/no-var-requires': 0,
-            'no-unused-vars': 0
+            'no-unused-vars': 0,
+            'no-script-url': 'off',
+            'import/no-unresolved': [0]
           }
         },
         null,
