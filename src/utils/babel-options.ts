@@ -21,7 +21,7 @@ export const babelOptions = {
   comments: true,
   presets: [[babelPresetEnv], [babelPresetReact], [babelPresetTypescript]],
   plugins: [
-    ...(globalState.isDevelopment ? [[transformRuntime]] : []),
+    [transformRuntime],
     [babelPluginReactHotLoader],
     [babelPluginProposalDecorators, { legacy: true }],
     [babelPluginProposalExportNamespace],
