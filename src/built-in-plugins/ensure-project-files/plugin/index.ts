@@ -11,7 +11,7 @@ import { declarePath, gitIgnores, npmIgnores, tempPath, tempTypesPath } from '..
 import { ensureComponentFiles } from './ensure-component';
 import { ensurePluginFiles } from './ensure-plugin';
 import { ensureProjectFiles } from './ensure-project';
-import { eslintParam, prettierParam } from '../../../utils/lint';
+import { eslintParam } from '../../../utils/lint';
 
 pri.event.once('beforeEnsureFiles', async () => {
   ensureGitignore();
@@ -127,6 +127,15 @@ function ensureEslint() {
             'import/resolver': {
               node: {
                 extensions: ['.js', '.jsx', '.ts', '.tsx', '.eslintrc']
+              },
+              webpack: {
+                config: {
+                  resolve: {
+                    alias: {
+                      '@': 'src'
+                    }
+                  }
+                }
               }
             }
           },
@@ -136,6 +145,7 @@ function ensureEslint() {
             'plugin:@typescript-eslint/recommended',
             'plugin:react/recommended',
             'airbnb-base',
+            'plugin:prettier/recommended',
             'prettier',
             'prettier/@typescript-eslint'
           ],
@@ -274,7 +284,7 @@ function ensurePackageJson() {
             preview: 'pri preview',
             analyse: 'pri analyse',
             test: 'pri test',
-            format: `eslint ${eslintParam} && prettier ${prettierParam}`
+            format: `eslint ${eslintParam}`
           },
           pri: { type: pri.projectPackageJson.pri.type },
           husky: {

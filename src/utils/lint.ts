@@ -4,7 +4,6 @@ import { logInfo } from './log';
 import { findNearestNodemodulesFile } from './npm-finder';
 
 export const eslintParam = `--fix './?(src|docs|tests)/**/*.?(ts|tsx)'`;
-export const prettierParam = `--write './?(src|docs|tests)/**/*.?(ts|tsx|css|less|scss|sass|md|mdx)'`;
 
 export async function lint(showBreakError = true) {
   if (yargs.argv.light) {
@@ -14,14 +13,9 @@ export async function lint(showBreakError = true) {
   logInfo('Lint and format code..');
 
   try {
-    execSync(
-      `${findNearestNodemodulesFile('.bin/eslint')} ${eslintParam} && ${findNearestNodemodulesFile(
-        '.bin/prettier'
-      )} ${prettierParam}`,
-      {
-        stdio: 'inherit'
-      }
-    );
+    execSync(`${findNearestNodemodulesFile('.bin/eslint')} ${eslintParam}`, {
+      stdio: 'inherit'
+    });
   } catch (error) {
     if (showBreakError) {
       process.exit(1);

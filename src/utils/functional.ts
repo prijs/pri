@@ -7,17 +7,15 @@ export const pipeEvent = (func: any) => {
 export function ensureEndWithSlash(str: string) {
   if (str.endsWith('/')) {
     return str;
-  } 
-    return `${str  }/`;
-  
+  }
+  return `${str}/`;
 }
 
 export function ensureStartWithSlash(str: string) {
   if (str.startsWith('/')) {
     return str;
-  } 
-    return `/${  str}`;
-  
+  }
+  return `/${str}`;
 }
 
 export function ensureStartWithWebpackRelativePoint(str: string) {
@@ -26,10 +24,9 @@ export function ensureStartWithWebpackRelativePoint(str: string) {
   }
 
   if (!str.startsWith('./') && !str.startsWith('../')) {
-    return `./${  str}`;
-  } 
-    return str;
-  
+    return `./${str}`;
+  }
+  return str;
 }
 
 export function safeJsonParse(text: string) {

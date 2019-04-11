@@ -74,7 +74,7 @@ if (!globalWithPri.pri) {
   });
 }
 
-export const {pri} = globalWithPri;
+export const { pri } = globalWithPri;
 
 export { createCli };
 

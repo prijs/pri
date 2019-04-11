@@ -19,12 +19,10 @@ function hasChanged(key: string, nextValue: string) {
   if (!previewValue) {
     projectState.set(key, nextValue);
     return true;
-  } 
-    projectState.set(key, nextValue);
-    if (previewValue !== nextValue) {
-      return true;
-    } 
-      return false;
-    
-  
+  }
+  projectState.set(key, nextValue);
+  if (previewValue !== nextValue) {
+    return true;
+  }
+  return false;
 }

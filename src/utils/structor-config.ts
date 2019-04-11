@@ -118,6 +118,7 @@ const ignores = [
   'coverage',
   '.nyc_output',
   'npm-debug.log',
+  'yarn.lock',
   '.node'
 ];
 

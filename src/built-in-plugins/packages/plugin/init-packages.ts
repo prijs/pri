@@ -25,7 +25,7 @@ export const initPackages = async () => {
 
       _.set(jsonData, 'compilerOptions.paths', { ..._.get(jsonData, 'compilerOptions.paths'), ...packagePaths });
 
-      return `${JSON.stringify(jsonData, null, 2)  }\n`;
+      return `${JSON.stringify(jsonData, null, 2)}\n`;
     }
   });
 

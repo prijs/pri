@@ -106,9 +106,8 @@ async function getExternalImportsFromEntry(
   if (handledEntryFilePaths.some(handledEntryFilePath => handledEntryFilePath === entryFilePath)) {
     // Ignore handled file.
     return;
-  } 
-    handledEntryFilePaths.push(entryFilePath);
-  
+  }
+  handledEntryFilePaths.push(entryFilePath);
 
   const sourceFile = program.getSourceFile(entryFilePath);
 
@@ -144,10 +143,9 @@ export async function getExternalImportsFromProjectRoot(projectRootPath: string)
     // Only one entry declared in package.json types | typings
     const entryFilePath = path.join(projectRootPath, packageJson.types || packageJson.typings);
     return getExternalImportsFromEntrys(program, [entryFilePath]);
-  } 
-    // All ts files is entry
-    return getExternalImportsFromEntrys(program, allTsFiles);
-  
+  }
+  // All ts files is entry
+  return getExternalImportsFromEntrys(program, allTsFiles);
 }
 
 export async function ensurePackagesLinks(useCache: boolean) {

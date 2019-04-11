@@ -18,7 +18,7 @@ export function generateCertificate() {
     };
   }
 
-  const {pki} = forge;
+  const { pki } = forge;
   const keys = pki.rsa.generateKeyPair(2048);
   const cert = pki.createCertificate();
 
