@@ -109,76 +109,10 @@ function ensureJestTsconfig() {
 function ensureEslint() {
   pri.project.addProjectFiles({
     fileName: '.eslintrc',
-    pipeContent: () =>
-      `${JSON.stringify(
-        {
-          parser: '@typescript-eslint/parser',
-          parserOptions: {
-            project: './tsconfig.json'
-          },
-          env: {
-            jest: true,
-            browser: true
-          },
-          settings: {
-            react: {
-              version: '16.8'
-            },
-            'import/resolver': {
-              node: {
-                extensions: ['.js', '.jsx', '.ts', '.tsx', '.eslintrc']
-              },
-              webpack: {
-                config: {
-                  resolve: {
-                    alias: {
-                      '@': 'src'
-                    }
-                  }
-                }
-              }
-            }
-          },
-          plugins: ['@typescript-eslint', 'react-hooks'],
-          extends: [
-            'eslint:recommended',
-            'plugin:@typescript-eslint/recommended',
-            'plugin:react/recommended',
-            'airbnb-base',
-            'plugin:prettier/recommended',
-            'prettier',
-            'prettier/@typescript-eslint'
-          ],
-          rules: {
-            'import/prefer-default-export': false,
-            '@typescript-eslint/explicit-function-return-type': 0,
-            '@typescript-eslint/interface-name-prefix': 0,
-            'no-use-before-define': ['error', { functions: false }],
-            '@typescript-eslint/no-use-before-define': 0,
-            'class-methods-use-this': 0,
-            'import/no-dynamic-require': false,
-            'consistent-return': 0,
-            'no-param-reassign': 'off',
-            '@typescript-eslint/no-explicit-any': 0,
-            'prefer-destructuring': 'off',
-            'import/no-extraneous-dependencies': false,
-            'react-hooks/rules-of-hooks': 'error',
-            'react-hooks/exhaustive-deps': 'warn',
-            'no-invalid-this': 'off',
-            'react/display-name': false,
-            'no-await-in-loop': 'off',
-            'no-restricted-syntax': 'off',
-            'array-callback-return': 'off',
-            'global-require': 'off',
-            '@typescript-eslint/no-var-requires': 0,
-            'no-unused-vars': 0,
-            'no-script-url': 'off',
-            'import/no-unresolved': [0]
-          }
-        },
-        null,
-        2
-      )}\n`
+    pipeContent: async () => {
+      const eslintConfig = await fs.readFile(path.join(__dirname, '../../../../.eslintrc'));
+      return eslintConfig.toString();
+    }
   });
 }
 

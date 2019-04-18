@@ -26,10 +26,10 @@ function ensureEntry() {
       const prettier = await import('prettier');
 
       return prettier.format(`
-        export const getPlugin = () => import('./plugin');
+        export const getPlugin = () => import("./plugin");
 
         export const getConfig = () => ({
-          name: 'pri-plugin-${pri.projectPackageJson.name}'
+          name: "pri-plugin-${pri.projectPackageJson.name}"
         });
       `);
     }
@@ -70,7 +70,8 @@ function ensureEntry() {
         })
 
         pri.project.onAnalyseProject(files => {
-          return { customPlugin: { hasComponents: judgeHasComponents(pri.projectRootPath, files) } } as IResult
+          const result: IResult = { customPlugin: { hasComponents: judgeHasComponents(pri.projectRootPath, files) } };
+          return result;
         })
 
         pri.project.onCreateEntry((analyseInfo: IResult, entry) => {

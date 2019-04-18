@@ -1,4 +1,5 @@
 import * as updateNotifier from 'update-notifier';
+import { execSync } from 'child_process';
 import * as yargs from 'yargs';
 
 import * as semver from 'semver';
@@ -10,6 +11,23 @@ import { loadPlugins, plugin } from '../utils/plugins';
 // Check node version
 if (semver.lte(process.version, '9.9.99')) {
   logFatal(`Nodejs version should be greater than 10, current is ${process.version}`);
+}
+
+// Check git repo
+let isGitRepo = false;
+try {
+  if (
+    execSync(`git rev-parse --is-inside-work-tree`)
+      .toString()
+      .trim() === 'true'
+  ) {
+    isGitRepo = true;
+  }
+} catch (error) {
+  isGitRepo = false;
+}
+if (!isGitRepo) {
+  logFatal(`Not a git repo, please run \`git init\` first.`);
 }
 
 export async function createCli(opts?: { pluginIncludeRoots: string[] }) {
