@@ -103,6 +103,11 @@ export const getWebpackConfig = async (opts: IOptions) => {
 
   const stats = { warnings: false, version: false, modules: false, entrypoints: false, hash: false };
 
+  const tsLoaderConfig = {
+    include: plugin.buildConfigJsLoaderIncludePipes.reduce((options, fn) => fn(options), defaultSourcePathToBeResolve),
+    exclude: plugin.buildConfigJsLoaderExcludePipes.reduce((options, fn) => fn(options), [])
+  };
+
   const cssLoaderConfig = {
     include: defaultSourcePathToBeResolve
   };
@@ -152,29 +157,17 @@ export const getWebpackConfig = async (opts: IOptions) => {
               }
             }
           ],
-          include: plugin.buildConfigJsLoaderIncludePipes.reduce(
-            (options, fn) => fn(options),
-            defaultSourcePathToBeResolve
-          ),
-          exclude: plugin.buildConfigJsLoaderIncludePipes.reduce((options, fn) => fn(options), [])
+          ...tsLoaderConfig
         },
         {
           test: /\.tsx?$/,
           use: [babelLoader],
-          include: plugin.buildConfigJsLoaderIncludePipes.reduce(
-            (options, fn) => fn(options),
-            defaultSourcePathToBeResolve
-          ),
-          exclude: plugin.buildConfigJsLoaderIncludePipes.reduce((options, fn) => fn(options), [])
+          ...tsLoaderConfig
         },
         {
           test: /\.mdx?$/,
           use: [babelLoader, '@mdx-js/loader'],
-          include: plugin.buildConfigJsLoaderIncludePipes.reduce(
-            (options, fn) => fn(options),
-            defaultSourcePathToBeResolve
-          ),
-          exclude: plugin.buildConfigJsLoaderIncludePipes.reduce((options, fn) => fn(options), [])
+          ...tsLoaderConfig
         },
         {
           test: /(?<!\.module)\.css$/,

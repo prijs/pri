@@ -195,8 +195,14 @@ function ensurePackageJson() {
       } else {
         // Not project type, just reset it's version if exist.
         setVersionIfExist(prevJson, 'dependencies', priDeps);
-        setVersionIfExist(prevJson, 'devDependencies', priDeps);
-        setVersionIfExist(prevJson, 'peerDependencies', priDeps);
+
+        // Remove devDeps which already exists in pri dependencies.
+        if (prevJson.devDependencies) {
+          prevJson.devDependencies = _.omit(prevJson.devDependencies, Object.keys(priDeps));
+        }
+        if (prevJson.peerDependencies) {
+          prevJson.peerDependencies = _.omit(prevJson.peerDependencies, Object.keys(priDeps));
+        }
       }
 
       // Mv pri-plugins to devDeps except plugin
