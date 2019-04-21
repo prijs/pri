@@ -2,7 +2,6 @@ import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as portfinder from 'portfinder';
 import * as prettier from 'prettier';
-import * as webpack from 'webpack';
 import { pri } from '../../../node';
 import { analyseProject } from '../../../utils/analyse-project';
 import { createEntry } from '../../../utils/create-entry';

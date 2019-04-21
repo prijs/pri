@@ -3,15 +3,12 @@ import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as portfinder from 'portfinder';
 import * as prettier from 'prettier';
-import * as urlJoin from 'url-join';
-import * as webpack from 'webpack';
 import { pri } from '../../../node';
 import { analyseProject } from '../../../utils/analyse-project';
 import { spinner } from '../../../utils/log';
 import { prettierConfig } from '../../../utils/prettier-config';
 import { tempPath } from '../../../utils/structor-config';
 import { runWebpackDevServer } from '../../../utils/webpack-dev-server';
-import { WrapContent } from '../../../utils/webpack-plugin-wrap-content';
 
 interface IResult {
   projectAnalyseDocs: {
