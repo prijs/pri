@@ -112,21 +112,21 @@ export const getWebpackConfig = async (opts: IOptions) => {
     include: defaultSourcePathToBeResolve
   };
 
-  const scssLoaderConfig = {
-    include: plugin.buildConfigSassLoaderIncludePipes.reduce(
-      (options, fn) => fn(options),
-      defaultSourcePathToBeResolve
-    ),
-    exclude: plugin.buildConfigSassLoaderExcludePipes.reduce((options, fn) => fn(options), [])
-  };
+  // const scssLoaderConfig = {
+  //   include: plugin.buildConfigSassLoaderIncludePipes.reduce(
+  //     (options, fn) => fn(options),
+  //     defaultSourcePathToBeResolve
+  //   ),
+  //   exclude: plugin.buildConfigSassLoaderExcludePipes.reduce((options, fn) => fn(options), [])
+  // };
 
-  const lessLoaderConfig = {
-    include: plugin.buildConfigLessLoaderIncludePipes.reduce(
-      (options, fn) => fn(options),
-      defaultSourcePathToBeResolve
-    ),
-    exclude: plugin.buildConfigLessLoaderExcludePipes.reduce((options, fn) => fn(options), [])
-  };
+  // const lessLoaderConfig = {
+  //   include: plugin.buildConfigLessLoaderIncludePipes.reduce(
+  //     (options, fn) => fn(options),
+  //     defaultSourcePathToBeResolve
+  //   ),
+  //   exclude: plugin.buildConfigLessLoaderExcludePipes.reduce((options, fn) => fn(options), [])
+  // };
 
   const config: webpack.Configuration = {
     mode: opts.mode,
@@ -169,37 +169,92 @@ export const getWebpackConfig = async (opts: IOptions) => {
           use: [babelLoader, '@mdx-js/loader'],
           ...tsLoaderConfig
         },
+        { test: /\.css$/, use: extraCssInProd(cssPureLoader), include: selfAndProjectNodeModules },
+        // TODO: Make sure we can use node10. start---------
+        // {
+        //   test: /(?<!\.module)\.css$/,
+        //   use: extraCssInProd(cssPureLoader),
+        //   ...cssLoaderConfig
+        // },
+        // {
+        //   test: /\.module\.css$/,
+        //   use: extraCssInProd(cssModuleLoader),
+        //   ...cssLoaderConfig
+        // },
         {
-          test: /(?<!\.module)\.css$/,
+          test: /.css$/,
           use: extraCssInProd(cssPureLoader),
-          ...cssLoaderConfig
+          ...cssLoaderConfig,
+          exclude: [/\.module\.css$/]
         },
         {
           test: /\.module\.css$/,
           use: extraCssInProd(cssModuleLoader),
           ...cssLoaderConfig
         },
-        { test: /\.css$/, use: extraCssInProd(cssPureLoader), include: selfAndProjectNodeModules },
+        // end------------------------------------------------
+        // TODO: Make sure we can use node10. start---------
+        // {
+        //   test: /(?<!\.module)\.s[a|c]ss$/,
+        //   use: extraCssInProd(cssPureLoader, sassLoader),
+        //   ...scssLoaderConfig
+        // },
+        // {
+        //   test: /\.module\.s[a|c]ss$/,
+        //   use: extraCssInProd(cssModuleLoader, sassLoader),
+        //   ...scssLoaderConfig
+        // },
         {
-          test: /(?<!\.module)\.s[a|c]ss$/,
+          test: /.s[a|c]ss$/,
           use: extraCssInProd(cssPureLoader, sassLoader),
-          ...scssLoaderConfig
+          include: plugin.buildConfigSassLoaderIncludePipes.reduce(
+            (options, fn) => fn(options),
+            defaultSourcePathToBeResolve
+          ),
+          exclude: plugin.buildConfigSassLoaderExcludePipes.reduce((options, fn) => fn(options), [
+            /\.module\.s[a|c]ss$/
+          ])
         },
         {
           test: /\.module\.s[a|c]ss$/,
           use: extraCssInProd(cssModuleLoader, sassLoader),
-          ...scssLoaderConfig
+          include: plugin.buildConfigSassLoaderIncludePipes.reduce(
+            (options, fn) => fn(options),
+            defaultSourcePathToBeResolve
+          ),
+          exclude: plugin.buildConfigSassLoaderExcludePipes.reduce((options, fn) => fn(options), [])
         },
+        // end------------------------------------------------
+        // TODO: Make sure we can use node10. start---------
+        // {
+        //   test: /(?<!\.module)\.less$/,
+        //   use: extraCssInProd(cssPureLoader, lessLoader),
+        //   ...lessLoaderConfig
+        // },
+        // {
+        //   test: /\.module\.less$/,
+        //   use: extraCssInProd(cssModuleLoader, lessLoader),
+        //   ...lessLoaderConfig
+        // },
         {
-          test: /(?<!\.module)\.less$/,
+          test: /.less$/,
           use: extraCssInProd(cssPureLoader, lessLoader),
-          ...lessLoaderConfig
+          include: plugin.buildConfigLessLoaderIncludePipes.reduce(
+            (options, fn) => fn(options),
+            defaultSourcePathToBeResolve
+          ),
+          exclude: plugin.buildConfigLessLoaderExcludePipes.reduce((options, fn) => fn(options), [/\.module\.less$/])
         },
         {
           test: /\.module\.less$/,
           use: extraCssInProd(cssModuleLoader, lessLoader),
-          ...lessLoaderConfig
+          include: plugin.buildConfigLessLoaderIncludePipes.reduce(
+            (options, fn) => fn(options),
+            defaultSourcePathToBeResolve
+          ),
+          exclude: plugin.buildConfigLessLoaderExcludePipes.reduce((options, fn) => fn(options), [])
         },
+        // end------------------------------------------------
         { test: /\.html$/, use: ['raw-loader'] },
         {
           test: /\.(png|jpg|jpeg|gif|woff|woff2|eot|ttf|svg)$/,

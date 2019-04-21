@@ -203,9 +203,9 @@ export class Entry {
 export async function createEntry() {
   const newEntryObject = new Entry();
 
-  plugin.projectCreateEntrys.forEach(projectCreateEntry => {
-    projectCreateEntry(plugin.analyseInfo, newEntryObject);
-  });
+  for (const projectCreateEntry of plugin.projectCreateEntrys) {
+    await projectCreateEntry(plugin.analyseInfo, newEntryObject);
+  }
 
   // Create entry tsx file
   const environmentPath = path.join(globalState.projectRootPath, path.format(tempEnvironmentPath));

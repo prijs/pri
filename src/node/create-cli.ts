@@ -9,8 +9,8 @@ import { logFatal } from '../utils/log';
 import { loadPlugins, plugin } from '../utils/plugins';
 
 // Check node version
-if (semver.lte(process.version, '9.9.99')) {
-  logFatal(`Nodejs version should be greater than 10, current is ${process.version}`);
+if (semver.lte(process.version, '8.0.0')) {
+  logFatal(`Nodejs version should be greater than 8, current is ${process.version}`);
 }
 
 // Check git repo
