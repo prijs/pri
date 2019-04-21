@@ -2,7 +2,6 @@ import { plugin } from '../utils/plugins';
 import {
   IAfterProdBuild,
   IBuildConfigPipe,
-  IDevDllList,
   ILoaderExcludePipe,
   ILoaderIncludePipe,
   ILoaderOptionsPipe
@@ -58,8 +57,4 @@ export const pipeLessExclude = (pipe: ILoaderExcludePipe) => {
 
 export const afterProdBuild = (callback: IAfterProdBuild) => {
   plugin.buildAfterProdBuild.push(callback);
-};
-
-export const pipeDevDllList = (callback: IDevDllList) => {
-  plugin.devDllPipes.push(callback);
 };

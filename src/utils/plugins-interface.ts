@@ -22,8 +22,6 @@ export interface ICommandRegister<
   options?: T;
 }
 
-export type IDevDllList = (list: string[]) => string[];
-
 export type IAnalyseProject = (
   projectFilesParsedPaths?: (path.ParsedPath & { isDir: boolean })[],
   setPipe?: typeof set

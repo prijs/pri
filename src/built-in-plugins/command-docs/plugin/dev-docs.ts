@@ -12,7 +12,6 @@ import { prettierConfig } from '../../../utils/prettier-config';
 import { tempPath } from '../../../utils/structor-config';
 import { runWebpackDevServer } from '../../../utils/webpack-dev-server';
 import { WrapContent } from '../../../utils/webpack-plugin-wrap-content';
-import { bundleDlls, dllMainfestName, dllOutPath, libraryStaticPath } from '../../command-dev/plugin/dll';
 
 interface IResult {
   projectAnalyseDocs: {
@@ -35,8 +34,6 @@ export async function devDocs(realDocsPath: string) {
   await spinner('Analyse project', async () => {
     return analyseProject();
   });
-
-  await bundleDlls();
 
   chokidar
     .watch(path.join(pri.projectRootPath, realDocsPath, '/**'), {
@@ -75,27 +72,6 @@ export async function devDocs(realDocsPath: string) {
       appendBody: `
             <script src="https://g.alicdn.com/dt/fbi/0.0.292/monaco-editor/vs/loader.js"></script>
           `
-    },
-    pipeConfig: async config => {
-      const dllHttpPath = urlJoin(
-        `${pri.projectConfig.useHttps ? 'https' : 'http'}://127.0.0.1:${freePort}`,
-        libraryStaticPath
-      );
-
-      config.plugins.push(
-        new WrapContent(
-          `
-          var dllScript = document.createElement("script");
-          dllScript.src = "${dllHttpPath}";
-          dllScript.onload = runEntry;
-          document.body.appendChild(dllScript);
-
-          function runEntry() {
-        `,
-          `}`
-        )
-      );
-      return config;
     }
   });
 }
@@ -112,21 +88,6 @@ function prepare(realDocsPath: string, docsEntryPath: string) {
   pri.build.pipeSassInclude(paths => {
     paths.push(path.join(pri.projectRootPath, realDocsPath));
     return paths;
-  });
-
-  pri.build.pipeConfig(config => {
-    if (!pri.isDevelopment) {
-      return config;
-    }
-
-    config.plugins.push(
-      new webpack.DllReferencePlugin({
-        context: '.',
-        manifest: require(path.join(dllOutPath, dllMainfestName))
-      })
-    );
-
-    return config;
   });
 
   pri.project.onAnalyseProject(files => {

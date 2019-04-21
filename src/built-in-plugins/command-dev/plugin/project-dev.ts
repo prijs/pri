@@ -2,7 +2,6 @@ import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as portfinder from 'portfinder';
 import * as prettier from 'prettier';
-import * as urlJoin from 'url-join';
 import * as webpack from 'webpack';
 import { pri } from '../../../node';
 import { analyseProject } from '../../../utils/analyse-project';
@@ -15,10 +14,8 @@ import * as projectState from '../../../utils/project-state';
 import { tempJsEntryPath, tempPath } from '../../../utils/structor-config';
 import { runWebpack } from '../../../utils/webpack';
 import { runWebpackDevServer } from '../../../utils/webpack-dev-server';
-import { WrapContent } from '../../../utils/webpack-plugin-wrap-content';
 import dashboardClientServer from './dashboard/server/client-server';
 import dashboardServer from './dashboard/server/index';
-import { bundleDlls, dllMainfestName, dllOutPath, libraryStaticPath } from './dll';
 
 const dashboardBundleFileName = 'main';
 
@@ -40,8 +37,6 @@ async function debugDashboard() {
   const freePort = await portfinder.getPortPromise();
   const dashboardServerPort = await portfinder.getPortPromise({ port: freePort + 1 });
 
-  await bundleDlls();
-
   // Start dashboard server
   dashboardServer({ serverPort: dashboardServerPort, analyseInfo });
 
@@ -59,8 +54,7 @@ async function debugDashboard() {
     outFileName: 'main.[hash].js',
     htmlTemplatePath: path.join(__dirname, '../../../../template-dashboard.ejs'),
     htmlTemplateArgs: {
-      dashboardServerPort,
-      libraryStaticPath
+      dashboardServerPort
     },
     webpackBarOptions: {
       name: 'dashboard'
@@ -84,8 +78,6 @@ async function debugProject() {
     await createEntry();
     return scopeAnalyseInfo;
   });
-
-  await bundleDlls();
 
   // Bundle dashboard if plugins changed or dashboard bundle not exist.
   const dashboardDistDir = path.join(globalState.projectRootPath, tempPath.dir, 'static/dashboard-bundle');
@@ -139,27 +131,6 @@ async function debugProject() {
     },
     webpackBarOptions: {
       name: 'dev'
-    },
-    pipeConfig: async config => {
-      const dllHttpPath = urlJoin(
-        `${globalState.projectConfig.useHttps ? 'https' : 'http'}://127.0.0.1:${freePort}`,
-        libraryStaticPath
-      );
-
-      config.plugins.push(
-        new WrapContent(
-          `
-          var dllScript = document.createElement("script");
-          dllScript.src = "${dllHttpPath}";
-          dllScript.onload = runEntry;
-          document.body.appendChild(dllScript);
-
-          function runEntry() {
-        `,
-          `}`
-        )
-      );
-      return config;
     }
   });
 }
@@ -303,23 +274,6 @@ function debugProjectPrepare(dashboardClientPort: number) {
       );
     }
   });
-
-  if (pri.majorCommand === 'dev') {
-    pri.build.pipeConfig(config => {
-      if (!pri.isDevelopment) {
-        return config;
-      }
-
-      config.plugins.push(
-        new webpack.DllReferencePlugin({
-          context: '.',
-          manifest: require(path.join(dllOutPath, dllMainfestName))
-        })
-      );
-
-      return config;
-    });
-  }
 }
 
 function createDashboardEntry() {

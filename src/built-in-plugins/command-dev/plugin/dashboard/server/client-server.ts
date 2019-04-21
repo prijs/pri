@@ -46,7 +46,6 @@ export default (opts: IOptions) => {
       <script>
         window.serverPort = ${opts.serverPort}
       </script>
-      <script src="/dlls/main.dll.js"></script>
       <script src="/dashboard-bundle/main.${opts.hash}.js"></script>
     </body>
 

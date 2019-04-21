@@ -9,7 +9,6 @@ import {
   IBuildConfigPipe,
   ICommandRegister,
   ICreateEntry,
-  IDevDllList,
   IEnsureProjectFilesQueue,
   ILintFilter,
   ILoaderExcludePipe,
@@ -91,8 +90,6 @@ export class IPluginConfig {
   public devServices: { socketListeners: { name: string; callback: () => void }[] } = { socketListeners: [] };
 
   public lintFilters: ILintFilter[] = [];
-
-  public devDllPipes: IDevDllList[] = [];
 
   // Lock init type
   public initType: IProjectType = null;
