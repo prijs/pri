@@ -6,7 +6,7 @@ export class Props {
   public docs?: { name: string; element: any; text: string }[] = [];
 }
 
-export const Docs = React.memo((props: Props) => {
+const Docs = React.memo((props: Props) => {
   const [docIndex, setDocIndex] = React.useState(0);
 
   function selectDoc(index: number) {
@@ -94,3 +94,5 @@ export const Docs = React.memo((props: Props) => {
     </div>
   );
 });
+
+export default Docs;
