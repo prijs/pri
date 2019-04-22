@@ -182,7 +182,7 @@ export const getWebpackConfig = async (opts: IOptions) => {
         //   ...cssLoaderConfig
         // },
         {
-          test: /.css$/,
+          test: /\.css$/,
           use: extraCssInProd(cssPureLoader),
           ...cssLoaderConfig,
           exclude: [/\.module\.css$/]
@@ -205,7 +205,7 @@ export const getWebpackConfig = async (opts: IOptions) => {
         //   ...scssLoaderConfig
         // },
         {
-          test: /.s[a|c]ss$/,
+          test: /\.s[a|c]ss$/,
           use: extraCssInProd(cssPureLoader, sassLoader),
           include: plugin.buildConfigSassLoaderIncludePipes.reduce(
             (options, fn) => fn(options),
@@ -237,7 +237,7 @@ export const getWebpackConfig = async (opts: IOptions) => {
         //   ...lessLoaderConfig
         // },
         {
-          test: /.less$/,
+          test: /\.less$/,
           use: extraCssInProd(cssPureLoader, lessLoader),
           include: plugin.buildConfigLessLoaderIncludePipes.reduce(
             (options, fn) => fn(options),
