@@ -109,9 +109,11 @@ function ensureJestTsconfig() {
 function ensureEslint() {
   pri.project.addProjectFiles({
     fileName: '.eslintrc',
-    pipeContent: async () => {
+    pipeContent: async prev => {
+      const prevJson = safeJsonParse(prev);
       const eslintConfig = await fs.readFile(path.join(__dirname, '../../../../.eslintrc'));
-      return eslintConfig.toString();
+
+      return `${JSON.stringify(_.merge({}, prevJson, eslintConfig), null, 2)}\n`;
     }
   });
 }
