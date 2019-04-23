@@ -14,21 +14,21 @@ if (semver.lte(process.version, '8.0.0')) {
 }
 
 // Check git repo
-let isGitRepo = false;
-try {
-  if (
-    execSync(`git rev-parse --is-inside-work-tree`)
-      .toString()
-      .trim() === 'true'
-  ) {
-    isGitRepo = true;
-  }
-} catch (error) {
-  isGitRepo = false;
-}
-if (!isGitRepo) {
-  logFatal(`Not a git repo, please run \`git init\` first.`);
-}
+// let isGitRepo = false;
+// try {
+//   if (
+//     execSync(`git rev-parse --is-inside-work-tree`)
+//       .toString()
+//       .trim() === 'true'
+//   ) {
+//     isGitRepo = true;
+//   }
+// } catch (error) {
+//   isGitRepo = false;
+// }
+// if (!isGitRepo) {
+//   logFatal(`Not a git repo, please run \`git init\` first.`);
+// }
 
 export async function createCli(opts?: { pluginIncludeRoots: string[] }) {
   await loadPlugins(opts && opts.pluginIncludeRoots);
