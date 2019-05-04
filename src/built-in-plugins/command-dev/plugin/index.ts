@@ -11,7 +11,7 @@ pri.commands.registerCommand({
   },
   description: text.commander.dev.description,
   action: async (options: any) => {
-    switch (pri.projectPackageJson.pri.type) {
+    switch (pri.sourceConfig.type) {
       case 'project': {
         const projectDevModule = await import('./project-dev');
         await projectDevModule.projectDev(options);

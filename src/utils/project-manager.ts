@@ -8,7 +8,7 @@ import { layoutPath, notFoundPath, pagesPath } from './structor-config';
 
 export async function addPage(options: { path: string }) {
   await analyseProject();
-  const fileFullPath = `${path.join(globalState.projectRootPath, pagesPath.dir, options.path, 'index')}.tsx`;
+  const fileFullPath = `${path.join(globalState.sourceRoot, pagesPath.dir, options.path, 'index')}.tsx`;
 
   if (fs.existsSync(fileFullPath)) {
     throw Error(`${options.path} already exist!`);
@@ -34,7 +34,7 @@ export async function addPage(options: { path: string }) {
 }
 
 export async function createLayout() {
-  const pathFullPath = path.join(globalState.projectRootPath, path.format(layoutPath));
+  const pathFullPath = path.join(globalState.sourceRoot, path.format(layoutPath));
 
   if (fs.existsSync(pathFullPath)) {
     throw Error(`layout already exist!`);
@@ -60,7 +60,7 @@ export async function createLayout() {
 }
 
 export async function create404() {
-  const pathFullPath = path.join(globalState.projectRootPath, path.format(notFoundPath));
+  const pathFullPath = path.join(globalState.sourceRoot, path.format(notFoundPath));
 
   if (fs.existsSync(pathFullPath)) {
     throw Error(`404 page already exist!`);

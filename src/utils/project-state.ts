@@ -1,7 +1,7 @@
 import * as fs from 'fs-extra';
 import * as path from 'path';
-import { globalState } from './global-state';
 import { tempPath } from './structor-config';
+import { globalState } from './global-state';
 
 const storeFilePath = path.join(globalState.projectRootPath, tempPath.dir, 'state.json');
 

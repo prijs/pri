@@ -1,7 +1,5 @@
-import * as _ from 'lodash';
 import * as path from 'path';
 import { pri } from '../../../node';
-import { safeJsonParse } from '../../../utils/functional';
 import { getPackages, packagesPath } from '../../../utils/packages';
 
 export const initPackages = async () => {
@@ -13,21 +11,21 @@ export const initPackages = async () => {
     return relativePath.startsWith(packagesPath);
   });
 
-  pri.project.addProjectFiles({
-    fileName: 'tsconfig.json',
-    pipeContent: async prev => {
-      const packagePaths = packages.reduce((obj: any, next) => {
-        obj[next.name] = [next.path];
-        return obj;
-      }, {});
+  // pri.project.addProjectFiles({
+  //   fileName: 'tsconfig.json',
+  //   pipeContent: async prev => {
+  //     const packagePaths = packages.reduce((obj: any, next) => {
+  //       obj[next.name] = [next.path];
+  //       return obj;
+  //     }, {});
 
-      const jsonData = safeJsonParse(prev);
+  //     const jsonData = safeJsonParse(prev);
 
-      _.set(jsonData, 'compilerOptions.paths', { ..._.get(jsonData, 'compilerOptions.paths'), ...packagePaths });
+  //     _.set(jsonData, 'compilerOptions.paths', { ..._.get(jsonData, 'compilerOptions.paths'), ...packagePaths });
 
-      return `${JSON.stringify(jsonData, null, 2)}\n`;
-    }
-  });
+  //     return `${JSON.stringify(jsonData, null, 2)}\n`;
+  //   }
+  // });
 
   pri.build.pipeConfig(async config => {
     const packagePaths = packages.reduce((obj: any, next) => {

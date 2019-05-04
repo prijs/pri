@@ -1,5 +1,5 @@
 import { plugin } from '../utils/plugins';
-import { ICommandRegister } from '../utils/plugins-interface';
+import { ICommandRegister } from '../utils/define';
 
 export const registerCommand = (opts: ICommandRegister) => {
   plugin.commands.push(opts);

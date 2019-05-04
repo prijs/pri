@@ -2,8 +2,7 @@ import * as fs from 'fs-extra';
 import * as _ from 'lodash';
 import * as path from 'path';
 import * as yargs from 'yargs';
-import { globalState } from './global-state';
-import { logInfo, logWarn } from './log';
+import { logInfo, logWarn, logFatal } from './log';
 import { plugin } from './plugins';
 import { priEvent } from './pri-events';
 
@@ -17,22 +16,19 @@ export const ensureFiles = async () => {
   const ensureProjectFilesQueueGroupByPath = _.groupBy(plugin.ensureProjectFilesQueue, 'fileName');
 
   await Promise.all(
-    Object.keys(ensureProjectFilesQueueGroupByPath).map(async fileRelativePath => {
-      const ensureProjectFilesQueue = ensureProjectFilesQueueGroupByPath[fileRelativePath];
+    Object.keys(ensureProjectFilesQueueGroupByPath).map(async filePath => {
+      const ensureProjectFilesQueue = ensureProjectFilesQueueGroupByPath[filePath];
 
-      await ensureFile(
-        fileRelativePath,
-        ensureProjectFilesQueue.map(ensureProjectFiles => ensureProjectFiles.pipeContent)
-      );
+      await ensureFile(filePath, ensureProjectFilesQueue.map(ensureProjectFiles => ensureProjectFiles.pipeContent));
     })
   );
 };
 
-export async function ensureFile(
-  fileRelativePath: string,
-  pipeContents: ((prev: string) => string | Promise<string>)[]
-) {
-  const filePath = path.join(globalState.projectRootPath, fileRelativePath);
+export async function ensureFile(filePath: string, pipeContents: ((prev: string) => string | Promise<string>)[]) {
+  if (!path.isAbsolute(filePath)) {
+    logFatal(`Plugin error: ensureProjectFiles path need be absolute path, not: ${filePath}`);
+  }
+
   const fileExist = fs.existsSync(filePath);
 
   let exitFileContent = '';
@@ -51,10 +47,10 @@ export async function ensureFile(
     if (exitFileContent === nextContent) {
       // skipped not log
     } else {
-      logWarn(`${fileRelativePath} exist, but the content is not correct, has been recovered.`);
+      logWarn(`${filePath} exist, but the content is not correct, has been recovered.`);
     }
   } else {
-    logInfo(`${fileRelativePath} not exist, created.`);
+    logInfo(`${filePath} not exist, created.`);
   }
 
   fs.outputFileSync(filePath, nextContent);

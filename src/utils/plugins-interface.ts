@@ -3,25 +3,6 @@ import { Configuration } from 'webpack';
 import { set } from '../node/pipe';
 import { Entry } from './create-entry';
 
-export interface ICommandRegister<
-  T = {
-    [optionName: string]: {
-      alias?: string;
-      description?: string;
-      required?: boolean;
-    };
-  }
-> {
-  name: string[];
-  // TODO:
-  action?: (options?: any) => void;
-  beforeAction?: any;
-  afterAction?: any;
-  alias?: string | string[];
-  description?: string;
-  options?: T;
-}
-
 export type IAnalyseProject = (
   projectFilesParsedPaths?: (path.ParsedPath & { isDir: boolean })[],
   setPipe?: typeof set

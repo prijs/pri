@@ -2,7 +2,7 @@ import * as HtmlWebpackPlugin from 'html-webpack-plugin';
 import * as MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import * as path from 'path';
 import * as webpack from 'webpack';
-import { globalState } from './global-state';
+import { globalState, transferToAllAbsolutePaths } from './global-state';
 import { plugin } from './plugins';
 import { srcPath, tempPath } from './structor-config';
 import { babelOptions } from './babel-options';
@@ -29,8 +29,8 @@ export type IOptions<T = {}> = {
 } & T;
 
 const defaultSourcePathToBeResolve = [
-  path.join(globalState.projectRootPath, srcPath.dir),
-  path.join(globalState.projectRootPath, tempPath.dir)
+  ...transferToAllAbsolutePaths(srcPath.dir),
+  ...transferToAllAbsolutePaths(tempPath.dir)
 ];
 
 const selfAndProjectNodeModules = [
@@ -272,12 +272,21 @@ export const getWebpackConfig = async (opts: IOptions) => {
     resolve: {
       modules: selfAndProjectNodeModules,
       alias: {
-        ...(globalState.projectPackageJson.pri.type === 'project' && {
-          '@': path.join(globalState.projectRootPath, '/src')
+        // Src alias to ./src
+        ...(globalState.sourceConfig.type === 'project' && {
+          src: path.join(globalState.projectRootPath, '/src')
         }),
+        // For react hot loader.
         ...(globalState.isDevelopment && {
           'react-dom': '@hot-loader/react-dom'
-        })
+        }),
+        // Packages alias names
+        ...globalState.packages.reduce((obj, eachPackage) => {
+          return {
+            ...obj,
+            [eachPackage.packageJson.name]: path.join(eachPackage.rootPath, 'src')
+          };
+        }, {})
       },
       extensions: [
         '.js',

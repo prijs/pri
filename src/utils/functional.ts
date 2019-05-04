@@ -1,3 +1,6 @@
+import * as path from 'path';
+import { StructorConfig } from './define';
+
 export const pipeEvent = (func: any) => {
   return (event: any) => {
     return func(event.target.value, event);
@@ -35,4 +38,14 @@ export function safeJsonParse(text: string) {
   } catch {
     return {};
   }
+}
+
+export function matchStructor(file: path.ParsedPath, target: StructorConfig, prefixPath: string) {
+  const fileAbsolutePath = path.format(file);
+  if (!target.name && !target.ext) {
+    // target is a dir
+    return fileAbsolutePath.startsWith(path.join(prefixPath, target.dir));
+  }
+  // target is a file
+  return fileAbsolutePath === path.join(prefixPath, path.format(target));
 }

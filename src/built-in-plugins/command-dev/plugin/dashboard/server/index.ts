@@ -31,7 +31,7 @@ export default (opts: IOptions) => {
 
   app.use(KoaCompress({ flush: zlib.Z_SYNC_FLUSH }));
 
-  app.use(KoaMount('/static', KoaStatic(path.join(globalState.projectRootPath, tempPath.dir), { gzip: true })));
+  app.use(KoaMount('/static', KoaStatic(globalState.projectRootPath, tempPath.dir, { gzip: true })));
 
   const server = globalState.projectConfig.useHttps
     ? https.createServer(generateCertificate(), app.callback())
@@ -76,7 +76,7 @@ export default (opts: IOptions) => {
 
   // Watch project file's change
   chokidar
-    .watch(path.join(globalState.projectRootPath, '/**'), { ignored: /(^|[/\\])\../, ignoreInitial: true })
+    .watch(path.join(globalState.sourceRoot, '/**'), { ignored: /(^|[/\\])\../, ignoreInitial: true })
     .on('add', async () => {
       await fresh();
     })
@@ -88,7 +88,7 @@ export default (opts: IOptions) => {
     })
     .on('change', async filePath => {
       // fresh when config change
-      const relativePath = path.relative(globalState.projectRootPath, filePath);
+      const relativePath = path.relative(globalState.sourceRoot, filePath);
       const pathInfo = path.parse(filePath);
 
       try {

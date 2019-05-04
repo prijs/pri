@@ -7,7 +7,6 @@ import {
   IAfterProdBuild,
   IAnalyseProject,
   IBuildConfigPipe,
-  ICommandRegister,
   ICreateEntry,
   IEnsureProjectFilesQueue,
   ILintFilter,
@@ -43,6 +42,7 @@ import * as pluginProjectAnalysePages from '../built-in-plugins/project-analyse-
 import * as pluginServiceWorker from '../built-in-plugins/service-worker';
 import * as whiteFiles from '../built-in-plugins/white-files';
 import { IProjectType } from './global-state-class';
+import { ICommandRegister } from './define';
 
 export const loadedPlugins = new Set<IPluginModule>();
 
@@ -156,7 +156,7 @@ export const loadPlugins = async (pluginIncludeRoots: string[] = []) => {
 function getPriPlugins(pluginRootPath: string, packageJsonPaths: string[]) {
   // Do not load plugins when type is 'plugin'.
   // Load plugin even when type is undefined.
-  if (globalState.projectPackageJson.pri.type === 'plugin') {
+  if (globalState.sourceConfig.type === 'plugin') {
     return;
   }
 

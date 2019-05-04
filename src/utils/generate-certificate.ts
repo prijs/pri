@@ -5,8 +5,7 @@ import { globalState } from './global-state';
 import { tempPath } from './structor-config';
 
 export function generateCertificate() {
-  const cacheDir = path.join(globalState.projectRootPath, `${tempPath.dir}/ssl`);
-
+  const cacheDir = path.join(`${path.join(globalState.projectRootPath, tempPath.dir)}/ssl`);
   const privateKeyPath = path.join(cacheDir, 'private.pem');
   const certPath = path.join(cacheDir, 'primary.crt');
   const cachedKey = fs.existsSync(privateKeyPath) && fs.readFileSync(privateKeyPath);

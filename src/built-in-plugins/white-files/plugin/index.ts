@@ -13,6 +13,7 @@ import {
   utilPath
 } from '../../../utils/structor-config';
 import { addWhiteFilesByProjectType } from '../../../utils/white-file-helper';
+import { transferToAllAbsolutePaths } from '../../../utils/global-state';
 
 const whiteList = [
   CONFIG_FILE,
@@ -23,48 +24,29 @@ const whiteList = [
   ...(pri.projectConfig.packageLock ? ['package-lock.json'] : [])
 ];
 
-const allIgnores = _.union(gitIgnores, npmIgnores);
+const allIgnores = _.union(gitIgnores, npmIgnores).concat(whiteList);
 
+const allAbsoluteIgnores = _.flatten(allIgnores.map(fileName => transferToAllAbsolutePaths(fileName)));
+
+// Add ignore file/dir to whiteRules
 pri.project.whiteFileRules.add(file => {
-  return whiteList
-    .concat(allIgnores)
-    .some(whiteName => path.format(file) === path.join(pri.projectRootPath, whiteName));
+  return allAbsoluteIgnores.some(absoluteFilePath => path.format(file) === absoluteFilePath);
 });
 
 // [utils]/
-pri.project.whiteFileRules.add(file => {
-  const relativePath = path.relative(pri.projectRootPath, path.format(file));
-  return relativePath.startsWith(utilPath.dir);
-});
-
-// [pages]/*
-pri.project.whiteFileRules.add(file => {
-  const relativePath = path.relative(pri.projectRootPath, path.format(file));
-  return relativePath.startsWith(pagesPath.dir);
-});
-
+// [pages]/
 // [docs]/*
-pri.project.whiteFileRules.add(file => {
-  const relativePath = path.relative(pri.projectRootPath, path.format(file));
-  return relativePath.startsWith(docsPath.dir);
-});
-
 // [components]/*
-pri.project.whiteFileRules.add(file => {
-  const relativePath = path.relative(pri.projectRootPath, path.format(file));
-  return relativePath.startsWith(componentPath.dir);
-});
-
 // [requests]/*
-pri.project.whiteFileRules.add(file => {
-  const relativePath = path.relative(pri.projectRootPath, path.format(file));
-  return relativePath.startsWith(requestsPath.dir);
-});
-
 // [layouts]/*
 pri.project.whiteFileRules.add(file => {
-  const relativePath = path.relative(pri.projectRootPath, path.format(file));
-  return relativePath.startsWith(`src${path.sep}layouts`);
+  return transferToAllAbsolutePaths(utilPath.dir)
+    .concat(transferToAllAbsolutePaths(pagesPath.dir))
+    .concat(transferToAllAbsolutePaths(docsPath.dir))
+    .concat(transferToAllAbsolutePaths(componentPath.dir))
+    .concat(transferToAllAbsolutePaths(requestsPath.dir))
+    .concat(transferToAllAbsolutePaths(`src${path.sep}layouts`))
+    .some(absoluteFilePath => path.format(file).startsWith(absoluteFilePath));
 });
 
 addWhiteFilesByProjectType();

@@ -2,6 +2,7 @@ import * as normalizePath from 'normalize-path';
 import * as path from 'path';
 import { pri } from '../../../node';
 import { notFoundPath, tempPath } from '../../../utils/structor-config';
+import { transferToAllAbsolutePaths } from '../../../utils/global-state';
 
 interface IResult {
   projectAnalyseNotFound: {
@@ -9,14 +10,15 @@ interface IResult {
   };
 }
 
-pri.project.whiteFileRules.add(file => {
-  const relativePath = path.relative(pri.projectRootPath, file.dir);
-  return relativePath === `src${path.sep}pages` && file.name === '404' && file.ext === '.tsx';
-});
+pri.project.whiteFileRules.add(file =>
+  transferToAllAbsolutePaths(path.format(notFoundPath)).some(
+    notFoundAbsolutePath => path.format(file) === notFoundAbsolutePath
+  )
+);
 
 pri.project.onAnalyseProject(files => {
   const notFoundFiles = files.filter(file => {
-    if (path.format(file) !== path.join(pri.projectRootPath, path.format(notFoundPath))) {
+    if (path.format(file) !== path.join(pri.sourceRoot, path.format(notFoundPath))) {
       return false;
     }
 
@@ -37,7 +39,10 @@ pri.project.onCreateEntry((analyseInfo: IResult, entry) => {
     return `
         ${header}
         import NotFoundComponent from "${normalizePath(
-          path.relative(tempPath.dir, path.join(pri.projectRootPath, path.join(notFoundPath.dir, notFoundPath.name)))
+          path.relative(
+            path.join(pri.projectRootPath, tempPath.dir),
+            path.join(pri.sourceRoot, path.join(notFoundPath.dir, notFoundPath.name))
+          )
         )}"
       `;
   });

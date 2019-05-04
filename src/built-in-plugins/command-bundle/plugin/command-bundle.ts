@@ -6,7 +6,7 @@ import { runWebpack } from '../../../utils/webpack';
 import { IOpts } from './interface';
 
 export const commandBundle = async (opts: IOpts = {}) => {
-  if (pri.projectPackageJson.pri.type !== 'component') {
+  if (pri.sourceConfig.type !== 'component') {
     logFatal(`Only component support 'npm run bundle', try 'npm start'!`);
   }
 
@@ -21,7 +21,7 @@ export const commandBundle = async (opts: IOpts = {}) => {
   await runWebpack({
     mode: 'production',
     outFileName: pri.projectConfig.bundleFileName,
-    entryPath: path.join(pri.projectRootPath, path.format(componentEntry)),
+    entryPath: path.join(pri.sourceRoot, path.format(componentEntry)),
     pipeConfig: async config => {
       config.output.libraryTarget = 'umd';
 

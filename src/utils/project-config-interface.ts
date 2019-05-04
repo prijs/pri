@@ -1,9 +1,16 @@
+import { IProjectType } from './global-state-class';
+
 interface IRoute {
   path: string;
   component: string;
 }
 
 export class ProjectConfig {
+  /**
+   * Project type
+   */
+  public type?: IProjectType;
+
   /**
    * Title for html <title>.
    */
@@ -96,11 +103,6 @@ export class ProjectConfig {
    * Enable hash router.
    */
   public useHashRouter?: boolean = false;
-
-  /**
-   * Specify source file root path, for example `sourceRoot='app/client'`, will lead to `app/client/src` and `app/client/tests`.
-   */
-  public sourceRoot?: string = './';
 
   /**
    * Suggestion to open!

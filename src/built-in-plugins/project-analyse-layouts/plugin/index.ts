@@ -17,9 +17,7 @@ pri.project.onAnalyseProject(files => {
     projectAnalyseLayout: {
       hasLayout: files
         .filter(file => {
-          const relativePath = path.relative(pri.projectRootPath, path.join(file.dir, file.name));
-
-          if (!relativePath.startsWith(layoutPath.dir)) {
+          if (!path.format(file).startsWith(path.join(pri.sourceRoot, layoutPath.dir))) {
             return false;
           }
 
@@ -35,7 +33,10 @@ pri.project.onCreateEntry((analyseInfo: IResult, entry) => {
     return;
   }
 
-  const layoutEntryRelativePath = path.relative(tempJsEntryPath.dir, path.join(layoutPath.dir, layoutPath.name));
+  const layoutEntryRelativePath = path.relative(
+    path.join(pri.projectRootPath, tempJsEntryPath.dir),
+    path.join(pri.sourceRoot, layoutPath.dir, layoutPath.name)
+  );
 
   entry.pipeAppHeader(async header => {
     return `

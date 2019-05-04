@@ -79,7 +79,7 @@ async function debugProject() {
   });
 
   // Bundle dashboard if plugins changed or dashboard bundle not exist.
-  const dashboardDistDir = path.join(globalState.projectRootPath, tempPath.dir, 'static/dashboard-bundle');
+  const dashboardDistDir = path.join(pri.projectRootPath, tempPath.dir, 'static/dashboard-bundle');
   if (!fs.existsSync(path.join(dashboardDistDir, `${dashboardBundleFileName}.js`))) {
     const dashboardEntryFilePath = createDashboardEntry();
 
@@ -112,7 +112,7 @@ async function debugProject() {
   dashboardClientServer({
     serverPort: dashboardServerPort,
     clientPort: dashboardClientPort,
-    staticRootPath: path.join(globalState.projectRootPath, tempPath.dir, 'static'),
+    staticRootPath: path.join(pri.projectRootPath, tempPath.dir, 'static'),
     hash: projectState.get('dashboardHash')
   });
 
@@ -277,7 +277,7 @@ function debugProjectPrepare(dashboardClientPort: number) {
 
 function createDashboardEntry() {
   const dashboardEntryMainPath = path.join(__dirname, 'dashboard/client/index');
-  const dashboardEntryFilePath = path.join(globalState.projectRootPath, tempPath.dir, 'dashboard', 'main.tsx');
+  const dashboardEntryFilePath = path.join(pri.projectRootPath, tempPath.dir, 'dashboard/main.tsx');
 
   const webUiEntries: string[] = [];
 

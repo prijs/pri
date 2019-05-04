@@ -3,8 +3,13 @@ import { pri } from '../../../node';
 import { testsPath } from '../../../utils/structor-config';
 
 pri.project.whiteFileRules.add(file => {
-  const relativePath = path.relative(pri.projectRootPath, file.dir);
-  return relativePath.startsWith(testsPath.dir);
+  return path.format(file).startsWith(path.join(pri.projectRootPath, testsPath.dir));
+});
+
+pri.packages.forEach(eachPackage => {
+  pri.project.whiteFileRules.add(file => {
+    return path.format(file).startsWith(path.join(eachPackage.rootPath, testsPath.dir));
+  });
 });
 
 pri.commands.registerCommand({

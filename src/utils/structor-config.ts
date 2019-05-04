@@ -7,22 +7,18 @@ import { globalState } from './global-state';
  * Top level definition start
  */
 
-export const srcPath = {
-  dir: path.join(globalState.projectConfig.sourceRoot, 'src')
-};
+export const srcPath = { dir: 'src' };
 
-export const testsPath = {
-  dir: path.join(globalState.projectConfig.sourceRoot, 'tests')
-};
+export const testsPath = { dir: 'tests' };
 
-export const docsPath = { dir: path.join(globalState.projectConfig.sourceRoot, 'docs') };
+export const docsPath = { dir: 'docs' };
 
-export const tempPath = {
-  dir: '.temp'
-};
+export const tempPath = { dir: '.temp' };
+
+export const assetsPath = { dir: 'assets' };
 
 /**
- * Top level definition end
+ * Sub level definition end
  */
 
 export const tempTypesPath = {
@@ -63,12 +59,6 @@ export const componentPath = {
   dir: path.join(srcPath.dir, 'components')
 };
 
-export const helperPath = {
-  dir: utilPath.dir,
-  name: 'helper',
-  ext: '.tsx'
-};
-
 export const declarePath = {
   dir: path.join(tempPath.dir, 'declare')
 };
@@ -79,24 +69,10 @@ export const layoutPath = {
   ext: '.tsx'
 };
 
-export const storesPath = {
-  dir: path.join(srcPath.dir, `stores`)
-};
-
-// Try to find project's entry's ext
-const projectEntryExt = path.join(globalState.projectRootPath, path.join(srcPath.dir), 'index');
-const componentEntryExt = fs.existsSync(`${projectEntryExt}.ts`) ? '.ts' : '.tsx';
-
 export const componentEntry = {
   dir: path.join(srcPath.dir),
   name: 'index',
-  ext: componentEntryExt
-};
-
-export const cliEntry = {
-  dir: path.join(srcPath.dir),
-  name: 'index',
-  ext: '.ts'
+  ext: getComponentEntryExt()
 };
 
 export const pluginEntry = {
@@ -113,7 +89,7 @@ const ignores = [
   '.cache',
   '.vscode',
   '.idea',
-  tempPath.dir,
+  '.temp',
   '.DS_Store',
   'coverage',
   '.nyc_output',
@@ -125,7 +101,7 @@ const ignores = [
 export const gitIgnores = _.union([...ignores, globalState.projectConfig.distDir, 'declaration']);
 
 // npm ignores extends git ingores.
-export const npmIgnores = _.union([...ignores, testsPath.dir, 'packages']);
+export const npmIgnores = _.union([...ignores, 'tests', 'packages']);
 
 export const ignoreScanFiles = _.union([
   ...ignores,
@@ -149,3 +125,8 @@ export const ignoreScanFiles = _.union([
   'history.md',
   'HISTORY.md'
 ]);
+
+function getComponentEntryExt() {
+  const projectEntryExt = path.join(globalState.sourceRoot, path.join(srcPath.dir), 'index');
+  return fs.existsSync(`${projectEntryExt}.ts`) ? '.ts' : '.tsx';
+}

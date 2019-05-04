@@ -3,14 +3,7 @@ import * as fs from 'fs-extra';
 import * as path from 'path';
 import { exec } from './exec';
 import { logFatal } from './log';
-
-export interface IPackageJson {
-  main: string;
-  name: string;
-  version: string;
-  types?: string;
-  typings?: string;
-}
+import { IPackageJson } from './define';
 
 function getRandomFolderPath() {
   const ramdomId = crypto.randomBytes(20).toString('hex');

@@ -7,7 +7,7 @@ import { pri } from '../../../node';
 import { analyseProject } from '../../../utils/analyse-project';
 import { spinner } from '../../../utils/log';
 import { prettierConfig } from '../../../utils/prettier-config';
-import { tempPath } from '../../../utils/structor-config';
+import { tempPath, docsPath } from '../../../utils/structor-config';
 import { runWebpackDevServer } from '../../../utils/webpack-dev-server';
 
 interface IResult {
@@ -18,10 +18,10 @@ interface IResult {
   };
 }
 
-export async function devDocs(realDocsPath: string) {
+export async function devDocs() {
   const docsEntryPath = path.join(pri.projectRootPath, tempPath.dir, 'docs-entry.tsx');
 
-  prepare(realDocsPath, docsEntryPath);
+  prepare(docsEntryPath);
 
   await pri.project.lint(false);
   await pri.project.ensureProjectFiles();
@@ -33,7 +33,7 @@ export async function devDocs(realDocsPath: string) {
   });
 
   chokidar
-    .watch(path.join(pri.projectRootPath, realDocsPath, '/**'), {
+    .watch(path.join(pri.sourceRoot, docsPath.dir, '/**'), {
       ignored: /(^|[/\\])\../,
       ignoreInitial: true
     })
@@ -73,17 +73,17 @@ export async function devDocs(realDocsPath: string) {
   });
 }
 
-function prepare(realDocsPath: string, docsEntryPath: string) {
+function prepare(docsEntryPath: string) {
   pri.build.pipeJsInclude(paths => {
-    paths.push(path.join(pri.projectRootPath, realDocsPath));
+    paths.push(path.join(pri.sourceRoot, docsPath.dir));
     return paths;
   });
   pri.build.pipeLessInclude(paths => {
-    paths.push(path.join(pri.projectRootPath, realDocsPath));
+    paths.push(path.join(pri.sourceRoot, docsPath.dir));
     return paths;
   });
   pri.build.pipeSassInclude(paths => {
-    paths.push(path.join(pri.projectRootPath, realDocsPath));
+    paths.push(path.join(pri.sourceRoot, docsPath.dir));
     return paths;
   });
 
@@ -92,9 +92,7 @@ function prepare(realDocsPath: string, docsEntryPath: string) {
       projectAnalyseDocs: {
         docs: files
           .filter(file => {
-            const relativePath = path.relative(pri.projectRootPath, path.join(file.dir, file.name));
-
-            if (!relativePath.startsWith(realDocsPath)) {
+            if (!path.format(file).startsWith(path.join(pri.sourceRoot, docsPath.dir))) {
               return false;
             }
 

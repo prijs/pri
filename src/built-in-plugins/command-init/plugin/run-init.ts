@@ -15,7 +15,7 @@ export const runInit = async () => {
     logFatal(`No package.json! please run "npm init" first.`);
   }
 
-  if (!globalState.projectPackageJson.pri.type) {
+  if (!globalState.sourceConfig.type) {
     let userSelectType: IProjectType = null;
 
     if (!plugin.initType) {
@@ -46,13 +46,13 @@ export const runInit = async () => {
 
     switch (userSelectType) {
       case 'project':
-        globalState.projectPackageJson.pri.type = 'project';
+        globalState.sourceConfig.type = 'project';
         break;
       case 'component':
-        globalState.projectPackageJson.pri.type = 'component';
+        globalState.sourceConfig.type = 'component';
         break;
       case 'plugin':
-        globalState.projectPackageJson.pri.type = 'plugin';
+        globalState.sourceConfig.type = 'plugin';
         break;
       default:
     }
@@ -64,9 +64,9 @@ export const runInit = async () => {
   await pri.project.ensureProjectFiles();
   await pri.project.checkProjectFiles();
 
-  logText(`\n Success init your ${globalState.projectPackageJson.pri.type}, you can run serval commands:\n`);
+  logText(`\n Success init your ${globalState.sourceConfig.type}, you can run serval commands:\n`);
 
-  switch (globalState.projectPackageJson.pri.type) {
+  switch (globalState.sourceConfig.type) {
     case 'project':
     case 'plugin':
       logText(colors.blue('  npm start'));
@@ -82,7 +82,7 @@ export const runInit = async () => {
   logText(colors.blue('  npm run build'));
   logText(`    ${text.commander.build.description}\n`);
 
-  switch (globalState.projectPackageJson.pri.type) {
+  switch (globalState.sourceConfig.type) {
     case 'project':
       logText(colors.blue('  npm run preview'));
       logText(`    ${text.commander.dev.description}\n`);

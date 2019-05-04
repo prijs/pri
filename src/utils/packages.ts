@@ -3,8 +3,9 @@ import * as _ from 'lodash';
 import * as path from 'path';
 import * as walk from 'walk';
 import { exec } from './exec';
-import { getPackageJson, IPackageJson } from './file-operate';
+import { getPackageJson } from './file-operate';
 import { globalState } from './global-state';
+import { IPackageJson } from './define';
 
 export const packagesPath = `packages`;
 

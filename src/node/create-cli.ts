@@ -1,17 +1,9 @@
 import * as updateNotifier from 'update-notifier';
-import { execSync } from 'child_process';
 import * as yargs from 'yargs';
-
 import * as semver from 'semver';
-import { globalState } from '../utils/global-state';
-import { transferCommandsArrayToMap, TransferedRegisterCommand } from '../utils/commands';
-import { logFatal } from '../utils/log';
-import { loadPlugins, plugin } from '../utils/plugins';
 
-// Check node version
-if (semver.lte(process.version, '8.0.0')) {
-  logFatal(`Nodejs version should be greater than 8, current is ${process.version}`);
-}
+import { initGlobalState } from '../utils/global-state';
+import { TransferedRegisterCommand } from '../utils/define';
 
 // Check git repo
 // let isGitRepo = false;
@@ -31,6 +23,14 @@ if (semver.lte(process.version, '8.0.0')) {
 // }
 
 export async function createCli(opts?: { pluginIncludeRoots: string[] }) {
+  await checkEnvironment();
+
+  await initGlobalState();
+
+  const { globalState } = await import('../utils/global-state');
+  const { transferCommandsArrayToMap } = await import('../utils/commands');
+  const { loadPlugins, plugin } = await import('../utils/plugins');
+
   await loadPlugins(opts && opts.pluginIncludeRoots);
 
   const commandRegisterMap = transferCommandsArrayToMap(plugin.commands);
@@ -43,7 +43,7 @@ export async function createCli(opts?: { pluginIncludeRoots: string[] }) {
   /**
    * Update notify.
    */
-  updateNotifier({ pkg: globalState.priPackageJson }).notify();
+  updateNotifier({ pkg: globalState.priPackageJson as updateNotifier.Package }).notify();
 }
 
 function registerYargs(leafYargs: typeof yargs, transferedRegisterCommands: TransferedRegisterCommand[]) {
@@ -83,4 +83,13 @@ function registerYargs(leafYargs: typeof yargs, transferedRegisterCommands: Tran
       }
     });
   });
+}
+
+async function checkEnvironment() {
+  const { logFatal } = await import('../utils/log');
+
+  // Check node version
+  if (semver.lte(process.version, '8.0.0')) {
+    logFatal(`Nodejs version should be greater than 8, current is ${process.version}`);
+  }
 }

@@ -1,20 +1,16 @@
 import * as fs from 'fs';
-import * as _ from 'lodash';
 import * as path from 'path';
-import * as pkg from '../../../../package.json';
 import { pagesPath, pri, testsPath } from '../../../node';
 import { PRI_PACKAGE_NAME } from '../../../utils/constants';
-import { safeJsonParse } from '../../../utils/functional';
 import { prettierConfig } from '../../../utils/prettier-config';
 
 export function ensureProjectFiles() {
   ensureProjectEntry();
   ensureTest();
-  ensurePackageJson();
 }
 
 function ensureProjectEntry() {
-  const homePagePath = path.join(pagesPath.dir, 'index.tsx');
+  const homePagePath = path.join(pri.sourceRoot, pagesPath.dir, 'index.tsx');
   const homePageAbsolutePath = path.join(pri.projectRootPath, homePagePath);
 
   if (!fs.existsSync(homePageAbsolutePath)) {
@@ -49,7 +45,7 @@ function ensureProjectEntry() {
 
 export function ensureTest() {
   pri.project.addProjectFiles({
-    fileName: path.join(testsPath.dir, 'index.ts'),
+    fileName: path.join(pri.sourceRoot, testsPath.dir, 'index.ts'),
     pipeContent: async (prev: string) => {
       if (prev) {
         return prev;
@@ -64,22 +60,6 @@ export function ensureTest() {
         `,
         { ...prettierConfig, parser: 'typescript' }
       );
-    }
-  });
-}
-
-export function ensurePackageJson() {
-  pri.project.addProjectFiles({
-    fileName: 'package.json',
-    pipeContent: prev => {
-      const prevJson = safeJsonParse(prev);
-      const projectPriVersion =
-        _.get(prevJson, 'devDependencies.pri') || _.get(prevJson, 'dependencies.pri') || pkg.version;
-
-      _.unset(prevJson, 'devDependencies.pri');
-      _.set(prevJson, `dependencies.${PRI_PACKAGE_NAME}`, projectPriVersion);
-
-      return `${JSON.stringify(prevJson, null, 2)}\n`;
     }
   });
 }

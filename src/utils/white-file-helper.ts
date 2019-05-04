@@ -1,16 +1,21 @@
 import * as path from 'path';
 import { pri } from '../node';
 import { globalState } from './global-state';
-import { IWhiteFile } from './plugins-interface';
 import { srcPath } from './structor-config';
 
 // For component/plugin, add `src` to white list.
 export function addWhiteFilesByProjectType() {
-  if (globalState.projectPackageJson.pri.type === 'component' || globalState.projectPackageJson.pri.type === 'plugin') {
-    const ignoreSrc: IWhiteFile = projectFiles => {
-      const relativePath = path.relative(globalState.projectRootPath, projectFiles.dir);
-      return relativePath.startsWith(srcPath.dir);
-    };
-    pri.project.whiteFileRules.add(ignoreSrc);
+  if (globalState.sourceConfig.type === 'component' || globalState.sourceConfig.type === 'plugin') {
+    pri.project.whiteFileRules.add(file => {
+      return path.format(file).startsWith(path.join(globalState.projectRootPath, srcPath.dir));
+    });
   }
+
+  globalState.packages.forEach(eachPackage => {
+    if (eachPackage.config.type === 'component' || eachPackage.config.type === 'plugin') {
+      pri.project.whiteFileRules.add(file => {
+        return path.format(file).startsWith(path.join(eachPackage.rootPath, srcPath.dir));
+      });
+    }
+  });
 }

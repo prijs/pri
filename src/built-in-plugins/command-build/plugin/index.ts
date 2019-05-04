@@ -31,7 +31,7 @@ pri.commands.registerCommand({
   },
   description: text.commander.build.description,
   action: async (options: IOpts) => {
-    switch (pri.projectPackageJson.pri.type) {
+    switch (pri.sourceConfig.type) {
       case 'project': {
         const projectBuildModule = await import('./build');
         await projectBuildModule.buildProject(options);

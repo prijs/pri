@@ -4,6 +4,8 @@ import * as path from 'path';
 import { pri } from '../../../node';
 import { md5 } from '../../../utils/md5';
 import { pagesPath, tempPath } from '../../../utils/structor-config';
+import { transferToAllAbsolutePaths } from '../../../utils/global-state';
+import { matchStructor } from '../../../utils/functional';
 
 interface IResult {
   projectAnalysePages: {
@@ -19,17 +21,7 @@ interface IResult {
 const safeName = (str: string) => _.upperFirst(_.camelCase(str));
 
 pri.project.whiteFileRules.add(file => {
-  const relativePath = path.relative(pri.projectRootPath, file.dir);
-  return (
-    relativePath.startsWith(pagesPath.dir) &&
-    file.name === 'index' &&
-    (file.ext === '.tsx' ||
-      file.ext === '.md' ||
-      file.ext === '.mdx' ||
-      file.ext === '.css' ||
-      file.ext === '.scss' ||
-      file.ext === '.less')
-  );
+  return transferToAllAbsolutePaths(pagesPath.dir).some(pagePath => path.format(file).startsWith(pagePath));
 });
 
 pri.project.onAnalyseProject(files => {
@@ -38,9 +30,7 @@ pri.project.onAnalyseProject(files => {
       projectAnalysePages: {
         pages: files
           .filter(file => {
-            const relativePath = path.relative(pri.projectRootPath, path.join(file.dir, file.name));
-
-            if (!relativePath.startsWith(pagesPath.dir)) {
+            if (!matchStructor(file, pagesPath, pri.sourceRoot)) {
               return false;
             }
 
@@ -56,7 +46,9 @@ pri.project.onAnalyseProject(files => {
           })
           .map(file => {
             const relativePathWithoutIndex = path.relative(pri.projectRootPath, file.dir);
-            const routerPath = normalizePath(`/${path.relative(pagesPath.dir, relativePathWithoutIndex)}`);
+            const routerPath = normalizePath(
+              `/${path.relative(path.join(pri.sourceRoot, pagesPath.dir), relativePathWithoutIndex)}`
+            );
             const chunkName = _.camelCase(routerPath) || 'index';
 
             const relativePageFilePath = path.relative(pri.projectRootPath, `${file.dir}/${file.name}`);
@@ -115,7 +107,7 @@ pri.project.onCreateEntry((analyseInfo: IResult, entry) => {
         ${(await Promise.all(
           analyseInfo.projectAnalysePages.pages.map(async page => {
             const pageRequirePath = normalizePath(
-              path.relative(tempPath.dir, path.join(page.file.dir, page.file.name))
+              path.relative(path.join(pri.projectRootPath, tempPath.dir), path.join(page.file.dir, page.file.name))
             );
 
             const importCode = `import(/* webpackChunkName: "${page.chunkName}" */ "${pageRequirePath}").then(code => {

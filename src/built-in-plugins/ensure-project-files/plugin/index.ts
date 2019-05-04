@@ -3,11 +3,19 @@ import * as _ from 'lodash';
 import * as path from 'path';
 import * as pkg from '../../../../package.json';
 import { pri } from '../../../node';
-import { PRI_PACKAGE_NAME } from '../../../utils/constants';
+import { PRI_PACKAGE_NAME, CONFIG_FILE } from '../../../utils/constants';
 import { safeJsonParse } from '../../../utils/functional';
-import { globalState } from '../../../utils/global-state';
+import { globalState, transferToAllAbsolutePaths } from '../../../utils/global-state';
 import { prettierConfig } from '../../../utils/prettier-config';
-import { declarePath, gitIgnores, npmIgnores, tempPath, tempTypesPath } from '../../../utils/structor-config';
+import {
+  declarePath,
+  gitIgnores,
+  npmIgnores,
+  tempPath,
+  tempTypesPath,
+  srcPath,
+  componentEntry
+} from '../../../utils/structor-config';
 import { ensureComponentFiles } from './ensure-component';
 import { ensurePluginFiles } from './ensure-plugin';
 import { ensureProjectFiles } from './ensure-project';
@@ -23,10 +31,11 @@ pri.event.once('beforeEnsureFiles', async () => {
   ensurePrettierrc();
   ensureEslint();
   ensurePackageJson();
+  ensurePriConfig();
 
-  ensureDeclares(pri.projectRootPath);
+  ensureDeclares();
 
-  switch (pri.projectPackageJson.pri.type) {
+  switch (pri.sourceConfig.type) {
     case 'project':
       ensureProjectFiles();
       break;
@@ -40,21 +49,20 @@ pri.event.once('beforeEnsureFiles', async () => {
   }
 });
 
-function ensureDeclares(projectRootPath: string) {
-  const declareAbsolutePath = path.join(projectRootPath, declarePath.dir);
-  fs.copySync(path.join(__dirname, '../../../../declare'), declareAbsolutePath);
+function ensureDeclares() {
+  fs.copySync(path.join(__dirname, '../../../../declare'), path.join(pri.projectRootPath, declarePath.dir));
 }
 
 function ensurePrettierrc() {
   pri.project.addProjectFiles({
-    fileName: '.prettierrc',
+    fileName: path.join(pri.projectRootPath, '.prettierrc'),
     pipeContent: () => `${JSON.stringify(prettierConfig, null, 2)}\n`
   });
 }
 
 function ensureTsconfig() {
   pri.project.addProjectFiles({
-    fileName: 'tsconfig.json',
+    fileName: path.join(pri.projectRootPath, 'tsconfig.json'),
     pipeContent: async () => {
       return `${JSON.stringify(
         {
@@ -71,13 +79,20 @@ function ensureTsconfig() {
             baseUrl: '.',
             lib: ['dom', 'es5', 'es6', 'scripthost'],
             paths: {
-              [`${PRI_PACKAGE_NAME}/*`]: [PRI_PACKAGE_NAME, path.join(tempTypesPath.dir, '*')],
-              ...(pri.projectPackageJson.pri.type === 'project' && { '@/*': ['src/*'] })
+              [`${PRI_PACKAGE_NAME}/*`]: [PRI_PACKAGE_NAME, path.join(pri.projectRootPath, tempTypesPath.dir, '*')],
+              ...(pri.projectConfig.type === 'project' && { 'src/*': ['src/*'] }),
+              // Packages alias names
+              ...globalState.packages.reduce((obj, eachPackage) => {
+                return {
+                  ...obj,
+                  [eachPackage.packageJson.name]: [path.join(eachPackage.rootPath, 'src')]
+                };
+              }, {})
             }
           },
           include: [
             `${tempPath.dir}/**/*`,
-            ...['src/**/*'].map(each => path.join(globalState.projectConfig.sourceRoot, each))
+            ...transferToAllAbsolutePaths(srcPath.dir).map(filePath => `${filePath}/**/*`)
           ],
           exclude: ['node_modules', globalState.projectConfig.distDir]
         },
@@ -90,7 +105,7 @@ function ensureTsconfig() {
 
 function ensureJestTsconfig() {
   pri.project.addProjectFiles({
-    fileName: 'tsconfig.jest.json',
+    fileName: path.join(pri.projectRootPath, 'tsconfig.jest.json'),
     pipeContent: async () => {
       return `${JSON.stringify(
         {
@@ -108,7 +123,7 @@ function ensureJestTsconfig() {
 
 function ensureEslint() {
   pri.project.addProjectFiles({
-    fileName: '.eslintrc',
+    fileName: path.join(pri.projectRootPath, '.eslintrc'),
     pipeContent: async prev => {
       const prevJson = safeJsonParse(prev);
       const eslintConfig = await fs.readFile(path.join(__dirname, '../../../../.eslintrc'));
@@ -120,7 +135,7 @@ function ensureEslint() {
 
 function ensureVscode() {
   pri.project.addProjectFiles({
-    fileName: '.vscode/settings.json',
+    fileName: path.join(pri.projectRootPath, '.vscode/settings.json'),
     pipeContent: (prev: string) =>
       `${JSON.stringify(
         _.merge({}, safeJsonParse(prev), {
@@ -143,7 +158,7 @@ function ensureVscode() {
 
 function ensureGitignore() {
   pri.project.addProjectFiles({
-    fileName: '.gitignore',
+    fileName: path.join(pri.projectRootPath, '.gitignore'),
     pipeContent: (prev = '') => {
       const values = prev.split('\n').filter(eachRule => !!eachRule);
       const gitIgnoresInRoot = gitIgnores.map(name => `/${name}`);
@@ -154,7 +169,7 @@ function ensureGitignore() {
 
 function ensureNpmignore() {
   pri.project.addProjectFiles({
-    fileName: '.npmignore',
+    fileName: path.join(pri.projectRootPath, '.npmignore'),
     pipeContent: (prev = '') => {
       const values = prev.split('\n').filter(eachRule => !!eachRule);
       const npmIgnoresInRoot = npmIgnores.map(name => `/${name}`);
@@ -170,20 +185,20 @@ function ensureNpmignore() {
 
 function ensureNpmrc() {
   pri.project.addProjectFiles({
-    fileName: '.npmrc',
+    fileName: path.join(pri.projectRootPath, '.npmrc'),
     pipeContent: () => `package-lock=${globalState.projectConfig.packageLock ? 'true' : 'false'}`
   });
 }
 
 function ensurePackageJson() {
   pri.project.addProjectFiles({
-    fileName: 'package.json',
+    fileName: path.join(pri.projectRootPath, 'package.json'),
     pipeContent: (prev: string) => {
       const prevJson = safeJsonParse(prev);
 
       const priDeps = pkg.dependencies || {};
 
-      if (pri.projectPackageJson.pri.type === 'project') {
+      if (pri.projectConfig.type === 'project') {
         // Remove all packages which already exists in pri dependencies.
         if (prevJson.dependencies) {
           prevJson.dependencies = _.omit(prevJson.dependencies, Object.keys(priDeps));
@@ -208,7 +223,7 @@ function ensurePackageJson() {
       }
 
       // Mv pri-plugins to devDeps except plugin
-      if (pri.projectPackageJson.pri.type === 'plugin') {
+      if (pri.projectConfig.type === 'plugin') {
         mvPriPlugins(prevJson, 'devDependencies', 'dependencies');
         mvPriPlugins(prevJson, 'peerDependencies', 'dependencies');
       } else {
@@ -216,8 +231,61 @@ function ensurePackageJson() {
         mvPriPlugins(prevJson, 'peerDependencies', 'devDependencies');
       }
 
+      switch (pri.projectConfig.type) {
+        case 'project':
+          {
+            // Move pri from devDeps to deps
+            const projectPriVersion =
+              _.get(prevJson, `devDependencies.${PRI_PACKAGE_NAME}`) ||
+              _.get(prevJson, `dependencies.${PRI_PACKAGE_NAME}`) ||
+              pkg.version;
+            _.unset(prevJson, `devDependencies.${PRI_PACKAGE_NAME}`);
+            _.set(prevJson, `dependencies.${PRI_PACKAGE_NAME}`, projectPriVersion);
+          }
+          break;
+        case 'plugin':
+          {
+            // Move pri from deps to devDeps
+            const projectPriVersion =
+              _.get(prevJson, `devDependencies.${PRI_PACKAGE_NAME}`) ||
+              _.get(prevJson, `dependencies.${PRI_PACKAGE_NAME}`) ||
+              pkg.version;
+            _.unset(prevJson, `dependencies.${PRI_PACKAGE_NAME}`);
+            _.set(prevJson, `devDependencies.${PRI_PACKAGE_NAME}`, projectPriVersion);
+
+            _.set(prevJson, 'scripts.prepublishOnly', 'npm run build && npm run bundle --skipLint');
+
+            // Add babel-runtime
+            _.set(prevJson, 'dependencies.@babel/runtime', '^7.0.0');
+          }
+          break;
+        case 'component':
+          {
+            // Move pri from deps to devDeps
+            const projectPriVersion =
+              _.get(prevJson, `devDependencies.${PRI_PACKAGE_NAME}`) ||
+              _.get(prevJson, `dependencies.${PRI_PACKAGE_NAME}`) ||
+              pkg.version;
+            _.unset(prevJson, `dependencies.${PRI_PACKAGE_NAME}`);
+            _.set(prevJson, `devDependencies.${PRI_PACKAGE_NAME}`, projectPriVersion);
+
+            const types = pri.projectConfig.hideSourceCodeForNpm
+              ? 'declaration/index.d.ts'
+              : path.format(componentEntry);
+            _.set(prevJson, 'types', types);
+
+            _.set(prevJson, 'scripts.prepublishOnly', 'npm run build && npm run bundle --skipLint');
+
+            // Add babel-runtime
+            _.set(prevJson, 'dependencies.@babel/runtime', '^7.0.0');
+          }
+          break;
+        default:
+      }
+
       return `${JSON.stringify(
         _.merge({}, prevJson, {
+          main: `${pri.projectConfig.distDir}/${pri.projectConfig.outFileName}`,
           scripts: {
             start: 'pri dev',
             docs: 'pri docs',
@@ -228,7 +296,6 @@ function ensurePackageJson() {
             test: 'pri test',
             format: `eslint ${eslintParam}`
           },
-          pri: { type: pri.projectPackageJson.pri.type },
           husky: {
             hooks: {
               'pre-commit': 'npm test'
@@ -239,6 +306,20 @@ function ensurePackageJson() {
         2
       )}\n`;
     }
+  });
+}
+
+function ensurePriConfig() {
+  pri.project.addProjectFiles({
+    fileName: path.join(pri.sourceRoot, CONFIG_FILE),
+    pipeContent: (prev: string) =>
+      `${JSON.stringify(
+        _.merge({}, safeJsonParse(prev), {
+          type: pri.sourceConfig.type
+        }),
+        null,
+        2
+      )}\n`
   });
 }
 

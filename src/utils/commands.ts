@@ -1,8 +1,6 @@
 import * as _ from 'lodash';
 import { logFatal } from './log';
-import { ICommandRegister } from './plugins-interface';
-
-export type TransferedRegisterCommand = { childs?: TransferedRegisterCommand[] } & ICommandRegister;
+import { TransferedRegisterCommand, ICommandRegister } from './define';
 
 // Transfer commands array to commands map
 export function transferCommandsArrayToMap(commandRegisters: ICommandRegister[]) {

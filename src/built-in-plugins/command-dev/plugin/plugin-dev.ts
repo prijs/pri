@@ -15,7 +15,7 @@ export const pluginDev = async () => {
     mode: 'development',
     target: 'node',
     libraryTarget: 'commonjs2',
-    entryPath: path.join(globalState.projectRootPath, path.format(pluginEntry)),
+    entryPath: path.join(globalState.sourceRoot, path.format(pluginEntry)),
     externals: [nodeExternals()],
     outFileName: pri.projectConfig.outFileName
   });

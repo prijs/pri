@@ -13,7 +13,7 @@ import { globalState } from '../../../utils/global-state';
 import { logInfo, spinner } from '../../../utils/log';
 import { findNearestNodemodulesFile } from '../../../utils/npm-finder';
 import { plugin } from '../../../utils/plugins';
-import { componentEntry, pluginEntry } from '../../../utils/structor-config';
+import { componentEntry, pluginEntry, assetsPath } from '../../../utils/structor-config';
 import { runWebpack } from '../../../utils/webpack';
 import { getStaticHtmlPaths } from './generate-static-html';
 import { IOpts } from './interface';
@@ -52,7 +52,7 @@ export const buildProject = async (opts: IOpts = {}) => {
   });
 
   // Write .temp/static/sw.js to [distDir]
-  const tempSwPath = path.join(globalState.projectRootPath, tempPath.dir, 'static/sw.js');
+  const tempSwPath = path.join(pri.projectRootPath, tempPath.dir, 'static/sw.js');
   const targetSwPath = path.join(globalState.projectRootPath, pri.projectConfig.distDir, 'sw.js');
 
   if (fs.existsSync(tempSwPath)) {
@@ -83,7 +83,7 @@ export const buildComponent = async (opts: IOpts = {}) => {
     mode: 'production',
     target: 'node',
     libraryTarget: 'commonjs2',
-    entryPath: path.join(pri.projectRootPath, path.format(componentEntry)),
+    entryPath: path.join(pri.sourceRoot, path.format(componentEntry)),
     outFileName: pri.projectConfig.outFileName,
     externals: [nodeExternals()]
   });
@@ -112,7 +112,7 @@ export const buildPlugin = async (opts: IOpts = {}) => {
     mode: 'production',
     target: 'node',
     libraryTarget: 'commonjs2',
-    entryPath: path.join(pri.projectRootPath, path.format(pluginEntry)),
+    entryPath: path.join(pri.sourceRoot, path.format(pluginEntry)),
     outFileName: pri.projectConfig.outFileName,
     externals: [nodeExternals()]
   });
@@ -122,13 +122,13 @@ export const buildPlugin = async (opts: IOpts = {}) => {
 
 // Copy assets dir to distDir
 async function copyAssets() {
-  const sourceAssetsPath = path.join(globalState.projectRootPath, 'assets');
+  const sourceAssetsPath = path.join(pri.sourceRoot, assetsPath.dir);
 
   if (!fs.existsSync(sourceAssetsPath)) {
     return;
   }
 
-  const distAssetsPath = path.join(globalState.projectRootPath, pri.projectConfig.distDir, 'assets');
+  const distAssetsPath = path.join(pri.projectRootPath, pri.projectConfig.distDir, assetsPath.dir);
   if (fs.existsSync(distAssetsPath)) {
     logInfo(`assets path exists in distDir, so skip /assets copy.`);
   } else {
@@ -141,7 +141,7 @@ async function prepareBuild(opts: IOpts = {}) {
     await cleanDist();
 
     // Clean .temp dir
-    await exec(`${findNearestNodemodulesFile('.bin/rimraf')} ${path.join(globalState.projectRootPath, tempPath.dir)}`);
+    await exec(`${findNearestNodemodulesFile('.bin/rimraf')} ${pri.projectRootPath}/${tempPath.dir}`);
 
     await pri.project.ensureProjectFiles();
 

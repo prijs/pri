@@ -9,7 +9,7 @@ export const runTest = async () => {
   execSync(
     [
       findNearestNodemodulesFile('/.bin/jest'),
-      `--testRegex "/${testsPath.dir}/.*\\.tsx?$"`,
+      `--testRegex "${path.join(pri.sourceRoot, testsPath.dir)}/.*\\.tsx?$"`,
       `
       --transform '${JSON.stringify({
         '^.+\\.tsx?$': 'ts-jest'

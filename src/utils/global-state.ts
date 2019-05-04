@@ -7,22 +7,29 @@ import * as fs from 'fs-extra';
 import { merge } from 'lodash';
 import * as path from 'path';
 import * as yargs from 'yargs';
+import * as inquirer from 'inquirer';
 import * as pkg from '../../package.json';
-import { CONFIG_FILE } from './constants';
+import { CONFIG_FILE, PACKAGES_NAME } from './constants';
 import { GlobalState } from './global-state-class';
 import { logFatal } from './log';
 import { ProjectConfig } from './project-config-interface';
+import { IPackageJson } from './define.js';
 
 const globalState = new GlobalState();
 
-globalState.priPackageJson = pkg;
-globalState.majorCommand = yargs.argv._.length === 0 ? 'dev' : yargs.argv._[0];
-globalState.isDevelopment = ['dev', 'docs'].some(operate => operate === globalState.majorCommand);
+export async function initGlobalState() {
+  globalState.priPackageJson = pkg;
+  globalState.majorCommand = yargs.argv._.length === 0 ? 'dev' : yargs.argv._[0];
+  globalState.isDevelopment = ['dev', 'docs'].some(operate => operate === globalState.majorCommand);
 
-freshGlobalState((yargs.argv.cwd as string) || process.cwd());
+  await freshGlobalState();
+}
 
-export function freshGlobalState(projectRootPath: string) {
-  globalState.projectRootPath = projectRootPath;
+async function freshGlobalState() {
+  const cliCurrentPath = (yargs.argv.cwd as string) || process.cwd();
+  globalState.projectRootPath = cliCurrentPath;
+
+  await initPackages(cliCurrentPath);
 
   freshProjectConfig();
 
@@ -31,10 +38,6 @@ export function freshGlobalState(projectRootPath: string) {
   if (fs.existsSync(projectPackageJsonPath)) {
     const projectPackageJson = fs.readJsonSync(projectPackageJsonPath, { throws: false }) || {};
 
-    if (!projectPackageJson.pri) {
-      projectPackageJson.pri = {};
-    }
-
     globalState.projectPackageJson = projectPackageJson;
   } else {
     logFatal(`No package.json, please run "npm init" first.`);
@@ -42,14 +45,84 @@ export function freshGlobalState(projectRootPath: string) {
 }
 
 export function freshProjectConfig() {
-  globalState.projectConfig = getProjectConfig();
+  globalState.projectConfig = freshConfig(globalState.projectRootPath);
+  globalState.packages.forEach(eachPackage => {
+    eachPackage.config = freshConfig(eachPackage.rootPath);
+  });
+
+  if (globalState.selectedSourceType === 'Root') {
+    globalState.sourceConfig = { ...globalState.projectConfig };
+  } else {
+    globalState.sourceConfig = globalState.packages.find(
+      eachPackage => eachPackage.name === globalState.selectedSourceType
+    ).config;
+  }
 }
 
-function getProjectConfig() {
-  const configFilePath = path.join(globalState.projectRootPath, CONFIG_FILE);
+function freshConfig(rootPath: string) {
+  const configFilePath = path.join(rootPath, CONFIG_FILE);
   const userProjectConfig: ProjectConfig = fs.readJsonSync(configFilePath, { throws: false }) || {};
 
   return merge(new ProjectConfig(), userProjectConfig);
 }
 
+async function initPackages(cliCurrentPath: string) {
+  const currentPackagesPath = path.join(cliCurrentPath, PACKAGES_NAME);
+
+  if (fs.existsSync(currentPackagesPath)) {
+    globalState.packages = fs.readdirSync(currentPackagesPath).map(folderName => {
+      const packagePath = path.join(cliCurrentPath, PACKAGES_NAME, folderName);
+      const packageJson: IPackageJson = fs.readJSONSync(path.join(packagePath, 'package.json'), { throws: false });
+
+      const config = fs.readJsonSync(path.join(packagePath, CONFIG_FILE), { throws: false }) || {};
+
+      if (!packageJson) {
+        logFatal(`Package ${folderName}'s package.json doesn't exist.`);
+      }
+
+      return {
+        name: folderName,
+        rootPath: packagePath,
+        packageJson,
+        config
+      };
+    });
+  }
+
+  if (globalState.packages.length > 0) {
+    const inquirerInfo = await inquirer.prompt([
+      {
+        message: `Choose packages`,
+        name: 'packageName',
+        type: 'list',
+        choices: ['Root', ...globalState.packages.map(eachPackage => eachPackage.name)]
+      }
+    ]);
+
+    globalState.selectedSourceType = inquirerInfo.packageName;
+  }
+
+  switch (globalState.selectedSourceType) {
+    case 'Root':
+      globalState.sourceRoot = cliCurrentPath;
+      break;
+    default:
+      globalState.sourceRoot = path.join(cliCurrentPath, PACKAGES_NAME, globalState.selectedSourceType);
+  }
+}
+
 export { globalState };
+
+/**
+ * Transfer relative path to absolute paths, include root and pacakges.
+ */
+export function transferToAllAbsolutePaths(relatePath: string) {
+  if (path.isAbsolute(relatePath)) {
+    throw Error(`${relatePath} is not a relative path.`);
+  }
+
+  return [
+    path.join(globalState.projectRootPath, relatePath),
+    ...globalState.packages.map(eachPackage => path.join(eachPackage.rootPath, relatePath))
+  ];
+}
