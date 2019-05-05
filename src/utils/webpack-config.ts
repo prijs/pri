@@ -282,10 +282,13 @@ export const getWebpackConfig = async (opts: IOptions) => {
         }),
         // Packages alias names
         ...globalState.packages.reduce((obj, eachPackage) => {
-          return {
-            ...obj,
-            [eachPackage.packageJson.name]: path.join(eachPackage.rootPath, 'src')
-          };
+          if (eachPackage.packageJson && eachPackage.packageJson.name) {
+            return {
+              ...obj,
+              [eachPackage.packageJson.name]: path.join(eachPackage.rootPath, 'src')
+            };
+          }
+          return obj;
         }, {})
       },
       extensions: [

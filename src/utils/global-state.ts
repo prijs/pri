@@ -76,10 +76,6 @@ async function initPackages(cliCurrentPath: string) {
 
       const config = fs.readJsonSync(path.join(packagePath, CONFIG_FILE), { throws: false }) || {};
 
-      if (!packageJson) {
-        logFatal(`Package ${folderName}'s package.json doesn't exist.`);
-      }
-
       return {
         name: folderName,
         rootPath: packagePath,

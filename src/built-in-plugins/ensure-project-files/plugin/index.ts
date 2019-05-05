@@ -79,20 +79,27 @@ function ensureTsconfig() {
             baseUrl: '.',
             lib: ['dom', 'es5', 'es6', 'scripthost'],
             paths: {
-              [`${PRI_PACKAGE_NAME}/*`]: [PRI_PACKAGE_NAME, path.join(pri.projectRootPath, tempTypesPath.dir, '*')],
+              [`${PRI_PACKAGE_NAME}/*`]: [PRI_PACKAGE_NAME, path.join(tempTypesPath.dir, '*')],
               ...(pri.projectConfig.type === 'project' && { 'src/*': ['src/*'] }),
               // Packages alias names
               ...globalState.packages.reduce((obj, eachPackage) => {
-                return {
-                  ...obj,
-                  [eachPackage.packageJson.name]: [path.join(eachPackage.rootPath, 'src')]
-                };
+                if (eachPackage.packageJson && eachPackage.packageJson.name) {
+                  return {
+                    ...obj,
+                    [eachPackage.packageJson.name]: [
+                      path.join(path.relative(pri.projectRootPath, eachPackage.rootPath), 'src')
+                    ]
+                  };
+                }
+                return obj;
               }, {})
             }
           },
           include: [
             `${tempPath.dir}/**/*`,
-            ...transferToAllAbsolutePaths(srcPath.dir).map(filePath => `${filePath}/**/*`)
+            ...transferToAllAbsolutePaths(srcPath.dir).map(
+              filePath => `${path.relative(pri.projectRootPath, filePath)}/**/*`
+            )
           ],
           exclude: ['node_modules', globalState.projectConfig.distDir]
         },
