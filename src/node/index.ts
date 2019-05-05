@@ -4,7 +4,6 @@ import * as build from './build';
 import * as cli from './cli';
 import * as commands from './commands';
 import { context } from './context';
-import { createCli } from './create-cli';
 import * as devService from './dev-service';
 import * as project from './project/index';
 import * as self from './self';
@@ -75,7 +74,5 @@ if (!globalWithPri.pri) {
 }
 
 export const { pri } = globalWithPri;
-
-export { createCli };
 
 export * from '../utils/structor-config';

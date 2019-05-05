@@ -13,7 +13,7 @@ import { CONFIG_FILE, PACKAGES_NAME } from './constants';
 import { GlobalState } from './global-state-class';
 import { logFatal } from './log';
 import { ProjectConfig } from './project-config-interface';
-import { IPackageJson } from './define.js';
+import { IPackageJson } from './define';
 
 const globalState = new GlobalState();
 

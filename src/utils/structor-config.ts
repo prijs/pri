@@ -98,7 +98,11 @@ const ignores = [
   '.node'
 ];
 
-export const gitIgnores = _.union([...ignores, globalState.projectConfig.distDir, 'declaration']);
+// FIXME:
+if (!(global as any).priGitIgnores) {
+  (global as any).priGitIgnores = _.union([...ignores, globalState.projectConfig.distDir, 'declaration']);
+}
+export const gitIgnores = (global as any).priGitIgnores as string[];
 
 // npm ignores extends git ingores.
 export const npmIgnores = _.union([...ignores, 'tests', 'packages']);
@@ -127,6 +131,9 @@ export const ignoreScanFiles = _.union([
 ]);
 
 function getComponentEntryExt() {
-  const projectEntryExt = path.join(globalState.sourceRoot, path.join(srcPath.dir), 'index');
-  return fs.existsSync(`${projectEntryExt}.ts`) ? '.ts' : '.tsx';
+  // FIXME:
+  if (!(global as any).priProjectEntryExt) {
+    (global as any).priProjectEntryExt = path.join(globalState.sourceRoot, path.join(srcPath.dir), 'index');
+  }
+  return fs.existsSync(`${(global as any).priProjectEntryExt}.ts`) ? '.ts' : '.tsx';
 }
