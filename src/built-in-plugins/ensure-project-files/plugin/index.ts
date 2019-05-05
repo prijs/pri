@@ -260,7 +260,7 @@ function ensurePackageJson() {
             _.unset(prevJson, `dependencies.${PRI_PACKAGE_NAME}`);
             _.set(prevJson, `devDependencies.${PRI_PACKAGE_NAME}`, projectPriVersion);
 
-            _.set(prevJson, 'scripts.prepublishOnly', 'npm run build && npm run bundle --skipLint');
+            _.set(prevJson, 'scripts.prepublishOnly', 'npm run build');
 
             // Add babel-runtime
             _.set(prevJson, 'dependencies.@babel/runtime', '^7.0.0');
