@@ -1,4 +1,4 @@
-import { ProjectConfig } from '../../../../../utils/project-config-interface';
+import { ProjectConfig } from '../../../../../utils/define';
 
 export interface IProjectStatus {
   projectConfig: ProjectConfig;

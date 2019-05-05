@@ -1,9 +1,9 @@
 import * as _ from 'lodash';
 import { logFatal } from './log';
-import { TransferedRegisterCommand, ICommandRegister } from './define';
+import { TransferedRegisterCommand, CommandRegister } from './define';
 
 // Transfer commands array to commands map
-export function transferCommandsArrayToMap(commandRegisters: ICommandRegister[]) {
+export function transferCommandsArrayToMap(commandRegisters: CommandRegister[]) {
   const duplicates = getDuplicatesCommand(commandRegisters);
   if (duplicates.length > 0) {
     logFatal(`Duplicate commands:\n${duplicates.map(duplicate => duplicate).join('\n')}`);
@@ -46,7 +46,7 @@ function createRootCommandRegisters(
   });
 }
 
-function getDuplicatesCommand(commandRegisters: ICommandRegister[]) {
+function getDuplicatesCommand(commandRegisters: CommandRegister[]) {
   return _.filter(commandRegisters.map(commandRegister => commandRegister.name), (value, index, iteratee) =>
     _.includes(iteratee, value, index + 1)
   );

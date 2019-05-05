@@ -5,7 +5,7 @@ import * as walk from 'walk';
 import { exec } from './exec';
 import { getPackageJson } from './file-operate';
 import { globalState } from './global-state';
-import { IPackageJson } from './define';
+import { PackageJson } from './define';
 
 export const packagesPath = `packages`;
 
@@ -13,7 +13,7 @@ export const getPackages = (() => {
   let result: {
     name: string;
     path: string;
-    packageJson: IPackageJson;
+    packageJson: PackageJson;
     pri?: {
       type: 'project' | 'component' | 'plugin';
     };

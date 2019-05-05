@@ -5,7 +5,7 @@ import {
   ILoaderExcludePipe,
   ILoaderIncludePipe,
   ILoaderOptionsPipe
-} from '../utils/plugins-interface';
+} from '../utils/define';
 
 export const pipeConfig = (pipe: IBuildConfigPipe) => {
   plugin.buildConfigPipes.push(pipe);

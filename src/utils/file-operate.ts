@@ -3,7 +3,7 @@ import * as fs from 'fs-extra';
 import * as path from 'path';
 import { exec } from './exec';
 import { logFatal } from './log';
-import { IPackageJson } from './define';
+import { PackageJson } from './define';
 
 function getRandomFolderPath() {
   const ramdomId = crypto.randomBytes(20).toString('hex');
@@ -30,7 +30,7 @@ export async function runInTempFolderAndDestroyAfterFinished(fn: (tempFolderPath
   }
 }
 
-export async function getPackageJson(projectPath: string): Promise<IPackageJson> {
+export async function getPackageJson(projectPath: string): Promise<PackageJson> {
   const packageJsonPath = path.join(projectPath, 'package.json');
 
   if (!fs.existsSync(projectPath)) {
@@ -40,7 +40,7 @@ export async function getPackageJson(projectPath: string): Promise<IPackageJson>
   return fs.readJson(packageJsonPath);
 }
 
-export async function writePackageJson(projectPath: string, packageJson: IPackageJson) {
+export async function writePackageJson(projectPath: string, packageJson: PackageJson) {
   const packageJsonPath = path.join(projectPath, 'package.json');
   fs.outputFileSync(packageJsonPath, `${JSON.stringify(packageJson, null, 2)}\n`);
 }

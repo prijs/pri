@@ -1,4 +1,4 @@
-import { PipeCallback } from '../utils/create-entry-d';
+import { SetPipe, PipeCallback } from '../utils/define';
 
 const pipes = new Map<string, PipeCallback[]>();
 
@@ -14,7 +14,7 @@ export const get = async (pipeName: string, defaultValue: string) => {
   return content;
 };
 
-export const set = (pipeName: string, callback: PipeCallback) => {
+export const set: SetPipe = (pipeName, callback) => {
   if (!pipes.has(pipeName)) {
     pipes.set(pipeName, [callback]);
   } else {

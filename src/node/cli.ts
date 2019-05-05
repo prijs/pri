@@ -1,6 +1,6 @@
-import { IProjectType } from '../utils/global-state-class';
 import { plugin } from '../utils/plugins';
+import { ProjectType } from '../utils/define';
 
-export const lockInitType = (initType: IProjectType) => {
+export const lockInitType = (initType: ProjectType) => {
   plugin.initType = initType;
 };

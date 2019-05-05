@@ -14,8 +14,10 @@ import {
   ILoaderIncludePipe,
   ILoaderOptionsPipe,
   IPluginModule,
-  IWhiteFile
-} from './plugins-interface';
+  IWhiteFile,
+  CommandRegister,
+  ProjectType
+} from './define';
 
 import * as pluginClientSsr from '../built-in-plugins/client-ssr';
 import * as pluginCommandAnalyse from '../built-in-plugins/command-analyse';
@@ -41,15 +43,13 @@ import * as pluginProjectAnalyseNotFound from '../built-in-plugins/project-analy
 import * as pluginProjectAnalysePages from '../built-in-plugins/project-analyse-pages';
 import * as pluginServiceWorker from '../built-in-plugins/service-worker';
 import * as whiteFiles from '../built-in-plugins/white-files';
-import { IProjectType } from './global-state-class';
-import { ICommandRegister } from './define';
 
 export const loadedPlugins = new Set<IPluginModule>();
 
 export class IPluginConfig {
   public analyseInfo?: any = {};
 
-  public commands?: ICommandRegister[] = [];
+  public commands?: CommandRegister[] = [];
 
   public buildConfigPipes: IBuildConfigPipe[] = [];
 
@@ -92,7 +92,7 @@ export class IPluginConfig {
   public lintFilters: ILintFilter[] = [];
 
   // Lock init type
-  public initType: IProjectType = null;
+  public initType: ProjectType = null;
 }
 
 export const plugin: IPluginConfig = new IPluginConfig();

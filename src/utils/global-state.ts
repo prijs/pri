@@ -10,10 +10,8 @@ import * as yargs from 'yargs';
 import * as inquirer from 'inquirer';
 import * as pkg from '../../package.json';
 import { CONFIG_FILE, PACKAGES_NAME } from './constants';
-import { GlobalState } from './global-state-class';
 import { logFatal } from './log';
-import { ProjectConfig } from './project-config-interface';
-import { IPackageJson } from './define';
+import { PackageJson, GlobalState, ProjectConfig } from './define';
 
 const globalState = new GlobalState();
 
@@ -72,7 +70,7 @@ async function initPackages(cliCurrentPath: string) {
   if (fs.existsSync(currentPackagesPath)) {
     globalState.packages = fs.readdirSync(currentPackagesPath).map(folderName => {
       const packagePath = path.join(cliCurrentPath, PACKAGES_NAME, folderName);
-      const packageJson: IPackageJson = fs.readJSONSync(path.join(packagePath, 'package.json'), { throws: false });
+      const packageJson: PackageJson = fs.readJSONSync(path.join(packagePath, 'package.json'), { throws: false });
 
       const config = fs.readJsonSync(path.join(packagePath, CONFIG_FILE), { throws: false }) || {};
 

@@ -4,11 +4,11 @@ import * as inquirer from 'inquirer';
 import * as path from 'path';
 import { pri } from '../../../node';
 import { globalState } from '../../../utils/global-state';
-import { IProjectType } from '../../../utils/global-state-class';
 import { logFatal, logText } from '../../../utils/log';
 import { plugin } from '../../../utils/plugins';
 import text from '../../../utils/text';
 import { addWhiteFilesByProjectType } from '../../../utils/white-file-helper';
+import { ProjectType } from '../../../utils/define';
 
 export const runInit = async () => {
   if (!fs.existsSync(path.join(pri.projectRootPath, 'package.json'))) {
@@ -16,7 +16,7 @@ export const runInit = async () => {
   }
 
   if (!globalState.sourceConfig.type) {
-    let userSelectType: IProjectType = null;
+    let userSelectType: ProjectType = null;
 
     if (!plugin.initType) {
       const inquirerInfo = await inquirer.prompt([

@@ -2,11 +2,11 @@ import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as pipe from '../node/pipe';
 import { PRI_PACKAGE_NAME } from './constants';
-import { PipeCallback } from './create-entry-d';
 import { globalState } from './global-state';
 import { plugin } from './plugins';
 import { prettierConfig } from './prettier-config';
 import { tempEnvironmentPath, tempJsAppPath, tempJsEntryPath } from './structor-config';
+import { PipeCallback } from './define';
 
 export class Entry {
   public async getApp() {
