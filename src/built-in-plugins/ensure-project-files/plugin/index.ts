@@ -80,7 +80,7 @@ function ensureTsconfig() {
             lib: ['dom', 'es5', 'es6', 'scripthost'],
             paths: {
               [`${PRI_PACKAGE_NAME}/*`]: [PRI_PACKAGE_NAME, path.join(tempTypesPath.dir, '*')],
-              ...(pri.projectConfig.type === 'project' && { 'src/*': ['src/*'] }),
+              'src/*': ['src/*'],
               // Packages alias names
               ...globalState.packages.reduce((obj, eachPackage) => {
                 if (eachPackage.packageJson && eachPackage.packageJson.name) {
