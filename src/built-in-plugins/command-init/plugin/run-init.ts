@@ -15,47 +15,15 @@ export const runInit = async () => {
     logFatal(`No package.json! please run "npm init" first.`);
   }
 
+  if (!globalState.projectConfig.type) {
+    globalState.projectConfig.type = await selectProjectType(`Choose project type`);
+    if (globalState.selectedSourceType === 'root') {
+      globalState.sourceConfig.type = globalState.projectConfig.type;
+    }
+  }
+
   if (!globalState.sourceConfig.type) {
-    let userSelectType: ProjectType = null;
-
-    if (!plugin.initType) {
-      const inquirerInfo = await inquirer.prompt([
-        {
-          message: `Choose project type`,
-          name: 'projectType',
-          type: 'list',
-          choices: ['Project', 'Component', 'Pri Plugin']
-        }
-      ]);
-
-      switch (inquirerInfo.projectType) {
-        case 'Project':
-          userSelectType = 'project';
-          break;
-        case 'Component':
-          userSelectType = 'component';
-          break;
-        case 'Pri Plugin':
-          userSelectType = 'plugin';
-          break;
-        default:
-      }
-    } else {
-      userSelectType = plugin.initType;
-    }
-
-    switch (userSelectType) {
-      case 'project':
-        globalState.sourceConfig.type = 'project';
-        break;
-      case 'component':
-        globalState.sourceConfig.type = 'component';
-        break;
-      case 'plugin':
-        globalState.sourceConfig.type = 'plugin';
-        break;
-      default:
-    }
+    globalState.sourceConfig.type = await selectProjectType(`Choose source type`);
   }
 
   // Add white files by projectType because we might change project type above.
@@ -103,3 +71,35 @@ export const runInit = async () => {
   // For async register commander, process will be exit automatic.
   process.exit(0);
 };
+
+async function selectProjectType(message: string): Promise<ProjectType> {
+  let userSelectType: ProjectType = null;
+
+  if (!plugin.initType) {
+    const inquirerInfo = await inquirer.prompt([
+      {
+        message,
+        name: 'projectType',
+        type: 'list',
+        choices: ['Project', 'Component', 'Pri Plugin']
+      }
+    ]);
+
+    switch (inquirerInfo.projectType) {
+      case 'Project':
+        userSelectType = 'project';
+        break;
+      case 'Component':
+        userSelectType = 'component';
+        break;
+      case 'Pri Plugin':
+        userSelectType = 'plugin';
+        break;
+      default:
+    }
+  } else {
+    userSelectType = plugin.initType;
+  }
+
+  return userSelectType;
+}

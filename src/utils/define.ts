@@ -37,7 +37,7 @@ export interface StructorConfig {
   ext?: string;
 }
 
-export type SourceType = 'Root' | string;
+export type SourceType = 'root' | string;
 
 export type ProjectType = 'project' | 'component' | 'plugin' | null;
 
@@ -86,7 +86,7 @@ export class GlobalState {
    * Selected source type.
    * Root or some packages.
    */
-  public selectedSourceType: SourceType = 'Root';
+  public selectedSourceType: SourceType = 'root';
 
   /**
    * In most cases, sourceRoot path is equal to projectRootPath.

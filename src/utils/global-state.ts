@@ -48,7 +48,7 @@ export function freshProjectConfig() {
     eachPackage.config = freshConfig(eachPackage.rootPath);
   });
 
-  if (globalState.selectedSourceType === 'Root') {
+  if (globalState.selectedSourceType === 'root') {
     globalState.sourceConfig = { ...globalState.projectConfig };
   } else {
     globalState.sourceConfig = globalState.packages.find(
@@ -89,7 +89,7 @@ async function initPackages(cliCurrentPath: string) {
         message: `Choose packages`,
         name: 'packageName',
         type: 'list',
-        choices: ['Root', ...globalState.packages.map(eachPackage => eachPackage.name)]
+        choices: ['root', ...globalState.packages.map(eachPackage => eachPackage.name)]
       }
     ]);
 
@@ -97,7 +97,7 @@ async function initPackages(cliCurrentPath: string) {
   }
 
   switch (globalState.selectedSourceType) {
-    case 'Root':
+    case 'root':
       globalState.sourceRoot = cliCurrentPath;
       break;
     default:

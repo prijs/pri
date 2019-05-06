@@ -318,16 +318,30 @@ function ensurePackageJson() {
 
 function ensurePriConfig() {
   pri.project.addProjectFiles({
-    fileName: path.join(pri.sourceRoot, CONFIG_FILE),
+    fileName: path.join(pri.projectRootPath, CONFIG_FILE),
     pipeContent: (prev: string) =>
       `${JSON.stringify(
         _.merge({}, safeJsonParse(prev), {
-          type: pri.sourceConfig.type
+          type: pri.projectConfig.type
         }),
         null,
         2
       )}\n`
   });
+
+  if (pri.selectedSourceType !== 'root') {
+    pri.project.addProjectFiles({
+      fileName: path.join(pri.sourceRoot, CONFIG_FILE),
+      pipeContent: (prev: string) =>
+        `${JSON.stringify(
+          _.merge({}, safeJsonParse(prev), {
+            type: pri.sourceConfig.type
+          }),
+          null,
+          2
+        )}\n`
+    });
+  }
 }
 
 function setVersionIfExist(sourceObj: any, key: string, targetObj: any) {
