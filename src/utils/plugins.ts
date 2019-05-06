@@ -135,12 +135,14 @@ export const loadPlugins = async (pluginIncludeRoots: string[] = []) => {
     loadedPlugins.add(eachPlugin);
   });
 
-  getPriPlugins(
-    globalState.projectRootPath,
-    pluginIncludeRoots
-      .concat(globalState.projectRootPath)
-      .map(pluginIncludeRoot => path.join(pluginIncludeRoot, 'package.json'))
-  );
+  if (globalState.projectConfig.type !== 'plugin') {
+    getPriPlugins(
+      globalState.projectRootPath,
+      pluginIncludeRoots
+        .concat(globalState.projectRootPath)
+        .map(pluginIncludeRoot => path.join(pluginIncludeRoot, 'package.json'))
+    );
+  }
 
   if (loadedPlugins.size > 1) {
     for (const eachPlugin of getPluginsByOrder()) {
