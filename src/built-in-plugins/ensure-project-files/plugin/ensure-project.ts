@@ -10,16 +10,16 @@ export function ensureProjectFiles() {
 }
 
 function ensureProjectEntry() {
-  const homePagePath = path.join(pri.sourceRoot, pagesPath.dir, 'index.tsx');
-  const homePageAbsolutePath = path.join(pri.projectRootPath, homePagePath);
+  pri.project.addProjectFiles({
+    fileName: path.join(pri.sourceRoot, pagesPath.dir, 'index.tsx'),
+    pipeContent: async text => {
+      if (text) {
+        return text;
+      }
 
-  if (!fs.existsSync(homePageAbsolutePath)) {
-    pri.project.addProjectFiles({
-      fileName: homePagePath,
-      pipeContent: async () => {
-        const prettier = await import('prettier');
-        return prettier.format(
-          `
+      const prettier = await import('prettier');
+      return prettier.format(
+        `
             import { isDevelopment } from "${PRI_PACKAGE_NAME}/client"
             import * as React from "react"
 
@@ -36,11 +36,10 @@ function ensureProjectEntry() {
               )
             }
           `,
-          { ...prettierConfig, parser: 'typescript' }
-        );
-      }
-    });
-  }
+        { ...prettierConfig, parser: 'typescript' }
+      );
+    }
+  });
 }
 
 export function ensureTest() {
