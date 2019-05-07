@@ -45,8 +45,8 @@ function ensureDocs() {
       const prettier = await import('prettier');
       return prettier.format(
         `
-          import Component from "${relativeToEntryPath}"
           import * as React from "react"
+          import Component from "${relativeToEntryPath}"
 
           export default () => <Component />
         `,
