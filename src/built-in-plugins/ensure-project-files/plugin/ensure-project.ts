@@ -1,4 +1,3 @@
-import * as fs from 'fs';
 import * as path from 'path';
 import { pagesPath, pri, testsPath } from '../../../node';
 import { PRI_PACKAGE_NAME } from '../../../utils/constants';
