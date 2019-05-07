@@ -32,7 +32,7 @@ function ensureEntryFile() {
 function ensureDocs() {
   const basicDocsPath = path.join(pri.sourceRoot, docsPath.dir, 'basic.tsx');
   const relativeToEntryPath = path.relative(
-    path.parse(path.join(pri.sourceRoot, basicDocsPath)).dir,
+    path.parse(basicDocsPath).dir,
     path.join(pri.sourceRoot, srcPath.dir, 'index')
   );
   pri.project.addProjectFiles({

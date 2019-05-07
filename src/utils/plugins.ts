@@ -30,13 +30,6 @@ import * as pluginCommandPreview from '../built-in-plugins/command-preview';
 import * as pluginCommandTest from '../built-in-plugins/command-test';
 import * as pluginEnsureProjectFiles from '../built-in-plugins/ensure-project-files';
 import * as pluginMocks from '../built-in-plugins/mocks';
-import * as pluginPackages from '../built-in-plugins/packages';
-import * as pluginPackagesAdd from '../built-in-plugins/packages-add';
-import * as pluginPackagesDocs from '../built-in-plugins/packages-docs';
-import * as pluginPackagesPublish from '../built-in-plugins/packages-publish';
-import * as pluginPackagesPush from '../built-in-plugins/packages-push';
-import * as pluginPackagesRemove from '../built-in-plugins/packages-remove';
-import * as pluginPackagesUpdate from '../built-in-plugins/packages-update';
 import * as pluginProjectAnalyseConfig from '../built-in-plugins/project-analyse-config';
 import * as pluginProjectAnalyseLayouts from '../built-in-plugins/project-analyse-layouts';
 import * as pluginProjectAnalyseNotFound from '../built-in-plugins/project-analyse-not-found';
@@ -118,13 +111,6 @@ export const loadPlugins = async (pluginIncludeRoots: string[] = []) => {
     pluginEnsureProjectFiles,
     pluginMocks,
     whiteFiles,
-    pluginPackages,
-    pluginPackagesAdd,
-    pluginPackagesDocs,
-    pluginPackagesPublish,
-    pluginPackagesPush,
-    pluginPackagesRemove,
-    pluginPackagesUpdate,
     pluginProjectAnalyseConfig,
     pluginProjectAnalyseLayouts,
     pluginProjectAnalyseNotFound,

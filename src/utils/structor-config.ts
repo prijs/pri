@@ -17,6 +17,8 @@ export const tempPath = { dir: '.temp' };
 
 export const assetsPath = { dir: 'assets' };
 
+export const packagesPath = { dir: 'packages' };
+
 /**
  * Sub level definition end
  */

@@ -10,7 +10,8 @@ import {
   pagesPath,
   requestsPath,
   srcPath,
-  utilPath
+  utilPath,
+  packagesPath
 } from '../../../utils/structor-config';
 import { addWhiteFilesByProjectType } from '../../../utils/white-file-helper';
 import { transferToAllAbsolutePaths } from '../../../utils/global-state';
@@ -33,12 +34,6 @@ pri.project.whiteFileRules.add(file => {
   return allAbsoluteIgnores.some(absoluteFilePath => path.format(file) === absoluteFilePath);
 });
 
-// [utils]/
-// [pages]/
-// [docs]/*
-// [components]/*
-// [requests]/*
-// [layouts]/*
 pri.project.whiteFileRules.add(file => {
   return transferToAllAbsolutePaths(utilPath.dir)
     .concat(transferToAllAbsolutePaths(pagesPath.dir))
@@ -46,6 +41,7 @@ pri.project.whiteFileRules.add(file => {
     .concat(transferToAllAbsolutePaths(componentPath.dir))
     .concat(transferToAllAbsolutePaths(requestsPath.dir))
     .concat(transferToAllAbsolutePaths(`src${path.sep}layouts`))
+    .concat(path.join(pri.projectRootPath, packagesPath.dir))
     .some(absoluteFilePath => path.format(file).startsWith(absoluteFilePath));
 });
 
