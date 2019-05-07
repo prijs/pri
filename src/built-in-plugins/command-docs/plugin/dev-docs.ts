@@ -67,7 +67,7 @@ export async function devDocs() {
         </style>
       `,
       appendBody: `
-            <script src="https://g.alicdn.com/dt/fbi/0.0.292/monaco-editor/vs/loader.js"></script>
+            
           `
     }
   });
