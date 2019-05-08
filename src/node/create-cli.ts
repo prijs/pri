@@ -25,7 +25,9 @@ import { TransferedRegisterCommand } from '../utils/define';
 export async function createCli(opts?: { pluginIncludeRoots: string[] }) {
   await checkEnvironment();
 
-  await initGlobalState();
+  const preSelectPackage = (yargs.argv.p as string) || (yargs.argv.package as string);
+
+  await initGlobalState(preSelectPackage);
 
   const { globalState } = await import('../utils/global-state');
   const { transferCommandsArrayToMap } = await import('../utils/commands');
@@ -53,6 +55,13 @@ function registerYargs(leafYargs: typeof yargs, transferedRegisterCommands: Tran
       describe: commandRegister.description || '',
       aliases: commandRegister.alias,
       builder: childYargs => {
+        // Add package options
+        childYargs.option('package', {
+          alias: 'p',
+          description: 'Select package',
+          demandOption: false
+        });
+
         if (commandRegister.options) {
           Object.keys(commandRegister.options).forEach(optionName => {
             const optionInfo = commandRegister.options[optionName];

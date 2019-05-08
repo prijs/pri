@@ -15,19 +15,19 @@ import { PackageJson, GlobalState, ProjectConfig } from './define';
 
 const globalState = new GlobalState();
 
-export async function initGlobalState() {
+export async function initGlobalState(preSelectPackage: string) {
   globalState.priPackageJson = pkg;
   globalState.majorCommand = yargs.argv._.length === 0 ? 'dev' : yargs.argv._[0];
   globalState.isDevelopment = ['dev', 'docs'].some(operate => operate === globalState.majorCommand);
 
-  await freshGlobalState();
+  await freshGlobalState(preSelectPackage);
 }
 
-async function freshGlobalState() {
+async function freshGlobalState(preSelectPackage: string) {
   const cliCurrentPath = (yargs.argv.cwd as string) || process.cwd();
   globalState.projectRootPath = cliCurrentPath;
 
-  await initPackages(cliCurrentPath);
+  await initPackages(cliCurrentPath, preSelectPackage);
 
   freshProjectConfig();
 
@@ -64,7 +64,7 @@ function freshConfig(rootPath: string) {
   return merge(new ProjectConfig(), userProjectConfig);
 }
 
-async function initPackages(cliCurrentPath: string) {
+async function initPackages(cliCurrentPath: string, preSelectPackage: string) {
   const currentPackagesPath = path.join(cliCurrentPath, PACKAGES_NAME);
 
   if (fs.existsSync(currentPackagesPath)) {
@@ -84,16 +84,34 @@ async function initPackages(cliCurrentPath: string) {
   }
 
   if (globalState.packages.length > 0) {
-    const inquirerInfo = await inquirer.prompt([
-      {
-        message: `Choose packages`,
-        name: 'packageName',
-        type: 'list',
-        choices: ['root', ...globalState.packages.map(eachPackage => eachPackage.name)]
-      }
-    ]);
+    if (!preSelectPackage) {
+      const inquirerInfo = await inquirer.prompt([
+        {
+          message: `Choose packages`,
+          name: 'packageName',
+          type: 'list',
+          choices: [
+            { name: 'Root (Current Project)', value: 'root' },
+            new inquirer.Separator(),
+            ...globalState.packages.map(eachPackage => ({
+              name: `Package: ${eachPackage.name}`,
+              value: eachPackage.name
+            }))
+          ]
+        }
+      ]);
 
-    globalState.selectedSourceType = inquirerInfo.packageName;
+      globalState.selectedSourceType = inquirerInfo.packageName;
+    } else {
+      if (
+        preSelectPackage !== 'root' &&
+        !globalState.packages.some(eachPackage => eachPackage.name === preSelectPackage)
+      ) {
+        logFatal(`No package ${preSelectPackage}`);
+      }
+
+      globalState.selectedSourceType = preSelectPackage;
+    }
   }
 
   switch (globalState.selectedSourceType) {
