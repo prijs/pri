@@ -305,7 +305,7 @@ function ensurePackageJson() {
           },
           husky: {
             hooks: {
-              'pre-commit': 'npm test'
+              'pre-commit': 'npm test -- --package root'
             }
           }
         }),
