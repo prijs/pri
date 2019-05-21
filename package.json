@@ -1,6 +1,6 @@
 {
   "name": "pri",
-  "version": "3.0.12",
+  "version": "3.0.13-beta1",
   "types": "src/node/index.ts",
   "main": "built/node/index.js",
   "scripts": {
@@ -126,7 +126,7 @@
     "url-join": "4.0.0",
     "url-loader": "1.1.2",
     "walk": "2.3.14",
-    "webpack": "4.29.6",
+    "webpack": "4.28.2",
     "webpack-bundle-analyzer": "3.0.4",
     "webpack-dev-server": "3.2.1",
     "webpack-node-externals": "1.7.2",

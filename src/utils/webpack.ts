@@ -37,6 +37,7 @@ export const watchWebpack = async (opts: IOptions<IExtraOptions>): Promise<any> 
   }
 
   webpackConfig.plugins.push(new WebpackBar());
+
   const compiler = webpack(webpackConfig);
 
   compiler.watch({}, () => {});
