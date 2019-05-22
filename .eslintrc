@@ -76,6 +76,7 @@
     "no-script-url": "off",
     "import/no-unresolved": [
       0
-    ]
+    ],
+    "react/prop-types": "0"
   }
 }
