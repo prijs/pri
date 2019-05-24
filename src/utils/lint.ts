@@ -3,7 +3,7 @@ import * as yargs from 'yargs';
 import { logInfo } from './log';
 import { findNearestNodemodulesFile } from './npm-finder';
 
-export const eslintParam = `--fix './?(src|docs|tests)/**/*.?(ts|tsx)'`;
+export const eslintParam = `'./?(src|docs|tests)/**/*.?(ts|tsx)'`;
 
 export async function lint(showBreakError = true) {
   if (yargs.argv.light) {

@@ -131,7 +131,7 @@ export const getWebpackConfig = async (opts: IOptions) => {
   const config: webpack.Configuration = {
     mode: opts.mode,
     entry: opts.entryPath,
-    devtool: opts.mode === 'development' ? 'source-map' : false,
+    devtool: opts.mode === 'development' ? 'eval-source-map' : false,
     externals: opts.externals,
     target: opts.target || 'web',
     output: {
