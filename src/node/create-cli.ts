@@ -57,7 +57,6 @@ function registerYargs(leafYargs: typeof yargs, transferedRegisterCommands: Tran
       builder: childYargs => {
         // Add package options
         childYargs.option('package', {
-          alias: 'p',
           description: 'Select package',
           demandOption: false
         });
