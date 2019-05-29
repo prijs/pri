@@ -111,6 +111,7 @@ export const npmIgnores = _.union([...ignores, 'tests', 'packages']);
 
 export const ignoreScanFiles = _.union([
   ...ignores,
+  '.eslintignore',
   '.gitignore',
   '.gitmodules',
   '.npmignore',
