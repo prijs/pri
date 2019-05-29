@@ -26,7 +26,7 @@ import { logFatal } from '../utils/log';
 export async function createCli(opts?: { pluginIncludeRoots: string[] }) {
   await checkEnvironment();
 
-  const preSelectPackage = (yargs.argv.p as string) || (yargs.argv.package as string);
+  const preSelectPackage = yargs.argv.package as string;
 
   await initGlobalState(preSelectPackage);
 
