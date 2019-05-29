@@ -4,6 +4,7 @@ import * as semver from 'semver';
 
 import { initGlobalState } from '../utils/global-state';
 import { TransferedRegisterCommand } from '../utils/define';
+import { logFatal } from '../utils/log';
 
 // Check git repo
 // let isGitRepo = false;
@@ -32,6 +33,10 @@ export async function createCli(opts?: { pluginIncludeRoots: string[] }) {
   const { globalState } = await import('../utils/global-state');
   const { transferCommandsArrayToMap } = await import('../utils/commands');
   const { loadPlugins, plugin } = await import('../utils/plugins');
+
+  if (!globalState.sourceConfig.type && yargs.argv._[0] !== 'init') {
+    logFatal(`You should run "npx pri init" first`);
+  }
 
   await loadPlugins(opts && opts.pluginIncludeRoots);
 
@@ -94,8 +99,6 @@ function registerYargs(leafYargs: typeof yargs, transferedRegisterCommands: Tran
 }
 
 async function checkEnvironment() {
-  const { logFatal } = await import('../utils/log');
-
   // Check node version
   if (semver.lte(process.version, '8.0.0')) {
     logFatal(`Nodejs version should be greater than 8, current is ${process.version}`);
