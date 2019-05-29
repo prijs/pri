@@ -9,10 +9,4 @@ export async function cleanDist() {
   await exec(
     `${findNearestNodemodulesFile('.bin/rimraf')} ${path.join(globalState.projectRootPath, pri.projectConfig.distDir)}`
   );
-  await exec(
-    `${findNearestNodemodulesFile('.bin/rimraf')} ${path.join(
-      globalState.projectRootPath,
-      globalState.projectConfig.distDir
-    )}`
-  );
 }
