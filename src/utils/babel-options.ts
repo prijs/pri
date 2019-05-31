@@ -14,6 +14,7 @@ import babelPresetReact from '@babel/preset-react';
 import babelPresetTypescript from '@babel/preset-typescript';
 import babelPluginReactCssModules from 'babel-plugin-react-css-modules';
 import * as babelPluginReactHotLoader from 'react-hot-loader/babel';
+import { globalState } from './global-state';
 
 export const babelOptions = {
   babelrc: false,
@@ -21,7 +22,7 @@ export const babelOptions = {
   presets: [[babelPresetEnv], [babelPresetReact], [babelPresetTypescript]],
   plugins: [
     [transformRuntime],
-    [babelPluginReactHotLoader],
+    ...(globalState.isDevelopment ? [[babelPluginReactHotLoader]] : []),
     [babelPluginProposalDecorators, { legacy: true }],
     [babelPluginProposalExportNamespace],
     [babelPluginProposalFunctionSent],
