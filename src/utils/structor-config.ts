@@ -57,6 +57,10 @@ export const requestsPath = {
   dir: path.join(srcPath.dir, 'requests')
 };
 
+export const expandPath = {
+  dir: path.join(srcPath.dir, 'expand')
+};
+
 export const componentPath = {
   dir: path.join(srcPath.dir, 'components')
 };
