@@ -9,6 +9,13 @@ export class Props {
 const Docs = React.memo((props: Props) => {
   const [docIndex, setDocIndex] = React.useState(0);
 
+  React.useEffect(() => {
+    const index = Number(urlSearchParams.get('index'));
+    if (docIndex !== index) {
+      setDocIndex(index);
+    }
+  }, [docIndex]);
+
   function selectDoc(index: number) {
     urlSearchParams.set('index', index.toString());
     const newurl = `${window.location.protocol}//${window.location.host}${
