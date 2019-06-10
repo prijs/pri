@@ -26,6 +26,7 @@ export type IOptions<T = {}> = {
   externals?: any[];
   target?: webpack.Configuration['target'];
   libraryTarget?: webpack.LibraryTarget;
+  devtool?: webpack.Options.Devtool;
 } & T;
 
 const defaultSourcePathToBeResolve = [
@@ -131,7 +132,7 @@ export const getWebpackConfig = async (opts: IOptions) => {
   const config: webpack.Configuration = {
     mode: opts.mode,
     entry: opts.entryPath,
-    devtool: opts.mode === 'development' ? 'eval-source-map' : false,
+    devtool: opts.devtool || (opts.mode === 'development' ? 'eval-source-map' : false),
     externals: opts.externals,
     target: opts.target || 'web',
     output: {

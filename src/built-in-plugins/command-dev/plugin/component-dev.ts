@@ -15,6 +15,8 @@ export const componentDev = async () => {
     mode: 'development',
     target: 'node',
     libraryTarget: 'commonjs2',
+    // Do not use sourceMap, otherwise main project won't load "require"
+    devtool: false,
     entryPath: path.join(globalState.sourceRoot, path.format(componentEntry)),
     externals: [nodeExternals()],
     outFileName: pri.projectConfig.outFileName
