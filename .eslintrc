@@ -101,7 +101,7 @@
     "react/jsx-uses-react": 2,
     "react/react-in-jsx-scope": 2,
     "react/sort-comp": 1,
-    "react/jsx-space-before-closing": 2,
+    "react/jsx-tag-spacing": 2,
     "react/jsx-no-bind": 2,
     "react/jsx-closing-bracket-location": 2,
     "react/prefer-stateless-function": 0,
