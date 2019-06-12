@@ -55,7 +55,7 @@
     "no-underscore-dangle": 2,
     "eol-last": 2,
     "no-useless-rename": 2,
-    "class-methods-use-this": 2,
+    "class-methods-use-this": 0,
     "prefer-destructuring": 2,
     "no-invalid-this": 2,
     "global-require": 2,
@@ -69,12 +69,13 @@
     "react-in-jsx-scope": 2,
     "react/sort-comp": 1,
     "react/jsx-space-before-closing": 2,
-    "react/jsx-no-bind": 2,
+    "react/jsx-no-bind": [2, { "allowArrowFunctions": true }],
     "react/jsx-closing-bracket-location": 2,
     "react/prefer-stateless-function": 0,
     "react/display-name": 2,
     "import/prefer-default-export": 0,
     "import/no-dynamic-require": 2,
-    "@typescript-eslint/no-var-requires": 2
+    "@typescript-eslint/no-var-requires": 2,
+    "@typescript-eslint/no-explicit-any": 0
   }
 }
