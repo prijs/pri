@@ -7,7 +7,7 @@ import { IOpts } from './interface';
 
 export const commandBundle = async (opts: IOpts = {}) => {
   if (pri.sourceConfig.type !== 'component') {
-    logFatal(`Only component support 'npm run bundle', try 'npm start'!`);
+    logFatal("Only component support 'npm run bundle', try 'npm start'!");
   }
 
   await pri.project.ensureProjectFiles();

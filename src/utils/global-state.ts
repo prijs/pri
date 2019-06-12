@@ -40,7 +40,7 @@ async function freshGlobalState(preSelectPackage: string) {
 
     globalState.projectPackageJson = projectPackageJson;
   } else {
-    logFatal(`No package.json, please run "npm init" first.`);
+    logFatal('No package.json, please run "npm init" first.');
   }
 }
 
@@ -92,7 +92,7 @@ async function initPackages(cliCurrentPath: string, preSelectPackage: string) {
     if (!preSelectPackage) {
       const inquirerInfo = await inquirer.prompt([
         {
-          message: `Choose packages`,
+          message: 'Choose packages',
           name: 'packageName',
           type: 'list',
           choices: [

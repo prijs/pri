@@ -58,7 +58,12 @@ pri.project.onAnalyseProject(files => {
             const relativePageFilePath = path.relative(pri.projectRootPath, `${file.dir}/${file.name}`);
             const componentName = safeName(relativePageFilePath) + md5(relativePageFilePath).slice(0, 5);
 
-            return { routerPath, file, chunkName, componentName };
+            return {
+              routerPath,
+              file,
+              chunkName,
+              componentName
+            };
           })
       }
     };

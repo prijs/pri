@@ -12,18 +12,18 @@ import { ProjectType } from '../../../utils/define';
 
 export const runInit = async () => {
   if (!fs.existsSync(path.join(pri.projectRootPath, 'package.json'))) {
-    logFatal(`No package.json! please run "npm init" first.`);
+    logFatal('No package.json! please run "npm init" first.');
   }
 
   if (!globalState.projectConfig.type) {
-    globalState.projectConfig.type = await selectProjectType(`Choose project type`);
+    globalState.projectConfig.type = await selectProjectType('Choose project type');
     if (globalState.selectedSourceType === 'root') {
       globalState.sourceConfig.type = globalState.projectConfig.type;
     }
   }
 
   if (!globalState.sourceConfig.type) {
-    globalState.sourceConfig.type = await selectProjectType(`Choose source type`);
+    globalState.sourceConfig.type = await selectProjectType('Choose source type');
   }
 
   // Add white files by projectType because we might change project type above.
@@ -58,7 +58,7 @@ export const runInit = async () => {
     case 'component':
     case 'plugin':
       logText(colors.blue('  npm publish'));
-      logText(`    Publish this component to npm package.\n`);
+      logText('    Publish this component to npm package.\n');
       break;
     default:
   }

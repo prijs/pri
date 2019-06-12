@@ -23,7 +23,6 @@ export async function devDocs() {
 
   prepare(docsEntryPath);
 
-  await pri.project.lint(false);
   await pri.project.ensureProjectFiles();
   await pri.project.checkProjectFiles();
 

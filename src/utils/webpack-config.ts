@@ -117,7 +117,13 @@ export const getWebpackConfig = async (opts: IOptions) => {
     publicPath += '/';
   }
 
-  const stats = { warnings: false, version: false, modules: false, entrypoints: false, hash: false };
+  const stats = {
+    warnings: false,
+    version: false,
+    modules: false,
+    entrypoints: false,
+    hash: false
+  };
 
   const tsLoaderConfig = {
     include: plugin.buildConfigJsLoaderIncludePipes.reduce((options, fn) => {
@@ -168,7 +174,7 @@ export const getWebpackConfig = async (opts: IOptions) => {
       hotUpdateChunkFilename: 'hot~[id].[hash].chunk.js',
       hotUpdateMainFilename: 'hot-update.[hash].json',
       hashDigestLength: 4,
-      globalObject: `(typeof self !== 'undefined' ? self : this)`,
+      globalObject: "(typeof self !== 'undefined' ? self : this)",
       libraryTarget: opts.libraryTarget || 'var'
     },
     module: {

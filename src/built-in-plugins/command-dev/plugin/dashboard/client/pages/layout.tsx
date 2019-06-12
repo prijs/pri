@@ -47,7 +47,14 @@ export const LayoutComponent = React.memo(() => {
   return (
     <SocketContext.Provider value={socket.current}>
       <div style={{ display: 'flex', height: '100%' }}>
-        <div style={{ display: 'flex', flexDirection: 'column', width: 250, borderRight: '1px solid #eee' }}>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            width: 250,
+            borderRight: '1px solid #eee'
+          }}
+        >
           <div style={topContainerStyle}>
             <NavComponent />
           </div>
@@ -57,7 +64,14 @@ export const LayoutComponent = React.memo(() => {
           </div>
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', flexGrow: 1, flexBasis: 0 }}>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            flexGrow: 1,
+            flexBasis: 0
+          }}
+        >
           <div style={topContainerStyle}>
             <MenuComponent />
             {loadPluginsByPosition(state.plugins, 'menu')}

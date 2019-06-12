@@ -12,7 +12,7 @@ export const checkGitVersion = async (cwd?: string) => {
 
   hasCheckGitVersion = true;
 
-  const gitVersion = await exec(`git --version`, { cwd });
+  const gitVersion = await exec('git --version', { cwd });
 
   try {
     const gitVersionPorcelain = /git\s+version\s+([0-9.]+)/g.exec(gitVersion)[1];
@@ -39,7 +39,7 @@ function validateGitVersion() {
 export const getStatus = async (cwd?: string) => {
   await checkGitVersion(cwd);
 
-  const gitStatus = await exec(`git status --porcelain`, { cwd });
+  const gitStatus = await exec('git status --porcelain', { cwd });
 
   return gitStatus;
 };

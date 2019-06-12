@@ -6,16 +6,7 @@ import { pri } from '../../../node';
 import { PRI_PACKAGE_NAME, CONFIG_FILE } from '../../../utils/constants';
 import { safeJsonParse } from '../../../utils/functional';
 import { globalState, transferToAllAbsolutePaths } from '../../../utils/global-state';
-import { prettierConfig } from '../../../utils/prettier-config';
-import {
-  declarePath,
-  gitIgnores,
-  npmIgnores,
-  tempPath,
-  tempTypesPath,
-  srcPath,
-  componentEntry
-} from '../../../utils/structor-config';
+import { declarePath, gitIgnores, npmIgnores, tempPath, tempTypesPath, srcPath } from '../../../utils/structor-config';
 import { ensureComponentFiles } from './ensure-component';
 import { ensurePluginFiles } from './ensure-plugin';
 import { ensureProjectFiles } from './ensure-project';
@@ -28,7 +19,6 @@ pri.event.once('beforeEnsureFiles', async () => {
   ensureTsconfig();
   ensureJestTsconfig();
   ensureVscode();
-  ensurePrettierrc();
   ensureEslint();
   ensurePackageJson();
   ensurePriConfig();
@@ -51,15 +41,6 @@ pri.event.once('beforeEnsureFiles', async () => {
 
 function ensureDeclares() {
   fs.copySync(path.join(__dirname, '../../../../declare'), path.join(pri.projectRootPath, declarePath.dir));
-}
-
-function ensurePrettierrc() {
-  pri.project.addProjectFiles({
-    fileName: path.join(pri.projectRootPath, '.prettierrc'),
-    pipeContent: () => {
-      return `${JSON.stringify(prettierConfig, null, 2)}\n`;
-    }
-  });
 }
 
 function ensureTsconfig() {
@@ -133,11 +114,10 @@ function ensureJestTsconfig() {
 function ensureEslint() {
   pri.project.addProjectFiles({
     fileName: path.join(pri.projectRootPath, '.eslintrc'),
-    pipeContent: async prev => {
-      const prevJson = safeJsonParse(prev);
+    pipeContent: async () => {
       const eslintConfig = await fs.readFile(path.join(__dirname, '../../../../.eslintrc'));
 
-      return `${JSON.stringify(_.merge({}, prevJson, safeJsonParse(eslintConfig.toString())), null, 2)}\n`;
+      return `${eslintConfig.toString()}\n`;
     }
   });
 }
@@ -191,10 +171,6 @@ function ensureNpmignore() {
       const npmIgnoresInRoot = npmIgnores.map(name => {
         return `/${name}`;
       });
-
-      if (pri.projectConfig.hideSourceCodeForNpm) {
-        npmIgnoresInRoot.push('/src');
-      }
 
       return _.union(values, npmIgnoresInRoot).join('\n');
     }
@@ -289,10 +265,7 @@ function ensurePackageJson() {
             _.unset(prevJson, `dependencies.${PRI_PACKAGE_NAME}`);
             _.set(prevJson, `devDependencies.${PRI_PACKAGE_NAME}`, projectPriVersion);
 
-            const types = pri.projectConfig.hideSourceCodeForNpm
-              ? 'declaration/index.d.ts'
-              : path.format(componentEntry);
-            _.set(prevJson, 'types', types);
+            _.set(prevJson, 'types', 'declaration/index.d.ts');
 
             _.set(prevJson, 'scripts.prepublishOnly', 'npm run build && npm run bundle --skipLint');
 
@@ -318,7 +291,7 @@ function ensurePackageJson() {
           },
           husky: {
             hooks: {
-              'pre-commit': 'npm test -- --package root'
+              'pre-commit': 'npm run format && npm test -- --package root'
             }
           }
         }),

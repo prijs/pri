@@ -27,7 +27,7 @@ export const tempTypesPath = {
   dir: path.join(tempPath.dir, 'types')
 };
 
-export const pagesPath = { dir: path.join(srcPath.dir, `pages`) };
+export const pagesPath = { dir: path.join(srcPath.dir, 'pages') };
 
 export const notFoundPath = {
   dir: pagesPath.dir,
@@ -70,7 +70,7 @@ export const declarePath = {
 };
 
 export const layoutPath = {
-  dir: path.join(srcPath.dir, `layouts`),
+  dir: path.join(srcPath.dir, 'layouts'),
   name: 'index',
   ext: '.tsx'
 };
@@ -119,7 +119,6 @@ export const ignoreScanFiles = _.union([
   '.gitignore',
   '.gitmodules',
   '.npmignore',
-  '.prettierrc',
   '.git',
   'package.json',
   'tsconfig.json',

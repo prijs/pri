@@ -78,7 +78,7 @@ export const StructComponent = React.memo(() => {
   const hasLayout = _.get(state.status, 'analyseInfo.projectAnalyseLayout.hasLayout', false);
   treeData[0].children.push({
     key: 'layout',
-    title: `Layout`,
+    title: 'Layout',
     icon: hasLayout ? (
       <TreeIcon type="layout" />
     ) : (
@@ -93,7 +93,7 @@ export const StructComponent = React.memo(() => {
   const hasNotFound = _.get(state.status, 'analyseInfo.projectAnalyseNotFound.hasNotFound', false);
   treeData[0].children.push({
     key: '404',
-    title: `404`,
+    title: '404',
     icon: hasNotFound ? (
       <TreeIcon type="file-unknown" />
     ) : (
@@ -108,7 +108,7 @@ export const StructComponent = React.memo(() => {
   const hasConfig = _.get(state.status, 'analyseInfo.projectAnalyseConfig.hasConfig', false);
   treeData[0].children.push({
     key: 'config',
-    title: `Config`,
+    title: 'Config',
     icon: hasConfig ? (
       <TreeIcon type="setting" />
     ) : (

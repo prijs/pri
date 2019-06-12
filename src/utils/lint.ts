@@ -3,17 +3,17 @@ import * as yargs from 'yargs';
 import { logInfo } from './log';
 import { findNearestNodemodulesFile } from './npm-finder';
 
-export const eslintParam = `'./?(src|packages|docs|tests)/**/*.?(ts|tsx)'`;
+export const eslintParam = "--fix './?(src|packages|docs|tests)/**/*.?(ts|tsx)'";
 
 export async function lint(showBreakError = true) {
   if (yargs.argv.light) {
     return;
   }
 
-  logInfo('Lint and format code..');
+  logInfo('\nLint and format code..');
 
   try {
-    execSync(`${findNearestNodemodulesFile('.bin/eslint')} ${eslintParam}`, {
+    execSync([`${findNearestNodemodulesFile('.bin/eslint')} ${eslintParam}`].join(' '), {
       stdio: 'inherit'
     });
   } catch (error) {

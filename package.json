@@ -1,6 +1,6 @@
 {
   "name": "pri",
-  "version": "3.0.28",
+  "version": "3.1.0",
   "types": "src/node/index.ts",
   "main": "built/node/index.js",
   "scripts": {
@@ -108,7 +108,7 @@
     "portfinder": "1.0.20",
     "postcss-less": "3.1.4",
     "postcss-scss": "2.0.0",
-    "prettier": "1.18.2",
+    "prettier": "^1.18.2",
     "raw-loader": "3.0.0",
     "react": "16.8.6",
     "react-dom": "16.8.6",

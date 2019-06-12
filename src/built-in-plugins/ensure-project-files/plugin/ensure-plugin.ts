@@ -103,7 +103,7 @@ function ensureTest() {
   const filePath = path.join(globalState.projectRootPath, testsPath.dir, 'index.ts');
 
   if (fs.existsSync(filePath)) {
-    logSuccess(`Test file already exist.`);
+    logSuccess('Test file already exist.');
     return;
   }
 

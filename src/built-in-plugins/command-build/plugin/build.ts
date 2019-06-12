@@ -70,8 +70,6 @@ export const buildProject = async (opts: IOpts = {}) => {
 
   await copyAssets();
 
-  await buildDeclaration();
-
   plugin.buildAfterProdBuild.forEach(afterProdBuild => {
     return afterProdBuild(stats);
   });
@@ -136,7 +134,7 @@ async function copyAssets() {
 
   const distAssetsPath = path.join(pri.projectRootPath, pri.projectConfig.distDir, assetsPath.dir);
   if (fs.existsSync(distAssetsPath)) {
-    logInfo(`assets path exists in distDir, so skip /assets copy.`);
+    logInfo('assets path exists in distDir, so skip /assets copy.');
   } else {
     await fs.copy(sourceAssetsPath, distAssetsPath);
   }
@@ -160,10 +158,8 @@ async function prepareBuild(opts: IOpts = {}) {
 }
 
 async function buildDeclaration() {
-  // Create d.ts if hideSourceCodeForNpm
-  if (pri.projectConfig.hideSourceCodeForNpm) {
-    await exec(`npx tsc --declaration --declarationDir ./declaration --emitDeclarationOnly`, {
-      cwd: pri.projectRootPath
-    });
-  }
+  // Create d.ts
+  await exec('npx tsc --declaration --declarationDir ./declaration --emitDeclarationOnly', {
+    cwd: pri.projectRootPath
+  });
 }

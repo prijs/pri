@@ -33,10 +33,13 @@ export async function createCli(opts?: { pluginIncludeRoots: string[] }) {
   const { globalState } = await import('../utils/global-state');
   const { transferCommandsArrayToMap } = await import('../utils/commands');
   const { loadPlugins, plugin } = await import('../utils/plugins');
+  const { cleanUncessaryFields } = await import('./clean-unecessary-files');
 
   if (!globalState.sourceConfig.type && yargs.argv._[0] !== 'init') {
-    logFatal(`You should run "npx pri init" first`);
+    logFatal('You should run "npx pri init" first');
   }
+
+  await cleanUncessaryFields();
 
   await loadPlugins(opts && opts.pluginIncludeRoots);
 
@@ -50,7 +53,9 @@ export async function createCli(opts?: { pluginIncludeRoots: string[] }) {
   /**
    * Update notify.
    */
-  updateNotifier({ pkg: globalState.priPackageJson as updateNotifier.Package }).notify();
+  updateNotifier({
+    pkg: globalState.priPackageJson as updateNotifier.Package
+  }).notify();
 }
 
 function registerYargs(leafYargs: typeof yargs, transferedRegisterCommands: TransferedRegisterCommand[]) {

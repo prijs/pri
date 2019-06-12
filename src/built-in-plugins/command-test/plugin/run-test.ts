@@ -15,7 +15,7 @@ export const runTest = async () => {
         '^.+\\.tsx?$': 'ts-jest'
       })}'
       `,
-      `--moduleFileExtensions ts tsx js jsx`,
+      '--moduleFileExtensions ts tsx js jsx',
       `
       --globals '${JSON.stringify({
         'ts-jest': {
@@ -26,7 +26,7 @@ export const runTest = async () => {
         }
       })}'
       `,
-      `--coverage`
+      '--coverage'
     ]
       .map(each => {
         return each.trim();

@@ -15,7 +15,7 @@ export async function runInTempFolderAndDestroyAfterFinished(fn: (tempFolderPath
   const tempFolderPath = getRandomFolderPath();
 
   if (fs.existsSync(tempFolderPath)) {
-    logFatal(`error code: 1`);
+    logFatal('error code: 1');
   }
 
   try {

@@ -86,7 +86,14 @@ const Docs = React.memo((props: Props) => {
         </div>
       )}
 
-      <div style={{ display: 'flex', flexDirection: 'column', flexGrow: 1, boxSizing: 'border-box' }}>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          flexGrow: 1,
+          boxSizing: 'border-box'
+        }}
+      >
         <div
           style={{
             width: '100%',

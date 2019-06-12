@@ -68,7 +68,6 @@ async function debugProject() {
 
   debugProjectPrepare(dashboardClientPort);
 
-  await pri.project.lint(false);
   await pri.project.ensureProjectFiles();
   await pri.project.checkProjectFiles();
 
@@ -105,7 +104,7 @@ async function debugProject() {
   dashboardServer({ serverPort: dashboardServerPort, analyseInfo });
 
   if (globalState.projectConfig.useHttps) {
-    logInfo(`you should set chrome://flags/#allow-insecure-localhost, to trust local certificate.`);
+    logInfo('you should set chrome://flags/#allow-insecure-localhost, to trust local certificate.');
   }
 
   // Start dashboard client production server
@@ -180,7 +179,7 @@ function debugProjectPrepare(dashboardClientPort: number) {
       });
 
       entry.pipe.set('appExportName', () => {
-        return `hot(App)`;
+        return 'hot(App)';
       });
 
       // Load webui iframe

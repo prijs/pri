@@ -6,8 +6,6 @@ import { globalState } from '../../../utils/global-state';
 import { watchWebpack } from '../../../utils/webpack';
 
 export const pluginDev = async () => {
-  await pri.project.lint(false);
-
   // Because plugin need create files, so clear dist first.
   await cleanDist();
 

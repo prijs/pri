@@ -187,15 +187,15 @@ function getPriPlugins(pluginRootPath: string, packageJsonPaths: string[]) {
       const instance: IPluginModule = require(subPackageRealEntryFilePath);
 
       if (!instance.getConfig) {
-        logFatal(`Plugin must impletement getConfig method!`);
+        logFatal('Plugin must impletement getConfig method!');
       }
 
       if (!instance.getPlugin) {
-        logFatal(`Plugin must impletement getPlugin method!`);
+        logFatal('Plugin must impletement getPlugin method!');
       }
 
       if (!instance.getConfig().name) {
-        logFatal(`Plugin must have name!`);
+        logFatal('Plugin must have name!');
       }
 
       loadedPlugins.add(instance);

@@ -7,7 +7,7 @@ import { getPackageJson } from './file-operate';
 import { globalState } from './global-state';
 import { PackageJson } from './define';
 
-export const packagesPath = `packages`;
+export const packagesPath = 'packages';
 
 export const getPackages = (() => {
   let result: {
@@ -25,7 +25,7 @@ export const getPackages = (() => {
       return result;
     }
 
-    const submoduleStatus = await exec(`git submodule status | awk '{ print $2 }'`);
+    const submoduleStatus = await exec("git submodule status | awk '{ print $2 }'");
     const submodulePaths = submoduleStatus
       .split('\n')
       .map(each => {

@@ -23,7 +23,7 @@ export function onAnalyseProject(mockFilesPath: string[]) {
     return `
       ${text}
       // Get mock list start
-      ${mocks.join(`\n`)}
+      ${mocks.join('\n')}
 
       var allMocks = {${mockFilesPath
         .map((__, index) => {
@@ -41,10 +41,12 @@ export function onAnalyseProject(mockFilesPath: string[]) {
       self.addEventListener("fetch", event => {
         var requestUrl = new URL(event.request.url)
 
-        const mockInfo = mockList.find(mock => requestUrl.hostname === mock.url.hostname && requestUrl.pathname === mock.url.pathname)
+        const mockInfo = mockList.find(mock => requestUrl.hostname === mock.url.hostname &&
+           requestUrl.pathname === mock.url.pathname)
 
         if (mockInfo) {
-          var responseInit = { status: 200, statusText: "OK", headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" } }
+          var responseInit = { status: 200, statusText: "OK", 
+            headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" } }
 
           if (typeof mockInfo.value === 'function') {
             event.respondWith(

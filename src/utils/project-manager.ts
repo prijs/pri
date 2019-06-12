@@ -37,7 +37,7 @@ export async function createLayout() {
   const pathFullPath = path.join(globalState.sourceRoot, path.format(layoutPath));
 
   if (fs.existsSync(pathFullPath)) {
-    throw Error(`layout already exist!`);
+    throw Error('layout already exist!');
   }
 
   const prettier = await import('prettier');
@@ -63,7 +63,7 @@ export async function create404() {
   const pathFullPath = path.join(globalState.sourceRoot, path.format(notFoundPath));
 
   if (fs.existsSync(pathFullPath)) {
-    throw Error(`404 page already exist!`);
+    throw Error('404 page already exist!');
   }
 
   const prettier = await import('prettier');
@@ -89,7 +89,7 @@ export async function createConfig() {
   const configFilePath = path.join(globalState.projectRootPath, CONFIG_FILE);
 
   if (fs.existsSync(configFilePath)) {
-    throw Error(`config already exist!`);
+    throw Error('config already exist!');
   }
 
   fs.outputJSONSync(configFilePath, {});

@@ -1,6 +1,6 @@
 import * as webpack from 'webpack';
 import * as WebpackBar from 'webpackbar';
-import { getWebpackConfig, IOptions } from './webpack-config';
+import { getWebpackConfig } from './webpack-config';
 
 interface IExtraOptions {
   pipeConfig?: (config?: webpack.Configuration) => Promise<webpack.Configuration>;
