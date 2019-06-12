@@ -4,7 +4,9 @@ import { pri } from '../../../node';
 // mocks
 const whiteList = ['mocks'];
 pri.project.whiteFileRules.add(file => {
-  return whiteList.some(whiteName => path.format(file) === path.join(pri.projectRootPath, whiteName));
+  return whiteList.some(whiteName => {
+    return path.format(file) === path.join(pri.projectRootPath, whiteName);
+  });
 });
 
 // mocks/**/*.ts
@@ -18,7 +20,9 @@ pri.project.onAnalyseProject(async files => {
     .filter(file => {
       return file.dir === path.join(pri.projectRootPath, 'mocks');
     })
-    .map(file => path.format(file));
+    .map(file => {
+      return path.format(file);
+    });
 
   const compileMockModule = await import('./compile-mock');
   compileMockModule.onAnalyseProject(mockFilesPath);

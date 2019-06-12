@@ -6,7 +6,9 @@ export const analyseProject = async () => {
   const files = await walkProjectFiles();
 
   // Clear analyseInfo
-  Object.keys(plugin.analyseInfo).forEach(key => delete plugin.analyseInfo[key]);
+  Object.keys(plugin.analyseInfo).forEach(key => {
+    return delete plugin.analyseInfo[key];
+  });
 
   // Clear pipe
   pipe.clear();

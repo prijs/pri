@@ -124,9 +124,9 @@ export const loadPlugins = async (pluginIncludeRoots: string[] = []) => {
   if (globalState.projectConfig.type !== 'plugin') {
     getPriPlugins(
       globalState.projectRootPath,
-      pluginIncludeRoots
-        .concat(globalState.projectRootPath)
-        .map(pluginIncludeRoot => path.join(pluginIncludeRoot, 'package.json'))
+      pluginIncludeRoots.concat(globalState.projectRootPath).map(pluginIncludeRoot => {
+        return path.join(pluginIncludeRoot, 'package.json');
+      })
     );
   }
 
@@ -148,17 +148,25 @@ function getPriPlugins(pluginRootPath: string, packageJsonPaths: string[]) {
     return;
   }
 
-  const deps = packageJsonPaths.map(packageJsonPath => getDependencesByPackageJsonPath(packageJsonPath));
+  const deps = packageJsonPaths.map(packageJsonPath => {
+    return getDependencesByPackageJsonPath(packageJsonPath);
+  });
   const allDependencies = deps.reduce((obj, next) => {
     Object.assign(obj, next);
     return obj;
   }, {});
 
   Object.keys(allDependencies)
-    .filter(subPackageName => subPackageName.startsWith('pri-plugin') || subPackageName.startsWith('@ali/pri-plugin'))
+    .filter(subPackageName => {
+      return subPackageName.startsWith('pri-plugin') || subPackageName.startsWith('@ali/pri-plugin');
+    })
     .map(subPackageName => {
       // Can't allowed same name plugins
-      if (Array.from(loadedPlugins).some(loadedPlugin => loadedPlugin.getConfig().name === subPackageName)) {
+      if (
+        Array.from(loadedPlugins).some(loadedPlugin => {
+          return loadedPlugin.getConfig().name === subPackageName;
+        })
+      ) {
         logFatal(`There are two plugins named ${subPackageName}!`);
       }
 
@@ -175,6 +183,7 @@ function getPriPlugins(pluginRootPath: string, packageJsonPaths: string[]) {
         ? getPackageJsonPathByPathOrNpmName(subPackageName, pluginRootPath)
         : path.resolve(pluginRootPath, subPackageVersion.replace(/^file:/g, ''), 'package.json');
 
+      // eslint-disable-next-line global-require,@typescript-eslint/no-var-requires,import/no-dynamic-require
       const instance: IPluginModule = require(subPackageRealEntryFilePath);
 
       if (!instance.getConfig) {
@@ -205,7 +214,11 @@ export function getPluginsByOrder() {
   loadedPlugins.forEach(loadedPlugin => {
     if (loadedPlugin.getConfig().dependencies) {
       loadedPlugin.getConfig().dependencies.forEach(depPluginName => {
-        if (!Array.from(loadedPlugins).some(eachLoadedPlugin => eachLoadedPlugin.getConfig().name === depPluginName)) {
+        if (
+          !Array.from(loadedPlugins).some(eachLoadedPlugin => {
+            return eachLoadedPlugin.getConfig().name === depPluginName;
+          })
+        ) {
           logFatal(
             `${loadedPlugin.getConfig().name}: No dependent "${depPluginName}"\nTry: npm install ${depPluginName}.`
           );
@@ -217,13 +230,17 @@ export function getPluginsByOrder() {
   // Push to plugin quene.
   while (instantiatedPluginNames.size !== loadedPlugins.size) {
     const currentInstantiatedPlugins = getPluginWithPreloadDependences(Array.from(instantiatedPluginNames));
-    currentInstantiatedPlugins.forEach(eachPlugin => outputPlugins.push(eachPlugin));
+    currentInstantiatedPlugins.forEach(eachPlugin => {
+      return outputPlugins.push(eachPlugin);
+    });
 
     if (currentInstantiatedPlugins.length === 0) {
       throw Error('Plugin loop dependency.');
     }
 
-    currentInstantiatedPlugins.forEach(eachPlugin => instantiatedPluginNames.add(eachPlugin.getConfig().name));
+    currentInstantiatedPlugins.forEach(eachPlugin => {
+      return instantiatedPluginNames.add(eachPlugin.getConfig().name);
+    });
   }
 
   return outputPlugins;
@@ -238,7 +255,11 @@ function getPluginWithPreloadDependences(preInstantiatedDependences: string[]) {
           return true;
         }
 
-        return preInstantiatedDependences.findIndex(pluginName => loadedPlugin.getConfig().name === pluginName) === -1;
+        return (
+          preInstantiatedDependences.findIndex(pluginName => {
+            return loadedPlugin.getConfig().name === pluginName;
+          }) === -1
+        );
       })
       // Filter plugins who satisfied the dependence condition.
       .filter(loadedPlugin => {
@@ -247,15 +268,17 @@ function getPluginWithPreloadDependences(preInstantiatedDependences: string[]) {
           return true;
         }
         if (
-          loadedPlugin
-            .getConfig()
-            .dependencies.every(depPluginName => preInstantiatedDependences.indexOf(depPluginName) > -1)
+          loadedPlugin.getConfig().dependencies.every(depPluginName => {
+            return preInstantiatedDependences.indexOf(depPluginName) > -1;
+          })
         ) {
           return true;
         }
         return false;
       })
-      .map(loadedPlugin => loadedPlugin)
+      .map(loadedPlugin => {
+        return loadedPlugin;
+      })
   );
 }
 

@@ -5,8 +5,8 @@ import { ensureEndWithSlash, ensureStartWithSlash } from '../../../utils/functio
 import { tempPath } from '../../../utils/structor-config';
 
 pri.project.onCreateEntry(async (analyseInfo, entry) => {
-  entry.pipeEntryRender(
-    text => `
+  entry.pipeEntryRender(text => {
+    return `
       ${
         pri.projectConfig.useServiceWorker
           ? `
@@ -20,8 +20,8 @@ pri.project.onCreateEntry(async (analyseInfo, entry) => {
       }
 
       ${text}
-    `
-  );
+    `;
+  });
 
   if (pri.projectConfig.useServiceWorker) {
     const prettier = await import('prettier');

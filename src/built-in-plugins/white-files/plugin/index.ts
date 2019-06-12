@@ -28,11 +28,17 @@ const whiteList = [
 
 const allIgnores = _.union(gitIgnores, npmIgnores).concat(whiteList);
 
-const allAbsoluteIgnores = _.flatten(allIgnores.map(fileName => transferToAllAbsolutePaths(fileName)));
+const allAbsoluteIgnores = _.flatten(
+  allIgnores.map(fileName => {
+    return transferToAllAbsolutePaths(fileName);
+  })
+);
 
 // Add ignore file/dir to whiteRules
 pri.project.whiteFileRules.add(file => {
-  return allAbsoluteIgnores.some(absoluteFilePath => path.format(file) === absoluteFilePath);
+  return allAbsoluteIgnores.some(absoluteFilePath => {
+    return path.format(file) === absoluteFilePath;
+  });
 });
 
 pri.project.whiteFileRules.add(file => {
@@ -44,7 +50,9 @@ pri.project.whiteFileRules.add(file => {
     .concat(transferToAllAbsolutePaths(expandPath.dir))
     .concat(transferToAllAbsolutePaths(`src${path.sep}layouts`))
     .concat(path.join(pri.projectRootPath, packagesPath.dir))
-    .some(absoluteFilePath => path.format(file).startsWith(absoluteFilePath));
+    .some(absoluteFilePath => {
+      return path.format(file).startsWith(absoluteFilePath);
+    });
 });
 
 addWhiteFilesByProjectType();

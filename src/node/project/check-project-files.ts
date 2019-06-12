@@ -19,7 +19,11 @@ export const checkProjectFiles = async () => {
   const whiteFileRules = plugin.whiteFileRules.slice();
 
   files.forEach(file => {
-    if (!whiteFileRules.some(whiteFileRule => whiteFileRule(file))) {
+    if (
+      !whiteFileRules.some(whiteFileRule => {
+        return whiteFileRule(file);
+      })
+    ) {
       logFatal(`Unexpected file or directory: ${path.format(file)}`);
     }
   });

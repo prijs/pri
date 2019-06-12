@@ -23,29 +23,30 @@ export const commandBundle = async (opts: IOpts = {}) => {
     outFileName: pri.projectConfig.bundleFileName,
     entryPath: path.join(pri.sourceRoot, path.format(componentEntry)),
     pipeConfig: async config => {
-      config.output.libraryTarget = 'umd';
+      let newConfig = { ...config };
 
-      config = await plugin.bundleConfigPipes.reduce(
-        async (newConfig, fn) => fn(await newConfig),
-        Promise.resolve(config)
-      );
+      newConfig.output.libraryTarget = 'umd';
+
+      newConfig = await plugin.bundleConfigPipes.reduce(async (nextConfig, fn) => {
+        return fn(await nextConfig);
+      }, Promise.resolve(config));
 
       // external React & ReactDOM
       if (!config.externals) {
-        config.externals = {};
+        newConfig.externals = {};
       }
 
       const externals = ['react', 'react-dom'];
 
       externals.forEach(eachExternal => {
-        (config.externals as any)[eachExternal] = {
+        (newConfig.externals as any)[eachExternal] = {
           amd: eachExternal,
           commonjs: eachExternal,
           commonjs2: eachExternal
         };
       });
 
-      return config;
+      return newConfig;
     }
   });
 };

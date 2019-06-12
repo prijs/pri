@@ -19,6 +19,7 @@ const columns: any = [
     key: 'path',
     render: (pathStr: string) => {
       return (
+        // eslint-disable-next-line react/jsx-no-bind
         <span style={{ color: '#1890ff', cursor: 'pointer' }} onClick={handleJumpPage.bind(null, pathStr)}>
           {pathStr}
         </span>
@@ -39,7 +40,9 @@ export const Routes = React.memo(() => {
 
   const dataSource = allPages
     .concat()
-    .sort((left, right) => left.routerPath.length - right.routerPath.length)
+    .sort((left, right) => {
+      return left.routerPath.length - right.routerPath.length;
+    })
     .map(route => {
       return { key: route.routerPath, path: route.routerPath };
     });

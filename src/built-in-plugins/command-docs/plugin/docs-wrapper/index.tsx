@@ -16,7 +16,7 @@ const Docs = React.memo((props: Props) => {
     }
   }, [docIndex]);
 
-  function selectDoc(index: number) {
+  const selectDoc = React.useCallback((index: number) => {
     urlSearchParams.set('index', index.toString());
     const newurl = `${window.location.protocol}//${window.location.host}${
       window.location.pathname
@@ -24,7 +24,7 @@ const Docs = React.memo((props: Props) => {
     window.history.pushState({ path: newurl }, '', newurl);
 
     setDocIndex(index);
-  }
+  }, []);
 
   function renderLeftMenus() {
     return props.docs.map((doc, index) => {
@@ -42,7 +42,10 @@ const Docs = React.memo((props: Props) => {
             color: '#333',
             borderBottom: '1px solid #eee'
           }}
-          onClick={() => selectDoc(index)}
+          // eslint-disable-next-line react/jsx-no-bind
+          onClick={() => {
+            selectDoc(index);
+          }}
           key={index}
         >
           {doc.name}

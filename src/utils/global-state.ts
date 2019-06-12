@@ -18,7 +18,9 @@ const globalState = new GlobalState();
 export async function initGlobalState(preSelectPackage: string) {
   globalState.priPackageJson = pkg;
   globalState.majorCommand = yargs.argv._.length === 0 ? 'dev' : yargs.argv._[0];
-  globalState.isDevelopment = ['dev', 'docs'].some(operate => operate === globalState.majorCommand);
+  globalState.isDevelopment = ['dev', 'docs'].some(operate => {
+    return operate === globalState.majorCommand;
+  });
 
   await freshGlobalState(preSelectPackage);
 }
@@ -44,16 +46,19 @@ async function freshGlobalState(preSelectPackage: string) {
 
 export function freshProjectConfig() {
   globalState.projectConfig = freshConfig(globalState.projectRootPath);
-  globalState.packages.forEach(eachPackage => {
-    eachPackage.config = freshConfig(eachPackage.rootPath);
+  globalState.packages = globalState.packages.map(eachPackage => {
+    return {
+      ...eachPackage,
+      config: freshConfig(eachPackage.rootPath)
+    };
   });
 
   if (globalState.selectedSourceType === 'root') {
     globalState.sourceConfig = { ...globalState.projectConfig };
   } else {
-    globalState.sourceConfig = globalState.packages.find(
-      eachPackage => eachPackage.name === globalState.selectedSourceType
-    ).config;
+    globalState.sourceConfig = globalState.packages.find(eachPackage => {
+      return eachPackage.name === globalState.selectedSourceType;
+    }).config;
   }
 }
 
@@ -93,10 +98,12 @@ async function initPackages(cliCurrentPath: string, preSelectPackage: string) {
           choices: [
             { name: 'Root (Current Project)', value: 'root' },
             new inquirer.Separator(),
-            ...globalState.packages.map(eachPackage => ({
-              name: `Package: ${eachPackage.name}`,
-              value: eachPackage.name
-            }))
+            ...globalState.packages.map(eachPackage => {
+              return {
+                name: `Package: ${eachPackage.name}`,
+                value: eachPackage.name
+              };
+            })
           ]
         }
       ]);
@@ -105,7 +112,9 @@ async function initPackages(cliCurrentPath: string, preSelectPackage: string) {
     } else {
       if (
         preSelectPackage !== 'root' &&
-        !globalState.packages.some(eachPackage => eachPackage.name === preSelectPackage)
+        !globalState.packages.some(eachPackage => {
+          return eachPackage.name === preSelectPackage;
+        })
       ) {
         logFatal(`No package ${preSelectPackage}`);
       }
@@ -135,6 +144,8 @@ export function transferToAllAbsolutePaths(relatePath: string) {
 
   return [
     path.join(globalState.projectRootPath, relatePath),
-    ...globalState.packages.map(eachPackage => path.join(eachPackage.rootPath, relatePath))
+    ...globalState.packages.map(eachPackage => {
+      return path.join(eachPackage.rootPath, relatePath);
+    })
   ];
 }

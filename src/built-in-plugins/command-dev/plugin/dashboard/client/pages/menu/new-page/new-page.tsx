@@ -3,7 +3,9 @@ import * as React from 'react';
 
 import FormComponent from './form';
 
-export const MenuIcon = (props: any) => <Icon style={{ fontSize: 15, marginRight: 10 }} {...props} />;
+export const MenuIcon = (props: any) => {
+  return <Icon style={{ fontSize: 15, marginRight: 10 }} {...props} />;
+};
 
 const buttonStyle = {
   display: 'flex',
@@ -21,15 +23,21 @@ export const NewPageComponent = React.memo(() => {
   const [visible, setVisible] = React.useState(false);
 
   const showModal = React.useCallback(() => {
-    setVisible(() => true);
+    setVisible(() => {
+      return true;
+    });
   }, []);
 
   const handleOk = React.useCallback(() => {
-    setVisible(() => false);
+    setVisible(() => {
+      return false;
+    });
   }, []);
 
   const handleCancel = React.useCallback(() => {
-    setVisible(() => false);
+    setVisible(() => {
+      return false;
+    });
   }, []);
 
   return (

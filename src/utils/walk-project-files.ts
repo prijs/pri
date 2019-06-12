@@ -12,8 +12,12 @@ type ICustomParsedPath = path.ParsedPath & { isDir: boolean };
 
 export function walkProjectFiles(): Promise<ICustomParsedPath[]> {
   return new Promise(resolve => {
-    const gitIgnores = gitIgnoreNames.map(dir => path.join(globalState.projectRootPath, dir));
-    const scanIgnores = ignoreScanFiles.map(addon => path.join(globalState.projectRootPath, addon));
+    const gitIgnores = gitIgnoreNames.map(dir => {
+      return path.join(globalState.projectRootPath, dir);
+    });
+    const scanIgnores = ignoreScanFiles.map(addon => {
+      return path.join(globalState.projectRootPath, addon);
+    });
 
     const walker = walk.walk(globalState.projectRootPath, { filters: [...gitIgnores, ...scanIgnores] });
 
@@ -29,7 +33,11 @@ export function walkProjectFiles(): Promise<ICustomParsedPath[]> {
           return;
         }
 
-        if (gitIgnores.concat(scanIgnores).some(ignorePath => ignorePath === path.join(root, dirStats.name))) {
+        if (
+          gitIgnores.concat(scanIgnores).some(ignorePath => {
+            return ignorePath === path.join(root, dirStats.name);
+          })
+        ) {
           next();
           return;
         }
@@ -40,7 +48,11 @@ export function walkProjectFiles(): Promise<ICustomParsedPath[]> {
     });
 
     walker.on('file', (root: string, fileStats: WalkStats, next: () => void) => {
-      if (gitIgnores.concat(scanIgnores).some(ignorePath => ignorePath === path.join(root, fileStats.name))) {
+      if (
+        gitIgnores.concat(scanIgnores).some(ignorePath => {
+          return ignorePath === path.join(root, fileStats.name);
+        })
+      ) {
         next();
         return;
       }

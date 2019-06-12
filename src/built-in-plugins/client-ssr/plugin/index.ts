@@ -18,8 +18,8 @@ pri.project.onCreateEntry((analyseInfo, entry) => {
     `;
   });
 
-  entry.pipeEntryRender(
-    render => `
+  entry.pipeEntryRender(render => {
+    return `
     ${render}
     if (navigator.serviceWorker) {
       navigator.serviceWorker.addEventListener("message", event => {
@@ -47,8 +47,8 @@ pri.project.onCreateEntry((analyseInfo, entry) => {
         }
       })
     }
-  `
-  );
+  `;
+  });
 });
 
 pri.build.afterProdBuild(stats => {
@@ -60,8 +60,8 @@ pri.build.afterProdBuild(stats => {
     return;
   }
 
-  pri.serviceWorker.pipeAfterProdBuild(
-    str => `
+  pri.serviceWorker.pipeAfterProdBuild(str => {
+    return `
       ${str}
 
       var SSR_BUNDLE_PREFIX = "__ssr_bundle__"
@@ -155,6 +155,6 @@ pri.build.afterProdBuild(stats => {
           );
         }
       });
-    `
-  );
+    `;
+  });
 });

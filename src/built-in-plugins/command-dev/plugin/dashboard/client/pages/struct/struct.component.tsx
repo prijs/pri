@@ -14,21 +14,25 @@ interface ITreeNode {
 
 const { TreeNode } = Tree;
 
-const TreeIcon = (props: any) => <Icon style={{ marginRight: 5 }} {...props} />;
+const TreeIcon = (props: any) => {
+  return <Icon style={{ marginRight: 5 }} {...props} />;
+};
 
-const PlusIcon = (props: any) => (
-  <span style={{ transition: 'all 0.2s', marginRight: 5 }}>
-    <Icon
-      style={{
-        color: '#369',
-        cursor: 'pointer',
-        fontWeight: 'bold'
-      }}
-      type="plus"
-      {...props}
-    />
-  </span>
-);
+const PlusIcon = (props: any) => {
+  return (
+    <span style={{ transition: 'all 0.2s', marginRight: 5 }}>
+      <Icon
+        style={{
+          color: '#369',
+          cursor: 'pointer',
+          fontWeight: 'bold'
+        }}
+        type="plus"
+        {...props}
+      />
+    </span>
+  );
+};
 
 export const StructComponent = React.memo(() => {
   const socket = React.useContext(SocketContext);
@@ -115,8 +119,8 @@ export const StructComponent = React.memo(() => {
     disabled: !hasConfig
   });
 
-  const loop = (data: ITreeNode[]): React.ReactElement<any>[] =>
-    data.map((item, eachIndex) => {
+  const loop = (data: ITreeNode[]): React.ReactElement<any>[] => {
+    return data.map((item, eachIndex) => {
       const title = (
         <span>
           {item.icon}
@@ -135,6 +139,7 @@ export const StructComponent = React.memo(() => {
       }
       return <TreeNode key={eachIndex} {...treeProps} />;
     });
+  };
 
   const handleSelectTreeNode = (selectedKeys: string[]) => {
     dispatch({

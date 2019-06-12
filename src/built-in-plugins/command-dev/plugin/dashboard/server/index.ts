@@ -43,8 +43,12 @@ export default (opts: IOptions) => {
     function socketListen(name: string, fn: (data: any) => any) {
       socket.on(name, (data, callback) => {
         Promise.resolve(fn(data))
-          .then(res => callback && callback({ success: true, data: res }))
-          .catch(err => callback && callback({ success: false, data: err.toString() }));
+          .then(res => {
+            return callback && callback({ success: true, data: res });
+          })
+          .catch(err => {
+            return callback && callback({ success: false, data: err.toString() });
+          });
       });
     }
 

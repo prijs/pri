@@ -18,10 +18,14 @@ interface IResult {
   };
 }
 
-const safeName = (str: string) => _.upperFirst(_.camelCase(str));
+const safeName = (str: string) => {
+  return _.upperFirst(_.camelCase(str));
+};
 
 pri.project.whiteFileRules.add(file => {
-  return transferToAllAbsolutePaths(pagesPath.dir).some(pagePath => path.format(file).startsWith(pagePath));
+  return transferToAllAbsolutePaths(pagesPath.dir).some(pagePath => {
+    return path.format(file).startsWith(pagePath);
+  });
 });
 
 pri.project.onAnalyseProject(files => {
@@ -63,7 +67,9 @@ pri.project.onAnalyseProject(files => {
   return {
     projectAnalysePages: {
       pages: pri.projectConfig.routes
-        .filter(route => route.component && route.path)
+        .filter(route => {
+          return route.component && route.path;
+        })
         .map((route, index) => {
           const componentFile = files.find(file => {
             const relativePath = path.relative(pri.projectRootPath, path.join(file.dir, file.name));
@@ -92,7 +98,9 @@ pri.project.onAnalyseProject(files => {
             componentName: componentName + index
           };
         })
-        .filter(route => route !== null)
+        .filter(route => {
+          return route !== null;
+        })
     }
   };
 });
@@ -129,8 +137,8 @@ pri.project.onCreateEntry((analyseInfo: IResult, entry) => {
       `;
   });
 
-  entry.pipeAppComponent(
-    str => `
+  entry.pipeAppComponent(str => {
+    return `
       ${str}
       ${analyseInfo.projectAnalysePages.pages
         .map(page => {
@@ -139,8 +147,8 @@ pri.project.onCreateEntry((analyseInfo: IResult, entry) => {
           `;
         })
         .join('\n')}
-    `
-  );
+    `;
+  });
 
   entry.pipeAppRoutes(async renderRoutes => {
     return `

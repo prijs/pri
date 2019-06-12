@@ -72,7 +72,9 @@ export const buildProject = async (opts: IOpts = {}) => {
 
   await buildDeclaration();
 
-  plugin.buildAfterProdBuild.forEach(afterProdBuild => afterProdBuild(stats));
+  plugin.buildAfterProdBuild.forEach(afterProdBuild => {
+    return afterProdBuild(stats);
+  });
 };
 
 export const buildComponent = async (opts: IOpts = {}) => {
@@ -101,7 +103,9 @@ export const buildComponent = async (opts: IOpts = {}) => {
 
   await buildDeclaration();
 
-  plugin.buildAfterProdBuild.forEach(afterProdBuild => afterProdBuild(stats));
+  plugin.buildAfterProdBuild.forEach(afterProdBuild => {
+    return afterProdBuild(stats);
+  });
 };
 
 export const buildPlugin = async (opts: IOpts = {}) => {
@@ -117,7 +121,9 @@ export const buildPlugin = async (opts: IOpts = {}) => {
     externals: [nodeExternals()]
   });
 
-  plugin.buildAfterProdBuild.forEach(afterProdBuild => afterProdBuild(stats));
+  plugin.buildAfterProdBuild.forEach(afterProdBuild => {
+    return afterProdBuild(stats);
+  });
 };
 
 // Copy assets dir to distDir

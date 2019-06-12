@@ -19,8 +19,8 @@ function compile(fileNames: string[]) {
 export function onAnalyseProject(mockFilesPath: string[]) {
   const mocks = compile(mockFilesPath);
 
-  pri.serviceWorker.pipe(
-    text => `
+  pri.serviceWorker.pipe(text => {
+    return `
       ${text}
       // Get mock list start
       ${mocks.join(`\n`)}
@@ -59,6 +59,6 @@ export function onAnalyseProject(mockFilesPath: string[]) {
           }
         }
       })
-    `
-  );
+    `;
+  });
 }

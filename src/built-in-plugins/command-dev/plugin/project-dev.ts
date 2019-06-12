@@ -161,29 +161,31 @@ function debugProjectPrepare(dashboardClientPort: number) {
       });
 
       // React hot loader
-      entry.pipeAppHeader(
-        header => `
+      entry.pipeAppHeader(header => {
+        return `
         ${header}
         import { hot } from "react-hot-loader/root"
         import { setConfig } from "react-hot-loader"
-      `
-      );
+      `;
+      });
 
-      entry.pipeAppBody(
-        str => `
+      entry.pipeAppBody(str => {
+        return `
         setConfig({
           ignoreSFC: true, // RHL will be __completely__ disabled for SFC
           pureRender: true, // RHL will not change render method
         })
         ${str}
-      `
-      );
+      `;
+      });
 
-      entry.pipe.set('appExportName', () => `hot(App)`);
+      entry.pipe.set('appExportName', () => {
+        return `hot(App)`;
+      });
 
       // Load webui iframe
-      entry.pipeEntryRender(
-        str => `
+      entry.pipeEntryRender(str => {
+        return `
         ${str}
         const webUICss = \`
           #pri-help-button {
@@ -269,8 +271,8 @@ function debugProjectPrepare(dashboardClientPort: number) {
           }
         }
         document.body.appendChild(dashboardButton)
-      `
-      );
+      `;
+      });
     }
   });
 }
@@ -313,7 +315,11 @@ function createDashboardEntry() {
         webUiEntries.length > 0
           ? `
           ${webUiEntries.join('\n')}
-          dashboard([${webUiEntries.map((each, index) => `plugin${index}`).join(',')}])
+          dashboard([${webUiEntries
+            .map((each, index) => {
+              return `plugin${index}`;
+            })
+            .join(',')}])
         `
           : `
           dashboard()

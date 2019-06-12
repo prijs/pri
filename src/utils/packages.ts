@@ -28,8 +28,12 @@ export const getPackages = (() => {
     const submoduleStatus = await exec(`git submodule status | awk '{ print $2 }'`);
     const submodulePaths = submoduleStatus
       .split('\n')
-      .map(each => each.trim())
-      .filter(each => !!each);
+      .map(each => {
+        return each.trim();
+      })
+      .filter(each => {
+        return !!each;
+      });
     result = await Promise.all(
       submodulePaths.map(async submodulePath => {
         const packagesPathEndWithSep = packagesPath.endsWith(path.sep) ? packagesPath : packagesPath + path.sep;
@@ -43,7 +47,9 @@ export const getPackages = (() => {
       })
     );
 
-    result = result.filter(eachResult => !_.isEmpty(eachResult.packageJson));
+    result = result.filter(eachResult => {
+      return !_.isEmpty(eachResult.packageJson);
+    });
 
     return result;
   };
@@ -104,7 +110,11 @@ async function getExternalImportsFromEntry(
   importPaths: string[] = [],
   handledEntryFilePaths: string[] = []
 ) {
-  if (handledEntryFilePaths.some(handledEntryFilePath => handledEntryFilePath === entryFilePath)) {
+  if (
+    handledEntryFilePaths.some(handledEntryFilePath => {
+      return handledEntryFilePath === entryFilePath;
+    })
+  ) {
     // Ignore handled file.
     return;
   }

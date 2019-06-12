@@ -29,7 +29,9 @@ const tailFormItemLayout = {
 };
 
 function hasErrors(fieldsError: any) {
-  return Object.keys(fieldsError).some((field: string) => fieldsError[field]);
+  return Object.keys(fieldsError).some((field: string) => {
+    return fieldsError[field];
+  });
 }
 
 const FormComponent = React.memo((props: { onSuccess: () => void; form: any }) => {

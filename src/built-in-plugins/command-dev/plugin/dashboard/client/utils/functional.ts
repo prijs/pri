@@ -9,7 +9,9 @@ export const pipeEvent = (func: any) => {
 
 export const loadPluginsByPosition = (plugins: IPlugin[], position: string, props?: any): JSX.Element => {
   return plugins
-    .filter(plugin => plugin.position === position)
+    .filter(plugin => {
+      return plugin.position === position;
+    })
     .map((plugin, index) => {
       return React.createElement(plugin.view, { key: index, ...props });
     }) as any;

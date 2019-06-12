@@ -10,11 +10,11 @@ interface IResult {
   };
 }
 
-pri.project.whiteFileRules.add(file =>
-  transferToAllAbsolutePaths(path.format(notFoundPath)).some(
-    notFoundAbsolutePath => path.format(file) === notFoundAbsolutePath
-  )
-);
+pri.project.whiteFileRules.add(file => {
+  return transferToAllAbsolutePaths(path.format(notFoundPath)).some(notFoundAbsolutePath => {
+    return path.format(file) === notFoundAbsolutePath;
+  });
+});
 
 pri.project.onAnalyseProject(files => {
   const notFoundFiles = files.filter(file => {

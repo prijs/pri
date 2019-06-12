@@ -1,5 +1,9 @@
-export const getPlugin = () => import('./plugin');
+export const getPlugin = () => {
+  return import('./plugin');
+};
 
-export const getConfig = () => ({
-  name: 'pri-plugin-command-docs'
-});
+export const getConfig = () => {
+  return {
+    name: 'pri-plugin-command-docs'
+  };
+};

@@ -23,7 +23,9 @@ pri.project.onAnalyseProject(files => {
 
           return true;
         })
-        .some(file => file.name === 'index')
+        .some(file => {
+          return file.name === 'index';
+        })
     }
   };
 });

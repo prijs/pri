@@ -56,7 +56,9 @@ function ensureDeclares() {
 function ensurePrettierrc() {
   pri.project.addProjectFiles({
     fileName: path.join(pri.projectRootPath, '.prettierrc'),
-    pipeContent: () => `${JSON.stringify(prettierConfig, null, 2)}\n`
+    pipeContent: () => {
+      return `${JSON.stringify(prettierConfig, null, 2)}\n`;
+    }
   });
 }
 
@@ -97,9 +99,9 @@ function ensureTsconfig() {
           },
           include: [
             `${tempPath.dir}/**/*`,
-            ...transferToAllAbsolutePaths(srcPath.dir).map(
-              filePath => `${path.relative(pri.projectRootPath, filePath)}/**/*`
-            )
+            ...transferToAllAbsolutePaths(srcPath.dir).map(filePath => {
+              return `${path.relative(pri.projectRootPath, filePath)}/**/*`;
+            })
           ],
           exclude: ['node_modules', globalState.projectConfig.distDir]
         },
@@ -143,8 +145,8 @@ function ensureEslint() {
 function ensureVscode() {
   pri.project.addProjectFiles({
     fileName: path.join(pri.projectRootPath, '.vscode/settings.json'),
-    pipeContent: (prev: string) =>
-      `${JSON.stringify(
+    pipeContent: (prev: string) => {
+      return `${JSON.stringify(
         _.merge({}, safeJsonParse(prev), {
           'editor.formatOnSave': true,
           'typescript.tsdk': 'node_modules/typescript/lib',
@@ -159,7 +161,8 @@ function ensureVscode() {
         }),
         null,
         2
-      )}\n`
+      )}\n`;
+    }
   });
 }
 
@@ -167,8 +170,12 @@ function ensureGitignore() {
   pri.project.addProjectFiles({
     fileName: path.join(pri.projectRootPath, '.gitignore'),
     pipeContent: (prev = '') => {
-      const values = prev.split('\n').filter(eachRule => !!eachRule);
-      const gitIgnoresInRoot = gitIgnores.map(name => `/${name}`);
+      const values = prev.split('\n').filter(eachRule => {
+        return !!eachRule;
+      });
+      const gitIgnoresInRoot = gitIgnores.map(name => {
+        return `/${name}`;
+      });
       return _.union(values, gitIgnoresInRoot).join('\n');
     }
   });
@@ -178,8 +185,12 @@ function ensureNpmignore() {
   pri.project.addProjectFiles({
     fileName: path.join(pri.projectRootPath, '.npmignore'),
     pipeContent: (prev = '') => {
-      const values = prev.split('\n').filter(eachRule => !!eachRule);
-      const npmIgnoresInRoot = npmIgnores.map(name => `/${name}`);
+      const values = prev.split('\n').filter(eachRule => {
+        return !!eachRule;
+      });
+      const npmIgnoresInRoot = npmIgnores.map(name => {
+        return `/${name}`;
+      });
 
       if (pri.projectConfig.hideSourceCodeForNpm) {
         npmIgnoresInRoot.push('/src');
@@ -193,7 +204,9 @@ function ensureNpmignore() {
 function ensureNpmrc() {
   pri.project.addProjectFiles({
     fileName: path.join(pri.projectRootPath, '.npmrc'),
-    pipeContent: () => `package-lock=${globalState.projectConfig.packageLock ? 'true' : 'false'}`
+    pipeContent: () => {
+      return `package-lock=${globalState.projectConfig.packageLock ? 'true' : 'false'}`;
+    }
   });
 }
 
@@ -201,7 +214,7 @@ function ensurePackageJson() {
   pri.project.addProjectFiles({
     fileName: path.join(pri.projectRootPath, 'package.json'),
     pipeContent: (prev: string) => {
-      const prevJson = safeJsonParse(prev);
+      let prevJson = safeJsonParse(prev);
 
       const priDeps = pkg.dependencies || {};
 
@@ -231,11 +244,11 @@ function ensurePackageJson() {
 
       // Mv pri-plugins to devDeps except plugin
       if (pri.projectConfig.type === 'plugin') {
-        mvPriPlugins(prevJson, 'devDependencies', 'dependencies');
-        mvPriPlugins(prevJson, 'peerDependencies', 'dependencies');
+        prevJson = mvPriPlugins(prevJson, 'devDependencies', 'dependencies');
+        prevJson = mvPriPlugins(prevJson, 'peerDependencies', 'dependencies');
       } else {
-        mvPriPlugins(prevJson, 'dependencies', 'devDependencies');
-        mvPriPlugins(prevJson, 'peerDependencies', 'devDependencies');
+        prevJson = mvPriPlugins(prevJson, 'dependencies', 'devDependencies');
+        prevJson = mvPriPlugins(prevJson, 'peerDependencies', 'devDependencies');
       }
 
       switch (pri.projectConfig.type) {
@@ -319,27 +332,29 @@ function ensurePackageJson() {
 function ensurePriConfig() {
   pri.project.addProjectFiles({
     fileName: path.join(pri.projectRootPath, CONFIG_FILE),
-    pipeContent: (prev: string) =>
-      `${JSON.stringify(
+    pipeContent: (prev: string) => {
+      return `${JSON.stringify(
         _.merge({}, safeJsonParse(prev), {
           type: pri.projectConfig.type
         }),
         null,
         2
-      )}\n`
+      )}\n`;
+    }
   });
 
   if (pri.selectedSourceType !== 'root') {
     pri.project.addProjectFiles({
       fileName: path.join(pri.sourceRoot, CONFIG_FILE),
-      pipeContent: (prev: string) =>
-        `${JSON.stringify(
+      pipeContent: (prev: string) => {
+        return `${JSON.stringify(
           _.merge({}, safeJsonParse(prev), {
             type: pri.sourceConfig.type
           }),
           null,
           2
-        )}\n`
+        )}\n`;
+      }
     });
   }
 }
@@ -355,23 +370,27 @@ function setVersionIfExist(sourceObj: any, key: string, targetObj: any) {
 }
 
 function mvPriPlugins(obj: any, sourceKey: string, targetKey: string) {
+  const newObj = { ...obj };
+
   if (!obj[sourceKey]) {
-    obj[sourceKey] = {};
+    newObj[sourceKey] = {};
   }
 
   if (!obj[targetKey]) {
-    obj[targetKey] = {};
+    newObj[targetKey] = {};
   }
 
-  const priPlugins = Object.keys(obj[sourceKey]).filter(
-    packageName => packageName.startsWith('pri-plugin') || packageName.startsWith('@ali/pri-plugin')
-  );
+  const priPlugins = Object.keys(obj[sourceKey]).filter(packageName => {
+    return packageName.startsWith('pri-plugin') || packageName.startsWith('@ali/pri-plugin');
+  });
 
   // Add plugins to targetKey
   priPlugins.forEach(packageName => {
-    obj[targetKey][packageName] = obj[sourceKey][packageName];
+    newObj[targetKey][packageName] = obj[sourceKey][packageName];
   });
 
   // Remove plugins from sourceKey
-  obj[sourceKey] = _.omit(obj[sourceKey], priPlugins);
+  newObj[sourceKey] = _.omit(obj[sourceKey], priPlugins);
+
+  return newObj;
 }

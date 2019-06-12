@@ -19,7 +19,12 @@ export const ensureFiles = async () => {
     Object.keys(ensureProjectFilesQueueGroupByPath).map(async filePath => {
       const ensureProjectFilesQueue = ensureProjectFilesQueueGroupByPath[filePath];
 
-      await ensureFile(filePath, ensureProjectFilesQueue.map(ensureProjectFiles => ensureProjectFiles.pipeContent));
+      await ensureFile(
+        filePath,
+        ensureProjectFilesQueue.map(ensureProjectFiles => {
+          return ensureProjectFiles.pipeContent;
+        })
+      );
     })
   );
 };
@@ -38,10 +43,9 @@ export async function ensureFile(filePath: string, pipeContents: ((prev: string)
     //
   }
 
-  const nextContent = await pipeContents.reduce(
-    async (preContent, pipeContent) => Promise.resolve(pipeContent(await preContent)),
-    Promise.resolve(exitFileContent)
-  );
+  const nextContent = await pipeContents.reduce(async (preContent, pipeContent) => {
+    return Promise.resolve(pipeContent(await preContent));
+  }, Promise.resolve(exitFileContent));
 
   if (fileExist) {
     if (exitFileContent === nextContent) {

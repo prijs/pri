@@ -6,7 +6,13 @@ import { TransferedRegisterCommand, CommandRegister } from './define';
 export function transferCommandsArrayToMap(commandRegisters: CommandRegister[]) {
   const duplicates = getDuplicatesCommand(commandRegisters);
   if (duplicates.length > 0) {
-    logFatal(`Duplicate commands:\n${duplicates.map(duplicate => duplicate).join('\n')}`);
+    logFatal(
+      `Duplicate commands:\n${duplicates
+        .map(duplicate => {
+          return duplicate;
+        })
+        .join('\n')}`
+    );
   }
 
   return createRootCommandRegisters(commandRegisters);
@@ -15,27 +21,35 @@ export function transferCommandsArrayToMap(commandRegisters: CommandRegister[]) 
 function createRootCommandRegisters(
   commandRegistersSplitName: TransferedRegisterCommand[]
 ): TransferedRegisterCommand[] {
-  const rootNames = _.uniq(commandRegistersSplitName.map(commandRegisterSplitName => commandRegisterSplitName.name[0]));
-
-  const rootCommandRegisters = commandRegistersSplitName.filter(
-    commandRegisterSplitName => commandRegisterSplitName.name.length === 1
+  const rootNames = _.uniq(
+    commandRegistersSplitName.map(commandRegisterSplitName => {
+      return commandRegisterSplitName.name[0];
+    })
   );
 
-  const leafCommandRegisters = commandRegistersSplitName.filter(
-    commandRegisterSplitName => commandRegisterSplitName.name.length > 1
-  );
+  const rootCommandRegisters = commandRegistersSplitName.filter(commandRegisterSplitName => {
+    return commandRegisterSplitName.name.length === 1;
+  });
+
+  const leafCommandRegisters = commandRegistersSplitName.filter(commandRegisterSplitName => {
+    return commandRegisterSplitName.name.length > 1;
+  });
 
   return rootNames.map(rootName => {
     const childs = leafCommandRegisters
-      .filter(leafCommandRegister => leafCommandRegister.name[0] === rootName)
-      .map(leafCommandRegister => ({
-        ...leafCommandRegister,
-        name: leafCommandRegister.name.slice(1, leafCommandRegister.name.length)
-      }));
+      .filter(leafCommandRegister => {
+        return leafCommandRegister.name[0] === rootName;
+      })
+      .map(leafCommandRegister => {
+        return {
+          ...leafCommandRegister,
+          name: leafCommandRegister.name.slice(1, leafCommandRegister.name.length)
+        };
+      });
 
-    const commandRegisterExactByName = rootCommandRegisters.find(
-      parentCommandRegister => parentCommandRegister.name[0] === rootName
-    );
+    const commandRegisterExactByName = rootCommandRegisters.find(parentCommandRegister => {
+      return parentCommandRegister.name[0] === rootName;
+    });
     if (commandRegisterExactByName) {
       return { ...commandRegisterExactByName, childs: createRootCommandRegisters(childs) };
     }
@@ -47,7 +61,12 @@ function createRootCommandRegisters(
 }
 
 function getDuplicatesCommand(commandRegisters: CommandRegister[]) {
-  return _.filter(commandRegisters.map(commandRegister => commandRegister.name), (value, index, iteratee) =>
-    _.includes(iteratee, value, index + 1)
+  return _.filter(
+    commandRegisters.map(commandRegister => {
+      return commandRegister.name;
+    }),
+    (value, index, iteratee) => {
+      return _.includes(iteratee, value, index + 1);
+    }
   );
 }

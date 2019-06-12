@@ -48,36 +48,51 @@ export const getWebpackConfig = async (opts: IOptions) => {
    */
   const styleLoader = {
     loader: 'style-loader',
-    options: plugin.buildConfigStyleLoaderOptionsPipes.reduce((options, fn) => fn(options), {})
+    options: plugin.buildConfigStyleLoaderOptionsPipes.reduce((options, fn) => {
+      return fn(options);
+    }, {})
   };
 
   const cssPureLoader = {
     loader: 'css-loader',
-    options: plugin.buildConfigCssLoaderOptionsPipes.reduce((options, fn) => fn(options), {})
+    options: plugin.buildConfigCssLoaderOptionsPipes.reduce((options, fn) => {
+      return fn(options);
+    }, {})
   };
 
   const cssModuleLoader = {
     loader: 'css-loader',
-    options: plugin.buildConfigCssLoaderOptionsPipes.reduce((options, fn) => fn(options), {
-      importLoaders: 1,
-      modules: true,
-      localIdentName: '[path][name]-[local]-[hash:base64:5]'
-    })
+    options: plugin.buildConfigCssLoaderOptionsPipes.reduce(
+      (options, fn) => {
+        return fn(options);
+      },
+      {
+        importLoaders: 1,
+        modules: true,
+        localIdentName: '[path][name]-[local]-[hash:base64:5]'
+      }
+    )
   };
 
   const sassLoader = {
     loader: 'sass-loader',
-    options: plugin.buildConfigSassLoaderOptionsPipes.reduce((options, fn) => fn(options), {})
+    options: plugin.buildConfigSassLoaderOptionsPipes.reduce((options, fn) => {
+      return fn(options);
+    }, {})
   };
 
   const lessLoader = {
     loader: 'less-loader',
-    options: plugin.buildConfigLessLoaderOptionsPipes.reduce((options, fn) => fn(options), {})
+    options: plugin.buildConfigLessLoaderOptionsPipes.reduce((options, fn) => {
+      return fn(options);
+    }, {})
   };
 
   const babelLoader = {
     loader: 'babel-loader',
-    options: plugin.buildConfigBabelLoaderOptionsPipes.reduce((options, fn) => fn(options), babelOptions)
+    options: plugin.buildConfigBabelLoaderOptionsPipes.reduce((options, fn) => {
+      return fn(options);
+    }, babelOptions)
   };
 
   /**
@@ -105,8 +120,12 @@ export const getWebpackConfig = async (opts: IOptions) => {
   const stats = { warnings: false, version: false, modules: false, entrypoints: false, hash: false };
 
   const tsLoaderConfig = {
-    include: plugin.buildConfigJsLoaderIncludePipes.reduce((options, fn) => fn(options), defaultSourcePathToBeResolve),
-    exclude: plugin.buildConfigJsLoaderExcludePipes.reduce((options, fn) => fn(options), [])
+    include: plugin.buildConfigJsLoaderIncludePipes.reduce((options, fn) => {
+      return fn(options);
+    }, defaultSourcePathToBeResolve),
+    exclude: plugin.buildConfigJsLoaderExcludePipes.reduce((options, fn) => {
+      return fn(options);
+    }, [])
   };
 
   const cssLoaderConfig = {
@@ -129,10 +148,16 @@ export const getWebpackConfig = async (opts: IOptions) => {
   //   exclude: plugin.buildConfigLessLoaderExcludePipes.reduce((options, fn) => fn(options), [])
   // };
 
+  let { devtool } = opts;
+
+  if (devtool === undefined) {
+    devtool = opts.mode === 'development' ? 'eval-source-map' : false;
+  }
+
   const config: webpack.Configuration = {
     mode: opts.mode,
     entry: opts.entryPath,
-    devtool: opts.devtool || (opts.mode === 'development' ? 'eval-source-map' : false),
+    devtool,
     externals: opts.externals,
     target: opts.target || 'web',
     output: {
@@ -208,22 +233,25 @@ export const getWebpackConfig = async (opts: IOptions) => {
         {
           test: /\.s[a|c]ss$/,
           use: extraCssInProd(cssPureLoader, sassLoader),
-          include: plugin.buildConfigSassLoaderIncludePipes.reduce(
-            (options, fn) => fn(options),
-            defaultSourcePathToBeResolve
-          ),
-          exclude: plugin.buildConfigSassLoaderExcludePipes.reduce((options, fn) => fn(options), [
-            /\.module\.s[a|c]ss$/
-          ])
+          include: plugin.buildConfigSassLoaderIncludePipes.reduce((options, fn) => {
+            return fn(options);
+          }, defaultSourcePathToBeResolve),
+          exclude: plugin.buildConfigSassLoaderExcludePipes.reduce(
+            (options, fn) => {
+              return fn(options);
+            },
+            [/\.module\.s[a|c]ss$/]
+          )
         },
         {
           test: /\.module\.s[a|c]ss$/,
           use: extraCssInProd(cssModuleLoader, sassLoader),
-          include: plugin.buildConfigSassLoaderIncludePipes.reduce(
-            (options, fn) => fn(options),
-            defaultSourcePathToBeResolve
-          ),
-          exclude: plugin.buildConfigSassLoaderExcludePipes.reduce((options, fn) => fn(options), [])
+          include: plugin.buildConfigSassLoaderIncludePipes.reduce((options, fn) => {
+            return fn(options);
+          }, defaultSourcePathToBeResolve),
+          exclude: plugin.buildConfigSassLoaderExcludePipes.reduce((options, fn) => {
+            return fn(options);
+          }, [])
         },
         // end------------------------------------------------
         // TODO: Make sure we can use node10. start---------
@@ -240,20 +268,25 @@ export const getWebpackConfig = async (opts: IOptions) => {
         {
           test: /\.less$/,
           use: extraCssInProd(cssPureLoader, lessLoader),
-          include: plugin.buildConfigLessLoaderIncludePipes.reduce(
-            (options, fn) => fn(options),
-            defaultSourcePathToBeResolve
-          ),
-          exclude: plugin.buildConfigLessLoaderExcludePipes.reduce((options, fn) => fn(options), [/\.module\.less$/])
+          include: plugin.buildConfigLessLoaderIncludePipes.reduce((options, fn) => {
+            return fn(options);
+          }, defaultSourcePathToBeResolve),
+          exclude: plugin.buildConfigLessLoaderExcludePipes.reduce(
+            (options, fn) => {
+              return fn(options);
+            },
+            [/\.module\.less$/]
+          )
         },
         {
           test: /\.module\.less$/,
           use: extraCssInProd(cssModuleLoader, lessLoader),
-          include: plugin.buildConfigLessLoaderIncludePipes.reduce(
-            (options, fn) => fn(options),
-            defaultSourcePathToBeResolve
-          ),
-          exclude: plugin.buildConfigLessLoaderExcludePipes.reduce((options, fn) => fn(options), [])
+          include: plugin.buildConfigLessLoaderIncludePipes.reduce((options, fn) => {
+            return fn(options);
+          }, defaultSourcePathToBeResolve),
+          exclude: plugin.buildConfigLessLoaderExcludePipes.reduce((options, fn) => {
+            return fn(options);
+          }, [])
         },
         // end------------------------------------------------
         { test: /\.html$/, use: ['raw-loader'] },
@@ -364,5 +397,7 @@ export const getWebpackConfig = async (opts: IOptions) => {
     config.performance.hints = false;
   }
 
-  return plugin.buildConfigPipes.reduce(async (newConfig, fn) => fn(await newConfig), Promise.resolve(config));
+  return plugin.buildConfigPipes.reduce(async (newConfig, fn) => {
+    return fn(await newConfig);
+  }, Promise.resolve(config));
 };

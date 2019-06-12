@@ -4,13 +4,11 @@ import { globalState } from './global-state';
 
 export function exec(shell: string, options?: ExecOptions): Promise<string> {
   return new Promise((resolve, reject) => {
-    if (!options) {
-      options = {};
-    }
+    const newOptions = options ? { ...options } : {};
 
     // 默认在 projectRootPath 下执行
-    if (!options.cwd) {
-      options.cwd = globalState.projectRootPath;
+    if (!newOptions.cwd) {
+      newOptions.cwd = globalState.projectRootPath;
     }
 
     nodeExec(shell, options, (error, stdOut) => {

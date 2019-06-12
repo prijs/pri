@@ -2,7 +2,7 @@ import * as path from 'path';
 import { StructorConfig } from './define';
 
 export const pipeEvent = (func: any) => {
-  return (event: any) => {
+  return (event: { target: { value: any } }) => {
     return func(event.target.value, event);
   };
 };

@@ -43,11 +43,13 @@ export const CommandPreview = async () => {
   // const hasCssOutput = fs.existsSync(cssPath);
 
   if (pri.projectConfig.useHttps) {
-    await spinner('Create https server', async () =>
-      https.createServer(generateCertificate(), app.callback()).listen(freePort)
-    );
+    await spinner('Create https server', async () => {
+      return https.createServer(generateCertificate(), app.callback()).listen(freePort);
+    });
   } else {
-    await spinner('Create http server', async () => http.createServer(app.callback()).listen(freePort));
+    await spinner('Create http server', async () => {
+      return http.createServer(app.callback()).listen(freePort);
+    });
   }
 
   if (pri.projectConfig.devUrl) {

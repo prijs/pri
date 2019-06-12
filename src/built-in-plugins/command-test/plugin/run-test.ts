@@ -28,7 +28,9 @@ export const runTest = async () => {
       `,
       `--coverage`
     ]
-      .map(each => each.trim())
+      .map(each => {
+        return each.trim();
+      })
       .join(' '),
     {
       stdio: 'inherit',

@@ -6,7 +6,9 @@ import { CONFIG_FILE } from '../../../utils/constants';
 // config
 const whiteList = ['config'];
 pri.project.whiteFileRules.add(file => {
-  return whiteList.some(whiteName => path.format(file) === path.join(pri.projectRootPath, whiteName));
+  return whiteList.some(whiteName => {
+    return path.format(file) === path.join(pri.projectRootPath, whiteName);
+  });
 });
 
 // config/config.default|local|prod.ts

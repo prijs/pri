@@ -78,9 +78,9 @@ export const runWebpackDevServer = async (opts: IOptions<IExtraOptions>) => {
     let devUrl = '';
 
     if (opts.devUrl) {
-      devUrl = opts.devUrl;
+      ({ devUrl } = opts);
     } else if (globalState.projectConfig.devUrl) {
-      devUrl = globalState.projectConfig.devUrl;
+      ({ devUrl } = globalState.projectConfig);
     } else {
       devUrl = urlJoin(
         `${globalState.projectConfig.useHttps ? 'https' : 'http'}://localhost:${opts.devServerPort}`,
