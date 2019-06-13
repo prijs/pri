@@ -353,7 +353,7 @@ function mvPriPlugins(obj: any, sourceKey: string, targetKey: string) {
     newObj[targetKey] = {};
   }
 
-  const priPlugins = Object.keys(obj[sourceKey]).filter(packageName => {
+  const priPlugins = Object.keys(obj[sourceKey] || {}).filter(packageName => {
     return packageName.startsWith('pri-plugin') || packageName.startsWith('@ali/pri-plugin');
   });
 
