@@ -159,17 +159,20 @@ async function prepareBuild(opts: IOpts = {}) {
 
 async function buildDeclaration() {
   // Create d.ts
-  try {
-    await exec(
-      `npx tsc --declaration --declarationDir ${path.join(
-        pri.projectRootPath,
-        './declaration'
-      )} --emitDeclarationOnly >> /dev/null 2>&1`,
-      {
-        cwd: pri.projectRootPath
-      }
-    );
-  } catch {
-    //
-  }
+
+  await spinner(`create declaration`, async () => {
+    try {
+      await exec(
+        `npx tsc --declaration --declarationDir ${path.join(
+          pri.projectRootPath,
+          './declaration'
+        )} --emitDeclarationOnly >> /dev/null 2>&1`,
+        {
+          cwd: pri.projectRootPath
+        }
+      );
+    } catch {
+      //
+    }
+  });
 }

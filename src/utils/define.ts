@@ -84,7 +84,7 @@ export class GlobalState {
 
   /**
    * Selected source type.
-   * Root or some packages.
+   * 'root' or some packages.
    */
   public selectedSourceType: SourceType = 'root';
 
