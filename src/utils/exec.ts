@@ -11,7 +11,7 @@ export function exec(shell: string, options?: ExecOptions): Promise<string> {
       newOptions.cwd = globalState.projectRootPath;
     }
 
-    nodeExec(shell, options, (error, stdOut) => {
+    nodeExec(shell, newOptions, (error, stdOut) => {
       if (error) {
         reject(error.toString());
       } else {

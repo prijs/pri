@@ -159,7 +159,17 @@ async function prepareBuild(opts: IOpts = {}) {
 
 async function buildDeclaration() {
   // Create d.ts
-  await exec('npx tsc --declaration --declarationDir ./declaration --emitDeclarationOnly', {
-    cwd: pri.projectRootPath
-  });
+  try {
+    await exec(
+      `npx tsc --declaration --declarationDir ${path.join(
+        pri.projectRootPath,
+        './declaration'
+      )} --emitDeclarationOnly >> /dev/null 2>&1`,
+      {
+        cwd: pri.projectRootPath
+      }
+    );
+  } catch {
+    //
+  }
 }
