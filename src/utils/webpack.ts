@@ -40,7 +40,7 @@ export const watchWebpack = async (opts: IOptions<IExtraOptions>): Promise<any> 
 
   const compiler = webpack(webpackConfig);
 
-  compiler.watch({}, () => {});
+  compiler.watch({}, () => { });
 };
 
 function runCompiler(compiler: webpack.Compiler) {
