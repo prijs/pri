@@ -137,7 +137,9 @@ function ensureVscode() {
             { language: 'typescript', autoFix: true },
             { language: 'typescriptreact', autoFix: true }
           ],
-          'eslint.provideLintTask': true
+          'eslint.provideLintTask': true,
+          'typescript.format.enable': false,
+          'javascript.format.enable': false
         }),
         null,
         2
