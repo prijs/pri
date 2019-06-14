@@ -1,0 +1,8 @@
+{
+  "recommendations": [
+    "dbaeumer.vscode-eslint",
+    "eamodio.gitlens",
+    "zhuangtongfa.material-theme",
+    "jasonhzq.vscode-pont"
+  ]
+}

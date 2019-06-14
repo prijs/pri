@@ -2,6 +2,19 @@
   "editor.formatOnSave": true,
   "typescript.tsdk": "node_modules/typescript/lib",
   "eslint.autoFixOnSave": true,
-  "eslint.validate": ["javascript", "javascriptreact", { "language": "typescript", "autoFix": true }, { "language": "typescriptreact", "autoFix": true }],
-  "eslint.provideLintTask": true
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    {
+      "language": "typescript",
+      "autoFix": true
+    },
+    {
+      "language": "typescriptreact",
+      "autoFix": true
+    }
+  ],
+  "eslint.provideLintTask": true,
+  "typescript.format.enable": false,
+  "javascript.format.enable": false
 }

@@ -146,6 +146,24 @@ function ensureVscode() {
       )}\n`;
     }
   });
+
+  pri.project.addProjectFiles({
+    fileName: path.join(pri.projectRootPath, '.vscode/extensions.json'),
+    pipeContent: (prev: string) => {
+      return `${JSON.stringify(
+        _.merge({}, safeJsonParse(prev), {
+          recommendations: [
+            'dbaeumer.vscode-eslint',
+            'eamodio.gitlens',
+            'zhuangtongfa.material-theme',
+            'jasonhzq.vscode-pont'
+          ]
+        }),
+        null,
+        2
+      )}\n`;
+    }
+  });
 }
 
 function ensureGitignore() {
