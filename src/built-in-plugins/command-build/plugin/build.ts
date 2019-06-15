@@ -2,7 +2,6 @@ import * as fs from 'fs-extra';
 import * as HtmlWebpackPlugin from 'html-webpack-plugin';
 import * as path from 'path';
 import * as prettier from 'prettier';
-import * as webpack from 'webpack';
 import * as nodeExternals from 'webpack-node-externals';
 import { pri, tempPath } from '../../../node';
 import * as pipe from '../../../node/pipe';
