@@ -2,6 +2,7 @@ import * as fs from 'fs-extra';
 import * as HtmlWebpackPlugin from 'html-webpack-plugin';
 import * as path from 'path';
 import * as prettier from 'prettier';
+import * as webpack from 'webpack';
 import * as nodeExternals from 'webpack-node-externals';
 import { pri, tempPath } from '../../../node';
 import * as pipe from '../../../node/pipe';
@@ -85,7 +86,16 @@ export const buildComponent = async (opts: IOpts = {}) => {
     libraryTarget: 'commonjs2',
     entryPath: path.join(pri.sourceRoot, path.format(componentEntry)),
     outFileName: pri.projectConfig.outFileName,
-    externals: [nodeExternals()]
+    externals: [nodeExternals()],
+    pipeConfig: async webpackConfig => {
+      return {
+        ...webpackConfig,
+        optimization: {
+          ...webpackConfig.optimization,
+          minimize: false
+        }
+      };
+    }
   });
 
   // Add bin file to dist dir.
