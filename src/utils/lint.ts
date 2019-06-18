@@ -3,6 +3,8 @@ import * as yargs from 'yargs';
 import { logInfo } from './log';
 import { findNearestNodemodulesFile } from './npm-finder';
 
+export const eslintParam = "--fix './?(src|packages|docs|tests)/**/*.?(ts|tsx)'";
+
 export async function lint(showBreakError = true) {
   if (yargs.argv.light) {
     return;
@@ -11,7 +13,7 @@ export async function lint(showBreakError = true) {
   logInfo('\nLint and format code..');
 
   try {
-    const commitedFiles = execSync('git diff  --cached --name-only --diff-filter=ACM')
+    const commitedFiles = execSync('git diff --cached --name-only --diff-filter=ACM')
       .toString()
       .split('\n');
     execSync([`${findNearestNodemodulesFile('.bin/eslint')} --fix`, ...commitedFiles].join(' '), {
