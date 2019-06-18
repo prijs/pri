@@ -13,7 +13,10 @@ export async function lint(showBreakError = true) {
   logInfo('\nLint and format code..');
 
   try {
-    execSync([`${findNearestNodemodulesFile('.bin/eslint')} ${eslintParam}`].join(' '), {
+    const commitedFiles = execSync('git diff  --cached --name-only --diff-filter=ACM')
+      .toString()
+      .split('\n');
+    execSync([`${findNearestNodemodulesFile('.bin/eslint')} --fix`, ...commitedFiles].join(' '), {
       stdio: 'inherit'
     });
   } catch (error) {
