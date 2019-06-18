@@ -40,74 +40,111 @@ const selfAndProjectNodeModules = [
 ];
 
 /**
+ * Mutilpe loaders
+ */
+const styleLoader = {
+  loader: 'style-loader',
+  options: plugin.buildConfigStyleLoaderOptionsPipes.reduce((options, fn) => {
+    return fn(options);
+  }, {})
+};
+
+const cssPureLoader = {
+  loader: 'css-loader',
+  options: plugin.buildConfigCssLoaderOptionsPipes.reduce((options, fn) => {
+    return fn(options);
+  }, {})
+};
+
+const cssModuleLoader = {
+  loader: 'css-loader',
+  options: plugin.buildConfigCssLoaderOptionsPipes.reduce(
+    (options, fn) => {
+      return fn(options);
+    },
+    {
+      importLoaders: 1,
+      modules: true,
+      localIdentName: '[path][name]-[local]-[hash:base64:5]'
+    }
+  )
+};
+
+const sassLoader = {
+  loader: 'sass-loader',
+  options: plugin.buildConfigSassLoaderOptionsPipes.reduce((options, fn) => {
+    return fn(options);
+  }, {})
+};
+
+const lessLoader = {
+  loader: 'less-loader',
+  options: plugin.buildConfigLessLoaderOptionsPipes.reduce((options, fn) => {
+    return fn(options);
+  }, {})
+};
+
+const babelLoader = {
+  loader: 'babel-loader',
+  options: plugin.buildConfigBabelLoaderOptionsPipes.reduce((options, fn) => {
+    return fn(options);
+  }, babelOptions)
+};
+
+/**
+ * Helper
+ */
+function extraCssInProd(...loaders: any[]) {
+  if (globalState.projectConfig.cssExtract) {
+    if (globalState.isDevelopment) {
+      return [styleLoader, ...loaders];
+    }
+    return [MiniCssExtractPlugin.loader, ...loaders];
+  }
+  return [styleLoader, ...loaders];
+}
+
+const stats = {
+  warnings: false,
+  version: false,
+  modules: false,
+  entrypoints: false,
+  hash: false
+};
+
+const tsLoaderConfig = {
+  include: plugin.buildConfigJsLoaderIncludePipes.reduce((options, fn) => {
+    return fn(options);
+  }, defaultSourcePathToBeResolve),
+  exclude: plugin.buildConfigJsLoaderExcludePipes.reduce((options, fn) => {
+    return fn(options);
+  }, [])
+};
+
+const cssLoaderConfig = {
+  include: defaultSourcePathToBeResolve
+};
+
+// const scssLoaderConfig = {
+//   include: plugin.buildConfigSassLoaderIncludePipes.reduce(
+//     (options, fn) => fn(options),
+//     defaultSourcePathToBeResolve
+//   ),
+//   exclude: plugin.buildConfigSassLoaderExcludePipes.reduce((options, fn) => fn(options), [])
+// };
+
+// const lessLoaderConfig = {
+//   include: plugin.buildConfigLessLoaderIncludePipes.reduce(
+//     (options, fn) => fn(options),
+//     defaultSourcePathToBeResolve
+//   ),
+//   exclude: plugin.buildConfigLessLoaderExcludePipes.reduce((options, fn) => fn(options), [])
+// };
+
+/**
  * Get webpack config.
  */
 export const getWebpackConfig = async (opts: IOptions) => {
-  /**
-   * Mutilpe loaders
-   */
-  const styleLoader = {
-    loader: 'style-loader',
-    options: plugin.buildConfigStyleLoaderOptionsPipes.reduce((options, fn) => {
-      return fn(options);
-    }, {})
-  };
-
-  const cssPureLoader = {
-    loader: 'css-loader',
-    options: plugin.buildConfigCssLoaderOptionsPipes.reduce((options, fn) => {
-      return fn(options);
-    }, {})
-  };
-
-  const cssModuleLoader = {
-    loader: 'css-loader',
-    options: plugin.buildConfigCssLoaderOptionsPipes.reduce(
-      (options, fn) => {
-        return fn(options);
-      },
-      {
-        importLoaders: 1,
-        modules: true,
-        localIdentName: '[path][name]-[local]-[hash:base64:5]'
-      }
-    )
-  };
-
-  const sassLoader = {
-    loader: 'sass-loader',
-    options: plugin.buildConfigSassLoaderOptionsPipes.reduce((options, fn) => {
-      return fn(options);
-    }, {})
-  };
-
-  const lessLoader = {
-    loader: 'less-loader',
-    options: plugin.buildConfigLessLoaderOptionsPipes.reduce((options, fn) => {
-      return fn(options);
-    }, {})
-  };
-
-  const babelLoader = {
-    loader: 'babel-loader',
-    options: plugin.buildConfigBabelLoaderOptionsPipes.reduce((options, fn) => {
-      return fn(options);
-    }, babelOptions)
-  };
-
-  /**
-   * Helper
-   */
-  function extraCssInProd(...loaders: any[]) {
-    if (globalState.projectConfig.cssExtract) {
-      if (globalState.isDevelopment) {
-        return [styleLoader, ...loaders];
-      }
-      return [MiniCssExtractPlugin.loader, ...loaders];
-    }
-    return [styleLoader, ...loaders];
-  }
-
   const distDir = opts.distDir || path.join(globalState.projectRootPath, globalState.projectConfig.distDir);
   const outFileName = opts.outFileName || globalState.projectConfig.outFileName;
   const outCssFileName = opts.outCssFileName || globalState.projectConfig.outCssFileName;
@@ -116,43 +153,6 @@ export const getWebpackConfig = async (opts: IOptions) => {
   if (!publicPath.endsWith('/')) {
     publicPath += '/';
   }
-
-  const stats = {
-    warnings: false,
-    version: false,
-    modules: false,
-    entrypoints: false,
-    hash: false
-  };
-
-  const tsLoaderConfig = {
-    include: plugin.buildConfigJsLoaderIncludePipes.reduce((options, fn) => {
-      return fn(options);
-    }, defaultSourcePathToBeResolve),
-    exclude: plugin.buildConfigJsLoaderExcludePipes.reduce((options, fn) => {
-      return fn(options);
-    }, [])
-  };
-
-  const cssLoaderConfig = {
-    include: defaultSourcePathToBeResolve
-  };
-
-  // const scssLoaderConfig = {
-  //   include: plugin.buildConfigSassLoaderIncludePipes.reduce(
-  //     (options, fn) => fn(options),
-  //     defaultSourcePathToBeResolve
-  //   ),
-  //   exclude: plugin.buildConfigSassLoaderExcludePipes.reduce((options, fn) => fn(options), [])
-  // };
-
-  // const lessLoaderConfig = {
-  //   include: plugin.buildConfigLessLoaderIncludePipes.reduce(
-  //     (options, fn) => fn(options),
-  //     defaultSourcePathToBeResolve
-  //   ),
-  //   exclude: plugin.buildConfigLessLoaderExcludePipes.reduce((options, fn) => fn(options), [])
-  // };
 
   let { devtool } = opts;
 

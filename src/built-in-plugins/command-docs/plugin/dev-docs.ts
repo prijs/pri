@@ -20,7 +20,6 @@ interface IResult {
 
 export async function devDocs() {
   const docsEntryPath = path.join(pri.projectRootPath, tempPath.dir, 'docs-entry.tsx');
-
   prepare(docsEntryPath);
 
   await pri.project.ensureProjectFiles();
@@ -48,6 +47,7 @@ export async function devDocs() {
 
   // Serve docs
   const freePort = await portfinder.getPortPromise();
+
   await runWebpackDevServer({
     mode: 'development',
     publicPath: '/',
@@ -66,7 +66,6 @@ export async function devDocs() {
         </style>
       `,
       appendBody: `
-            
           `
     }
   });
