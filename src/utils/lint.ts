@@ -19,6 +19,7 @@ export async function lint(showBreakError = true) {
         .toString()
         .split('\n')
     );
+
     if (commitedFiles.length > 0) {
       execSync([`${findNearestNodemodulesFile('.bin/eslint')} --fix`, ...commitedFiles].join(' '), {
         stdio: 'inherit'
