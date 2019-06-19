@@ -14,17 +14,9 @@ export async function lint(showBreakError = true) {
   logInfo('\nLint and format code..');
 
   try {
-    const commitedFiles = _.compact(
-      execSync('git diff --cached --name-only --diff-filter=ACM')
-        .toString()
-        .split('\n')
-    );
-
-    if (commitedFiles.length > 0) {
-      execSync([`${findNearestNodemodulesFile('.bin/eslint')} --fix`, ...commitedFiles].join(' '), {
-        stdio: 'inherit'
-      });
-    }
+    execSync(`${findNearestNodemodulesFile('.bin/eslint')} ${eslintParam}`, {
+      stdio: 'inherit'
+    });
   } catch (error) {
     if (showBreakError) {
       process.exit(1);
