@@ -6,7 +6,6 @@ import * as path from 'path';
 import * as urlJoin from 'url-join';
 import * as webpack from 'webpack';
 import * as WebpackDevServer from 'webpack-dev-server';
-import * as WebpackBar from 'webpackbar';
 import { globalState } from './global-state';
 import { tempPath } from './structor-config';
 import { logInfo } from './log';
@@ -20,7 +19,6 @@ interface IExtraOptions {
   hot?: boolean;
   devUrl?: string;
   autoOpenBrowser?: boolean;
-  webpackBarOptions?: any;
 }
 
 const stats = {
@@ -41,7 +39,6 @@ export const runWebpackDevServer = async (opts: IOptions<IExtraOptions>) => {
   }
 
   webpackConfig.plugins.push(new webpack.HotModuleReplacementPlugin());
-  webpackConfig.plugins.push(new WebpackBar(opts.webpackBarOptions));
 
   const webpackDevServerConfig: WebpackDevServer.Configuration = {
     host: '127.0.0.1',

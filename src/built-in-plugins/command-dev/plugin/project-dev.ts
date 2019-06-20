@@ -54,9 +54,6 @@ async function debugDashboard() {
     htmlTemplatePath: path.join(__dirname, '../../../../template-dashboard.ejs'),
     htmlTemplateArgs: {
       dashboardServerPort
-    },
-    webpackBarOptions: {
-      name: 'dashboard'
     }
   });
 }
@@ -126,9 +123,6 @@ async function debugProject() {
     htmlTemplatePath: path.join(__dirname, '../../../../template-project.ejs'),
     htmlTemplateArgs: {
       dashboardServerPort
-    },
-    webpackBarOptions: {
-      name: 'dev'
     }
   });
 }
