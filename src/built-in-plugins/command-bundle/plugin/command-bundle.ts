@@ -13,7 +13,11 @@ export const commandBundle = async (opts: IOpts = {}) => {
   await pri.project.ensureProjectFiles();
 
   if (!opts.skipLint) {
-    await pri.project.lint();
+    await pri.project.lint({
+      lintAll: true,
+      needFix: false,
+      showBreakError: true
+    });
   }
 
   await pri.project.checkProjectFiles();
