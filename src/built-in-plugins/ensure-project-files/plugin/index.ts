@@ -313,7 +313,7 @@ function ensurePackageJson() {
             preview: 'pri preview',
             analyse: 'pri analyse',
             test: 'pri test',
-            format: `eslint ${eslintParam}`
+            format: `eslint --fix ${eslintParam}`
           },
           husky: {
             hooks: {

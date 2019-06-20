@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 import { logInfo } from './log';
 import { findNearestNodemodulesFile } from './npm-finder';
 
-export const eslintParam = "--fix './?(src|packages|docs|tests)/**/*.?(ts|tsx)'";
+export const eslintParam = "'./?(src|packages|docs|tests)/**/*.?(ts|tsx)'";
 
 export async function lint(
   options = {
@@ -21,10 +21,9 @@ export async function lint(
 
   try {
     const eslintCmd = findNearestNodemodulesFile('.bin/eslint');
+
     if (options.lintAll) {
-      const script = options.needFix
-        ? `${eslintCmd} --fix './?(src|packages|docs|tests)/**/*.?(ts|tsx)'`
-        : `${eslintCmd} './?(src|packages|docs|tests)/**/*.?(ts|tsx)'`;
+      const script = options.needFix ? `${eslintCmd} --fix ${eslintParam}` : `${eslintCmd} ${eslintParam}`;
       execSync(script, { stdio: 'inherit' });
     } else {
       const commitedFiles = _.compact(
@@ -49,8 +48,4 @@ export async function lint(
       // Ignore
     }
   }
-
-  // Maybe change project files after lint, so `git add` and `git commit` if necessary.
-  // TODO:
-  // await addCommitIfNecessary('Commit after lint.', globalState.projectRootPath);
 }
