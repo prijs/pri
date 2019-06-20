@@ -16,7 +16,11 @@ pri.commands.registerCommand({
   name: ['test'],
   description: 'Run tests.',
   action: async () => {
-    await pri.project.lint();
+    await pri.project.lint({
+      lintAll: false,
+      needFix: true,
+      showBreakError: true
+    });
     await pri.project.ensureProjectFiles();
     await pri.project.checkProjectFiles();
 
