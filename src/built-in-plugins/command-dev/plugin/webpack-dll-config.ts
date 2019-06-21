@@ -1,5 +1,6 @@
 import * as path from 'path';
 import * as webpack from 'webpack';
+import * as WebpackBar from 'webpackbar';
 import { PRI_PACKAGE_NAME } from '../../../utils/constants';
 import { globalState } from '../../../utils/global-state';
 import { plugin } from '../../../utils/plugins';
@@ -52,7 +53,8 @@ export default (opts: IOptions) => {
       new webpack.DllPlugin({
         path: path.join(opts.dllOutPath, opts.dllMainfestName),
         name: 'library'
-      })
+      }),
+      new WebpackBar()
     ],
 
     module: {

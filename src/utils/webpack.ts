@@ -1,4 +1,5 @@
 import * as webpack from 'webpack';
+import * as WebpackBar from 'webpackbar';
 import { getWebpackConfig, IOptions } from './webpack-config';
 
 interface IExtraOptions {
@@ -22,6 +23,8 @@ export const runWebpack = async (opts: IOptions<IExtraOptions>): Promise<any> =>
     webpackConfig = await opts.pipeConfig(webpackConfig);
   }
 
+  webpackConfig.plugins.push(new WebpackBar());
+
   const compiler = webpack(webpackConfig);
 
   return runCompiler(compiler);
@@ -33,6 +36,8 @@ export const watchWebpack = async (opts: IOptions<IExtraOptions>): Promise<any> 
   if (opts.pipeConfig) {
     webpackConfig = await opts.pipeConfig(webpackConfig);
   }
+
+  webpackConfig.plugins.push(new WebpackBar());
 
   const compiler = webpack(webpackConfig);
 

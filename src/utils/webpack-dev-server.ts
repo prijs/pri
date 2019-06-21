@@ -5,6 +5,7 @@ import * as open from 'open';
 import * as path from 'path';
 import * as urlJoin from 'url-join';
 import * as webpack from 'webpack';
+import * as WebpackBar from 'webpackbar';
 import * as WebpackDevServer from 'webpack-dev-server';
 import { globalState } from './global-state';
 import { tempPath } from './structor-config';
@@ -39,6 +40,8 @@ export const runWebpackDevServer = async (opts: IOptions<IExtraOptions>) => {
   }
 
   webpackConfig.plugins.push(new webpack.HotModuleReplacementPlugin());
+
+  webpackConfig.plugins.push(new WebpackBar());
 
   const webpackDevServerConfig: WebpackDevServer.Configuration = {
     host: '127.0.0.1',
