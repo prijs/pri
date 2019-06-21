@@ -4,7 +4,7 @@ import * as Koa from 'koa';
 import * as KoaCompress from 'koa-compress';
 import * as KoaMount from 'koa-mount';
 import * as KoaStatic from 'koa-static';
-import * as open from 'opn';
+import * as open from 'open';
 import * as path from 'path';
 import * as portfinder from 'portfinder';
 import * as url from 'url';

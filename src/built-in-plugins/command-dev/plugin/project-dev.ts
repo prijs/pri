@@ -2,11 +2,14 @@ import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as portfinder from 'portfinder';
 import * as prettier from 'prettier';
+import * as urlJoin from 'url-join';
+import * as webpack from 'webpack';
 import { pri } from '../../../node';
 import { analyseProject } from '../../../utils/analyse-project';
 import { createEntry } from '../../../utils/create-entry';
 import { globalState } from '../../../utils/global-state';
 import { logInfo, spinner } from '../../../utils/log';
+import { WrapContent } from '../../../utils/webpack-plugin-wrap-content';
 import { getPluginsByOrder } from '../../../utils/plugins';
 import { prettierConfig } from '../../../utils/prettier-config';
 import * as projectState from '../../../utils/project-state';
@@ -15,6 +18,7 @@ import { runWebpack } from '../../../utils/webpack';
 import { runWebpackDevServer } from '../../../utils/webpack-dev-server';
 import dashboardClientServer from './dashboard/server/client-server';
 import dashboardServer from './dashboard/server/index';
+import { bundleDlls, dllMainfestName, dllOutPath, libraryStaticPath } from './dll';
 
 const dashboardBundleFileName = 'main';
 
@@ -74,6 +78,8 @@ async function debugProject() {
     return scopeAnalyseInfo;
   });
 
+  await bundleDlls();
+
   // Bundle dashboard if plugins changed or dashboard bundle not exist.
   const dashboardDistDir = path.join(pri.projectRootPath, tempPath.dir, 'static/dashboard-bundle');
   if (!fs.existsSync(path.join(dashboardDistDir, `${dashboardBundleFileName}.js`))) {
@@ -123,6 +129,26 @@ async function debugProject() {
     htmlTemplatePath: path.join(__dirname, '../../../../template-project.ejs'),
     htmlTemplateArgs: {
       dashboardServerPort
+    },
+    pipeConfig: async config => {
+      const dllHttpPath = urlJoin(
+        `${globalState.projectConfig.useHttps ? 'https' : 'http'}://127.0.0.1:${freePort}`,
+        libraryStaticPath
+      );
+
+      config.plugins.push(
+        new WrapContent(
+          `
+          var dllScript = document.createElement("script");
+          dllScript.src = "${dllHttpPath}";
+          dllScript.onload = runEntry;
+          document.body.appendChild(dllScript);
+          function runEntry() {
+        `,
+          `}`
+        )
+      );
+      return config;
     }
   });
 }
@@ -268,6 +294,24 @@ function debugProjectPrepare(dashboardClientPort: number) {
       });
     }
   });
+
+  if (pri.majorCommand === 'dev') {
+    pri.build.pipeConfig(config => {
+      if (!pri.isDevelopment) {
+        return config;
+      }
+
+      config.plugins.push(
+        new webpack.DllReferencePlugin({
+          context: '.',
+          // eslint-disable-next-line import/no-dynamic-require,global-require
+          manifest: require(path.join(dllOutPath, dllMainfestName))
+        })
+      );
+
+      return config;
+    });
+  }
 }
 
 function createDashboardEntry() {

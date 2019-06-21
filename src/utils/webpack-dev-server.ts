@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import * as express from 'express';
 import * as normalizePath from 'normalize-path';
-import * as open from 'opn';
+import * as open from 'open';
 import * as path from 'path';
 import * as urlJoin from 'url-join';
 import * as webpack from 'webpack';

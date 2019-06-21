@@ -285,3 +285,5 @@ export interface IPluginModule {
   getPlugin?: () => Promise<any>;
   getUIPlugins?: () => Promise<any>[];
 }
+
+export type IDevDllList = (list: string[]) => string[];

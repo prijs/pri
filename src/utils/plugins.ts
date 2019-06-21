@@ -16,7 +16,8 @@ import {
   IPluginModule,
   IWhiteFile,
   CommandRegister,
-  ProjectType
+  ProjectType,
+  IDevDllList
 } from './define';
 
 import * as pluginClientSsr from '../built-in-plugins/client-ssr';
@@ -83,6 +84,8 @@ export class IPluginConfig {
   public devServices: { socketListeners: { name: string; callback: () => void }[] } = { socketListeners: [] };
 
   public lintFilters: ILintFilter[] = [];
+
+  public devDllPipes: IDevDllList[] = [];
 
   // Lock init type
   public initType: ProjectType = null;
