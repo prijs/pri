@@ -67,6 +67,27 @@ async function debugProject() {
   const dashboardServerPort = await portfinder.getPortPromise({ port: freePort + 1 });
   const dashboardClientPort = await portfinder.getPortPromise({ port: freePort + 2 });
 
+  const pipeConfig = async (config: webpack.Configuration) => {
+    const dllHttpPath = urlJoin(
+      `${globalState.projectConfig.useHttps ? 'https' : 'http'}://127.0.0.1:${freePort}`,
+      libraryStaticPath
+    );
+
+    config.plugins.push(
+      new WrapContent(
+        `
+        var dllScript = document.createElement("script");
+        dllScript.src = "${dllHttpPath}";
+        dllScript.onload = runEntry;
+        document.body.appendChild(dllScript);
+        function runEntry() {
+      `,
+        `}`
+      )
+    );
+    return config;
+  };
+
   debugProjectPrepare(dashboardClientPort);
 
   await pri.project.ensureProjectFiles();
@@ -90,7 +111,8 @@ async function debugProject() {
       publicPath: '/bundle/',
       entryPath: dashboardEntryFilePath,
       distDir: dashboardDistDir,
-      outFileName: 'main.[hash].js' // dashboard has no css file
+      outFileName: 'main.[hash].js', // dashboard has no css file
+      pipeConfig
     });
     projectState.set('dashboardHash', status.hash);
   }
@@ -130,26 +152,7 @@ async function debugProject() {
     htmlTemplateArgs: {
       dashboardServerPort
     },
-    pipeConfig: async config => {
-      const dllHttpPath = urlJoin(
-        `${globalState.projectConfig.useHttps ? 'https' : 'http'}://127.0.0.1:${freePort}`,
-        libraryStaticPath
-      );
-
-      config.plugins.push(
-        new WrapContent(
-          `
-          var dllScript = document.createElement("script");
-          dllScript.src = "${dllHttpPath}";
-          dllScript.onload = runEntry;
-          document.body.appendChild(dllScript);
-          function runEntry() {
-        `,
-          `}`
-        )
-      );
-      return config;
-    }
+    pipeConfig
   });
 }
 
