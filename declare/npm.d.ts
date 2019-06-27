@@ -57,3 +57,5 @@ declare module 'hard-source-webpack-plugin';
 declare module 'react-hot-loader/babel';
 declare module '@babel/preset-typescript';
 declare module '@babel/plugin-transform-classes';
+declare module 'babel-plugin-import';
+declare module 'terser-webpack-plugin';

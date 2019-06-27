@@ -77,9 +77,9 @@ export const runWebpackDevServer = async (opts: IOptions<IExtraOptions>) => {
   devServer.listen(opts.devServerPort, '127.0.0.1', () => {
     let devUrl = '';
 
-    if (opts.devUrl) {
+    if (opts.devUrl !== undefined) {
       ({ devUrl } = opts);
-    } else if (globalState.projectConfig.devUrl) {
+    } else if (globalState.projectConfig.devUrl !== undefined) {
       ({ devUrl } = globalState.projectConfig);
     } else {
       devUrl = urlJoin(

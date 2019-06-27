@@ -7,23 +7,25 @@ export class Props {
 }
 
 const Docs = React.memo((props: Props) => {
-  const [docIndex, setDocIndex] = React.useState(0);
+  const [docName, setDocName] = React.useState(null);
 
   React.useEffect(() => {
-    const index = Number(urlSearchParams.get('index'));
-    if (docIndex !== index) {
-      setDocIndex(index);
+    const name = urlSearchParams.get('name');
+    if (docName !== name) {
+      setDocName(name);
     }
-  }, [docIndex]);
+  }, [docName]);
 
-  const selectDoc = React.useCallback((index: number) => {
-    urlSearchParams.set('index', index.toString());
+  const selectDoc = React.useCallback((name: string) => {
+    urlSearchParams.set('name', name);
+
     const newurl = `${window.location.protocol}//${window.location.host}${
       window.location.pathname
     }?${urlSearchParams.toString()}`;
+
     window.history.pushState({ path: newurl }, '', newurl);
 
-    setDocIndex(index);
+    setDocName(name);
   }, []);
 
   function renderLeftMenus() {
@@ -37,14 +39,14 @@ const Docs = React.memo((props: Props) => {
             cursor: 'pointer',
             paddingLeft: 10,
             boxSizing: 'border-box',
-            backgroundColor: docIndex === index ? 'white' : null,
+            backgroundColor: docName === index ? 'white' : null,
             fontSize: 14,
             color: '#333',
             borderBottom: '1px solid #eee'
           }}
           // eslint-disable-next-line react/jsx-no-bind
           onClick={() => {
-            selectDoc(index);
+            selectDoc(doc.name);
           }}
           key={index}
         >
@@ -58,7 +60,11 @@ const Docs = React.memo((props: Props) => {
     return null;
   }
 
-  const currentDoc = props.docs[docIndex];
+  const currentDoc = !docName
+    ? props.docs[0]
+    : props.docs.find(eachDoc => {
+        return eachDoc.name === docName;
+      });
   const DocInstance = currentDoc.element.default;
 
   return (

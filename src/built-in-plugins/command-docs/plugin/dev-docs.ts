@@ -53,6 +53,7 @@ export async function devDocs() {
     publicPath: '/',
     autoOpenBrowser: true,
     hot: true,
+    devUrl: null,
     entryPath: docsEntryPath,
     devServerPort: freePort,
     htmlTemplatePath: path.join(__dirname, '../../../../template-project.ejs'),

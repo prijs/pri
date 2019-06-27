@@ -391,8 +391,6 @@ export const getWebpackConfig = async (opts: IOptions) => {
       //   ]
       // };
     }
-
-    babelLoader.options.plugins.push(['import', { libraryName: 'antd' }]);
   }
 
   if (globalState.isDevelopment) {

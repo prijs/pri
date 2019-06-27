@@ -9,9 +9,18 @@
     "rootDir": "./src",
     "experimentalDecorators": true,
     "skipLibCheck": true,
-    "lib": ["dom", "es5", "es6", "scripthost", "es2018.promise"],
+    "lib": [
+      "dom",
+      "es5",
+      "es6",
+      "scripthost",
+      "es2018.promise"
+    ],
     "outDir": "built",
     "sourceMap": true
   },
-  "exclude": ["node_modules", "built"]
+  "exclude": [
+    "node_modules",
+    "built"
+  ]
 }
