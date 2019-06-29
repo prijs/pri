@@ -25,9 +25,10 @@ export class Entry {
   }
 
   public async getEnvironment() {
+    const environmentHeader = await this.getEnvironmentHeader();
     const environmentBody = await this.getEnvironmentBody();
 
-    return [environmentBody].join('\n');
+    return [environmentHeader, environmentBody].join('\n');
   }
 
   public get pipe() {
@@ -64,6 +65,10 @@ export class Entry {
 
   public pipeEntryRender(fn: PipeCallback) {
     pipe.set('entryRender', fn);
+  }
+
+  public pipeEnvironmentHeader(fn: PipeCallback) {
+    pipe.set('environmentHeader', fn);
   }
 
   public pipeEnvironmentBody(fn: PipeCallback) {
@@ -181,6 +186,10 @@ export class Entry {
       }
     `
     );
+  }
+
+  protected async getEnvironmentHeader() {
+    return pipe.get('environmentHeader', ``);
   }
 
   protected async getEnvironmentBody() {

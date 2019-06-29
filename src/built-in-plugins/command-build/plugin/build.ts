@@ -2,6 +2,7 @@ import * as fs from 'fs-extra';
 import * as HtmlWebpackPlugin from 'html-webpack-plugin';
 import * as path from 'path';
 import * as prettier from 'prettier';
+import * as yargs from 'yargs';
 import * as nodeExternals from 'webpack-node-externals';
 import { pri, tempPath } from '../../../node';
 import * as pipe from '../../../node/pipe';
@@ -78,6 +79,11 @@ export const buildProject = async (opts: IOpts = {}) => {
 export const buildComponent = async (opts: IOpts = {}) => {
   await prepareBuild(opts);
 
+  // FIXME:
+  // Do not minimize in cloud build(def envirenment), because commnets will lead to
+  // build error in cloud build.
+  const isCloudBuild = yargs.argv.cloud as boolean;
+
   // Build component
   const stats = await runWebpack({
     mode: 'production',
@@ -91,7 +97,7 @@ export const buildComponent = async (opts: IOpts = {}) => {
         ...webpackConfig,
         optimization: {
           ...webpackConfig.optimization,
-          minimize: false
+          minimize: isCloudBuild
         }
       };
     }
