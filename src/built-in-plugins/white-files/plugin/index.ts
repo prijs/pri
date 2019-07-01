@@ -23,7 +23,7 @@ const whiteList = [
   docsPath.dir,
   '.git',
   `src${path.sep}components`,
-  ...(pri.projectConfig.packageLock ? ['package-lock.json'] : [])
+  ...(pri.projectConfig.packageLock ? ['package-lock.json', 'yarn.lock'] : [])
 ];
 
 const allIgnores = _.union(gitIgnores, npmIgnores).concat(whiteList);
