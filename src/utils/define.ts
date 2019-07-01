@@ -247,6 +247,11 @@ export class ProjectConfig {
    * Check deps * ^ ~
    */
   public allowDepsSemver?: 'major' | 'minor' | 'patch' | 'fixed' = null;
+
+  /**
+   * Enable incremental lint check.
+   */
+  public incrementalLint?: boolean = false;
 }
 
 export type SetPipe = (pipeName: string, callback: PipeCallback) => void;

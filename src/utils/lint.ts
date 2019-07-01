@@ -3,6 +3,7 @@ import * as yargs from 'yargs';
 import * as _ from 'lodash';
 import { logInfo } from './log';
 import { findNearestNodemodulesFile } from './npm-finder';
+import { globalState } from './global-state';
 
 export const eslintParam = "'./?(src|packages|docs|tests)/**/*.?(ts|tsx)'";
 
@@ -30,10 +31,10 @@ export async function lint(options?: Partial<DefaultOptions>) {
   logInfo('\nLint and format code..');
 
   try {
-    if (mergedOptions.lintAll) {
-      lintAll(mergedOptions);
-    } else {
+    if (!mergedOptions.lintAll && globalState.projectConfig.incrementalLint === true) {
       lintIncrement(mergedOptions);
+    } else {
+      lintAll(mergedOptions);
     }
   } catch (error) {
     if (mergedOptions.showBreakError) {
