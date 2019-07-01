@@ -75,22 +75,22 @@ export const runWebpackDevServer = async (opts: IOptions<IExtraOptions>) => {
   const devServer = new WebpackDevServer(compiler, webpackDevServerConfig);
 
   devServer.listen(opts.devServerPort, '127.0.0.1', () => {
-    let devUrl = '';
+    let devUrl: string = null;
 
-    if (opts.devUrl !== undefined) {
-      ({ devUrl } = opts);
-    } else if (globalState.projectConfig.devUrl !== undefined) {
-      ({ devUrl } = globalState.projectConfig);
-    } else {
+    if (opts.devUrl === 'localhost') {
       devUrl = urlJoin(
         `${globalState.projectConfig.useHttps ? 'https' : 'http'}://localhost:${opts.devServerPort}`,
         globalState.projectConfig.baseHref
       );
+    } else if (opts.devUrl !== undefined) {
+      ({ devUrl } = opts);
+    } else if (globalState.projectConfig.devUrl !== undefined) {
+      ({ devUrl } = globalState.projectConfig);
     }
 
     logInfo(`Serve on ${devUrl}`);
 
-    if (opts.autoOpenBrowser) {
+    if (opts.autoOpenBrowser && devUrl) {
       open(devUrl);
     }
   });
