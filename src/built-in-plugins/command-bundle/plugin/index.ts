@@ -8,6 +8,9 @@ pri.commands.registerCommand({
   options: {
     skipLint: {
       description: 'Skip lint'
+    },
+    dev: {
+      description: 'For development?'
     }
   },
   action: async (opts?: IOpts) => {
