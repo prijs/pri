@@ -55,11 +55,11 @@ export const runWebpackDevServer = async (opts: IOptions<IExtraOptions>) => {
     ...(!opts.jsOnly && {
       historyApiFallback: { rewrites: [{ from: '/', to: normalizePath(path.join(opts.publicPath, 'index.html')) }] }
     }),
-    https: globalState.projectConfig.useHttps,
+    https: globalState.sourceConfig.useHttps,
     overlay: { warnings: true, errors: true },
     stats,
     watchOptions: {
-      ...(!globalState.projectConfig.watchNodeModules && {
+      ...(!globalState.sourceConfig.watchNodeModules && {
         ignored: /node_modules/
       })
     },
@@ -79,13 +79,13 @@ export const runWebpackDevServer = async (opts: IOptions<IExtraOptions>) => {
 
     if (opts.devUrl === 'localhost') {
       devUrl = urlJoin(
-        `${globalState.projectConfig.useHttps ? 'https' : 'http'}://localhost:${opts.devServerPort}`,
-        globalState.projectConfig.baseHref
+        `${globalState.sourceConfig.useHttps ? 'https' : 'http'}://localhost:${opts.devServerPort}`,
+        globalState.sourceConfig.baseHref
       );
     } else if (opts.devUrl !== undefined) {
       ({ devUrl } = opts);
-    } else if (globalState.projectConfig.devUrl !== undefined) {
-      ({ devUrl } = globalState.projectConfig);
+    } else if (globalState.sourceConfig.devUrl !== undefined) {
+      ({ devUrl } = globalState.sourceConfig);
     }
 
     logInfo(`Serve on ${devUrl}`);

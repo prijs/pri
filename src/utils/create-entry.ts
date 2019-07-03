@@ -126,8 +126,8 @@ export class Entry {
   }
 
   protected async getAppRouter() {
-    const routerName = globalState.projectConfig.useHashRouter ? 'HashRouter' : 'Router';
-    const historyInfo = globalState.projectConfig.useHashRouter
+    const routerName = globalState.sourceConfig.useHashRouter ? 'HashRouter' : 'Router';
+    const historyInfo = globalState.sourceConfig.useHashRouter
       ? ''
       : `
       history={${await pipe.get('appRouterHistory', 'customHistory')}}

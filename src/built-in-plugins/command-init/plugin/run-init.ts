@@ -15,10 +15,10 @@ export const runInit = async () => {
     logFatal('No package.json! please run "npm init" first.');
   }
 
-  if (!globalState.projectConfig.type) {
-    globalState.projectConfig.type = await selectProjectType('Choose project type');
+  if (!globalState.sourceConfig.type) {
+    globalState.sourceConfig.type = await selectProjectType('Choose project type');
     if (globalState.selectedSourceType === 'root') {
-      globalState.sourceConfig.type = globalState.projectConfig.type;
+      globalState.sourceConfig.type = globalState.sourceConfig.type;
     }
   }
 

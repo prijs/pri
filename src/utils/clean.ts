@@ -7,6 +7,6 @@ import { findNearestNodemodulesFile } from './npm-finder';
 export async function cleanDist() {
   // Clean dist dir
   await exec(
-    `${findNearestNodemodulesFile('.bin/rimraf')} ${path.join(globalState.projectRootPath, pri.projectConfig.distDir)}`
+    `${findNearestNodemodulesFile('.bin/rimraf')} ${path.join(globalState.projectRootPath, pri.sourceConfig.distDir)}`
   );
 }

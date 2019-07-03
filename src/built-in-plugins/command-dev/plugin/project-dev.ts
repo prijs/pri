@@ -63,13 +63,13 @@ async function debugDashboard() {
 }
 
 async function debugProject() {
-  const freePort = pri.projectConfig.devPort || (await portfinder.getPortPromise());
+  const freePort = pri.sourceConfig.devPort || (await portfinder.getPortPromise());
   const dashboardServerPort = await portfinder.getPortPromise({ port: freePort + 1 });
   const dashboardClientPort = await portfinder.getPortPromise({ port: freePort + 2 });
 
   const pipeConfig = async (config: webpack.Configuration) => {
     const dllHttpPath = urlJoin(
-      `${globalState.projectConfig.useHttps ? 'https' : 'http'}://127.0.0.1:${freePort}`,
+      `${globalState.sourceConfig.useHttps ? 'https' : 'http'}://127.0.0.1:${freePort}`,
       libraryStaticPath
     );
 
@@ -128,7 +128,7 @@ async function debugProject() {
   // Start dashboard server
   dashboardServer({ serverPort: dashboardServerPort, analyseInfo });
 
-  if (globalState.projectConfig.useHttps) {
+  if (globalState.sourceConfig.useHttps) {
     logInfo('you should set chrome://flags/#allow-insecure-localhost, to trust local certificate.');
   }
 
@@ -145,7 +145,7 @@ async function debugProject() {
     mode: 'development',
     autoOpenBrowser: true,
     hot: true,
-    publicPath: globalState.projectConfig.publicPath,
+    publicPath: globalState.sourceConfig.publicPath,
     entryPath: path.join(globalState.projectRootPath, path.format(tempJsEntryPath)),
     devServerPort: freePort,
     htmlTemplatePath: path.join(__dirname, '../../../../template-project.ejs'),

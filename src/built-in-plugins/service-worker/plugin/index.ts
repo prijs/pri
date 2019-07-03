@@ -8,11 +8,11 @@ pri.project.onCreateEntry(async (analyseInfo, entry) => {
   entry.pipeEntryRender(text => {
     return `
       ${
-        pri.projectConfig.useServiceWorker
+        pri.sourceConfig.useServiceWorker
           ? `
         if (navigator.serviceWorker) {
           navigator.serviceWorker.register('/sw.js', {scope: "${ensureStartWithSlash(
-            ensureEndWithSlash(pri.projectConfig.baseHref)
+            ensureEndWithSlash(pri.sourceConfig.baseHref)
           )}"})
         }
       `
@@ -23,7 +23,7 @@ pri.project.onCreateEntry(async (analyseInfo, entry) => {
     `;
   });
 
-  if (pri.projectConfig.useServiceWorker) {
+  if (pri.sourceConfig.useServiceWorker) {
     const prettier = await import('prettier');
 
     fs.outputFileSync(

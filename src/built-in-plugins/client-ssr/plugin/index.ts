@@ -1,11 +1,11 @@
 import { pri } from '../../../node';
 
 pri.project.onCreateEntry((analyseInfo, entry) => {
-  if (!pri.projectConfig.useServiceWorker) {
+  if (!pri.sourceConfig.useServiceWorker) {
     return;
   }
 
-  if (!pri.projectConfig.clientServerRender) {
+  if (!pri.sourceConfig.clientServerRender) {
     return;
   }
 
@@ -24,7 +24,7 @@ pri.project.onCreateEntry((analyseInfo, entry) => {
     if (navigator.serviceWorker) {
       navigator.serviceWorker.addEventListener("message", event => {
         if (event.data.type === "getServerRenderContent") {
-          const baseHrefRegex = new RegExp(escapeRegExp("${pri.projectConfig.baseHref}"), "g")
+          const baseHrefRegex = new RegExp(escapeRegExp("${pri.sourceConfig.baseHref}"), "g")
           const matchRouterPath = event.data.pathname.replace(baseHrefRegex, "")
           const loadableMap = pageLoadableMap.get(matchRouterPath === "/" ? "/" : trimEnd(matchRouterPath, "/"))
           if (loadableMap) {
@@ -52,11 +52,11 @@ pri.project.onCreateEntry((analyseInfo, entry) => {
 });
 
 pri.build.afterProdBuild(stats => {
-  if (!pri.projectConfig.useServiceWorker) {
+  if (!pri.sourceConfig.useServiceWorker) {
     return;
   }
 
-  if (!pri.projectConfig.clientServerRender) {
+  if (!pri.sourceConfig.clientServerRender) {
     return;
   }
 

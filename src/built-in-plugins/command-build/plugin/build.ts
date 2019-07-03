@@ -42,7 +42,7 @@ export const buildProject = async (opts: IOpts = {}) => {
       staticHtmlPaths.forEach(staticHtmlPath => {
         config.plugins.push(
           new HtmlWebpackPlugin({
-            title: pri.projectConfig.title || globalState.projectRootPath.split(path.sep).pop(),
+            title: pri.sourceConfig.title || globalState.projectRootPath.split(path.sep).pop(),
             filename: staticHtmlPath,
             template: path.join(__dirname, '../../../../template-project.ejs')
           })
@@ -54,7 +54,7 @@ export const buildProject = async (opts: IOpts = {}) => {
 
   // Write .temp/static/sw.js to [distDir]
   const tempSwPath = path.join(pri.projectRootPath, tempPath.dir, 'static/sw.js');
-  const targetSwPath = path.join(globalState.projectRootPath, pri.projectConfig.distDir, 'sw.js');
+  const targetSwPath = path.join(globalState.projectRootPath, pri.sourceConfig.distDir, 'sw.js');
 
   if (fs.existsSync(tempSwPath)) {
     const tempSwContent = fs.readFileSync(tempSwPath).toString();
@@ -90,7 +90,7 @@ export const buildComponent = async (opts: IOpts = {}) => {
     target: 'node',
     libraryTarget: 'commonjs2',
     entryPath: path.join(pri.sourceRoot, path.format(componentEntry)),
-    outFileName: pri.projectConfig.outFileName,
+    outFileName: pri.sourceConfig.outFileName,
     externals: [nodeExternals()],
     pipeConfig: async webpackConfig => {
       return {
@@ -104,13 +104,13 @@ export const buildComponent = async (opts: IOpts = {}) => {
   });
 
   // Add bin file to dist dir.
-  const binJsPath = path.join(pri.projectRootPath, pri.projectConfig.distDir, 'bin.js');
+  const binJsPath = path.join(pri.projectRootPath, pri.sourceConfig.distDir, 'bin.js');
   fs.writeFileSync(
     binJsPath,
     `
     #!/usr/bin/env node
 
-    require("./${path.parse(pri.projectConfig.outFileName).name}")
+    require("./${path.parse(pri.sourceConfig.outFileName).name}")
   `.trim()
   );
 
@@ -130,7 +130,7 @@ export const buildPlugin = async (opts: IOpts = {}) => {
     target: 'node',
     libraryTarget: 'commonjs2',
     entryPath: path.join(pri.sourceRoot, path.format(pluginEntry)),
-    outFileName: pri.projectConfig.outFileName,
+    outFileName: pri.sourceConfig.outFileName,
     externals: [nodeExternals()]
   });
 
@@ -147,7 +147,7 @@ async function copyAssets() {
     return;
   }
 
-  const distAssetsPath = path.join(pri.projectRootPath, pri.projectConfig.distDir, assetsPath.dir);
+  const distAssetsPath = path.join(pri.projectRootPath, pri.sourceConfig.distDir, assetsPath.dir);
   if (fs.existsSync(distAssetsPath)) {
     logInfo('assets path exists in distDir, so skip /assets copy.');
   } else {

@@ -36,7 +36,7 @@ export const commandBundle = async (opts: IOpts = {}) => {
   if (!opts.dev) {
     await runWebpack({
       mode: 'production',
-      outFileName: pri.projectConfig.bundleFileName,
+      outFileName: pri.sourceConfig.bundleFileName,
       entryPath: path.join(pri.sourceRoot, path.format(componentEntry)),
       pipeConfig: async config => {
         let newConfig = { ...config };
@@ -51,11 +51,11 @@ export const commandBundle = async (opts: IOpts = {}) => {
       }
     });
   } else {
-    const freePort = await portfinder.getPortPromise({ port: pri.projectConfig.devPort });
+    const freePort = await portfinder.getPortPromise({ port: pri.sourceConfig.devPort });
 
     runWebpackDevServer({
       mode: 'development',
-      outFileName: pri.projectConfig.bundleFileName,
+      outFileName: pri.sourceConfig.bundleFileName,
       devServerPort: freePort,
       publicPath: '/',
       jsOnly: true,
@@ -72,21 +72,5 @@ export const commandBundle = async (opts: IOpts = {}) => {
         return newConfig;
       }
     });
-    // // Start static file server.
-    // const freePort = await portfinder.getPortPromise({ port: pri.projectConfig.devPort });
-
-    // const app = new Koa();
-
-    // app.use(KoaCors());
-
-    // app.use(KoaCompress({ flush: zlib.Z_SYNC_FLUSH }));
-
-    // app.use(KoaMount('/', KoaStatic(pri.projectRootPath, pri.projectConfig.distDir, { gzip: true })));
-
-    // const server = pri.projectConfig.useHttps
-    //   ? https.createServer(generateCertificate(), app.callback())
-    //   : http.createServer(app.callback());
-
-    // server.listen(freePort);
   }
 };

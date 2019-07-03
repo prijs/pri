@@ -19,17 +19,17 @@ import { buildProject } from '../../command-build/plugin/build';
 export const CommandPreview = async () => {
   const app = new Koa();
 
-  const distDir = path.join(pri.projectRootPath, pri.projectConfig.distDir);
+  const distDir = path.join(pri.projectRootPath, pri.sourceConfig.distDir);
 
   await buildProject();
 
-  const freePort = pri.projectConfig.devPort || (await portfinder.getPortPromise());
+  const freePort = pri.sourceConfig.devPort || (await portfinder.getPortPromise());
 
   app.use(KoaCompress({ flush: zlib.Z_SYNC_FLUSH }));
 
   app.use(
     KoaMount(
-      url.parse(pri.projectConfig.publicPath).pathname,
+      url.parse(pri.sourceConfig.publicPath).pathname,
       KoaStatic(distDir, {
         gzip: true,
         setHeaders: (res: any) => {
@@ -42,7 +42,7 @@ export const CommandPreview = async () => {
   // const cssPath = path.join(distDir, 'main.css');
   // const hasCssOutput = fs.existsSync(cssPath);
 
-  if (pri.projectConfig.useHttps) {
+  if (pri.sourceConfig.useHttps) {
     await spinner('Create https server', async () => {
       return https.createServer(generateCertificate(), app.callback()).listen(freePort);
     });
@@ -52,12 +52,12 @@ export const CommandPreview = async () => {
     });
   }
 
-  if (pri.projectConfig.devUrl) {
-    open(pri.projectConfig.devUrl);
+  if (pri.sourceConfig.devUrl) {
+    open(pri.sourceConfig.devUrl);
   } else {
     open(
       ensureEndWithSlash(
-        urlJoin(`${pri.projectConfig.useHttps ? 'https' : 'http'}://localhost:${freePort}`, pri.projectConfig.baseHref)
+        urlJoin(`${pri.sourceConfig.useHttps ? 'https' : 'http'}://localhost:${freePort}`, pri.sourceConfig.baseHref)
       )
     );
   }

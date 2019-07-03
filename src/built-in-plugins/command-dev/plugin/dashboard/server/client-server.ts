@@ -53,7 +53,7 @@ export default (opts: IOptions) => {
   `;
   });
 
-  if (globalState.projectConfig.useHttps) {
+  if (globalState.sourceConfig.useHttps) {
     https.createServer(generateCertificate(), app.callback()).listen(opts.clientPort);
   } else {
     http.createServer(app.callback()).listen(opts.clientPort);

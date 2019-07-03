@@ -33,7 +33,7 @@ export default (opts: IOptions) => {
 
   app.use(KoaMount('/static', KoaStatic(globalState.projectRootPath, tempPath.dir, { gzip: true })));
 
-  const server = globalState.projectConfig.useHttps
+  const server = globalState.sourceConfig.useHttps
     ? https.createServer(generateCertificate(), app.callback())
     : http.createServer(app.callback());
 
@@ -120,7 +120,7 @@ export default (opts: IOptions) => {
   async function getProjectStatus() {
     const analyseInfo = await analyseProject();
 
-    return { projectConfig: globalState.projectConfig, analyseInfo };
+    return { projectConfig: globalState.sourceConfig, analyseInfo };
   }
 
   // Socket

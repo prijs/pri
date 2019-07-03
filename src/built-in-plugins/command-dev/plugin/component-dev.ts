@@ -17,6 +17,6 @@ export const componentDev = async () => {
     devtool: false,
     entryPath: path.join(globalState.sourceRoot, path.format(componentEntry)),
     externals: [nodeExternals()],
-    outFileName: pri.projectConfig.outFileName
+    outFileName: pri.sourceConfig.outFileName
   });
 };

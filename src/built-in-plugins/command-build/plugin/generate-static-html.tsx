@@ -8,6 +8,6 @@ export function getStaticHtmlPaths(analyseInfo: any) {
 
   return allPages.map(page => {
     const relativePathWithSuffix = path.join(page.routerPath, 'index.html');
-    return path.join(globalState.projectRootPath, globalState.projectConfig.distDir, relativePathWithSuffix);
+    return path.join(globalState.projectRootPath, globalState.sourceConfig.distDir, relativePathWithSuffix);
   });
 }

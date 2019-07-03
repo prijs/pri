@@ -95,7 +95,7 @@ const babelLoader = {
  * Helper
  */
 function extraCssInProd(...loaders: any[]) {
-  if (globalState.projectConfig.cssExtract) {
+  if (globalState.sourceConfig.cssExtract) {
     if (globalState.isDevelopment) {
       return [styleLoader, ...loaders];
     }
@@ -145,11 +145,11 @@ const cssLoaderConfig = {
  * Get webpack config.
  */
 export const getWebpackConfig = async (opts: IOptions) => {
-  const distDir = opts.distDir || path.join(globalState.projectRootPath, globalState.projectConfig.distDir);
-  const outFileName = opts.outFileName || globalState.projectConfig.outFileName;
-  const outCssFileName = opts.outCssFileName || globalState.projectConfig.outCssFileName;
+  const distDir = opts.distDir || path.join(globalState.projectRootPath, globalState.sourceConfig.distDir);
+  const outFileName = opts.outFileName || globalState.sourceConfig.outFileName;
+  const outCssFileName = opts.outCssFileName || globalState.sourceConfig.outCssFileName;
 
-  let publicPath: string = opts.publicPath || globalState.projectConfig.publicPath || '/';
+  let publicPath: string = opts.publicPath || globalState.sourceConfig.publicPath || '/';
   if (!publicPath.endsWith('/')) {
     publicPath += '/';
   }
@@ -362,7 +362,7 @@ export const getWebpackConfig = async (opts: IOptions) => {
     if (opts.htmlTemplatePath) {
       config.plugins.push(
         new HtmlWebpackPlugin({
-          title: globalState.projectConfig.title || globalState.projectRootPath.split(path.sep).pop(),
+          title: globalState.sourceConfig.title || globalState.projectRootPath.split(path.sep).pop(),
           filename: 'index.html',
           template: opts.htmlTemplatePath,
           htmlTemplateArgs: opts.htmlTemplateArgs
@@ -372,7 +372,7 @@ export const getWebpackConfig = async (opts: IOptions) => {
   }
 
   if (!globalState.isDevelopment) {
-    if (globalState.projectConfig.cssExtract) {
+    if (globalState.sourceConfig.cssExtract) {
       config.plugins.push(
         new MiniCssExtractPlugin({
           filename: outCssFileName

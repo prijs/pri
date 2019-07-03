@@ -58,7 +58,7 @@ function ensureTsconfig() {
             target: 'esnext',
             experimentalDecorators: true,
             skipLibCheck: true,
-            outDir: globalState.projectConfig.distDir,
+            outDir: globalState.sourceConfig.distDir,
             baseUrl: '.',
             lib: ['dom', 'es5', 'es6', 'scripthost', 'es2018.promise'],
             paths: {
@@ -201,7 +201,7 @@ function ensureNpmrc() {
   pri.project.addProjectFiles({
     fileName: path.join(pri.projectRootPath, '.npmrc'),
     pipeContent: () => {
-      return `package-lock=${globalState.projectConfig.packageLock ? 'true' : 'false'}`;
+      return `package-lock=${globalState.sourceConfig.packageLock ? 'true' : 'false'}`;
     }
   });
 }

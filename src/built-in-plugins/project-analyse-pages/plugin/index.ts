@@ -29,7 +29,7 @@ pri.project.whiteFileRules.add(file => {
 });
 
 pri.project.onAnalyseProject(files => {
-  if (pri.projectConfig.routes.length === 0) {
+  if (pri.sourceConfig.routes.length === 0) {
     return {
       projectAnalysePages: {
         pages: files
@@ -71,7 +71,7 @@ pri.project.onAnalyseProject(files => {
 
   return {
     projectAnalysePages: {
-      pages: pri.projectConfig.routes
+      pages: pri.sourceConfig.routes
         .filter(route => {
           return route.component && route.path;
         })
