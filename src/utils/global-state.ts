@@ -56,9 +56,13 @@ export function freshProjectConfig() {
   if (globalState.selectedSourceType === 'root') {
     globalState.sourceConfig = { ...globalState.projectConfig };
   } else {
-    globalState.sourceConfig = globalState.packages.find(eachPackage => {
-      return eachPackage.name === globalState.selectedSourceType;
-    }).config;
+    // Merge projectConfig and sourceConfig
+    globalState.sourceConfig = {
+      ...globalState.projectConfig,
+      ...globalState.packages.find(eachPackage => {
+        return eachPackage.name === globalState.selectedSourceType;
+      }).config
+    };
   }
 }
 
