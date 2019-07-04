@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "incremental": true,
     "module": "commonjs",
     "moduleResolution": "node",
     "strict": true,
