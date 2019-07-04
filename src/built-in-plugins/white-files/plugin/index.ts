@@ -12,7 +12,8 @@ import {
   srcPath,
   utilPath,
   packagesPath,
-  expandPath
+  expandPath,
+  typingsPath
 } from '../../../utils/structor-config';
 import { addWhiteFilesByProjectType } from '../../../utils/white-file-helper';
 import { transferToAllAbsolutePaths } from '../../../utils/global-state';
@@ -45,6 +46,7 @@ pri.project.whiteFileRules.add(file => {
   return transferToAllAbsolutePaths(utilPath.dir)
     .concat(transferToAllAbsolutePaths(pagesPath.dir))
     .concat(transferToAllAbsolutePaths(docsPath.dir))
+    .concat(transferToAllAbsolutePaths(typingsPath.dir))
     .concat(transferToAllAbsolutePaths(componentPath.dir))
     .concat(transferToAllAbsolutePaths(requestsPath.dir))
     .concat(transferToAllAbsolutePaths(expandPath.dir))

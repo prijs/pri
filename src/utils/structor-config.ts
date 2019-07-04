@@ -13,6 +13,8 @@ export const testsPath = { dir: 'tests' };
 
 export const docsPath = { dir: 'docs' };
 
+export const typingsPath = { dir: 'typings' };
+
 export const tempPath = { dir: '.temp' };
 
 export const assetsPath = { dir: 'assets' };
