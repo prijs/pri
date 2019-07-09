@@ -64,8 +64,9 @@ const cssModuleLoader = {
     },
     {
       importLoaders: 1,
-      modules: true,
-      localIdentName: '[path][name]-[local]-[hash:base64:5]'
+      modules: {
+        localIdentName: '[path][name]-[local]-[hash:base64:5]'
+      }
     }
   )
 };
