@@ -214,7 +214,7 @@ function ensurePackageJson() {
 
       const priDeps = pkg.dependencies || {};
 
-      if (pri.projectConfig.type === 'project') {
+      if (pri.sourceConfig.type === 'project') {
         // Remove all packages which already exists in pri dependencies.
         if (prevJson.dependencies) {
           prevJson.dependencies = _.omit(prevJson.dependencies, Object.keys(priDeps));
@@ -239,7 +239,7 @@ function ensurePackageJson() {
       }
 
       // Mv pri-plugins to devDeps except plugin
-      if (pri.projectConfig.type === 'plugin') {
+      if (pri.sourceConfig.type === 'plugin') {
         prevJson = mvPriPlugins(prevJson, 'devDependencies', 'dependencies');
         prevJson = mvPriPlugins(prevJson, 'peerDependencies', 'dependencies');
       } else {
@@ -247,7 +247,7 @@ function ensurePackageJson() {
         prevJson = mvPriPlugins(prevJson, 'peerDependencies', 'devDependencies');
       }
 
-      switch (pri.projectConfig.type) {
+      switch (pri.sourceConfig.type) {
         case 'project':
           {
             // Move pri from devDeps to deps
@@ -334,7 +334,7 @@ function ensurePriConfig() {
     pipeContent: (prev: string) => {
       return `${JSON.stringify(
         _.merge({}, safeJsonParse(prev), {
-          type: pri.projectConfig.type
+          type: pri.sourceConfig.type
         }),
         null,
         2

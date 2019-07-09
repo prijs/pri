@@ -124,7 +124,7 @@ export const loadPlugins = async (pluginIncludeRoots: string[] = []) => {
     loadedPlugins.add(eachPlugin);
   });
 
-  if (globalState.projectConfig.type !== 'plugin') {
+  if (globalState.sourceConfig.type !== 'plugin') {
     getPriPlugins(
       globalState.projectRootPath,
       pluginIncludeRoots.concat(globalState.projectRootPath).map(pluginIncludeRoot => {
