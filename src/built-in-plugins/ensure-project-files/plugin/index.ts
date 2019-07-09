@@ -60,7 +60,6 @@ function ensureTsconfig() {
             skipLibCheck: true,
             outDir: globalState.sourceConfig.distDir,
             baseUrl: '.',
-            incremental: true,
             lib: ['dom', 'es5', 'es6', 'scripthost', 'es2018.promise'],
             paths: {
               [`${PRI_PACKAGE_NAME}/*`]: [PRI_PACKAGE_NAME, path.join(tempTypesPath.dir, '*')],
