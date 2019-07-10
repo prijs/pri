@@ -61,6 +61,9 @@ function ensureTsconfig() {
             outDir: globalState.sourceConfig.distDir,
             baseUrl: '.',
             lib: ['dom', 'es5', 'es6', 'scripthost', 'es2018.promise'],
+            declaration: pri.sourceConfig.type !== 'project',
+            emitDecoratorMetadata: true,
+            preserveConstEnums: true,
             paths: {
               [`${PRI_PACKAGE_NAME}/*`]: [PRI_PACKAGE_NAME, path.join(tempTypesPath.dir, '*')],
               'src/*': ['src/*'],
