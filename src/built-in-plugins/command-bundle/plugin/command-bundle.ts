@@ -1,19 +1,10 @@
 import * as path from 'path';
 import * as portfinder from 'portfinder';
-import * as KoaMount from 'koa-mount';
-import * as KoaStatic from 'koa-static';
-import * as zlib from 'zlib';
-import * as http from 'http';
-import * as https from 'https';
-import * as KoaCompress from 'koa-compress';
-import * as KoaCors from '@koa/cors';
-import * as Koa from 'koa';
-import { componentEntry, pri, tempPath } from '../../../node';
+import { componentEntry, pri } from '../../../node';
 import { logFatal } from '../../../utils/log';
 import { plugin } from '../../../utils/plugins';
 import { IOpts } from './interface';
 import { runWebpack } from '../../../utils/webpack';
-import { generateCertificate } from '../../../utils/generate-certificate';
 import { runWebpackDevServer } from '../../../utils/webpack-dev-server';
 
 export const commandBundle = async (opts: IOpts = {}) => {

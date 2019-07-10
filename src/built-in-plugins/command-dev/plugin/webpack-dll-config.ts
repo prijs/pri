@@ -32,8 +32,6 @@ export default (opts: IOptions) => {
           'react',
           'react-dom',
           'lodash',
-          'antd',
-          'antd/dist/antd.css',
           'highlight.js',
           'react-loadable',
           'react-router',

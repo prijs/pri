@@ -14,7 +14,6 @@ import babelPresetReact from '@babel/preset-react';
 import babelPresetTypescript from '@babel/preset-typescript';
 import babelPluginReactCssModules from 'babel-plugin-react-css-modules';
 import * as babelPluginReactHotLoader from 'react-hot-loader/babel';
-import babelPluginImport from 'babel-plugin-import';
 import { globalState } from './global-state';
 
 export const babelOptions = {
@@ -46,7 +45,6 @@ export const babelOptions = {
           }
         }
       }
-    ],
-    [babelPluginImport, { libraryName: 'antd' }]
+    ]
   ]
 };
