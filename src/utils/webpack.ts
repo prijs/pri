@@ -1,6 +1,7 @@
 import * as webpack from 'webpack';
 import * as WebpackBar from 'webpackbar';
 import { getWebpackConfig, IOptions } from './webpack-config';
+import { logWarn } from './log';
 
 interface IExtraOptions {
   pipeConfig?: (config?: webpack.Configuration) => Promise<webpack.Configuration>;
@@ -41,7 +42,15 @@ export const watchWebpack = async (opts: IOptions<IExtraOptions>): Promise<any> 
 
   const compiler = webpack(webpackConfig);
 
-  compiler.watch({}, () => {});
+  compiler.watch({}, (err, status) => {
+    if (!err && !status.hasErrors()) {
+      process.stdout.write(`${status.toString(stats)}\n\n`);
+    } else if (err && err.message) {
+      logWarn(err.message);
+    } else {
+      logWarn(status.toString());
+    }
+  });
 };
 
 function runCompiler(compiler: webpack.Compiler) {
