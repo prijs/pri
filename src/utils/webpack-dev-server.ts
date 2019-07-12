@@ -76,16 +76,19 @@ export const runWebpackDevServer = async (opts: IOptions<IExtraOptions>) => {
 
   devServer.listen(opts.devServerPort, '127.0.0.1', () => {
     let devUrl: string = null;
+    const localSuggestUrl = urlJoin(
+      `${globalState.sourceConfig.useHttps ? 'https' : 'http'}://localhost:${opts.devServerPort}`,
+      globalState.sourceConfig.baseHref
+    );
 
     if (opts.devUrl === 'localhost') {
-      devUrl = urlJoin(
-        `${globalState.sourceConfig.useHttps ? 'https' : 'http'}://localhost:${opts.devServerPort}`,
-        globalState.sourceConfig.baseHref
-      );
+      devUrl = localSuggestUrl;
     } else if (opts.devUrl !== undefined) {
       ({ devUrl } = opts);
-    } else if (globalState.sourceConfig.devUrl !== undefined) {
+    } else if (globalState.sourceConfig.devUrl !== undefined && globalState.sourceConfig.devUrl !== null) {
       ({ devUrl } = globalState.sourceConfig);
+    } else {
+      devUrl = localSuggestUrl;
     }
 
     logInfo(`Serve on ${devUrl}`);

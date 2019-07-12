@@ -4,6 +4,7 @@ import * as path from 'path';
 import * as prettier from 'prettier';
 import * as yargs from 'yargs';
 import * as nodeExternals from 'webpack-node-externals';
+import * as rollup from 'rollup';
 import { pri, tempPath } from '../../../node';
 import * as pipe from '../../../node/pipe';
 import { analyseProject } from '../../../utils/analyse-project';
@@ -85,6 +86,10 @@ export const buildComponent = async (opts: IOpts = {}) => {
   const isCloudBuild = yargs.argv.cloud as boolean;
 
   // Build component
+  // TODO: Wait for webpack5
+  // ISSUE: https://github.com/webpack/webpack/issues/2933
+  // DOC:   https://github.com/webpack/changelog-v5/blob/master/README.md#runtime-modules
+
   const stats = await runWebpack({
     mode: 'production',
     target: 'node',
@@ -105,7 +110,7 @@ export const buildComponent = async (opts: IOpts = {}) => {
 
   // Add bin file to dist dir.
   const binJsPath = path.join(pri.projectRootPath, pri.sourceConfig.distDir, 'bin.js');
-  fs.writeFileSync(
+  fs.outputFileSync(
     binJsPath,
     `
     #!/usr/bin/env node
@@ -116,9 +121,16 @@ export const buildComponent = async (opts: IOpts = {}) => {
 
   await buildDeclaration();
 
+  // TODO: add back after upgrade to webpack5
   plugin.buildAfterProdBuild.forEach(afterProdBuild => {
     return afterProdBuild(stats);
   });
+
+  // const inputOptions = {};
+  // const outputOptions = {};
+
+  // const bundle = await rollup.rollup(inputOptions);
+  // await bundle.write(outputOptions);
 };
 
 export const buildPlugin = async (opts: IOpts = {}) => {

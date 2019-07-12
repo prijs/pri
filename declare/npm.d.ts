@@ -15,7 +15,6 @@ declare module 'node-forge';
 declare module '@koa/cors';
 declare module 'react-router-dom/StaticRouter';
 declare module 'markdown-it';
-declare module 'react-loadable';
 declare module 'extract-text-webpack-plugin';
 declare module 'html-webpack-plugin';
 declare module 'normalize-path';
