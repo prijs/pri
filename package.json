@@ -1,6 +1,6 @@
 {
   "name": "pri",
-  "version": "3.2.3",
+  "version": "3.2.4",
   "types": "src/node/index.ts",
   "main": "built/node/index.js",
   "scripts": {
@@ -52,6 +52,7 @@
     "@types/koa-route": "3.2.4",
     "@types/lodash": "4.14.136",
     "@types/react-dom": "16.8.4",
+    "@types/react-loadable": "^5.5.1",
     "@types/react-router-dom": "4.3.4",
     "@types/rimraf": "2.0.2",
     "@types/semver": "6.0.1",
