@@ -14,37 +14,49 @@ import babelPresetReact from '@babel/preset-react';
 import babelPresetTypescript from '@babel/preset-typescript';
 import babelPluginReactCssModules from 'babel-plugin-react-css-modules';
 import * as babelPluginReactHotLoader from 'react-hot-loader/babel';
+import * as _ from 'lodash';
 import { globalState } from './global-state';
 
-export const babelOptions = {
-  babelrc: false,
-  comments: globalState.isDevelopment,
-  presets: [[babelPresetEnv], [babelPresetReact], [babelPresetTypescript]],
-  plugins: [
-    [transformRuntime],
-    ...(globalState.isDevelopment ? [[babelPluginReactHotLoader]] : []),
-    [babelPluginProposalDecorators, { legacy: true }],
-    [babelPluginProposalExportNamespace],
-    [babelPluginProposalFunctionSent],
-    [babelPluginProposalNumericSeparator],
-    [babelPluginProposalThrowExpressions],
-    [babelPluginSyntaxDynamicImport],
-    [babelPluginSyntaxImportMeta],
-    [babelPluginProposalClassProperties, { loose: true }],
-    [babelPluginProposalJsonStrings],
-    [babelPluginProposalOptionalCatchBinding],
-    [
-      babelPluginReactCssModules,
-      {
-        filetypes: {
-          '.scss': {
-            syntax: 'postcss-scss'
-          },
-          '.less': {
-            syntax: 'postcss-less'
+class DefaultOptions {
+  modules: boolean | string = 'auto';
+
+  plugins: any[][] = [];
+}
+
+export function getBabelOptions(options?: Partial<DefaultOptions>) {
+  const mergedOptions = _.defaults(options || {}, new DefaultOptions());
+
+  return {
+    babelrc: false,
+    comments: globalState.isDevelopment,
+    presets: [[babelPresetEnv, { modules: mergedOptions.modules }], [babelPresetReact], [babelPresetTypescript]],
+    plugins: [
+      [transformRuntime],
+      ...(globalState.isDevelopment ? [[babelPluginReactHotLoader]] : []),
+      [babelPluginProposalDecorators, { legacy: true }],
+      [babelPluginProposalExportNamespace],
+      [babelPluginProposalFunctionSent],
+      [babelPluginProposalNumericSeparator],
+      [babelPluginProposalThrowExpressions],
+      [babelPluginSyntaxDynamicImport],
+      [babelPluginSyntaxImportMeta],
+      [babelPluginProposalClassProperties, { loose: true }],
+      [babelPluginProposalJsonStrings],
+      [babelPluginProposalOptionalCatchBinding],
+      [
+        babelPluginReactCssModules,
+        {
+          filetypes: {
+            '.scss': {
+              syntax: 'postcss-scss'
+            },
+            '.less': {
+              syntax: 'postcss-less'
+            }
           }
         }
-      }
+      ],
+      ...mergedOptions.plugins
     ]
-  ]
-};
+  };
+}

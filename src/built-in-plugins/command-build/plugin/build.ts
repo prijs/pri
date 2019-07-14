@@ -4,7 +4,6 @@ import * as path from 'path';
 import * as prettier from 'prettier';
 import * as yargs from 'yargs';
 import * as nodeExternals from 'webpack-node-externals';
-import * as rollup from 'rollup';
 import { pri, tempPath } from '../../../node';
 import * as pipe from '../../../node/pipe';
 import { analyseProject } from '../../../utils/analyse-project';
@@ -19,6 +18,7 @@ import { componentEntry, pluginEntry, assetsPath } from '../../../utils/structor
 import { runWebpack } from '../../../utils/webpack';
 import { getStaticHtmlPaths } from './generate-static-html';
 import { IOpts } from './interface';
+import { tsPlusBabel } from './ts-plus-babel';
 
 export const buildProject = async (opts: IOpts = {}) => {
   await prepareBuild(opts);
@@ -89,48 +89,44 @@ export const buildComponent = async (opts: IOpts = {}) => {
   // TODO: Wait for webpack5
   // ISSUE: https://github.com/webpack/webpack/issues/2933
   // DOC:   https://github.com/webpack/changelog-v5/blob/master/README.md#runtime-modules
-
-  const stats = await runWebpack({
-    mode: 'production',
-    target: 'node',
-    libraryTarget: 'commonjs2',
-    entryPath: path.join(pri.sourceRoot, path.format(componentEntry)),
-    outFileName: pri.sourceConfig.outFileName,
-    externals: [nodeExternals()],
-    pipeConfig: async webpackConfig => {
-      return {
-        ...webpackConfig,
-        optimization: {
-          ...webpackConfig.optimization,
-          minimize: isCloudBuild
-        }
-      };
-    }
-  });
+  // const stats = await runWebpack({
+  //   mode: 'production',
+  //   target: 'node',
+  //   libraryTarget: 'commonjs2',
+  //   entryPath: path.join(pri.sourceRoot, path.format(componentEntry)),
+  //   outFileName: pri.sourceConfig.outFileName,
+  //   externals: [nodeExternals()],
+  //   pipeConfig: async webpackConfig => {
+  //     return {
+  //       ...webpackConfig,
+  //       optimization: {
+  //         ...webpackConfig.optimization,
+  //         minimize: isCloudBuild
+  //       }
+  //     };
+  //   }
+  // });
 
   // Add bin file to dist dir.
-  const binJsPath = path.join(pri.projectRootPath, pri.sourceConfig.distDir, 'bin.js');
-  fs.outputFileSync(
-    binJsPath,
-    `
-    #!/usr/bin/env node
+  // const binJsPath = path.join(pri.projectRootPath, pri.sourceConfig.distDir, 'bin.js');
+  // fs.outputFileSync(
+  //   binJsPath,
+  //   `
+  //   #!/usr/bin/env node
 
-    require("./${path.parse(pri.sourceConfig.outFileName).name}")
-  `.trim()
-  );
+  //   require("./${path.parse(pri.sourceConfig.outFileName).name}")
+  // `.trim()
+  // );
 
-  await buildDeclaration();
+  // await buildDeclaration();
 
   // TODO: add back after upgrade to webpack5
-  plugin.buildAfterProdBuild.forEach(afterProdBuild => {
-    return afterProdBuild(stats);
-  });
+  // plugin.buildAfterProdBuild.forEach(afterProdBuild => {
+  //   return afterProdBuild(stats);
+  // });
 
-  // const inputOptions = {};
-  // const outputOptions = {};
-
-  // const bundle = await rollup.rollup(inputOptions);
-  // await bundle.write(outputOptions);
+  // TODO:
+  await tsPlusBabel();
 };
 
 export const buildPlugin = async (opts: IOpts = {}) => {

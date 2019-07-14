@@ -17,7 +17,6 @@ pri.event.once('beforeEnsureFiles', async () => {
   ensureNpmignore();
   ensureNpmrc();
   ensureTsconfig();
-  ensureJestTsconfig();
   ensureVscode();
   ensureEslint();
   ensurePackageJson();
@@ -91,24 +90,6 @@ function ensureTsconfig() {
         null,
         2
       )}\n`; // Make sure ./src structor. # https://github.com/Microsoft/TypeScript/issues/5134
-    }
-  });
-}
-
-function ensureJestTsconfig() {
-  pri.project.addProjectFiles({
-    fileName: path.join(pri.projectRootPath, 'tsconfig.jest.json'),
-    pipeContent: async () => {
-      return `${JSON.stringify(
-        {
-          extends: './tsconfig',
-          compilerOptions: {
-            module: 'commonjs'
-          }
-        },
-        null,
-        2
-      )}\n`;
     }
   });
 }
@@ -203,7 +184,7 @@ function ensureNpmrc() {
   pri.project.addProjectFiles({
     fileName: path.join(pri.projectRootPath, '.npmrc'),
     pipeContent: () => {
-      return `package-lock=${globalState.sourceConfig.packageLock ? 'true' : 'false'}`;
+      return `package-lock=${globalState.projectConfig.packageLock ? 'true' : 'false'}`;
     }
   });
 }
@@ -304,9 +285,20 @@ function ensurePackageJson() {
         default:
       }
 
+      switch (pri.sourceConfig.type) {
+        case 'project':
+        case 'plugin':
+          _.set(prevJson, 'main', `${pri.projectConfig.distDir}/${pri.projectConfig.outFileName}`);
+          break;
+        case 'component':
+          _.set(prevJson, 'main', `${pri.projectConfig.distDir}/main`);
+          _.set(prevJson, 'module', `${pri.projectConfig.distDir}/module`);
+          break;
+        default:
+      }
+
       return `${JSON.stringify(
         _.merge({}, prevJson, {
-          main: `${pri.projectConfig.distDir}/${pri.projectConfig.outFileName}`,
           scripts: {
             start: 'pri dev',
             docs: 'pri docs',

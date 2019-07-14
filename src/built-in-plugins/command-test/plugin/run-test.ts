@@ -10,22 +10,7 @@ export const runTest = async () => {
     [
       findNearestNodemodulesFile('/.bin/jest'),
       `--testRegex "${path.join(pri.sourceRoot, testsPath.dir)}/.*\\.tsx?$"`,
-      `
-      --transform '${JSON.stringify({
-        '^.+\\.tsx?$': 'ts-jest'
-      })}'
-      `,
       '--moduleFileExtensions ts tsx js jsx',
-      `
-      --globals '${JSON.stringify({
-        'ts-jest': {
-          babelConfig: {
-            presets: [['@babel/preset-env']],
-            plugins: [['@babel/plugin-transform-runtime', { regenerator: true }]]
-          }
-        }
-      })}'
-      `,
       '--coverage'
     ]
       .map(each => {

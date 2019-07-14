@@ -5,7 +5,7 @@ import * as webpack from 'webpack';
 import { globalState, transferToAllAbsolutePaths } from './global-state';
 import { plugin } from './plugins';
 import { srcPath, tempPath } from './structor-config';
-import { babelOptions } from './babel-options';
+import { getBabelOptions } from './babel-options';
 
 export interface IHtmlTemplateArgs {
   dashboardServerPort?: number;
@@ -89,7 +89,7 @@ const babelLoader = {
   loader: 'babel-loader',
   options: plugin.buildConfigBabelLoaderOptionsPipes.reduce((options, fn) => {
     return fn(options);
-  }, babelOptions)
+  }, getBabelOptions())
 };
 
 /**
