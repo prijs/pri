@@ -1,7 +1,6 @@
 import * as gulp from 'gulp';
 import * as gulpBabel from 'gulp-babel';
 import * as sassGulp from 'gulp-sass';
-import * as _ from 'lodash';
 import * as path from 'path';
 import * as babelPluginTransformRenameImport from 'babel-plugin-transform-rename-import';
 import { pri } from '../../../node';

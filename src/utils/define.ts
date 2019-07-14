@@ -141,11 +141,13 @@ export class ProjectConfig {
 
   /**
    * Output main file name.
+   * Only take effect on `type=project`
    */
   public outFileName?: string = 'index.js';
 
   /**
    * Output main css file name.
+   * Only take effect on `type=project`
    */
   public outCssFileName?: string = 'index.css';
 

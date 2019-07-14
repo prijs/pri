@@ -2,7 +2,6 @@ import * as fs from 'fs-extra';
 import * as HtmlWebpackPlugin from 'html-webpack-plugin';
 import * as path from 'path';
 import * as prettier from 'prettier';
-import * as yargs from 'yargs';
 import * as nodeExternals from 'webpack-node-externals';
 import { pri, tempPath } from '../../../node';
 import * as pipe from '../../../node/pipe';
@@ -14,7 +13,7 @@ import { globalState } from '../../../utils/global-state';
 import { logInfo, spinner } from '../../../utils/log';
 import { findNearestNodemodulesFile } from '../../../utils/npm-finder';
 import { plugin } from '../../../utils/plugins';
-import { componentEntry, pluginEntry, assetsPath } from '../../../utils/structor-config';
+import { pluginEntry, assetsPath } from '../../../utils/structor-config';
 import { runWebpack } from '../../../utils/webpack';
 import { getStaticHtmlPaths } from './generate-static-html';
 import { IOpts } from './interface';
@@ -83,7 +82,7 @@ export const buildComponent = async (opts: IOpts = {}) => {
   // FIXME:
   // Do not minimize in cloud build(def envirenment), because commnets will lead to
   // build error in cloud build.
-  const isCloudBuild = yargs.argv.cloud as boolean;
+  // const isCloudBuild = yargs.argv.cloud as boolean;
 
   // Build component
   // TODO: Wait for webpack5
@@ -118,15 +117,15 @@ export const buildComponent = async (opts: IOpts = {}) => {
   // `.trim()
   // );
 
-  // await buildDeclaration();
+  // TODO:
+  await tsPlusBabel();
+
+  await buildDeclaration();
 
   // TODO: add back after upgrade to webpack5
   // plugin.buildAfterProdBuild.forEach(afterProdBuild => {
   //   return afterProdBuild(stats);
   // });
-
-  // TODO:
-  await tsPlusBabel();
 };
 
 export const buildPlugin = async (opts: IOpts = {}) => {
