@@ -276,7 +276,7 @@ function ensurePackageJson() {
               _.set(prevJson, 'types', `declaration/packages/${globalState.selectedSourceType}/index.d.ts`);
             }
 
-            _.set(prevJson, 'scripts.prepublishOnly', 'npm run build && npm run bundle --skipLint');
+            _.set(prevJson, 'scripts.prepublishOnly', 'npm run build && npm run bundle -- --skipLint');
 
             // Add babel-runtime
             _.set(prevJson, 'dependencies.@babel/runtime', '^7.0.0');
