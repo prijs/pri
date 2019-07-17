@@ -14,7 +14,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run stylelint:auto-fix"
+      "pre-commit": "npm run format && npm run stylelint:auto-fix"
     }
   },
   "bin": {
