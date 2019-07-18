@@ -314,7 +314,7 @@ export const getWebpackConfig = async (opts: IOptions) => {
       modules: selfAndProjectNodeModules,
       alias: {
         // Src alias to ./src
-        src: path.join(globalState.projectRootPath, '/src'),
+        ...(globalState.sourceConfig.type === 'project' && { src: path.join(globalState.projectRootPath, '/src') }),
         // For react hot loader.
         ...(globalState.isDevelopment && {
           'react-dom': '@hot-loader/react-dom'

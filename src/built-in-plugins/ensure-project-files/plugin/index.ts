@@ -64,7 +64,7 @@ function ensureTsconfig() {
             preserveConstEnums: true,
             paths: {
               [`${PRI_PACKAGE_NAME}/*`]: [PRI_PACKAGE_NAME, path.join(tempTypesPath.dir, '*')],
-              'src/*': ['src/*'],
+              ...(pri.sourceConfig.type === 'project' && { 'src/*': ['src/*'] }),
               // Packages alias names
               ...globalState.packages.reduce((obj, eachPackage) => {
                 if (eachPackage.packageJson && eachPackage.packageJson.name) {
@@ -268,14 +268,7 @@ function ensurePackageJson() {
             _.unset(prevJson, `dependencies.${PRI_PACKAGE_NAME}`);
             _.set(prevJson, `devDependencies.${PRI_PACKAGE_NAME}`, projectPriVersion);
 
-            if (globalState.packages.length === 0) {
-              _.set(prevJson, 'types', 'declaration/index.d.ts');
-            } else if (globalState.selectedSourceType === 'root') {
-              _.set(prevJson, 'types', 'declaration/src/index.d.ts');
-            } else {
-              _.set(prevJson, 'types', `declaration/packages/${globalState.selectedSourceType}/index.d.ts`);
-            }
-
+            _.set(prevJson, 'types', 'declaration/index.d.ts');
             _.set(prevJson, 'scripts.prepublishOnly', 'npm run build && npm run bundle -- --skipLint');
 
             // Add babel-runtime

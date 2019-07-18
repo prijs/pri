@@ -3,6 +3,7 @@ import * as HtmlWebpackPlugin from 'html-webpack-plugin';
 import * as path from 'path';
 import * as prettier from 'prettier';
 import * as nodeExternals from 'webpack-node-externals';
+import * as glob from 'glob';
 import { pri, tempPath } from '../../../node';
 import * as pipe from '../../../node/pipe';
 import { analyseProject } from '../../../utils/analyse-project';
@@ -13,11 +14,11 @@ import { globalState } from '../../../utils/global-state';
 import { logInfo, spinner } from '../../../utils/log';
 import { findNearestNodemodulesFile } from '../../../utils/npm-finder';
 import { plugin } from '../../../utils/plugins';
-import { pluginEntry, assetsPath } from '../../../utils/structor-config';
+import { pluginEntry, assetsPath, srcPath } from '../../../utils/structor-config';
 import { runWebpack } from '../../../utils/webpack';
 import { getStaticHtmlPaths } from './generate-static-html';
 import { IOpts } from './interface';
-import { tsPlusBabel } from './ts-plus-babel';
+import { tsPlusBabel } from '../../../utils/ts-plus-babel';
 
 export const buildProject = async (opts: IOpts = {}) => {
   await prepareBuild(opts);
@@ -118,7 +119,9 @@ export const buildComponent = async (opts: IOpts = {}) => {
   // );
 
   // TODO:
-  await tsPlusBabel();
+  await spinner(`build source files`, async () => {
+    await tsPlusBabel();
+  });
 
   await buildDeclaration();
 
@@ -184,14 +187,15 @@ async function prepareBuild(opts: IOpts = {}) {
 }
 
 async function buildDeclaration() {
-  // Create d.ts
+  const declarationName = 'declaration';
 
+  // Create d.ts
   await spinner(`create declaration`, async () => {
     try {
       await exec(
         `npx tsc --declaration --declarationDir ${path.join(
           pri.projectRootPath,
-          './declaration'
+          `./${declarationName}`
         )} --emitDeclarationOnly >> /dev/null 2>&1`,
         {
           cwd: pri.projectRootPath
@@ -201,4 +205,35 @@ async function buildDeclaration() {
       //
     }
   });
+
+  // If select packages, pick it's own declaration
+  if (pri.selectedSourceType !== 'root') {
+    fs.removeSync(path.join(pri.projectRootPath, declarationName, srcPath.dir));
+
+    const declarationFiles = glob.sync(
+      path.join(pri.projectRootPath, declarationName, 'packages', pri.selectedSourceType, srcPath.dir, '/**/*.d.ts')
+    );
+
+    declarationFiles.map(eachFile => {
+      const targetPath = path.relative(
+        path.join(pri.projectRootPath, declarationName, 'packages', pri.selectedSourceType, srcPath.dir),
+        eachFile
+      );
+      fs.copySync(eachFile, path.join(pri.projectRootPath, declarationName, targetPath));
+    });
+
+    fs.removeSync(path.join(pri.projectRootPath, declarationName, 'packages'));
+  } else {
+    // get declaration from src
+    fs.removeSync(path.join(pri.projectRootPath, declarationName, 'packages'));
+
+    const declarationFiles = glob.sync(path.join(pri.projectRootPath, declarationName, srcPath.dir, '**/*.d.ts'));
+
+    declarationFiles.map(eachFile => {
+      const targetPath = path.relative(path.join(pri.projectRootPath, declarationName, srcPath.dir), eachFile);
+      fs.copySync(eachFile, path.join(pri.projectRootPath, declarationName, targetPath));
+    });
+
+    fs.removeSync(path.join(pri.projectRootPath, declarationName, srcPath.dir));
+  }
 }

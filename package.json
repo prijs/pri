@@ -1,6 +1,6 @@
 {
   "name": "pri",
-  "version": "3.2.6",
+  "version": "3.2.7-beta1",
   "types": "src/node/index.ts",
   "main": "built/node/index.js",
   "scripts": {
@@ -86,7 +86,9 @@
     "fs-extra": "8.1.0",
     "gulp": "^4.0.2",
     "gulp-babel": "^8.0.0",
+    "gulp-less": "^4.0.1",
     "gulp-sass": "^4.0.2",
+    "gulp-watch": "^5.0.1",
     "highlight.js": "9.15.8",
     "html-webpack-plugin": "3.2.0",
     "husky": "3.0.0",
@@ -117,6 +119,7 @@
     "react-loadable": "5.5.0",
     "react-router-dom": "5.0.1",
     "rimraf": "2.6.3",
+    "sass-loader": "7.1.0",
     "semver": "6.2.0",
     "signale": "1.4.0",
     "socket.io": "2.2.0",

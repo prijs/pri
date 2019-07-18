@@ -1,12 +1,14 @@
 import * as path from 'path';
+import * as fs from 'fs-extra';
 import { pri } from '../node';
-import { exec } from './exec';
 import { globalState } from './global-state';
-import { findNearestNodemodulesFile } from './npm-finder';
 
 export async function cleanDist() {
   // Clean dist dir
-  await exec(
-    `${findNearestNodemodulesFile('.bin/rimraf')} ${path.join(globalState.projectRootPath, pri.sourceConfig.distDir)}`
-  );
+  await fs.remove(path.join(globalState.projectRootPath, pri.sourceConfig.distDir));
+
+  // Clean declaration if component
+  if (pri.sourceConfig.type === 'component') {
+    await fs.remove(path.join(pri.projectRootPath, 'declaration'));
+  }
 }
