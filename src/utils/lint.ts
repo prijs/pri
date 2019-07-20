@@ -28,8 +28,6 @@ export async function lint(options?: Partial<DefaultOptions>) {
     return;
   }
 
-  logInfo('\nLint and format code..');
-
   try {
     if (!mergedOptions.lintAll && globalState.projectConfig.incrementalLint === true) {
       lintIncrement(mergedOptions);
@@ -46,15 +44,15 @@ export async function lint(options?: Partial<DefaultOptions>) {
 }
 
 function lintAll(options: DefaultOptions) {
-  const eslintCmd = findNearestNodemodulesFile('.bin/eslint');
+  logInfo('\nLint all files..');
 
+  const eslintCmd = findNearestNodemodulesFile('.bin/eslint');
   const script = options.needFix ? `${eslintCmd} --fix ${eslintParam}` : `${eslintCmd} ${eslintParam}`;
   execSync(script, { stdio: 'inherit' });
 }
 
 function lintIncrement(options: DefaultOptions) {
   const eslintCmd = findNearestNodemodulesFile('.bin/eslint');
-
   const commitedFiles = _.compact(
     execSync('git diff --cached --name-only --diff-filter=ACM')
       .toString()
@@ -64,6 +62,8 @@ function lintIncrement(options: DefaultOptions) {
   });
 
   if (commitedFiles.length > 0) {
+    logInfo(`\nLint ${commitedFiles.length} files..`);
+
     const script = options.needFix
       ? [`${eslintCmd} --fix`, ...commitedFiles].join(' ')
       : [`${eslintCmd}`, ...commitedFiles].join(' ');

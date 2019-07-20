@@ -120,7 +120,7 @@ export const buildComponent = async (opts: IOpts = {}) => {
 
   // TODO:
   await spinner(`build source files`, async () => {
-    await tsPlusBabel();
+    await tsPlusBabel(false);
   });
 
   await buildDeclaration();

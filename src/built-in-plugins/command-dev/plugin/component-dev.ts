@@ -1,10 +1,16 @@
 import { cleanDist } from '../../../utils/clean';
 import { tsPlusBabel } from '../../../utils/ts-plus-babel';
 import { spinner, logInfo } from '../../../utils/log';
+import { pri } from '../../../node';
 
 export const componentDev = async () => {
   // Because component need create files, so clear dist first.
   await cleanDist();
+
+  await spinner('Analyse project', async () => {
+    await pri.project.ensureProjectFiles();
+    await pri.project.checkProjectFiles();
+  });
 
   // TODO: Wait for webpack5
   // await watchWebpack({
@@ -20,9 +26,9 @@ export const componentDev = async () => {
 
   // Build all
   await spinner(`Init build`, async () => {
-    await tsPlusBabel(false);
+    await tsPlusBabel(false, true);
   });
   // Watch
   logInfo('Watching files..');
-  await tsPlusBabel(true);
+  await tsPlusBabel(true, true);
 };

@@ -11,15 +11,20 @@ import { ensureComponentFiles } from './ensure-component';
 import { ensurePluginFiles } from './ensure-plugin';
 import { ensureProjectFiles } from './ensure-project';
 import { eslintParam } from '../../../utils/lint';
+import { getDepsPackages } from '../../../utils/packages.js';
+import { logFatal } from '../../../utils/log.js';
 
-pri.event.once('beforeEnsureFiles', async () => {
+import yargs = require('yargs');
+
+export const main = async () => {
   ensureGitignore();
   ensureNpmignore();
   ensureNpmrc();
   ensureTsconfig();
   ensureVscode();
   ensureEslint();
-  ensurePackageJson();
+  ensureRootPackageJson();
+  ensureSourcePackageJson();
   ensurePriConfig();
 
   ensureDeclares();
@@ -36,7 +41,25 @@ pri.event.once('beforeEnsureFiles', async () => {
       break;
     default:
   }
-});
+};
+
+const commonComponentPackageJson = {
+  scripts: {
+    start: 'pri dev',
+    docs: 'pri docs',
+    build: 'pri build',
+    bundle: 'pri bundle',
+    preview: 'pri preview',
+    analyse: 'pri analyse',
+    test: 'pri test',
+    format: `eslint --fix ${eslintParam}`
+  },
+  husky: {
+    hooks: {
+      'pre-commit': 'npm test -- --package root'
+    }
+  }
+};
 
 function ensureDeclares() {
   fs.copySync(path.join(__dirname, '../../../../declare'), path.join(pri.projectRootPath, declarePath.dir));
@@ -189,7 +212,65 @@ function ensureNpmrc() {
   });
 }
 
-function ensurePackageJson() {
+async function ensureSourcePackageJson() {
+  pri.project.addProjectFiles({
+    fileName: path.join(pri.sourceRoot, 'package.json'),
+    pipeContent: async (prev: string) => {
+      const prevJson = safeJsonParse(prev);
+      const priDeps = prevJson.dependencies || {};
+
+      if (pri.packages.length > 0) {
+        const { depPackages, depNpmPackages } = await getDepsPackages();
+
+        prevJson.dependencies = {
+          ...priDeps,
+          ...depPackages.reduce((root, next) => {
+            if (!next.packageJson.version) {
+              logFatal(
+                `${pri.selectedSourceType} depend on ${next.name}, but missing "version" in ${next.name}'s package.json`
+              );
+            }
+
+            return {
+              ...root,
+              [next.packageJson.name]: `^${next.packageJson.version}`
+            };
+          }, {})
+        };
+
+        if (pri.selectedSourceType !== 'root') {
+          // Find depNpmPackages's version from rootPackageJson
+          const projectPackageJsonDeps = (pri.projectPackageJson as any).dependencies || {};
+          prevJson.dependencies = {
+            ...prevJson.dependencies,
+            ...depNpmPackages
+              .filter(npmName => !['react', 'react-dom', 'antd'].includes(npmName))
+              .reduce((root, next) => {
+                if (!projectPackageJsonDeps[next]) {
+                  logFatal(
+                    `${pri.selectedSourceType}'s code depends on ${next}, but it doesn't exist in root package.json`
+                  );
+                }
+
+                return {
+                  ...root,
+                  [next]: projectPackageJsonDeps[next]
+                };
+              }, {})
+          };
+        }
+      }
+
+      _.set(prevJson, 'main', `${pri.projectConfig.distDir}/main`);
+      _.set(prevJson, 'module', `${pri.projectConfig.distDir}/module`);
+      _.set(prevJson, 'types', 'declaration/index.d.ts');
+
+      return `${JSON.stringify(_.merge({}, prevJson, commonComponentPackageJson), null, 2)}\n`;
+    }
+  });
+}
+
+function ensureRootPackageJson() {
   pri.project.addProjectFiles({
     fileName: path.join(pri.projectRootPath, 'package.json'),
     pipeContent: (prev: string) => {
@@ -268,7 +349,6 @@ function ensurePackageJson() {
             _.unset(prevJson, `dependencies.${PRI_PACKAGE_NAME}`);
             _.set(prevJson, `devDependencies.${PRI_PACKAGE_NAME}`, projectPriVersion);
 
-            _.set(prevJson, 'types', 'declaration/index.d.ts');
             _.set(prevJson, 'scripts.prepublishOnly', 'npm run build && npm run bundle -- --skipLint');
 
             // Add babel-runtime
@@ -284,33 +364,25 @@ function ensurePackageJson() {
           _.set(prevJson, 'main', `${pri.projectConfig.distDir}/${pri.projectConfig.outFileName}`);
           break;
         case 'component':
-          _.set(prevJson, 'main', `${pri.projectConfig.distDir}/main`);
-          _.set(prevJson, 'module', `${pri.projectConfig.distDir}/module`);
+          if (yargs.argv._[0] === 'dev') {
+            // Component dev mode, has a whole project struct
+            if (pri.selectedSourceType === 'root') {
+              _.set(prevJson, 'main', `${pri.projectConfig.distDir}/main/src`);
+              _.set(prevJson, 'module', `${pri.projectConfig.distDir}/module/src`);
+            } else {
+              _.set(prevJson, 'main', `${pri.projectConfig.distDir}/main/packages/${pri.selectedSourceType}/src`);
+              _.set(prevJson, 'module', `${pri.projectConfig.distDir}/module/packages/${pri.selectedSourceType}/src`);
+            }
+          } else {
+            _.set(prevJson, 'main', `${pri.projectConfig.distDir}/main`);
+            _.set(prevJson, 'module', `${pri.projectConfig.distDir}/module`);
+            _.set(prevJson, 'types', 'declaration/index.d.ts');
+          }
           break;
         default:
       }
 
-      return `${JSON.stringify(
-        _.merge({}, prevJson, {
-          scripts: {
-            start: 'pri dev',
-            docs: 'pri docs',
-            build: 'pri build',
-            bundle: 'pri bundle',
-            preview: 'pri preview',
-            analyse: 'pri analyse',
-            test: 'pri test',
-            format: `eslint --fix ${eslintParam}`
-          },
-          husky: {
-            hooks: {
-              'pre-commit': 'npm test -- --package root'
-            }
-          }
-        }),
-        null,
-        2
-      )}\n`;
+      return `${JSON.stringify(_.merge({}, prevJson, commonComponentPackageJson), null, 2)}\n`;
     }
   });
 }

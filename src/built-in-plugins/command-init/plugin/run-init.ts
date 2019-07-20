@@ -38,38 +38,35 @@ export const runInit = async () => {
     case 'project':
     case 'plugin':
       logText(colors.blue('  npm start'));
-      logText(`    ${text.commander.dev.description}\n`);
+      logText(`  ${text.commander.dev.description}\n`);
       break;
     case 'component':
       logText(colors.blue('  npm run docs'));
-      logText(`    ${text.commander.docs.description}\n`);
+      logText(`  ${text.commander.docs.description}\n`);
       break;
     default:
   }
 
   logText(colors.blue('  npm run build'));
-  logText(`    ${text.commander.build.description}\n`);
+  logText(`  ${text.commander.build.description}\n`);
 
   switch (globalState.sourceConfig.type) {
     case 'project':
       logText(colors.blue('  npm run preview'));
-      logText(`    ${text.commander.dev.description}\n`);
+      logText(`  ${text.commander.dev.description}\n`);
       break;
     case 'component':
     case 'plugin':
       logText(colors.blue('  npm publish'));
-      logText('    Publish this component to npm package.\n');
+      logText('  Publish this component to npm package.\n');
       break;
     default:
   }
 
   logText(colors.blue('  npm test'));
-  logText('    Run tests.\n');
+  logText('  Run tests.\n');
 
-  logText('\n Happy hacking!');
-
-  // For async register commander, process will be exit automatic.
-  process.exit(0);
+  logText('\n  Happy hacking!');
 };
 
 async function selectProjectType(message: string): Promise<ProjectType> {

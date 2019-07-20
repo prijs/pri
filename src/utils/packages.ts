@@ -1,11 +1,12 @@
 import * as fs from 'fs-extra';
 import * as _ from 'lodash';
 import * as path from 'path';
-import * as walk from 'walk';
+import * as glob from 'glob';
 import { exec } from './exec';
 import { getPackageJson } from './file-operate';
 import { globalState } from './global-state';
-import { PackageJson } from './define';
+import { PackageJson, PackageInfo } from './define';
+import { srcPath } from '../node';
 
 export const packagesPath = 'packages';
 
@@ -55,110 +56,6 @@ export const getPackages = (() => {
   };
 })();
 
-type WalkStats = fs.Stats & {
-  name: string;
-};
-function getAllTsFiles(rootPath: string): Promise<string[]> {
-  return new Promise(resolve => {
-    const walker = walk.walk(rootPath, { filters: [path.join(rootPath, 'node_modules'), path.join(rootPath, '.git')] });
-
-    const filePaths: string[] = [];
-
-    walker.on('file', (root: string, fileStats: WalkStats, next: () => void) => {
-      const filePath = path.join(root, fileStats.name);
-      const fileInfo = path.parse(filePath);
-
-      if (fileInfo.ext === '.ts' || fileInfo.ext === '.tsx') {
-        filePaths.push(filePath);
-      }
-
-      next();
-    });
-
-    walker.on('errors', (root: string, nodeStatsArray: WalkStats, next: () => void) => {
-      next();
-    });
-
-    walker.on('end', () => {
-      resolve(filePaths);
-    });
-  });
-}
-
-async function createProgram(entryFilePaths: string[]) {
-  const ts = await import('typescript');
-
-  return ts.createProgram(entryFilePaths, {
-    target: ts.ScriptTarget.ESNext,
-    module: ts.ModuleKind.CommonJS
-  });
-}
-
-// TODO: any -> ts.Program
-async function getExternalImportsFromEntrys(program: any, entryFilePaths: string[]) {
-  return entryFilePaths.reduce(async (allImportPathsPromise, entryFilePath) => {
-    let allImportPaths = await allImportPathsPromise;
-    allImportPaths = allImportPaths.concat(await getExternalImportsFromEntry(program, entryFilePath));
-    return allImportPaths;
-  }, Promise.resolve([]));
-}
-
-// TODO: any -> ts.Program
-async function getExternalImportsFromEntry(
-  program: any,
-  entryFilePath: string,
-  importPaths: string[] = [],
-  handledEntryFilePaths: string[] = []
-) {
-  if (
-    handledEntryFilePaths.some(handledEntryFilePath => {
-      return handledEntryFilePath === entryFilePath;
-    })
-  ) {
-    // Ignore handled file.
-    return;
-  }
-  handledEntryFilePaths.push(entryFilePath);
-
-  const sourceFile = program.getSourceFile(entryFilePath);
-
-  if (!sourceFile) {
-    return;
-  }
-
-  const resolveModules = (sourceFile as any).resolvedModules;
-
-  if (resolveModules) {
-    Array.from<string>(resolveModules.keys()).forEach(importPath => {
-      const resolveInfo = (sourceFile as any).resolvedModules.get(importPath);
-
-      if (resolveInfo && !resolveInfo.isExternalLibraryImport) {
-        // Find import file
-        getExternalImportsFromEntry(program, resolveInfo.resolvedFileName, importPaths, handledEntryFilePaths);
-      } else if (!importPath.startsWith('./') && !importPath.startsWith('../')) {
-        importPaths.push(importPath);
-      }
-    });
-  }
-
-  return importPaths;
-}
-
-export async function getExternalImportsFromProjectRoot(projectRootPath: string) {
-  const packageJson = await getPackageJson(projectRootPath);
-  const allTsFiles = await getAllTsFiles(projectRootPath);
-  const entryRelativePath = packageJson.types || packageJson.typings;
-  const program = await createProgram(allTsFiles);
-
-  if (entryRelativePath) {
-    // Only one entry declared in package.json types | typings
-    const entryFilePath = path.join(projectRootPath, packageJson.types || packageJson.typings);
-    return getExternalImportsFromEntrys(program, [entryFilePath]);
-  }
-  // All ts files is entry
-  return getExternalImportsFromEntrys(program, allTsFiles);
-}
-
 export async function ensurePackagesLinks(useCache: boolean) {
   const packages = await getPackages(useCache);
 
@@ -177,4 +74,48 @@ export async function ensurePackagesLinks(useCache: boolean) {
       'dir'
     );
   }
+}
+
+export async function getDepsPackages() {
+  if (globalState.packages.length > 0) {
+    const ts = await import('typescript');
+    const tsFiles = glob.sync(path.join(globalState.sourceRoot, srcPath.dir, '**/*.{ts,tsx}'));
+    const depPackages = new Set<PackageInfo>();
+    const depNpmPackages = new Set<string>();
+
+    tsFiles.forEach(tsFile => {
+      const sourceFile = ts.createSourceFile(tsFile, fs.readFileSync(tsFile).toString(), ts.ScriptTarget.ESNext);
+
+      sourceFile.statements.forEach(statement => {
+        if ([ts.SyntaxKind.ImportDeclaration, ts.SyntaxKind.ExportDeclaration].includes(statement.kind)) {
+          statement.forEachChild(each => {
+            if (each.kind === ts.SyntaxKind.StringLiteral) {
+              const importStringLiteral = _.trim(each.getText(sourceFile), `'"`);
+              const targetPackage = globalState.packages.find(
+                eachPackage => eachPackage.packageJson && eachPackage.packageJson.name === importStringLiteral
+              );
+              if (targetPackage) {
+                depPackages.add(targetPackage);
+              } else if (!importStringLiteral.startsWith('.')) {
+                const importStringLiteralSplit = importStringLiteral.split('/');
+                if (importStringLiteralSplit[0].startsWith('@')) {
+                  if (importStringLiteralSplit.length > 1) {
+                    depNpmPackages.add(`${importStringLiteralSplit[0]}/${importStringLiteralSplit[1]}`);
+                  } else {
+                    depNpmPackages.add(importStringLiteralSplit[0]);
+                  }
+                } else {
+                  depNpmPackages.add(importStringLiteralSplit[0]);
+                }
+              }
+            }
+          });
+        }
+      });
+    });
+
+    return { depPackages: Array.from(depPackages), depNpmPackages: Array.from(depNpmPackages) };
+  }
+
+  return { depPackages: [] as PackageInfo[], depNpmPackages: [] as string[] };
 }

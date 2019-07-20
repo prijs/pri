@@ -3,12 +3,10 @@ import * as gulpBabel from 'gulp-babel';
 import * as gulpSass from 'gulp-sass';
 import * as gulpWatch from 'gulp-watch';
 import * as path from 'path';
-import * as glob from 'glob';
-import * as fs from 'fs-extra';
-import * as babelPluginTransformRenameImport from 'babel-plugin-transform-rename-import';
 import { pri, srcPath } from '../node';
 import { getBabelOptions } from './babel-options';
 import { globalState } from './global-state';
+import { babelPluginTransformRenameImport } from './babel-plugin-rename-import';
 
 function getGulpByWatch(watch: boolean, filesPath: string) {
   if (watch) {
@@ -17,9 +15,13 @@ function getGulpByWatch(watch: boolean, filesPath: string) {
   return gulp.src(filesPath);
 }
 
-const buildTs = (watch: boolean, outdir: string, babelOptions: any) => {
+const buildTs = (watch: boolean, outdir: string, babelOptions: any, wholeProject: boolean) => {
+  const targetPath = wholeProject
+    ? path.join(pri.projectRootPath, '{src,packages}/**/*.{ts,tsx}')
+    : path.join(pri.sourceRoot, srcPath.dir, '**/*.{ts,tsx}');
+
   return new Promise((resolve, reject) => {
-    getGulpByWatch(watch, path.join(pri.sourceRoot, srcPath.dir, '**/*.{ts,tsx}'))
+    getGulpByWatch(watch, targetPath)
       .pipe(gulpBabel(babelOptions))
       .on('error', reject)
       .pipe(gulp.dest(outdir))
@@ -27,9 +29,13 @@ const buildTs = (watch: boolean, outdir: string, babelOptions: any) => {
   });
 };
 
-const buildSass = (watch: boolean, outdir: string) => {
+const buildSass = (watch: boolean, outdir: string, wholeProject: boolean) => {
+  const targetPath = wholeProject
+    ? path.join(pri.projectRootPath, '{src,packages}/**/*.scss')
+    : path.join(pri.sourceRoot, srcPath.dir, '**/*.scss');
+
   return new Promise((resolve, reject) => {
-    getGulpByWatch(watch, path.join(pri.sourceRoot, srcPath.dir, '**/*.scss'))
+    getGulpByWatch(watch, targetPath)
       .pipe(gulpSass())
       .on('error', reject)
       .pipe(gulp.dest(outdir))
@@ -37,38 +43,74 @@ const buildSass = (watch: boolean, outdir: string) => {
   });
 };
 
-const mvResources = (watch: boolean, outdir: string) => {
+const mvResources = (watch: boolean, outdir: string, wholeProject: boolean) => {
+  const targetPath = wholeProject
+    ? path.join(pri.projectRootPath, '{src,packages}/**/*.{js,png,jpg,jpeg,gif,woff,woff2,eot,ttf,svg}')
+    : path.join(pri.sourceRoot, srcPath.dir, '**/*.{js,png,jpg,jpeg,gif,woff,woff2,eot,ttf,svg}');
+
   return new Promise((resolve, reject) => {
-    getGulpByWatch(watch, path.join(pri.sourceRoot, srcPath.dir, '**/*.{js,png,jpg,jpeg,gif,woff,woff2,eot,ttf,svg}'))
+    getGulpByWatch(watch, targetPath)
       .on('error', reject)
       .pipe(gulp.dest(outdir))
       .on('end', resolve);
   });
 };
 
-export const tsPlusBabel = async (watch = false) => {
+function importRename(packageAbsoluteToRelative = false) {
+  return [
+    babelPluginTransformRenameImport,
+    {
+      pipeImport: (text: string, filename: string) => {
+        const scssRegex = '^(.+?)\\.scss$';
+        const scssPattern = new RegExp(`^(${scssRegex}|${scssRegex}/.*)$`);
+
+        if (scssPattern.test(text)) {
+          const scssReplacePattern = new RegExp(scssRegex);
+          return text.replace(scssReplacePattern, '$1.css');
+        }
+
+        if (packageAbsoluteToRelative) {
+          // resolve absolute packages to relative path
+          for (const eachPackage of globalState.packages) {
+            if (eachPackage.packageJson && eachPackage.packageJson.name) {
+              if (eachPackage.packageJson.name === text) {
+                return path.relative(path.parse(filename).dir, path.join(eachPackage.rootPath, srcPath.dir));
+              }
+            }
+          }
+        }
+
+        return text;
+      }
+    }
+  ];
+}
+
+export const tsPlusBabel = async (watch = false, wholeProject = false) => {
   const mainDistPath = path.join(globalState.projectRootPath, pri.sourceConfig.distDir, 'main');
   const moduleDistPath = path.join(globalState.projectRootPath, pri.sourceConfig.distDir, 'module');
 
   return Promise.all([
-    buildSass(watch, mainDistPath),
-    mvResources(watch, mainDistPath),
+    buildSass(watch, mainDistPath, wholeProject),
+    mvResources(watch, mainDistPath, wholeProject),
     buildTs(
       watch,
       mainDistPath,
       getBabelOptions({
-        plugins: [[babelPluginTransformRenameImport, { original: '^(.+?)\\.scss$', replacement: '' }]]
-      })
+        plugins: [importRename(wholeProject)]
+      }),
+      wholeProject
     ),
-    buildSass(watch, moduleDistPath),
-    mvResources(watch, moduleDistPath),
+    buildSass(watch, moduleDistPath, wholeProject),
+    mvResources(watch, moduleDistPath, wholeProject),
     buildTs(
       watch,
       moduleDistPath,
       getBabelOptions({
         modules: false,
-        plugins: [[babelPluginTransformRenameImport, { original: '^(.+?)\\.scss$', replacement: '$1.css' }]]
-      })
+        plugins: [importRename(wholeProject)]
+      }),
+      wholeProject
     )
   ]);
 };

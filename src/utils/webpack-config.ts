@@ -2,7 +2,7 @@ import * as HtmlWebpackPlugin from 'html-webpack-plugin';
 import * as MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import * as path from 'path';
 import * as webpack from 'webpack';
-import { globalState, transferToAllAbsolutePaths } from './global-state';
+import { globalState, transferToAllAbsolutePaths as transferToAllAbsolutePathsWithPackages } from './global-state';
 import { plugin } from './plugins';
 import { srcPath, tempPath } from './structor-config';
 import { getBabelOptions } from './babel-options';
@@ -30,8 +30,8 @@ export type IOptions<T = {}> = {
 } & T;
 
 const defaultSourcePathToBeResolve = [
-  ...transferToAllAbsolutePaths(srcPath.dir),
-  ...transferToAllAbsolutePaths(tempPath.dir)
+  ...transferToAllAbsolutePathsWithPackages(srcPath.dir),
+  ...transferToAllAbsolutePathsWithPackages(tempPath.dir)
 ];
 
 const selfAndProjectNodeModules = [
@@ -202,41 +202,12 @@ export const getWebpackConfig = async (opts: IOptions) => {
           use: [babelLoader, '@mdx-js/loader'],
           ...tsLoaderConfig
         },
-        { test: /\.css$/, use: extraCssInProd(cssPureLoader), include: selfAndProjectNodeModules },
-        // TODO: Make sure we can use node10. start---------
-        // {
-        //   test: /(?<!\.module)\.css$/,
-        //   use: extraCssInProd(cssPureLoader),
-        //   ...cssLoaderConfig
-        // },
-        // {
-        //   test: /\.module\.css$/,
-        //   use: extraCssInProd(cssModuleLoader),
-        //   ...cssLoaderConfig
-        // },
-        {
-          test: /\.css$/,
-          use: extraCssInProd(cssPureLoader),
-          ...cssLoaderConfig,
-          exclude: [/\.module\.css$/]
-        },
+        { test: /\.css$/, use: extraCssInProd(cssPureLoader), exclude: [/\.module\.css$/] },
         {
           test: /\.module\.css$/,
           use: extraCssInProd(cssModuleLoader),
           ...cssLoaderConfig
         },
-        // end------------------------------------------------
-        // TODO: Make sure we can use node10. start---------
-        // {
-        //   test: /(?<!\.module)\.s[a|c]ss$/,
-        //   use: extraCssInProd(cssPureLoader, sassLoader),
-        //   ...scssLoaderConfig
-        // },
-        // {
-        //   test: /\.module\.s[a|c]ss$/,
-        //   use: extraCssInProd(cssModuleLoader, sassLoader),
-        //   ...scssLoaderConfig
-        // },
         {
           test: /\.s[a|c]ss$/,
           use: extraCssInProd(cssPureLoader, sassLoader),
@@ -260,18 +231,6 @@ export const getWebpackConfig = async (opts: IOptions) => {
             return fn(options);
           }, [])
         },
-        // end------------------------------------------------
-        // TODO: Make sure we can use node10. start---------
-        // {
-        //   test: /(?<!\.module)\.less$/,
-        //   use: extraCssInProd(cssPureLoader, lessLoader),
-        //   ...lessLoaderConfig
-        // },
-        // {
-        //   test: /\.module\.less$/,
-        //   use: extraCssInProd(cssModuleLoader, lessLoader),
-        //   ...lessLoaderConfig
-        // },
         {
           test: /\.less$/,
           use: extraCssInProd(cssPureLoader, lessLoader),
@@ -295,7 +254,6 @@ export const getWebpackConfig = async (opts: IOptions) => {
             return fn(options);
           }, [])
         },
-        // end------------------------------------------------
         { test: /\.html$/, use: ['raw-loader'] },
         {
           test: /\.(png|jpg|jpeg|gif|woff|woff2|eot|ttf|svg)$/,
@@ -379,18 +337,6 @@ export const getWebpackConfig = async (opts: IOptions) => {
           filename: outCssFileName
         })
       );
-
-      // TODO: fix css bug
-      // config.optimization = {
-      //   ...config.optimization,
-      //   minimizer: [
-      //     new UglifyJsPlugin({
-      //       cache: true,
-      //       parallel: true
-      //     }),
-      //     new OptimizeCSSAssetsPlugin({})
-      //   ]
-      // };
     }
   }
 
