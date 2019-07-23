@@ -10,23 +10,18 @@ export interface PackageJson {
   typings?: string;
 }
 
-export interface CommandRegister<
-  T = {
+export interface CommandRegister {
+  name: string[];
+  actions?: ((options?: any) => Promise<void>)[];
+  alias?: string | string[];
+  description?: string;
+  options?: {
     [optionName: string]: {
       alias?: string;
       description?: string;
       required?: boolean;
     };
-  }
-> {
-  name: string[];
-  // TODO:
-  action?: (options?: any) => void;
-  beforeAction?: any;
-  afterAction?: any;
-  alias?: string | string[];
-  description?: string;
-  options?: T;
+  };
 }
 
 export type TransferedRegisterCommand = { childs?: TransferedRegisterCommand[] } & CommandRegister;
@@ -193,11 +188,6 @@ export class ProjectConfig {
   public baseHref?: string = '/';
 
   /**
-   * Custom env.
-   */
-  public customEnv?: { [key: string]: any };
-
-  /**
    * Using https for server.
    */
   public useHttps?: boolean = true;
@@ -254,6 +244,8 @@ export class ProjectConfig {
    * Enable incremental lint check.
    */
   public incrementalLint?: boolean = false;
+
+  public npmClient?: string = 'npm';
 }
 
 export type SetPipe = (pipeName: string, callback: PipeCallback) => void;

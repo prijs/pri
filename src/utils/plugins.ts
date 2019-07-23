@@ -28,6 +28,7 @@ import * as pluginCommandDev from '../built-in-plugins/command-dev';
 import * as pluginCommandDocs from '../built-in-plugins/command-docs';
 import * as pluginCommandInit from '../built-in-plugins/command-init';
 import * as pluginCommandPreview from '../built-in-plugins/command-preview';
+import * as pluginCommandPublish from '../built-in-plugins/command-publish';
 import * as pluginCommandTest from '../built-in-plugins/command-test';
 import * as pluginEnsureProjectFiles from '../built-in-plugins/ensure-project-files';
 import * as pluginMocks from '../built-in-plugins/mocks';
@@ -110,6 +111,7 @@ export const loadPlugins = async (pluginIncludeRoots: string[] = []) => {
     pluginCommandDocs,
     pluginCommandInit,
     pluginCommandPreview,
+    pluginCommandPublish,
     pluginCommandTest,
     pluginEnsureProjectFiles,
     pluginMocks,

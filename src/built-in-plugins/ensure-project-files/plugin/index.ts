@@ -11,7 +11,7 @@ import { ensureComponentFiles } from './ensure-component';
 import { ensurePluginFiles } from './ensure-plugin';
 import { ensureProjectFiles } from './ensure-project';
 import { eslintParam } from '../../../utils/lint';
-import { getDepsPackages } from '../../../utils/packages.js';
+import { getMonoAndNpmDeps } from '../../../utils/packages.js';
 import { logFatal } from '../../../utils/log.js';
 
 import yargs = require('yargs');
@@ -220,11 +220,11 @@ async function ensureSourcePackageJson() {
       const priDeps = prevJson.dependencies || {};
 
       if (pri.packages.length > 0) {
-        const { depPackages, depNpmPackages } = await getDepsPackages();
+        const { depMonoPackages, depNpmPackages } = await getMonoAndNpmDeps();
 
         prevJson.dependencies = {
           ...priDeps,
-          ...depPackages.reduce((root, next) => {
+          ...depMonoPackages.reduce((root, next) => {
             if (!next.packageJson.version) {
               logFatal(
                 `${pri.selectedSourceType} depend on ${next.name}, but missing "version" in ${next.name}'s package.json`
@@ -246,7 +246,15 @@ async function ensureSourcePackageJson() {
             ...depNpmPackages
               .filter(npmName => !['react', 'react-dom', 'antd'].includes(npmName))
               .reduce((root, next) => {
-                if (!projectPackageJsonDeps[next]) {
+                const sourceDeps: any = {};
+                Object.assign(sourceDeps, projectPackageJsonDeps);
+
+                // If root type is project, also find in pri deps.
+                if (pri.projectConfig.type === 'project') {
+                  Object.assign(sourceDeps, pkg.dependencies || {});
+                }
+
+                if (!sourceDeps[next]) {
                   logFatal(
                     `${pri.selectedSourceType}'s code depends on ${next}, but it doesn't exist in root package.json`
                   );
@@ -254,16 +262,18 @@ async function ensureSourcePackageJson() {
 
                 return {
                   ...root,
-                  [next]: projectPackageJsonDeps[next]
+                  [next]: sourceDeps[next]
                 };
               }, {})
           };
         }
       }
 
-      _.set(prevJson, 'main', `${pri.projectConfig.distDir}/main`);
-      _.set(prevJson, 'module', `${pri.projectConfig.distDir}/module`);
-      _.set(prevJson, 'types', 'declaration/index.d.ts');
+      if (pri.selectedSourceType !== 'root') {
+        _.set(prevJson, 'main', `${pri.projectConfig.distDir}/main`);
+        _.set(prevJson, 'module', `${pri.projectConfig.distDir}/module`);
+        _.set(prevJson, 'types', 'declaration/index.d.ts');
+      }
 
       return `${JSON.stringify(_.merge({}, prevJson, commonComponentPackageJson), null, 2)}\n`;
     }
@@ -389,7 +399,7 @@ function ensureRootPackageJson() {
 
 function ensurePriConfig() {
   pri.project.addProjectFiles({
-    fileName: path.join(pri.projectRootPath, CONFIG_FILE),
+    fileName: path.join(pri.sourceRoot, CONFIG_FILE),
     pipeContent: (prev: string) => {
       return `${JSON.stringify(
         _.merge({}, safeJsonParse(prev), {

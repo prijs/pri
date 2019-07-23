@@ -7,6 +7,7 @@ import { getPackageJson } from './file-operate';
 import { globalState } from './global-state';
 import { PackageJson, PackageInfo } from './define';
 import { srcPath } from '../node';
+import { logFatal } from './log';
 
 export const packagesPath = 'packages';
 
@@ -76,46 +77,113 @@ export async function ensurePackagesLinks(useCache: boolean) {
   }
 }
 
-export async function getDepsPackages() {
+type DepMap = Map<
+  string,
+  {
+    depMonoPackages: PackageInfo[];
+    depNpmPackages: string[];
+  }
+>;
+
+export async function getMonoAndNpmDeps() {
   if (globalState.packages.length > 0) {
-    const ts = await import('typescript');
-    const tsFiles = glob.sync(path.join(globalState.sourceRoot, srcPath.dir, '**/*.{ts,tsx}'));
-    const depPackages = new Set<PackageInfo>();
-    const depNpmPackages = new Set<string>();
+    // Get all dep maps
+    const depMap: DepMap = new Map();
 
-    tsFiles.forEach(tsFile => {
-      const sourceFile = ts.createSourceFile(tsFile, fs.readFileSync(tsFile).toString(), ts.ScriptTarget.ESNext);
+    depMap.set(
+      'root',
+      await getMonoAndNpmDepsByPath(path.join(globalState.projectRootPath, srcPath.dir, '**/*.{ts,tsx}'))
+    );
 
-      sourceFile.statements.forEach(statement => {
-        if ([ts.SyntaxKind.ImportDeclaration, ts.SyntaxKind.ExportDeclaration].includes(statement.kind)) {
-          statement.forEachChild(each => {
-            if (each.kind === ts.SyntaxKind.StringLiteral) {
-              const importStringLiteral = _.trim(each.getText(sourceFile), `'"`);
-              const targetPackage = globalState.packages.find(
-                eachPackage => eachPackage.packageJson && eachPackage.packageJson.name === importStringLiteral
-              );
-              if (targetPackage) {
-                depPackages.add(targetPackage);
-              } else if (!importStringLiteral.startsWith('.')) {
-                const importStringLiteralSplit = importStringLiteral.split('/');
-                if (importStringLiteralSplit[0].startsWith('@')) {
-                  if (importStringLiteralSplit.length > 1) {
-                    depNpmPackages.add(`${importStringLiteralSplit[0]}/${importStringLiteralSplit[1]}`);
-                  } else {
-                    depNpmPackages.add(importStringLiteralSplit[0]);
-                  }
+    for (const eachPackage of globalState.packages) {
+      depMap.set(
+        eachPackage.name,
+        await getMonoAndNpmDepsByPath(path.join(eachPackage.rootPath, srcPath.dir, '**/*.{ts,tsx}'))
+      );
+    }
+
+    const selectedDepMonoPackages = depMap.get(globalState.selectedSourceType).depMonoPackages;
+    const selectedDepNpmPackages = depMap.get(globalState.selectedSourceType).depNpmPackages;
+
+    const monoDepASC: string[] = [];
+
+    // delete root, because it cannot participate in dependency analysis
+    depMap.delete('root');
+
+    // Get mono sort by deps DESC
+    while (depMap.size > 0) {
+      let zeroMonoDepsPackageName: string = null;
+      depMap.forEach((value, key) => {
+        if (value.depMonoPackages.length === 0) {
+          zeroMonoDepsPackageName = key;
+        }
+      });
+
+      if (zeroMonoDepsPackageName === null) {
+        logFatal(`Cyclic dependence happend!`);
+      }
+
+      monoDepASC.push(zeroMonoDepsPackageName);
+
+      depMap.delete(zeroMonoDepsPackageName);
+
+      depMap.forEach(value => {
+        const zeroMonoDepsPackageCurrentIndex = value.depMonoPackages.findIndex(
+          eachPackage => eachPackage.name === zeroMonoDepsPackageName
+        );
+        if (zeroMonoDepsPackageCurrentIndex > -1) {
+          value.depMonoPackages.splice(zeroMonoDepsPackageCurrentIndex, 1);
+        }
+      });
+    }
+
+    // Sort selectedDepMonoPackages by deps DESC
+    selectedDepMonoPackages.sort((left, right) => {
+      return monoDepASC.findIndex(name => name === right.name) - monoDepASC.findIndex(name => name === left.name);
+    });
+
+    return { depMonoPackages: selectedDepMonoPackages, depNpmPackages: selectedDepNpmPackages };
+  }
+
+  return { depMonoPackages: [] as PackageInfo[], depNpmPackages: [] as string[] };
+}
+
+export async function getMonoAndNpmDepsByPath(rootPath: string) {
+  const ts = await import('typescript');
+  const tsFiles = glob.sync(rootPath);
+  const depMonoPackages = new Set<PackageInfo>();
+  const depNpmPackages = new Set<string>();
+
+  tsFiles.forEach(tsFile => {
+    const sourceFile = ts.createSourceFile(tsFile, fs.readFileSync(tsFile).toString(), ts.ScriptTarget.ESNext);
+
+    sourceFile.statements.forEach(statement => {
+      if ([ts.SyntaxKind.ImportDeclaration, ts.SyntaxKind.ExportDeclaration].includes(statement.kind)) {
+        statement.forEachChild(each => {
+          if (each.kind === ts.SyntaxKind.StringLiteral) {
+            const importStringLiteral = _.trim(each.getText(sourceFile), `'"`);
+            const targetPackage = globalState.packages.find(
+              eachPackage => eachPackage.packageJson && eachPackage.packageJson.name === importStringLiteral
+            );
+            if (targetPackage) {
+              depMonoPackages.add(targetPackage);
+            } else if (!importStringLiteral.startsWith('.')) {
+              const importStringLiteralSplit = importStringLiteral.split('/');
+              if (importStringLiteralSplit[0].startsWith('@')) {
+                if (importStringLiteralSplit.length > 1) {
+                  depNpmPackages.add(`${importStringLiteralSplit[0]}/${importStringLiteralSplit[1]}`);
                 } else {
                   depNpmPackages.add(importStringLiteralSplit[0]);
                 }
+              } else {
+                depNpmPackages.add(importStringLiteralSplit[0]);
               }
             }
-          });
-        }
-      });
+          }
+        });
+      }
     });
+  });
 
-    return { depPackages: Array.from(depPackages), depNpmPackages: Array.from(depNpmPackages) };
-  }
-
-  return { depPackages: [] as PackageInfo[], depNpmPackages: [] as string[] };
+  return { depMonoPackages: Array.from(depMonoPackages), depNpmPackages: Array.from(depNpmPackages) };
 }

@@ -28,6 +28,8 @@ export async function createCli(opts?: { pluginIncludeRoots: string[] }) {
 
   const preSelectPackage = yargs.argv.package as string;
 
+  // TODO: do not select package when pri -v and pri -h
+
   await initGlobalState(preSelectPackage);
 
   const { globalState } = await import('../utils/global-state');
@@ -87,16 +89,10 @@ function registerYargs(leafYargs: typeof yargs, transferedRegisterCommands: Tran
         return childYargs;
       },
       handler: async argv => {
-        if (commandRegister.beforeAction) {
-          await commandRegister.beforeAction(argv);
-        }
-
-        if (commandRegister.action) {
-          await commandRegister.action(argv);
-        }
-
-        if (commandRegister.afterAction) {
-          await commandRegister.afterAction(argv);
+        if (commandRegister.actions) {
+          for (const action of commandRegister.actions) {
+            await action(argv);
+          }
         }
       }
     });

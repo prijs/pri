@@ -20,6 +20,9 @@ export default {
     },
     docs: {
       description: 'Run docs'
+    },
+    publish: {
+      description: 'Publish code.'
     }
   }
 };

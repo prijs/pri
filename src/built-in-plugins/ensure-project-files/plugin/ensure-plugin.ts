@@ -58,13 +58,6 @@ function ensureEntry() {
           }
         })
 
-        pri.commands.expandCommand({
-          name: ["init"],
-          beforeAction: async (...args: any[]) => {
-            //
-          }
-        })
-
         pri.project.onAnalyseProject(files => {
           const result: IResult = { customPlugin: { hasComponents: judgeHasComponents(pri.projectRootPath, files) } };
           return result;
