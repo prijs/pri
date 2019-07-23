@@ -410,21 +410,6 @@ function ensurePriConfig() {
       )}\n`;
     }
   });
-
-  if (pri.selectedSourceType !== 'root') {
-    pri.project.addProjectFiles({
-      fileName: path.join(pri.sourceRoot, CONFIG_FILE),
-      pipeContent: (prev: string) => {
-        return `${JSON.stringify(
-          _.merge({}, safeJsonParse(prev), {
-            type: pri.sourceConfig.type
-          }),
-          null,
-          2
-        )}\n`;
-      }
-    });
-  }
 }
 
 function setVersionIfExist(sourceObj: any, key: string, targetObj: any) {
