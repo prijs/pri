@@ -51,22 +51,3 @@ export const isWorkingTreeClean = async (cwd?: string) => {
   }
   return false;
 };
-
-export const addAllAndCommit = async (message: string, cwd?: string) => {
-  try {
-    await exec(`git add -A; git commit -m "${message}"`, { cwd });
-  } catch {
-    //
-  }
-};
-
-export const addAllAndCommitIfWorkingTreeNotClean = async (message: string, cwd?: string) => {
-  if (!(await isWorkingTreeClean(cwd))) {
-    logWarn(`Working tree is not clean, auto add all and commit: "${message}"`);
-    try {
-      await addAllAndCommit(message, cwd);
-    } catch {
-      // Ignore
-    }
-  }
-};

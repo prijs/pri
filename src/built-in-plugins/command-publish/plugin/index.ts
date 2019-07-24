@@ -8,6 +8,12 @@ pri.commands.registerCommand({
   options: {
     tag: {
       description: 'npm tag'
+    },
+    bundle: {
+      description: 'create bundle'
+    },
+    skipLint: {
+      description: 'Skip lint'
     }
   },
   action: async (options: PublishOption) => {

@@ -51,6 +51,7 @@ const commonComponentPackageJson = {
     bundle: 'pri bundle',
     preview: 'pri preview',
     analyse: 'pri analyse',
+    publish: 'pri publish',
     test: 'pri test',
     format: `eslint --fix ${eslintParam}`
   },
@@ -343,8 +344,6 @@ function ensureRootPackageJson() {
             _.unset(prevJson, `dependencies.${PRI_PACKAGE_NAME}`);
             _.set(prevJson, `devDependencies.${PRI_PACKAGE_NAME}`, projectPriVersion);
 
-            _.set(prevJson, 'scripts.prepublishOnly', 'npm run build');
-
             // Add babel-runtime
             _.set(prevJson, 'dependencies.@babel/runtime', '^7.0.0');
           }
@@ -358,8 +357,6 @@ function ensureRootPackageJson() {
               pkg.version;
             _.unset(prevJson, `dependencies.${PRI_PACKAGE_NAME}`);
             _.set(prevJson, `devDependencies.${PRI_PACKAGE_NAME}`, projectPriVersion);
-
-            _.set(prevJson, 'scripts.prepublishOnly', 'npm run build && npm run bundle -- --skipLint');
 
             // Add babel-runtime
             _.set(prevJson, 'dependencies.@babel/runtime', '^7.0.0');

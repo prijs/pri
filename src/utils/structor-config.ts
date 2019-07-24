@@ -21,6 +21,8 @@ export const assetsPath = { dir: 'assets' };
 
 export const packagesPath = { dir: 'packages' };
 
+export const declarationPath = { dir: 'declaration' };
+
 /**
  * Sub level definition end
  */

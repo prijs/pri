@@ -54,3 +54,10 @@
 - checkProjectFiles
 - import()
   - **pure test**
+
+# publish
+
+- import()
+  - lint
+  - **pure build**
+  - **pure bundle**

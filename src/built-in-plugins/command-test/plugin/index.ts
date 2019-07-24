@@ -17,7 +17,7 @@ pri.commands.registerCommand({
   description: 'Run tests.',
   action: async () => {
     await pri.project.lint({
-      lintAll: true,
+      lintAll: false,
       needFix: false,
       showBreakError: true
     });

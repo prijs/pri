@@ -14,7 +14,7 @@ import { globalState } from '../../../utils/global-state';
 import { logInfo, spinner } from '../../../utils/log';
 import { findNearestNodemodulesFile } from '../../../utils/npm-finder';
 import { plugin } from '../../../utils/plugins';
-import { pluginEntry, assetsPath, srcPath } from '../../../utils/structor-config';
+import { pluginEntry, assetsPath, srcPath, declarationPath } from '../../../utils/structor-config';
 import { runWebpack } from '../../../utils/webpack';
 import { getStaticHtmlPaths } from './generate-static-html';
 import { IOpts } from './interface';
@@ -187,15 +187,13 @@ async function prepareBuild(opts: IOpts = {}) {
 }
 
 async function buildDeclaration() {
-  const declarationName = 'declaration';
-
   // Create d.ts
   await spinner(`create declaration`, async () => {
     try {
       await exec(
         `npx tsc --declaration --declarationDir ${path.join(
           pri.projectRootPath,
-          `./${declarationName}`
+          `./${declarationPath.dir}`
         )} --emitDeclarationOnly >> /dev/null 2>&1`,
         {
           cwd: pri.projectRootPath
@@ -208,32 +206,32 @@ async function buildDeclaration() {
 
   // If select packages, pick it's own declaration
   if (pri.selectedSourceType !== 'root') {
-    fs.removeSync(path.join(pri.projectRootPath, declarationName, srcPath.dir));
+    fs.removeSync(path.join(pri.projectRootPath, declarationPath.dir, srcPath.dir));
 
     const declarationFiles = glob.sync(
-      path.join(pri.projectRootPath, declarationName, 'packages', pri.selectedSourceType, srcPath.dir, '/**/*.d.ts')
+      path.join(pri.projectRootPath, declarationPath.dir, 'packages', pri.selectedSourceType, srcPath.dir, '/**/*.d.ts')
     );
 
     declarationFiles.map(eachFile => {
       const targetPath = path.relative(
-        path.join(pri.projectRootPath, declarationName, 'packages', pri.selectedSourceType, srcPath.dir),
+        path.join(pri.projectRootPath, declarationPath.dir, 'packages', pri.selectedSourceType, srcPath.dir),
         eachFile
       );
-      fs.copySync(eachFile, path.join(pri.projectRootPath, declarationName, targetPath));
+      fs.copySync(eachFile, path.join(pri.projectRootPath, declarationPath.dir, targetPath));
     });
 
-    fs.removeSync(path.join(pri.projectRootPath, declarationName, 'packages'));
+    fs.removeSync(path.join(pri.projectRootPath, declarationPath.dir, 'packages'));
   } else {
     // get declaration from src
-    fs.removeSync(path.join(pri.projectRootPath, declarationName, 'packages'));
+    fs.removeSync(path.join(pri.projectRootPath, declarationPath.dir, 'packages'));
 
-    const declarationFiles = glob.sync(path.join(pri.projectRootPath, declarationName, srcPath.dir, '**/*.d.ts'));
+    const declarationFiles = glob.sync(path.join(pri.projectRootPath, declarationPath.dir, srcPath.dir, '**/*.d.ts'));
 
     declarationFiles.map(eachFile => {
-      const targetPath = path.relative(path.join(pri.projectRootPath, declarationName, srcPath.dir), eachFile);
-      fs.copySync(eachFile, path.join(pri.projectRootPath, declarationName, targetPath));
+      const targetPath = path.relative(path.join(pri.projectRootPath, declarationPath.dir, srcPath.dir), eachFile);
+      fs.copySync(eachFile, path.join(pri.projectRootPath, declarationPath.dir, targetPath));
     });
 
-    fs.removeSync(path.join(pri.projectRootPath, declarationName, srcPath.dir));
+    fs.removeSync(path.join(pri.projectRootPath, declarationPath.dir, srcPath.dir));
   }
 }
