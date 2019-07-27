@@ -77,7 +77,7 @@ export async function ensurePackagesLinks(useCache: boolean) {
   }
 }
 
-type DepMap = Map<
+export type DepMap = Map<
   string,
   {
     depMonoPackages: PackageInfo[];
@@ -85,7 +85,9 @@ type DepMap = Map<
   }
 >;
 
-export async function getMonoAndNpmDeps() {
+export const getMonoAndNpmDepsOnce = _.once(getMonoAndNpmDeps);
+
+async function getMonoAndNpmDeps() {
   if (globalState.packages.length > 0) {
     // Get all dep maps
     const depMap: DepMap = new Map();
@@ -105,47 +107,55 @@ export async function getMonoAndNpmDeps() {
     const selectedDepMonoPackages = depMap.get(globalState.selectedSourceType).depMonoPackages;
     const selectedDepNpmPackages = depMap.get(globalState.selectedSourceType).depNpmPackages;
 
-    const monoDepASC: string[] = [];
-
-    // delete root, because it cannot participate in dependency analysis
-    depMap.delete('root');
-
-    // Get mono sort by deps DESC
-    while (depMap.size > 0) {
-      let zeroMonoDepsPackageName: string = null;
-      depMap.forEach((value, key) => {
-        if (value.depMonoPackages.length === 0) {
-          zeroMonoDepsPackageName = key;
-        }
-      });
-
-      if (zeroMonoDepsPackageName === null) {
-        logFatal(`Cyclic dependence happend!`);
-      }
-
-      monoDepASC.push(zeroMonoDepsPackageName);
-
-      depMap.delete(zeroMonoDepsPackageName);
-
-      depMap.forEach(value => {
-        const zeroMonoDepsPackageCurrentIndex = value.depMonoPackages.findIndex(
-          eachPackage => eachPackage.name === zeroMonoDepsPackageName
-        );
-        if (zeroMonoDepsPackageCurrentIndex > -1) {
-          value.depMonoPackages.splice(zeroMonoDepsPackageCurrentIndex, 1);
-        }
-      });
-    }
+    const monoDepASC = getMonoDepASC(depMap);
 
     // Sort selectedDepMonoPackages by deps DESC
     selectedDepMonoPackages.sort((left, right) => {
-      return monoDepASC.findIndex(name => name === right.name) - monoDepASC.findIndex(name => name === left.name);
+      return monoDepASC.findIndex(name => name === left.name) - monoDepASC.findIndex(name => name === right.name);
     });
 
-    return { depMonoPackages: selectedDepMonoPackages, depNpmPackages: selectedDepNpmPackages };
+    return { depMonoPackages: selectedDepMonoPackages, depNpmPackages: selectedDepNpmPackages, depMap };
   }
 
-  return { depMonoPackages: [] as PackageInfo[], depNpmPackages: [] as string[] };
+  return { depMonoPackages: [] as PackageInfo[], depNpmPackages: [] as string[], depMap: null };
+}
+
+function getMonoDepASC(depMap: DepMap) {
+  const newMap = _.cloneDeep(depMap);
+
+  const monoDepASC: string[] = [];
+
+  // delete root, because it cannot participate in dependency analysis
+  newMap.delete('root');
+
+  // Get mono sort by deps DESC
+  while (newMap.size > 0) {
+    let zeroMonoDepsPackageName: string = null;
+    newMap.forEach((value, key) => {
+      if (value.depMonoPackages.length === 0) {
+        zeroMonoDepsPackageName = key;
+      }
+    });
+
+    if (zeroMonoDepsPackageName === null) {
+      logFatal(`Cyclic dependence happend!`);
+    }
+
+    monoDepASC.push(zeroMonoDepsPackageName);
+
+    newMap.delete(zeroMonoDepsPackageName);
+
+    newMap.forEach(value => {
+      const zeroMonoDepsPackageCurrentIndex = value.depMonoPackages.findIndex(
+        eachPackage => eachPackage.name === zeroMonoDepsPackageName
+      );
+      if (zeroMonoDepsPackageCurrentIndex > -1) {
+        value.depMonoPackages.splice(zeroMonoDepsPackageCurrentIndex, 1);
+      }
+    });
+  }
+
+  return monoDepASC;
 }
 
 export async function getMonoAndNpmDepsByPath(rootPath: string) {

@@ -45,32 +45,30 @@ async function freshGlobalState(preSelectPackage: string) {
 }
 
 export function freshProjectConfig() {
-  globalState.projectConfig = freshConfig(globalState.projectRootPath);
+  globalState.projectConfig = merge(new ProjectConfig(), getPriConfig(globalState.projectRootPath));
   globalState.packages = globalState.packages.map(eachPackage => {
     return {
       ...eachPackage,
-      config: freshConfig(eachPackage.rootPath)
+      // Merge projectConfig and sourceConfig
+      config: {
+        ...globalState.projectConfig,
+        ...getPriConfig(eachPackage.rootPath)
+      }
     };
   });
 
   if (globalState.selectedSourceType === 'root') {
     globalState.sourceConfig = { ...globalState.projectConfig };
   } else {
-    // Merge projectConfig and sourceConfig
-    globalState.sourceConfig = {
-      ...globalState.projectConfig,
-      ...globalState.packages.find(eachPackage => {
-        return eachPackage.name === globalState.selectedSourceType;
-      }).config
-    };
+    globalState.sourceConfig = globalState.packages.find(eachPackage => {
+      return eachPackage.name === globalState.selectedSourceType;
+    }).config;
   }
 }
 
-function freshConfig(rootPath: string) {
+function getPriConfig(rootPath: string) {
   const configFilePath = path.join(rootPath, CONFIG_FILE);
-  const userProjectConfig: ProjectConfig = fs.readJsonSync(configFilePath, { throws: false }) || {};
-
-  return merge(new ProjectConfig(), userProjectConfig);
+  return fs.readJsonSync(configFilePath, { throws: false }) || {};
 }
 
 async function initPackages(cliCurrentPath: string, preSelectPackage: string) {

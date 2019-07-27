@@ -11,8 +11,6 @@ import { ensureComponentFiles } from './ensure-component';
 import { ensurePluginFiles } from './ensure-plugin';
 import { ensureProjectFiles } from './ensure-project';
 import { eslintParam } from '../../../utils/lint';
-import { getMonoAndNpmDeps } from '../../../utils/packages.js';
-import { logFatal } from '../../../utils/log.js';
 
 import yargs = require('yargs');
 
@@ -24,7 +22,6 @@ export const main = async () => {
   ensureVscode();
   ensureEslint();
   ensureRootPackageJson();
-  ensureSourcePackageJson();
   ensurePriConfig();
 
   ensureDeclares();
@@ -209,74 +206,6 @@ function ensureNpmrc() {
     fileName: path.join(pri.projectRootPath, '.npmrc'),
     pipeContent: () => {
       return `package-lock=${globalState.projectConfig.packageLock ? 'true' : 'false'}`;
-    }
-  });
-}
-
-async function ensureSourcePackageJson() {
-  pri.project.addProjectFiles({
-    fileName: path.join(pri.sourceRoot, 'package.json'),
-    pipeContent: async (prev: string) => {
-      const prevJson = safeJsonParse(prev);
-      const priDeps = prevJson.dependencies || {};
-
-      if (pri.packages.length > 0) {
-        const { depMonoPackages, depNpmPackages } = await getMonoAndNpmDeps();
-
-        prevJson.dependencies = {
-          ...priDeps,
-          ...depMonoPackages.reduce((root, next) => {
-            if (!next.packageJson.version) {
-              logFatal(
-                `${pri.selectedSourceType} depend on ${next.name}, but missing "version" in ${next.name}'s package.json`
-              );
-            }
-
-            return {
-              ...root,
-              [next.packageJson.name]: `^${next.packageJson.version}`
-            };
-          }, {})
-        };
-
-        if (pri.selectedSourceType !== 'root') {
-          // Find depNpmPackages's version from rootPackageJson
-          const projectPackageJsonDeps = (pri.projectPackageJson as any).dependencies || {};
-          prevJson.dependencies = {
-            ...prevJson.dependencies,
-            ...depNpmPackages
-              .filter(npmName => !['react', 'react-dom', 'antd'].includes(npmName))
-              .reduce((root, next) => {
-                const sourceDeps: any = {};
-                Object.assign(sourceDeps, projectPackageJsonDeps);
-
-                // If root type is project, also find in pri deps.
-                if (pri.projectConfig.type === 'project') {
-                  Object.assign(sourceDeps, pkg.dependencies || {});
-                }
-
-                if (!sourceDeps[next]) {
-                  logFatal(
-                    `${pri.selectedSourceType}'s code depends on ${next}, but it doesn't exist in root package.json`
-                  );
-                }
-
-                return {
-                  ...root,
-                  [next]: sourceDeps[next]
-                };
-              }, {})
-          };
-        }
-      }
-
-      if (pri.selectedSourceType !== 'root') {
-        _.set(prevJson, 'main', `${pri.projectConfig.distDir}/main`);
-        _.set(prevJson, 'module', `${pri.projectConfig.distDir}/module`);
-        _.set(prevJson, 'types', 'declaration/index.d.ts');
-      }
-
-      return `${JSON.stringify(_.merge({}, prevJson, commonComponentPackageJson), null, 2)}\n`;
     }
   });
 }

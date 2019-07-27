@@ -1,6 +1,6 @@
 {
   "name": "pri",
-  "version": "3.2.7-beta11",
+  "version": "3.2.7-beta13",
   "types": "src/node/index.ts",
   "main": "built/node/index.js",
   "scripts": {
@@ -101,7 +101,7 @@
     "koa-mount": "4.0.0",
     "koa-route": "3.2.0",
     "koa-static": "5.0.0",
-    "lodash": "4.17.11",
+    "lodash": "^4.17.11",
     "mini-css-extract-plugin": "0.7.0",
     "node-forge": "0.8.5",
     "normalize-path": "3.0.0",

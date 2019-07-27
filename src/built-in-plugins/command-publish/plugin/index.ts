@@ -14,6 +14,9 @@ pri.commands.registerCommand({
     },
     skipLint: {
       description: 'Skip lint'
+    },
+    semver: {
+      description: 'Semver version: patch minor major'
     }
   },
   action: async (options: PublishOption) => {
