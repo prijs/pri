@@ -244,7 +244,7 @@ async function moveSourceFilesToTempFolderAndPublish(
   const addedPackageJson = await addMissingDeps(sourceType, depMap, targetConfig);
 
   _.merge(targetPackageJson, addedPackageJson);
-  await fs.outputJSON(path.join(tempRoot, 'package.json'), targetPackageJson);
+  await fs.outputFile(path.join(tempRoot, 'package.json'), JSON.stringify(targetPackageJson, null, 2));
 
   await exec(
     `${targetConfig.npmClient} publish ${tempRoot} --ignore-scripts ${
