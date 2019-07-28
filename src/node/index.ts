@@ -68,6 +68,9 @@ if (!globalWithPri.pri) {
     Object.defineProperty((global as any).pri, globalStateKey, {
       get() {
         return (globalState as any)[globalStateKey];
+      },
+      set(value: any) {
+        (globalState as any)[globalStateKey] = value;
       }
     });
   });

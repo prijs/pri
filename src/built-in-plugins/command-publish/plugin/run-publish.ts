@@ -5,10 +5,11 @@ import * as commitLint from '@commitlint/lint';
 import * as semver from 'semver';
 import { execSync } from 'child_process';
 import * as _ from 'lodash';
+import * as glob from 'glob';
 import * as pkg from '../../../../package.json';
 import { PublishOption } from './interface';
 import { exec } from '../../../utils/exec';
-import { pri, tempPath, declarationPath } from '../../../node';
+import { pri, tempPath, declarationPath, srcPath } from '../../../node';
 import { buildComponent } from '../../command-build/plugin/build';
 import { commandBundle } from '../../command-bundle/plugin/command-bundle';
 import { isWorkingTreeClean } from '../../../utils/git-operate';
@@ -41,17 +42,24 @@ export const publish = async (options: PublishOption) => {
       }
     ]);
 
+    await buildDeclaration();
+
     if (installAllPrompt.installAll) {
       for (const eachPackage of depMonoPackages) {
         await publishByPackageName(eachPackage.name, options, depMap);
       }
     }
+  } else {
+    await buildDeclaration();
   }
 
   switch (pri.sourceConfig.type) {
     case 'component':
     case 'plugin': {
       await publishByPackageName(pri.selectedSourceType, options, depMap);
+
+      await fs.remove(path.join(pri.projectRootPath, tempPath.dir, declarationPath.dir));
+
       break;
     }
     case 'project':
@@ -77,6 +85,12 @@ async function publishByPackageName(sourceType: string, options: PublishOption, 
     sourceType === 'root'
       ? pri.projectRootPath
       : pri.packages.find(eachPackage => eachPackage.name === sourceType).rootPath;
+
+  await fs.remove(path.join(pri.projectRootPath, pri.sourceConfig.distDir));
+
+  // Change source config here
+  pri.sourceConfig = targetConfig;
+  pri.sourceRoot = targetRoot;
 
   if (!targetPackageJson.name) {
     logFatal(`No name found in ${sourceType} package.json`);
@@ -128,9 +142,14 @@ async function publishByPackageName(sourceType: string, options: PublishOption, 
     .toString()
     .trim();
 
-  let targetVersion = targetPackageJson.version;
+  if (options.tag === 'beta') {
+    targetPackageJson.version = (semver.inc as any)(targetPackageJson.version, 'prerelease', 'beta');
+    await fs.outputFile(path.join(targetRoot, 'package.json'), `${JSON.stringify(targetPackageJson, null, 2)}\n`);
 
-  if (versionResult !== '') {
+    await exec(`git add -A; git commit -m "upgrade ${sourceType} version to ${targetPackageJson.version}" -n`, {
+      cwd: pri.projectRootPath
+    });
+  } else if (versionResult !== '') {
     if (!options.semver) {
       const versionPrompt = await inquirer.prompt([
         {
@@ -154,30 +173,30 @@ async function publishByPackageName(sourceType: string, options: PublishOption, 
         }
       ]);
 
-      targetVersion = versionPrompt.version;
+      targetPackageJson.version = versionPrompt.version;
     } else if (['patch', 'minor', 'major'].some(each => each === options.semver)) {
-      targetVersion = semver.inc(targetPackageJson.version, options.semver as semver.ReleaseType);
+      targetPackageJson.version = semver.inc(targetPackageJson.version, options.semver as semver.ReleaseType);
     } else {
       logFatal(`semver must be "patch" "minor" or "major"`);
     }
 
     // Upgrade package.json's version
-    await fs.outputFile(
-      path.join(targetRoot, 'package.json'),
-      `${JSON.stringify(
-        {
-          ...targetPackageJson,
-          version: targetVersion
-        },
-        null,
-        2
-      )}\n`
-    );
+    await fs.outputFile(path.join(targetRoot, 'package.json'), `${JSON.stringify(targetPackageJson, null, 2)}\n`);
 
-    await exec(`git add -A; git commit -m "upgrade ${sourceType} version to ${targetVersion}" -n`, {
+    await exec(`git add -A; git commit -m "upgrade ${sourceType} version to ${targetPackageJson.version}" -n`, {
       cwd: pri.projectRootPath
     });
   }
+
+  // Update version in depMao
+  depMap.forEach((value, key) => {
+    value.depMonoPackages.forEach(eachPackage => {
+      if (eachPackage.name === sourceType) {
+        // eslint-disable-next-line no-param-reassign
+        eachPackage.packageJson.version = targetPackageJson.version;
+      }
+    });
+  });
 
   await buildComponent({ skipLint: true });
 
@@ -191,9 +210,9 @@ async function publishByPackageName(sourceType: string, options: PublishOption, 
 
   await spinner(`Add tag`, async () => {
     if (sourceType !== 'root') {
-      await exec(`git tag -a ${sourceType}-v${targetVersion} -m "release"`);
+      await exec(`git tag -a ${sourceType}-v${targetPackageJson.version} -m "release"`);
     } else {
-      await exec(`git tag -a v${targetVersion} -m "release"`);
+      await exec(`git tag -a v${targetPackageJson.version} -m "release"`);
     }
   });
 
@@ -201,7 +220,7 @@ async function publishByPackageName(sourceType: string, options: PublishOption, 
     await exec(`git push --follow-tags`);
   });
 
-  logText(`+ ${targetPackageJson.name}@${targetVersion}`);
+  logText(`+ ${targetPackageJson.name}@${targetPackageJson.version}`);
 }
 
 async function moveSourceFilesToTempFolderAndPublish(
@@ -217,7 +236,7 @@ async function moveSourceFilesToTempFolderAndPublish(
   await fs.remove(tempRoot);
 
   await fs.copy(path.join(pri.projectRootPath, targetConfig.distDir), path.join(tempRoot, targetConfig.distDir));
-  await fs.copy(path.join(pri.projectRootPath, declarationPath.dir), path.join(tempRoot, declarationPath.dir));
+  await copyDeclaration(sourceType, publishTempName);
   await fs.copy(path.join(targetRoot, 'package.json'), path.join(tempRoot, 'package.json'));
 
   // Add external deps
@@ -307,4 +326,51 @@ async function addMissingDeps(sourceType: string, depMap: DepMap, targetConfig: 
   }
 
   return newPackageJson;
+}
+
+async function buildDeclaration() {
+  // Create d.ts
+  await spinner(`create declaration`, async () => {
+    try {
+      await exec(
+        `npx tsc --declaration --declarationDir ${path.join(
+          pri.projectRootPath,
+          `./${tempPath.dir}/${declarationPath.dir}`
+        )} --emitDeclarationOnly >> /dev/null 2>&1`,
+        {
+          cwd: pri.projectRootPath
+        }
+      );
+    } catch {
+      //
+    }
+  });
+}
+
+async function copyDeclaration(sourceType: string, publishTempName: string) {
+  const declarationRoot = path.join(pri.projectRootPath, tempPath.dir, declarationPath.dir);
+
+  // If select packages, pick it's own declaration
+  if (sourceType !== 'root') {
+    const declarationFiles = glob.sync(path.join(declarationRoot, 'packages', sourceType, srcPath.dir, '/**/*.d.ts'));
+
+    declarationFiles.map(eachFile => {
+      const targetPath = path.relative(path.join(declarationRoot, 'packages', sourceType, srcPath.dir), eachFile);
+      fs.copySync(
+        eachFile,
+        path.join(pri.projectRootPath, tempPath.dir, publishTempName, declarationPath.dir, targetPath)
+      );
+    });
+  } else {
+    // get declaration from src
+    const declarationFiles = glob.sync(path.join(declarationRoot, srcPath.dir, '**/*.d.ts'));
+
+    declarationFiles.map(eachFile => {
+      const targetPath = path.relative(path.join(declarationRoot, srcPath.dir), eachFile);
+      fs.copySync(
+        eachFile,
+        path.join(pri.projectRootPath, tempPath.dir, publishTempName, declarationPath.dir, targetPath)
+      );
+    });
+  }
 }

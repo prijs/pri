@@ -12,18 +12,6 @@ export const commandBundle = async (opts: IOpts = {}) => {
     logFatal("Only component support 'npm run bundle', try 'npm start'!");
   }
 
-  await pri.project.ensureProjectFiles();
-
-  if (!opts.skipLint) {
-    await pri.project.lint({
-      lintAll: true,
-      needFix: false,
-      showBreakError: true
-    });
-  }
-
-  await pri.project.checkProjectFiles();
-
   if (!opts.dev) {
     await runWebpack({
       mode: 'production',
@@ -64,4 +52,18 @@ export const commandBundle = async (opts: IOpts = {}) => {
       }
     });
   }
+};
+
+export const prepareBundle = async (opts: IOpts) => {
+  await pri.project.ensureProjectFiles();
+
+  if (!opts.skipLint) {
+    await pri.project.lint({
+      lintAll: true,
+      needFix: false,
+      showBreakError: true
+    });
+  }
+
+  await pri.project.checkProjectFiles();
 };

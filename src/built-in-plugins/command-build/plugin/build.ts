@@ -7,7 +7,6 @@ import * as glob from 'glob';
 import { pri, tempPath } from '../../../node';
 import * as pipe from '../../../node/pipe';
 import { analyseProject } from '../../../utils/analyse-project';
-import { cleanDist } from '../../../utils/clean';
 import { createEntry } from '../../../utils/create-entry';
 import { exec } from '../../../utils/exec';
 import { globalState } from '../../../utils/global-state';
@@ -21,8 +20,6 @@ import { IOpts } from './interface';
 import { tsPlusBabel } from '../../../utils/ts-plus-babel';
 
 export const buildProject = async (opts: IOpts = {}) => {
-  await prepareBuild(opts);
-
   const result = await spinner('Analyse project', async () => {
     const analyseInfo = await analyseProject();
     const entryPath = await createEntry();
@@ -78,8 +75,6 @@ export const buildProject = async (opts: IOpts = {}) => {
 };
 
 export const buildComponent = async (opts: IOpts = {}) => {
-  await prepareBuild(opts);
-
   // FIXME:
   // Do not minimize in cloud build(def envirenment), because commnets will lead to
   // build error in cloud build.
@@ -123,8 +118,6 @@ export const buildComponent = async (opts: IOpts = {}) => {
     await tsPlusBabel(false);
   });
 
-  await buildDeclaration();
-
   // TODO: add back after upgrade to webpack5
   // plugin.buildAfterProdBuild.forEach(afterProdBuild => {
   //   return afterProdBuild(stats);
@@ -132,8 +125,6 @@ export const buildComponent = async (opts: IOpts = {}) => {
 };
 
 export const buildPlugin = async (opts: IOpts = {}) => {
-  await prepareBuild(opts);
-
   // Build component
   const stats = await runWebpack({
     mode: 'production',
@@ -165,10 +156,8 @@ async function copyAssets() {
   }
 }
 
-async function prepareBuild(opts: IOpts = {}) {
+export async function prepareBuild(opts: IOpts = {}) {
   await spinner('Clean project.', async () => {
-    await cleanDist();
-
     // Clean .temp dir
     await exec(`${findNearestNodemodulesFile('.bin/rimraf')} ${pri.projectRootPath}/${tempPath.dir}`);
 
@@ -184,54 +173,4 @@ async function prepareBuild(opts: IOpts = {}) {
 
     await pri.project.checkProjectFiles();
   });
-}
-
-async function buildDeclaration() {
-  // Create d.ts
-  await spinner(`create declaration`, async () => {
-    try {
-      await exec(
-        `npx tsc --declaration --declarationDir ${path.join(
-          pri.projectRootPath,
-          `./${declarationPath.dir}`
-        )} --emitDeclarationOnly >> /dev/null 2>&1`,
-        {
-          cwd: pri.projectRootPath
-        }
-      );
-    } catch {
-      //
-    }
-  });
-
-  // If select packages, pick it's own declaration
-  if (pri.selectedSourceType !== 'root') {
-    fs.removeSync(path.join(pri.projectRootPath, declarationPath.dir, srcPath.dir));
-
-    const declarationFiles = glob.sync(
-      path.join(pri.projectRootPath, declarationPath.dir, 'packages', pri.selectedSourceType, srcPath.dir, '/**/*.d.ts')
-    );
-
-    declarationFiles.map(eachFile => {
-      const targetPath = path.relative(
-        path.join(pri.projectRootPath, declarationPath.dir, 'packages', pri.selectedSourceType, srcPath.dir),
-        eachFile
-      );
-      fs.copySync(eachFile, path.join(pri.projectRootPath, declarationPath.dir, targetPath));
-    });
-
-    fs.removeSync(path.join(pri.projectRootPath, declarationPath.dir, 'packages'));
-  } else {
-    // get declaration from src
-    fs.removeSync(path.join(pri.projectRootPath, declarationPath.dir, 'packages'));
-
-    const declarationFiles = glob.sync(path.join(pri.projectRootPath, declarationPath.dir, srcPath.dir, '**/*.d.ts'));
-
-    declarationFiles.map(eachFile => {
-      const targetPath = path.relative(path.join(pri.projectRootPath, declarationPath.dir, srcPath.dir), eachFile);
-      fs.copySync(eachFile, path.join(pri.projectRootPath, declarationPath.dir, targetPath));
-    });
-
-    fs.removeSync(path.join(pri.projectRootPath, declarationPath.dir, srcPath.dir));
-  }
 }

@@ -15,6 +15,7 @@ pri.commands.registerCommand({
   },
   action: async (opts?: IOpts) => {
     const commandBundleModule = await import('./command-bundle');
+    await commandBundleModule.prepareBundle(opts);
     await commandBundleModule.commandBundle(opts);
   }
 });

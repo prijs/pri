@@ -31,20 +31,22 @@ pri.commands.registerCommand({
   },
   description: text.commander.build.description,
   action: async (options: IOpts) => {
+    const buildModule = await import('./build');
+
     switch (pri.sourceConfig.type) {
       case 'project': {
-        const projectBuildModule = await import('./build');
-        await projectBuildModule.buildProject(options);
+        await buildModule.prepareBuild(options);
+        await buildModule.buildProject(options);
         break;
       }
       case 'component': {
-        const componentBuildModule = await import('./build');
-        await componentBuildModule.buildComponent(options);
+        await buildModule.prepareBuild(options);
+        await buildModule.buildComponent(options);
         break;
       }
       case 'plugin': {
-        const pluginBuildModule = await import('./build');
-        await pluginBuildModule.buildPlugin(options);
+        await buildModule.prepareBuild(options);
+        await buildModule.buildPlugin(options);
         break;
       }
       default:

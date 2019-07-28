@@ -14,20 +14,23 @@
 
 # build
 
-- import()
+- prepareBuild
   - cleanDist
   - ensureProjectFiles
   - lint
   - checkProjectFiles
+- import()
   - **pure build**
 
 # bundle
 
-- import()
+- prepareBundle
   - ensureProjectFiles
   - lint
   - checkProjectFiles
-
+- import()
+  - **pure bundle**
+  
 # analyse
 
 - import()
