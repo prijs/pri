@@ -7,5 +7,5 @@ pri.commands.registerCommand({
   action: async () => {
     const devDocsModule = await import('./dev-docs');
     devDocsModule.devDocs();
-  }
+  },
 });

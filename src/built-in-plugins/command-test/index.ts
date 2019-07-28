@@ -4,6 +4,6 @@ export const getPlugin = () => {
 
 export const getConfig = () => {
   return {
-    name: 'pri-plugin-command-test'
+    name: 'pri-plugin-command-test',
   };
 };

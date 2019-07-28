@@ -18,7 +18,7 @@ export const checkGitVersion = async (cwd?: string) => {
     const gitVersionPorcelain = /git\s+version\s+([0-9.]+)/g.exec(gitVersion)[1];
     if (semver.lte(gitVersionPorcelain, '2.14.0')) {
       logFatal(
-        `Your git version is outdate, should upgrade to 2.14.1 and above, current version: ${gitVersionPorcelain}`
+        `Your git version is outdate, should upgrade to 2.14.1 and above, current version: ${gitVersionPorcelain}`,
       );
     }
   } catch {

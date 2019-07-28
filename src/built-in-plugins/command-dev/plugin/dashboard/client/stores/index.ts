@@ -16,19 +16,19 @@ export const ApplicationReducer = (state: State, action: Action) => {
 
         return {
           ...state,
-          plugins: action.plugins
+          plugins: action.plugins,
         };
       }
       return state;
     case 'setSelectedTreeKey':
       return {
         ...state,
-        selectedTreeKey: action.selectedTreeKey
+        selectedTreeKey: action.selectedTreeKey,
       };
     case 'freshProjectStatus':
       return {
         ...state,
-        status: action.status
+        status: action.status,
       };
     default:
       return state;

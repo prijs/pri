@@ -44,9 +44,9 @@ export const getPackages = (() => {
         return {
           name: submoduleName,
           path: submodulePath,
-          packageJson: submodulePackageJson
+          packageJson: submodulePackageJson,
         };
-      })
+      }),
     );
 
     result = result.filter(eachResult => {
@@ -65,14 +65,14 @@ export async function ensurePackagesLinks(useCache: boolean) {
     await fs.ensureSymlink(
       path.join(globalState.projectRootPath, packageInfo.path),
       path.join(globalState.projectRootPath, 'node_modules', packageInfo.name),
-      'dir'
+      'dir',
     );
 
     // linkRootNodeModulesToEveryPackages
     await fs.ensureSymlink(
       path.join(globalState.projectRootPath, 'node_modules'),
       path.join(globalState.projectRootPath, packageInfo.path, 'node_modules'),
-      'dir'
+      'dir',
     );
   }
 }
@@ -94,13 +94,13 @@ async function getMonoAndNpmDeps() {
 
     depMap.set(
       'root',
-      await getMonoAndNpmDepsByPath(path.join(globalState.projectRootPath, srcPath.dir, '**/*.{ts,tsx}'))
+      await getMonoAndNpmDepsByPath(path.join(globalState.projectRootPath, srcPath.dir, '**/*.{ts,tsx}')),
     );
 
     for (const eachPackage of globalState.packages) {
       depMap.set(
         eachPackage.name,
-        await getMonoAndNpmDepsByPath(path.join(eachPackage.rootPath, srcPath.dir, '**/*.{ts,tsx}'))
+        await getMonoAndNpmDepsByPath(path.join(eachPackage.rootPath, srcPath.dir, '**/*.{ts,tsx}')),
       );
     }
 
@@ -147,7 +147,7 @@ function getMonoDepASC(depMap: DepMap) {
 
     newMap.forEach(value => {
       const zeroMonoDepsPackageCurrentIndex = value.depMonoPackages.findIndex(
-        eachPackage => eachPackage.name === zeroMonoDepsPackageName
+        eachPackage => eachPackage.name === zeroMonoDepsPackageName,
       );
       if (zeroMonoDepsPackageCurrentIndex > -1) {
         value.depMonoPackages.splice(zeroMonoDepsPackageCurrentIndex, 1);
@@ -173,7 +173,7 @@ export async function getMonoAndNpmDepsByPath(rootPath: string) {
           if (each.kind === ts.SyntaxKind.StringLiteral) {
             const importStringLiteral = _.trim(each.getText(sourceFile), `'"`);
             const targetPackage = globalState.packages.find(
-              eachPackage => eachPackage.packageJson && eachPackage.packageJson.name === importStringLiteral
+              eachPackage => eachPackage.packageJson && eachPackage.packageJson.name === importStringLiteral,
             );
             if (targetPackage) {
               depMonoPackages.add(targetPackage);

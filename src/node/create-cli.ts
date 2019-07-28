@@ -59,7 +59,7 @@ export async function createCli(opts?: { pluginIncludeRoots: string[] }) {
    * Update notify.
    */
   updateNotifier({
-    pkg: globalState.priPackageJson as updateNotifier.Package
+    pkg: globalState.priPackageJson as updateNotifier.Package,
   }).notify();
 }
 
@@ -73,7 +73,7 @@ function registerYargs(leafYargs: typeof yargs, transferedRegisterCommands: Tran
         // Add package options
         childYargs.option('package', {
           description: 'Select package',
-          demandOption: false
+          demandOption: false,
         });
 
         if (commandRegister.options) {
@@ -82,7 +82,7 @@ function registerYargs(leafYargs: typeof yargs, transferedRegisterCommands: Tran
             childYargs.option(optionName, {
               alias: optionInfo.alias,
               description: optionInfo.description,
-              demandOption: optionInfo.required
+              demandOption: optionInfo.required,
             });
           });
         }
@@ -97,7 +97,7 @@ function registerYargs(leafYargs: typeof yargs, transferedRegisterCommands: Tran
             await action(argv);
           }
         }
-      }
+      },
     });
   });
 }

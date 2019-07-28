@@ -4,7 +4,7 @@ import {
   IBuildConfigPipe,
   ILoaderExcludePipe,
   ILoaderIncludePipe,
-  ILoaderOptionsPipe
+  ILoaderOptionsPipe,
 } from '../utils/define';
 
 export const pipeConfig = (pipe: IBuildConfigPipe) => {

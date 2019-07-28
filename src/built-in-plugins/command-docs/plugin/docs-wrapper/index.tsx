@@ -42,7 +42,7 @@ const Docs = React.memo((props: Props) => {
             backgroundColor: docName === index ? 'white' : null,
             fontSize: 14,
             color: '#333',
-            borderBottom: '1px solid #eee'
+            borderBottom: '1px solid #eee',
           }}
           // eslint-disable-next-line react/jsx-no-bind
           onClick={() => {
@@ -74,7 +74,7 @@ const Docs = React.memo((props: Props) => {
         width: '100vw',
         height: '100vh',
         display: 'flex',
-        boxSizing: 'border-box'
+        boxSizing: 'border-box',
       }}
     >
       {props.docs.length > 1 && (
@@ -85,7 +85,7 @@ const Docs = React.memo((props: Props) => {
             width: 200,
             minWidth: 200,
             borderRight: '1px solid #eee',
-            boxSizing: 'border-box'
+            boxSizing: 'border-box',
           }}
         >
           {renderLeftMenus()}
@@ -97,7 +97,7 @@ const Docs = React.memo((props: Props) => {
           display: 'flex',
           flexDirection: 'column',
           flexGrow: 1,
-          boxSizing: 'border-box'
+          boxSizing: 'border-box',
         }}
       >
         <div
@@ -108,7 +108,7 @@ const Docs = React.memo((props: Props) => {
             flexBasis: 0,
             overflowY: 'auto',
             overflowX: 'hidden',
-            boxSizing: 'border-box'
+            boxSizing: 'border-box',
           }}
         >
           <DocInstance />

@@ -25,7 +25,7 @@ export const buildProject = async (opts: IOpts = {}) => {
     const entryPath = await createEntry();
     return {
       analyseInfo,
-      entryPath
+      entryPath,
     };
   });
 
@@ -42,12 +42,12 @@ export const buildProject = async (opts: IOpts = {}) => {
           new HtmlWebpackPlugin({
             title: pri.sourceConfig.title || globalState.projectRootPath.split(path.sep).pop(),
             filename: staticHtmlPath,
-            template: path.join(__dirname, '../../../../template-project.ejs')
-          })
+            template: path.join(__dirname, '../../../../template-project.ejs'),
+          }),
         );
       });
       return config;
-    }
+    },
   });
 
   // Write .temp/static/sw.js to [distDir]
@@ -62,8 +62,8 @@ export const buildProject = async (opts: IOpts = {}) => {
       prettier.format(targetSwContent, {
         semi: true,
         singleQuote: true,
-        parser: 'babylon'
-      })
+        parser: 'babylon',
+      }),
     );
   }
 
@@ -132,7 +132,7 @@ export const buildPlugin = async (opts: IOpts = {}) => {
     libraryTarget: 'commonjs2',
     entryPath: path.join(pri.sourceRoot, path.format(pluginEntry)),
     outFileName: pri.sourceConfig.outFileName,
-    externals: [nodeExternals()]
+    externals: [nodeExternals()],
   });
 
   plugin.buildAfterProdBuild.forEach(afterProdBuild => {
@@ -167,7 +167,7 @@ export async function prepareBuild(opts: IOpts = {}) {
       await pri.project.lint({
         lintAll: true,
         needFix: false,
-        showBreakError: true
+        showBreakError: true,
       });
     }
 

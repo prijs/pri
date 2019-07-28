@@ -61,7 +61,7 @@ if (!globalWithPri.pri) {
     event: priEvent,
     webpack: webpackCommand,
     cli,
-    ...self
+    ...self,
   } as any;
 
   Object.keys(globalState).forEach(globalStateKey => {
@@ -71,7 +71,7 @@ if (!globalWithPri.pri) {
       },
       set(value: any) {
         (globalState as any)[globalStateKey] = value;
-      }
+      },
     });
   });
 }

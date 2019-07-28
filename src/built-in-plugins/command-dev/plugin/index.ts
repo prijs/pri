@@ -6,8 +6,8 @@ pri.commands.registerCommand({
   options: {
     debugDashboard: {
       alias: 'd',
-      description: 'Debug dashboard'
-    }
+      description: 'Debug dashboard',
+    },
   },
   description: text.commander.dev.description,
   action: async (options: any) => {
@@ -29,5 +29,5 @@ pri.commands.registerCommand({
       }
       default:
     }
-  }
+  },
 });

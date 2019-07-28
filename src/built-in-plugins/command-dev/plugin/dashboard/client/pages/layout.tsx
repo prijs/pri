@@ -15,7 +15,7 @@ const bottomContainerStyle: React.CSSProperties = {
   display: 'flex',
   flexDirection: 'column',
   flexGrow: 1,
-  flexBasis: 0
+  flexBasis: 0,
 };
 
 export const LayoutComponent = React.memo(() => {
@@ -31,7 +31,7 @@ export const LayoutComponent = React.memo(() => {
     socket.current.on('freshProjectStatus', (data: IProjectStatus) => {
       dispatch({
         type: 'freshProjectStatus',
-        status: data
+        status: data,
       });
     });
 
@@ -52,7 +52,7 @@ export const LayoutComponent = React.memo(() => {
             display: 'flex',
             flexDirection: 'column',
             width: 250,
-            borderRight: '1px solid #eee'
+            borderRight: '1px solid #eee',
           }}
         >
           <div style={topContainerStyle}>
@@ -69,7 +69,7 @@ export const LayoutComponent = React.memo(() => {
             display: 'flex',
             flexDirection: 'column',
             flexGrow: 1,
-            flexBasis: 0
+            flexBasis: 0,
           }}
         >
           <div style={topContainerStyle}>

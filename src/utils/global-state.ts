@@ -52,8 +52,8 @@ export function freshProjectConfig() {
       // Merge projectConfig and sourceConfig
       config: {
         ...globalState.projectConfig,
-        ...getPriConfig(eachPackage.rootPath)
-      }
+        ...getPriConfig(eachPackage.rootPath),
+      },
     };
   });
 
@@ -85,7 +85,7 @@ async function initPackages(cliCurrentPath: string, preSelectPackage: string) {
         name: folderName,
         rootPath: packagePath,
         packageJson,
-        config
+        config,
       };
     });
   }
@@ -103,11 +103,11 @@ async function initPackages(cliCurrentPath: string, preSelectPackage: string) {
             ...globalState.packages.map(eachPackage => {
               return {
                 name: `Package: ${eachPackage.name}`,
-                value: eachPackage.name
+                value: eachPackage.name,
               };
-            })
-          ]
-        }
+            }),
+          ],
+        },
       ]);
 
       globalState.selectedSourceType = inquirerInfo.packageName;
@@ -148,6 +148,6 @@ export function transferToAllAbsolutePaths(relatePath: string) {
     path.join(globalState.projectRootPath, relatePath),
     ...globalState.packages.map(eachPackage => {
       return path.join(eachPackage.rootPath, relatePath);
-    })
+    }),
   ];
 }

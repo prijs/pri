@@ -4,6 +4,6 @@ export const getPlugin = () => {
 
 export const getConfig = () => {
   return {
-    name: 'pri-plugin-analyse-layouts'
+    name: 'pri-plugin-analyse-layouts',
   };
 };

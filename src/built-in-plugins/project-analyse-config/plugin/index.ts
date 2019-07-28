@@ -24,7 +24,7 @@ pri.project.whiteFileRules.add(file => {
 pri.project.onAnalyseProject(() => {
   return {
     projectAnalyseConfig: {
-      hasConfig: fs.existsSync(path.join(pri.projectRootPath, CONFIG_FILE))
-    }
+      hasConfig: fs.existsSync(path.join(pri.projectRootPath, CONFIG_FILE)),
+    },
   };
 });

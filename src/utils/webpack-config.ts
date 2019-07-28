@@ -31,12 +31,12 @@ export type IOptions<T = {}> = {
 
 const defaultSourcePathToBeResolve = [
   ...transferToAllAbsolutePathsWithPackages(srcPath.dir),
-  ...transferToAllAbsolutePathsWithPackages(tempPath.dir)
+  ...transferToAllAbsolutePathsWithPackages(tempPath.dir),
 ];
 
 const selfAndProjectNodeModules = [
   path.join(globalState.projectRootPath, 'node_modules'),
-  path.join(__dirname, '../../node_modules')
+  path.join(__dirname, '../../node_modules'),
 ];
 
 /**
@@ -46,14 +46,14 @@ const styleLoader = {
   loader: 'style-loader',
   options: plugin.buildConfigStyleLoaderOptionsPipes.reduce((options, fn) => {
     return fn(options);
-  }, {})
+  }, {}),
 };
 
 const cssPureLoader = {
   loader: 'css-loader',
   options: plugin.buildConfigCssLoaderOptionsPipes.reduce((options, fn) => {
     return fn(options);
-  }, {})
+  }, {}),
 };
 
 const cssModuleLoader = {
@@ -65,31 +65,31 @@ const cssModuleLoader = {
     {
       importLoaders: 1,
       modules: {
-        localIdentName: '[path][name]-[local]-[hash:base64:5]'
-      }
-    }
-  )
+        localIdentName: '[path][name]-[local]-[hash:base64:5]',
+      },
+    },
+  ),
 };
 
 const sassLoader = {
   loader: 'sass-loader',
   options: plugin.buildConfigSassLoaderOptionsPipes.reduce((options, fn) => {
     return fn(options);
-  }, {})
+  }, {}),
 };
 
 const lessLoader = {
   loader: 'less-loader',
   options: plugin.buildConfigLessLoaderOptionsPipes.reduce((options, fn) => {
     return fn(options);
-  }, {})
+  }, {}),
 };
 
 const babelLoader = {
   loader: 'babel-loader',
   options: plugin.buildConfigBabelLoaderOptionsPipes.reduce((options, fn) => {
     return fn(options);
-  }, getBabelOptions())
+  }, getBabelOptions()),
 };
 
 /**
@@ -110,7 +110,7 @@ const stats = {
   version: false,
   modules: false,
   entrypoints: false,
-  hash: false
+  hash: false,
 };
 
 const tsLoaderConfig = {
@@ -119,11 +119,11 @@ const tsLoaderConfig = {
   }, defaultSourcePathToBeResolve),
   exclude: plugin.buildConfigJsLoaderExcludePipes.reduce((options, fn) => {
     return fn(options);
-  }, [])
+  }, []),
 };
 
 const cssLoaderConfig = {
-  include: defaultSourcePathToBeResolve
+  include: defaultSourcePathToBeResolve,
 };
 
 // const scssLoaderConfig = {
@@ -176,7 +176,7 @@ export const getWebpackConfig = async (opts: IOptions) => {
       hotUpdateMainFilename: 'hot-update.[hash].json',
       hashDigestLength: 4,
       globalObject: "(typeof self !== 'undefined' ? self : this)",
-      libraryTarget: opts.libraryTarget || 'var'
+      libraryTarget: opts.libraryTarget || 'var',
     },
     module: {
       rules: [
@@ -186,27 +186,27 @@ export const getWebpackConfig = async (opts: IOptions) => {
             {
               loader: 'worker-loader',
               options: {
-                inline: true
-              }
-            }
+                inline: true,
+              },
+            },
           ],
-          ...tsLoaderConfig
+          ...tsLoaderConfig,
         },
         {
           test: /\.tsx?$/,
           use: [babelLoader],
-          ...tsLoaderConfig
+          ...tsLoaderConfig,
         },
         {
           test: /\.mdx?$/,
           use: [babelLoader, '@mdx-js/loader'],
-          ...tsLoaderConfig
+          ...tsLoaderConfig,
         },
         { test: /\.css$/, use: extraCssInProd(cssPureLoader), exclude: [/\.module\.css$/] },
         {
           test: /\.module\.css$/,
           use: extraCssInProd(cssModuleLoader),
-          ...cssLoaderConfig
+          ...cssLoaderConfig,
         },
         {
           test: /\.s[a|c]ss$/,
@@ -218,8 +218,8 @@ export const getWebpackConfig = async (opts: IOptions) => {
             (options, fn) => {
               return fn(options);
             },
-            [/\.module\.s[a|c]ss$/]
-          )
+            [/\.module\.s[a|c]ss$/],
+          ),
         },
         {
           test: /\.module\.s[a|c]ss$/,
@@ -229,7 +229,7 @@ export const getWebpackConfig = async (opts: IOptions) => {
           }, defaultSourcePathToBeResolve),
           exclude: plugin.buildConfigSassLoaderExcludePipes.reduce((options, fn) => {
             return fn(options);
-          }, [])
+          }, []),
         },
         {
           test: /\.less$/,
@@ -241,8 +241,8 @@ export const getWebpackConfig = async (opts: IOptions) => {
             (options, fn) => {
               return fn(options);
             },
-            [/\.module\.less$/]
-          )
+            [/\.module\.less$/],
+          ),
         },
         {
           test: /\.module\.less$/,
@@ -252,7 +252,7 @@ export const getWebpackConfig = async (opts: IOptions) => {
           }, defaultSourcePathToBeResolve),
           exclude: plugin.buildConfigLessLoaderExcludePipes.reduce((options, fn) => {
             return fn(options);
-          }, [])
+          }, []),
         },
         { test: /\.html$/, use: ['raw-loader'] },
         {
@@ -261,12 +261,12 @@ export const getWebpackConfig = async (opts: IOptions) => {
             {
               loader: 'url-loader',
               options: {
-                limit: 1024 * 100
-              }
-            }
-          ]
-        }
-      ]
+                limit: 1024 * 100,
+              },
+            },
+          ],
+        },
+      ],
     },
     resolve: {
       modules: selfAndProjectNodeModules,
@@ -275,18 +275,18 @@ export const getWebpackConfig = async (opts: IOptions) => {
         ...(globalState.sourceConfig.type === 'project' && { src: path.join(globalState.projectRootPath, '/src') }),
         // For react hot loader.
         ...(globalState.isDevelopment && {
-          'react-dom': '@hot-loader/react-dom'
+          'react-dom': '@hot-loader/react-dom',
         }),
         // Packages alias names
         ...globalState.packages.reduce((obj, eachPackage) => {
           if (eachPackage.packageJson && eachPackage.packageJson.name) {
             return {
               ...obj,
-              [eachPackage.packageJson.name]: path.join(eachPackage.rootPath, 'src')
+              [eachPackage.packageJson.name]: path.join(eachPackage.rootPath, 'src'),
             };
           }
           return obj;
-        }, {})
+        }, {}),
       },
       extensions: [
         '.js',
@@ -306,15 +306,15 @@ export const getWebpackConfig = async (opts: IOptions) => {
         'woff2',
         'eot',
         'ttf',
-        'svg'
-      ]
+        'svg',
+      ],
     },
     resolveLoader: {
-      modules: selfAndProjectNodeModules
+      modules: selfAndProjectNodeModules,
     },
     plugins: [],
     optimization: { namedChunks: false },
-    stats
+    stats,
   };
 
   if (globalState.isDevelopment) {
@@ -324,8 +324,8 @@ export const getWebpackConfig = async (opts: IOptions) => {
           title: globalState.sourceConfig.title || globalState.projectRootPath.split(path.sep).pop(),
           filename: 'index.html',
           template: opts.htmlTemplatePath,
-          htmlTemplateArgs: opts.htmlTemplateArgs
-        })
+          htmlTemplateArgs: opts.htmlTemplateArgs,
+        }),
       );
     }
   }
@@ -334,8 +334,8 @@ export const getWebpackConfig = async (opts: IOptions) => {
     if (globalState.sourceConfig.cssExtract) {
       config.plugins.push(
         new MiniCssExtractPlugin({
-          filename: outCssFileName
-        })
+          filename: outCssFileName,
+        }),
       );
     }
   }

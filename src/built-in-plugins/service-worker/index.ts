@@ -4,6 +4,6 @@ export const getPlugin = () => {
 
 export const getConfig = () => {
   return {
-    name: 'pri-plugin-service-worker'
+    name: 'pri-plugin-service-worker',
   };
 };

@@ -4,6 +4,6 @@ export const getPlugin = () => {
 
 export const getConfig = () => {
   return {
-    name: 'pri-plugin-ensure-project-files'
+    name: 'pri-plugin-ensure-project-files',
   };
 };

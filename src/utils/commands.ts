@@ -11,7 +11,7 @@ export function transferCommandsArrayToMap(commandRegisters: CommandRegister[]) 
         .map(duplicate => {
           return duplicate;
         })
-        .join('\n')}`
+        .join('\n')}`,
     );
   }
 
@@ -19,12 +19,12 @@ export function transferCommandsArrayToMap(commandRegisters: CommandRegister[]) 
 }
 
 function createRootCommandRegisters(
-  commandRegistersSplitName: TransferedRegisterCommand[]
+  commandRegistersSplitName: TransferedRegisterCommand[],
 ): TransferedRegisterCommand[] {
   const rootNames = _.uniq(
     commandRegistersSplitName.map(commandRegisterSplitName => {
       return commandRegisterSplitName.name[0];
-    })
+    }),
   );
 
   const rootCommandRegisters = commandRegistersSplitName.filter(commandRegisterSplitName => {
@@ -43,7 +43,7 @@ function createRootCommandRegisters(
       .map(leafCommandRegister => {
         return {
           ...leafCommandRegister,
-          name: leafCommandRegister.name.slice(1, leafCommandRegister.name.length)
+          name: leafCommandRegister.name.slice(1, leafCommandRegister.name.length),
         };
       });
 
@@ -55,7 +55,7 @@ function createRootCommandRegisters(
     }
     return {
       name: [rootName],
-      childs: createRootCommandRegisters(childs)
+      childs: createRootCommandRegisters(childs),
     };
   });
 }
@@ -67,6 +67,6 @@ function getDuplicatesCommand(commandRegisters: CommandRegister[]) {
     }),
     (value, index, iteratee) => {
       return _.includes(iteratee, value, index + 1);
-    }
+    },
   );
 }

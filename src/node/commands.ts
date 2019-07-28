@@ -21,13 +21,13 @@ export const registerCommand = (opts: CommandOpt) => {
   if (!existCommand) {
     plugin.commands.push({
       ...opts,
-      actions: opts.action ? [opts.action] : []
+      actions: opts.action ? [opts.action] : [],
     });
   } else {
     existCommand.actions.push(opts.action);
     existCommand.options = {
       ...(existCommand.options || {}),
-      ...(opts.options || {})
+      ...(opts.options || {}),
     };
   }
 };

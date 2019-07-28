@@ -28,7 +28,7 @@ export const publish = async (options: PublishOption) => {
         await pri.project.lint({
           lintAll: true,
           needFix: false,
-          showBreakError: true
+          showBreakError: true,
         });
       }
 
@@ -41,8 +41,8 @@ export const publish = async (options: PublishOption) => {
               .map(eachPackage => `"${eachPackage.name}"`)
               .join(', ')} \n Do you want to publish these packages first?`,
             name: 'installAll',
-            type: 'confirm'
-          }
+            type: 'confirm',
+          },
         ]);
 
         await buildDeclaration();
@@ -105,8 +105,8 @@ async function publishByPackageName(sourceType: string, options: PublishOption, 
       {
         message: 'Working tree is not clean, your commit message:',
         name: 'message',
-        type: 'input'
-      }
+        type: 'input',
+      },
     ]);
 
     if (!inquirerInfo.message) {
@@ -123,7 +123,7 @@ async function publishByPackageName(sourceType: string, options: PublishOption, 
       'subject-full-stop': [2, 'never', '.'],
       'type-case': [2, 'always', 'lower-case'],
       'type-empty': [2, 'never'],
-      'type-enum': [2, 'always', ['build', 'ci', 'docs', 'feat', 'fix', 'perf', 'refactor', 'revert', 'style', 'test']]
+      'type-enum': [2, 'always', ['build', 'ci', 'docs', 'feat', 'fix', 'perf', 'refactor', 'revert', 'style', 'test']],
     });
 
     if (!result.valid) {
@@ -137,7 +137,7 @@ async function publishByPackageName(sourceType: string, options: PublishOption, 
 
   logInfo('Check if npm package exist');
   const versionResult = execSync(
-    `${targetConfig.npmClient} view ${targetPackageJson.name}@${targetPackageJson.version} version`
+    `${targetConfig.npmClient} view ${targetPackageJson.name}@${targetPackageJson.version} version`,
   )
     .toString()
     .trim();
@@ -147,7 +147,7 @@ async function publishByPackageName(sourceType: string, options: PublishOption, 
     await fs.outputFile(path.join(targetRoot, 'package.json'), `${JSON.stringify(targetPackageJson, null, 2)}\n`);
 
     await exec(`git add -A; git commit -m "upgrade ${sourceType} version to ${targetPackageJson.version}" -n`, {
-      cwd: pri.projectRootPath
+      cwd: pri.projectRootPath,
     });
   } else if (versionResult !== '') {
     if (!options.semver) {
@@ -159,18 +159,18 @@ async function publishByPackageName(sourceType: string, options: PublishOption, 
           choices: [
             {
               name: `Patch(${semver.inc(targetPackageJson.version, 'patch')})`,
-              value: semver.inc(targetPackageJson.version, 'patch')
+              value: semver.inc(targetPackageJson.version, 'patch'),
             },
             {
               name: `Minor(${semver.inc(targetPackageJson.version, 'minor')})`,
-              value: semver.inc(targetPackageJson.version, 'minor')
+              value: semver.inc(targetPackageJson.version, 'minor'),
             },
             {
               name: `Major(${semver.inc(targetPackageJson.version, 'major')})`,
-              value: semver.inc(targetPackageJson.version, 'major')
-            }
-          ]
-        }
+              value: semver.inc(targetPackageJson.version, 'major'),
+            },
+          ],
+        },
       ]);
 
       targetPackageJson.version = versionPrompt.version;
@@ -184,7 +184,7 @@ async function publishByPackageName(sourceType: string, options: PublishOption, 
     await fs.outputFile(path.join(targetRoot, 'package.json'), `${JSON.stringify(targetPackageJson, null, 2)}\n`);
 
     await exec(`git add -A; git commit -m "upgrade ${sourceType} version to ${targetPackageJson.version}" -n`, {
-      cwd: pri.projectRootPath
+      cwd: pri.projectRootPath,
     });
   }
 
@@ -228,7 +228,7 @@ async function moveSourceFilesToTempFolderAndPublish(
   options: PublishOption,
   targetConfig: ProjectConfig,
   targetRoot: string,
-  depMap: DepMap
+  depMap: DepMap,
 ) {
   const publishTempName = 'publish-temp';
   const tempRoot = path.join(pri.projectRootPath, tempPath.dir, publishTempName);
@@ -251,8 +251,8 @@ async function moveSourceFilesToTempFolderAndPublish(
       options.tag ? `--tag ${options.tag}` : '--tag latest'
     }`,
     {
-      cwd: tempRoot
-    }
+      cwd: tempRoot,
+    },
   );
 
   await fs.remove(tempRoot);
@@ -263,7 +263,7 @@ async function addMissingDeps(sourceType: string, depMap: DepMap, targetConfig: 
 
   if (targetConfig.npmClient === 'tnpm') {
     newPackageJson.publishConfig = {
-      registry: 'https://registry.npm.alibaba-inc.com'
+      registry: 'https://registry.npm.alibaba-inc.com',
     };
   }
 
@@ -277,7 +277,7 @@ async function addMissingDeps(sourceType: string, depMap: DepMap, targetConfig: 
 
       return {
         ...root,
-        [next.packageJson.name]: `^${next.packageJson.version}`
+        [next.packageJson.name]: `^${next.packageJson.version}`,
       };
     }, {});
 
@@ -288,14 +288,14 @@ async function addMissingDeps(sourceType: string, depMap: DepMap, targetConfig: 
       let sourceDeps: any = {};
       sourceDeps = {
         ...sourceDeps,
-        ...projectPackageJsonDeps
+        ...projectPackageJsonDeps,
       };
 
       // If root type is project, also find in pri deps.
       if (pri.projectConfig.type === 'project') {
         sourceDeps = {
           ...sourceDeps,
-          ...(pkg.dependencies || {})
+          ...(pkg.dependencies || {}),
         };
       }
 
@@ -306,15 +306,15 @@ async function addMissingDeps(sourceType: string, depMap: DepMap, targetConfig: 
           .reduce((root, next) => {
             if (!sourceDeps[next]) {
               logFatal(
-                `${pri.selectedSourceType}'s code depends on ${next}, but it doesn't exist in root package.json`
+                `${pri.selectedSourceType}'s code depends on ${next}, but it doesn't exist in root package.json`,
               );
             }
 
             return {
               ...root,
-              [next]: sourceDeps[next]
+              [next]: sourceDeps[next],
             };
-          }, {})
+          }, {}),
       };
     }
   }
@@ -335,11 +335,11 @@ async function buildDeclaration() {
       await exec(
         `npx tsc --declaration --declarationDir ${path.join(
           pri.projectRootPath,
-          `./${tempPath.dir}/${declarationPath.dir}`
+          `./${tempPath.dir}/${declarationPath.dir}`,
         )} --emitDeclarationOnly >> /dev/null 2>&1`,
         {
-          cwd: pri.projectRootPath
-        }
+          cwd: pri.projectRootPath,
+        },
       );
     } catch {
       //
@@ -358,7 +358,7 @@ async function copyDeclaration(sourceType: string, publishTempName: string) {
       const targetPath = path.relative(path.join(declarationRoot, 'packages', sourceType, srcPath.dir), eachFile);
       fs.copySync(
         eachFile,
-        path.join(pri.projectRootPath, tempPath.dir, publishTempName, declarationPath.dir, targetPath)
+        path.join(pri.projectRootPath, tempPath.dir, publishTempName, declarationPath.dir, targetPath),
       );
     });
   } else {
@@ -369,7 +369,7 @@ async function copyDeclaration(sourceType: string, publishTempName: string) {
       const targetPath = path.relative(path.join(declarationRoot, srcPath.dir), eachFile);
       fs.copySync(
         eachFile,
-        path.join(pri.projectRootPath, tempPath.dir, publishTempName, declarationPath.dir, targetPath)
+        path.join(pri.projectRootPath, tempPath.dir, publishTempName, declarationPath.dir, targetPath),
       );
     });
   }

@@ -26,7 +26,7 @@ export class WrapContent {
               compilation.assets[fileName] = new ConcatSource.ConcatSource(
                 this.header,
                 compilation.assets[fileName],
-                this.footer
+                this.footer,
               );
             }
           });

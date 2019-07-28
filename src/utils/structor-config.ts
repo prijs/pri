@@ -28,7 +28,7 @@ export const declarationPath = { dir: 'declaration' };
  */
 
 export const tempTypesPath = {
-  dir: path.join(tempPath.dir, 'types')
+  dir: path.join(tempPath.dir, 'types'),
 };
 
 export const pagesPath = { dir: path.join(srcPath.dir, 'pages') };
@@ -36,59 +36,59 @@ export const pagesPath = { dir: path.join(srcPath.dir, 'pages') };
 export const notFoundPath = {
   dir: pagesPath.dir,
   name: '404',
-  ext: '.tsx'
+  ext: '.tsx',
 };
 
 export const tempJsEntryPath = {
   dir: tempPath.dir,
   name: 'entry',
-  ext: '.tsx'
+  ext: '.tsx',
 };
 
 export const tempEnvironmentPath = {
   dir: tempPath.dir,
   name: 'environment',
-  ext: '.ts'
+  ext: '.ts',
 };
 
 export const tempJsAppPath = { dir: tempPath.dir, name: 'app', ext: '.tsx' };
 
 export const utilPath = {
-  dir: path.join(srcPath.dir, 'utils')
+  dir: path.join(srcPath.dir, 'utils'),
 };
 
 export const requestsPath = {
-  dir: path.join(srcPath.dir, 'requests')
+  dir: path.join(srcPath.dir, 'requests'),
 };
 
 export const expandPath = {
-  dir: path.join(srcPath.dir, 'expand')
+  dir: path.join(srcPath.dir, 'expand'),
 };
 
 export const componentPath = {
-  dir: path.join(srcPath.dir, 'components')
+  dir: path.join(srcPath.dir, 'components'),
 };
 
 export const declarePath = {
-  dir: path.join(tempPath.dir, 'declare')
+  dir: path.join(tempPath.dir, 'declare'),
 };
 
 export const layoutPath = {
   dir: path.join(srcPath.dir, 'layouts'),
   name: 'index',
-  ext: '.tsx'
+  ext: '.tsx',
 };
 
 export const componentEntry = {
   dir: path.join(srcPath.dir),
   name: 'index',
-  ext: getComponentEntryExt()
+  ext: getComponentEntryExt(),
 };
 
 export const pluginEntry = {
   dir: path.join(srcPath.dir),
   name: 'index',
-  ext: '.ts'
+  ext: '.ts',
 };
 
 /**
@@ -104,7 +104,7 @@ const ignores = [
   'coverage',
   '.nyc_output',
   'npm-debug.log',
-  '.node'
+  '.node',
 ];
 
 // FIXME:
@@ -135,7 +135,7 @@ export const ignoreScanFiles = _.union([
   'readme.md',
   'README.md',
   'history.md',
-  'HISTORY.md'
+  'HISTORY.md',
 ]);
 
 function getComponentEntryExt() {

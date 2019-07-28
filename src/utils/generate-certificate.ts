@@ -13,7 +13,7 @@ export function generateCertificate() {
   if (cachedKey && cachedCert) {
     return {
       key: cachedKey,
-      cert: cachedCert
+      cert: cachedCert,
     };
   }
 
@@ -30,28 +30,28 @@ export function generateCertificate() {
   const attrs = [
     {
       name: 'commonName',
-      value: 'prijs.org'
+      value: 'prijs.org',
     },
     {
       name: 'countryName',
-      value: 'China'
+      value: 'China',
     },
     {
       shortName: 'ST',
-      value: 'Virginiae'
+      value: 'Virginiae',
     },
     {
       name: 'localityName',
-      value: 'Blacks'
+      value: 'Blacks',
     },
     {
       name: 'organizationName',
-      value: 'pri'
+      value: 'pri',
     },
     {
       shortName: 'OU',
-      value: 'pri test'
-    }
+      value: 'pri test',
+    },
   ];
 
   cert.setSubject(attrs);
@@ -59,7 +59,7 @@ export function generateCertificate() {
   cert.setExtensions([
     {
       name: 'basicConstraints',
-      cA: true
+      cA: true,
     },
     {
       name: 'keyUsage',
@@ -67,7 +67,7 @@ export function generateCertificate() {
       digitalSignature: true,
       nonRepudiation: true,
       keyEncipherment: true,
-      dataEncipherment: true
+      dataEncipherment: true,
     },
     {
       name: 'extKeyUsage',
@@ -75,7 +75,7 @@ export function generateCertificate() {
       clientAuth: true,
       codeSigning: true,
       emailProtection: true,
-      timeStamping: true
+      timeStamping: true,
     },
     {
       name: 'nsCertType',
@@ -85,24 +85,24 @@ export function generateCertificate() {
       objsign: true,
       sslCA: true,
       emailCA: true,
-      objCA: true
+      objCA: true,
     },
     {
       name: 'subjectAltName',
       altNames: [
         {
           type: 6, // URI
-          value: 'http://pri.org/webid#me'
+          value: 'http://pri.org/webid#me',
         },
         {
           type: 7, // IP
-          ip: '127.0.0.1'
-        }
-      ]
+          ip: '127.0.0.1',
+        },
+      ],
     },
     {
-      name: 'subjectKeyIdentifier'
-    }
+      name: 'subjectKeyIdentifier',
+    },
   ]);
 
   cert.sign(keys.privateKey, forge.md.sha256.create());
@@ -116,6 +116,6 @@ export function generateCertificate() {
 
   return {
     key: privPem,
-    cert: certPem
+    cert: certPem,
   };
 }

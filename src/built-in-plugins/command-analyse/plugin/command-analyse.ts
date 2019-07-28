@@ -26,6 +26,6 @@ export const commandAnalyse = async () => {
     pipeConfig: async config => {
       config.plugins.push(new webpackBundleAnalyzer.BundleAnalyzerPlugin());
       return config;
-    }
+    },
   });
 };

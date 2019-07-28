@@ -6,9 +6,9 @@ const handleJumpPage = (pathStr: string) => {
   window.parent.postMessage(
     {
       type: 'changeRoute',
-      path: pathStr
+      path: pathStr,
     },
-    '*'
+    '*',
   );
 };
 

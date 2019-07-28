@@ -56,7 +56,7 @@ function lintIncrement(options: DefaultOptions) {
   const commitedFiles = _.compact(
     execSync('git diff --cached --name-only --diff-filter=ACM')
       .toString()
-      .split('\n')
+      .split('\n'),
   ).filter(file => {
     return file.match(/^(src|packages|docs|tests).+(ts|tsx)$/);
   });

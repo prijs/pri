@@ -11,7 +11,7 @@ export const NavComponent = React.memo(() => {
         paddingLeft: 10,
         paddingRight: 10,
         fontWeight: 'bold',
-        color: '#999'
+        color: '#999',
       }}
     >
       <span>Pri dashboard</span>

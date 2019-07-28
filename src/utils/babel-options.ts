@@ -51,17 +51,17 @@ export function getBabelOptions(options?: Partial<DefaultOptions>) {
               {
                 filetypes: {
                   '.scss': {
-                    syntax: 'postcss-scss'
+                    syntax: 'postcss-scss',
                   },
                   '.less': {
-                    syntax: 'postcss-less'
-                  }
-                }
-              }
-            ]
+                    syntax: 'postcss-less',
+                  },
+                },
+              },
+            ],
           ]
         : []),
-      ...mergedOptions.plugins
-    ]
+      ...mergedOptions.plugins,
+    ],
   };
 }

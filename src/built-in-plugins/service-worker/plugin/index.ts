@@ -12,7 +12,7 @@ pri.project.onCreateEntry(async (analyseInfo, entry) => {
           ? `
         if (navigator.serviceWorker) {
           navigator.serviceWorker.register('/sw.js', {scope: "${ensureStartWithSlash(
-            ensureEndWithSlash(pri.sourceConfig.baseHref)
+            ensureEndWithSlash(pri.sourceConfig.baseHref),
           )}"})
         }
       `
@@ -39,10 +39,10 @@ pri.project.onCreateEntry(async (analyseInfo, entry) => {
             self.addEventListener("activate", event => {
               self.clients.claim()
             });
-          `
+          `,
         ),
-        { semi: true, singleQuote: true, parser: 'babylon' }
-      )
+        { semi: true, singleQuote: true, parser: 'babylon' },
+      ),
     );
   }
 });

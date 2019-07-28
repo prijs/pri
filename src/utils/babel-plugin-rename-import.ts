@@ -45,7 +45,7 @@ export function babelPluginTransformRenameImport({ types: t }: any) {
             path.node.arguments = [source(node.arguments[0].value, state, pipeImport)];
           }
         });
-      }
-    }
+      },
+    },
   };
 }

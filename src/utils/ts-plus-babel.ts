@@ -84,8 +84,8 @@ function importRename(packageAbsoluteToRelative = false) {
         }
 
         return text;
-      }
-    }
+      },
+    },
   ];
 }
 
@@ -100,9 +100,9 @@ export const tsPlusBabel = async (watch = false, wholeProject = false) => {
       watch,
       mainDistPath,
       getBabelOptions({
-        plugins: [importRename(wholeProject)]
+        plugins: [importRename(wholeProject)],
       }),
-      wholeProject
+      wholeProject,
     ),
     buildSass(watch, moduleDistPath, wholeProject),
     mvResources(watch, moduleDistPath, wholeProject),
@@ -111,9 +111,9 @@ export const tsPlusBabel = async (watch = false, wholeProject = false) => {
       moduleDistPath,
       getBabelOptions({
         modules: false,
-        plugins: [importRename(wholeProject)]
+        plugins: [importRename(wholeProject)],
       }),
-      wholeProject
-    )
+      wholeProject,
+    ),
   ]);
 };

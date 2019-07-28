@@ -253,7 +253,7 @@ export type SetPipe = (pipeName: string, callback: PipeCallback) => void;
 
 export type IAnalyseProject = (
   projectFilesParsedPaths?: (path.ParsedPath & { isDir: boolean })[],
-  setPipe?: SetPipe
+  setPipe?: SetPipe,
 ) => any;
 
 export type ICreateEntry = (analyseInfo?: any, entry?: Entry) => void;

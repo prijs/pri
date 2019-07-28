@@ -12,13 +12,13 @@ const Root = React.memo((props: { plugins: IPlugin[] }) => {
   const [state, dispatch] = React.useReducer(ApplicationReducer, {
     plugins: [],
     status: null,
-    selectedTreeKey: null
+    selectedTreeKey: null,
   });
 
   React.useEffect(() => {
     dispatch({
       type: 'loadUiPlugins',
-      plugins: props.plugins
+      plugins: props.plugins,
     });
   }, [props.plugins]);
 

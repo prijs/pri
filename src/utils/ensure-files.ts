@@ -23,9 +23,9 @@ export const ensureFiles = async () => {
         filePath,
         ensureProjectFilesQueue.map(ensureProjectFiles => {
           return ensureProjectFiles.pipeContent;
-        })
+        }),
       );
-    })
+    }),
   );
 };
 

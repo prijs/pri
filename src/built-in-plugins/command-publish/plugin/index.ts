@@ -7,20 +7,20 @@ pri.commands.registerCommand({
   description: text.commander.publish.description,
   options: {
     tag: {
-      description: 'npm tag'
+      description: 'npm tag',
     },
     bundle: {
-      description: 'create bundle'
+      description: 'create bundle',
     },
     skipLint: {
-      description: 'Skip lint'
+      description: 'Skip lint',
     },
     semver: {
-      description: 'Semver version: patch minor major'
-    }
+      description: 'Semver version: patch minor major',
+    },
   },
   action: async (options: PublishOption) => {
     const commandPublishModule = await import('./run-publish');
     await commandPublishModule.publish(options);
-  }
+  },
 });

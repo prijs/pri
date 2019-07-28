@@ -4,6 +4,6 @@ export const getPlugin = () => {
 
 export const getConfig = () => {
   return {
-    name: 'pri-plugin-command-init'
+    name: 'pri-plugin-command-init',
   };
 };

@@ -4,6 +4,6 @@ export const getPlugin = () => {
 
 export const getConfig = () => {
   return {
-    name: 'pri-plugin-white-files'
+    name: 'pri-plugin-white-files',
   };
 };

@@ -25,8 +25,8 @@ pri.project.onAnalyseProject(files => {
         })
         .some(file => {
           return file.name === 'index';
-        })
-    }
+        }),
+    },
   };
 });
 
@@ -37,14 +37,14 @@ pri.project.onCreateEntry((analyseInfo: IResult, entry) => {
 
   const layoutEntryRelativePath = path.relative(
     path.join(pri.projectRootPath, tempJsEntryPath.dir),
-    path.join(pri.sourceRoot, layoutPath.dir, layoutPath.name)
+    path.join(pri.sourceRoot, layoutPath.dir, layoutPath.name),
   );
 
   entry.pipeAppHeader(async header => {
     return `
         ${header}
         import ${await entry.pipe.get('analyseLayoutImportName', LAYOUT)} from "${normalizePath(
-      layoutEntryRelativePath
+      layoutEntryRelativePath,
     )}"
       `;
   });

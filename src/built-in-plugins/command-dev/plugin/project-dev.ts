@@ -57,8 +57,8 @@ async function debugDashboard() {
     outFileName: 'main.[hash].js',
     htmlTemplatePath: path.join(__dirname, '../../../../template-dashboard.ejs'),
     htmlTemplateArgs: {
-      dashboardServerPort
-    }
+      dashboardServerPort,
+    },
   });
 }
 
@@ -70,7 +70,7 @@ async function debugProject() {
   const pipeConfig = async (config: webpack.Configuration) => {
     const dllHttpPath = urlJoin(
       `${globalState.sourceConfig.useHttps ? 'https' : 'http'}://127.0.0.1:${freePort}`,
-      libraryStaticPath
+      libraryStaticPath,
     );
 
     config.plugins.push(
@@ -82,8 +82,8 @@ async function debugProject() {
         document.body.appendChild(dllScript);
         function runEntry() {
       `,
-        `}`
-      )
+        `}`,
+      ),
     );
     return config;
   };
@@ -112,7 +112,7 @@ async function debugProject() {
       entryPath: dashboardEntryFilePath,
       distDir: dashboardDistDir,
       outFileName: 'main.[hash].js', // dashboard has no css file
-      pipeConfig
+      pipeConfig,
     });
     projectState.set('dashboardHash', status.hash);
   }
@@ -137,7 +137,7 @@ async function debugProject() {
     serverPort: dashboardServerPort,
     clientPort: dashboardClientPort,
     staticRootPath: path.join(pri.projectRootPath, tempPath.dir, 'static'),
-    hash: projectState.get('dashboardHash')
+    hash: projectState.get('dashboardHash'),
   });
 
   // Serve project
@@ -150,9 +150,9 @@ async function debugProject() {
     devServerPort: freePort,
     htmlTemplatePath: path.join(__dirname, '../../../../template-project.ejs'),
     htmlTemplateArgs: {
-      dashboardServerPort
+      dashboardServerPort,
     },
-    pipeConfig
+    pipeConfig,
   });
 }
 
@@ -308,8 +308,8 @@ function debugProjectPrepare(dashboardClientPort: number) {
         new webpack.DllReferencePlugin({
           context: '.',
           // eslint-disable-next-line import/no-dynamic-require,global-require
-          manifest: require(path.join(dllOutPath, dllMainfestName))
-        })
+          manifest: require(path.join(dllOutPath, dllMainfestName)),
+        }),
       );
 
       return config;
@@ -366,8 +366,8 @@ function createDashboardEntry() {
         `
       }
     `,
-      { ...prettierConfig, parser: 'typescript' }
-    )
+      { ...prettierConfig, parser: 'typescript' },
+    ),
   );
 
   return dashboardEntryFilePath;

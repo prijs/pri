@@ -7,5 +7,5 @@ pri.commands.registerCommand({
   action: async () => {
     const commandPreviewModule = await import('./run-preview');
     await commandPreviewModule.CommandPreview();
-  }
+  },
 });

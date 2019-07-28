@@ -50,7 +50,7 @@ function checkDepsLevel(illegalPrefixs: string[]) {
   const allDeps = {
     ..._.get(globalState.projectPackageJson, 'devDependencies', {}),
     ..._.get(globalState.projectPackageJson, 'dependencies', {}),
-    ..._.get(globalState.projectPackageJson, 'peerDependencies', {})
+    ..._.get(globalState.projectPackageJson, 'peerDependencies', {}),
   };
 
   Object.keys(allDeps).forEach(depName => {

@@ -29,7 +29,7 @@ const stats = {
   entrypoints: false,
   hash: false,
   colors: true,
-  children: false
+  children: false,
 };
 
 export const runWebpackDevServer = async (opts: IOptions<IExtraOptions>) => {
@@ -53,20 +53,20 @@ export const runWebpackDevServer = async (opts: IOptions<IExtraOptions>) => {
     },
     compress: true,
     ...(!opts.jsOnly && {
-      historyApiFallback: { rewrites: [{ from: '/', to: normalizePath(path.join(opts.publicPath, 'index.html')) }] }
+      historyApiFallback: { rewrites: [{ from: '/', to: normalizePath(path.join(opts.publicPath, 'index.html')) }] },
     }),
     https: globalState.sourceConfig.useHttps,
     overlay: { warnings: true, errors: true },
     stats,
     watchOptions: {
       ...(!globalState.sourceConfig.watchNodeModules && {
-        ignored: /node_modules/
-      })
+        ignored: /node_modules/,
+      }),
     },
     headers: { 'Access-Control-Allow-Origin': '*' },
     clientLogLevel: 'warning',
     disableHostCheck: true,
-    port: opts.devServerPort
+    port: opts.devServerPort,
   } as any;
 
   WebpackDevServer.addDevServerEntrypoints(webpackConfig, webpackDevServerConfig);
@@ -78,7 +78,7 @@ export const runWebpackDevServer = async (opts: IOptions<IExtraOptions>) => {
     let devUrl: string = null;
     const localSuggestUrl = urlJoin(
       `${globalState.sourceConfig.useHttps ? 'https' : 'http'}://localhost:${opts.devServerPort}`,
-      globalState.sourceConfig.baseHref
+      globalState.sourceConfig.baseHref,
     );
 
     if (opts.devUrl === 'localhost') {

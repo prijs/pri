@@ -50,13 +50,13 @@ const commonComponentPackageJson = {
     analyse: 'pri analyse',
     publish: 'pri publish',
     test: 'pri test',
-    format: `eslint --fix ${eslintParam}`
+    format: `eslint --fix ${eslintParam}`,
   },
   husky: {
     hooks: {
-      'pre-commit': 'npm test -- --package root'
-    }
-  }
+      'pre-commit': 'npm test -- --package root',
+    },
+  },
 };
 
 function ensureDeclares() {
@@ -92,26 +92,26 @@ function ensureTsconfig() {
                   return {
                     ...obj,
                     [eachPackage.packageJson.name]: [
-                      path.join(path.relative(pri.projectRootPath, eachPackage.rootPath), 'src')
-                    ]
+                      path.join(path.relative(pri.projectRootPath, eachPackage.rootPath), 'src'),
+                    ],
                   };
                 }
                 return obj;
-              }, {})
-            }
+              }, {}),
+            },
           },
           include: [
             `${tempPath.dir}/**/*`,
             ...transferToAllAbsolutePaths(srcPath.dir).map(filePath => {
               return `${path.relative(pri.projectRootPath, filePath)}/**/*`;
-            })
+            }),
           ],
-          exclude: ['node_modules', globalState.projectConfig.distDir]
+          exclude: ['node_modules', globalState.projectConfig.distDir],
         },
         null,
-        2
+        2,
       )}\n`; // Make sure ./src structor. # https://github.com/Microsoft/TypeScript/issues/5134
-    }
+    },
   });
 }
 
@@ -122,7 +122,7 @@ function ensureEslint() {
       const eslintConfig = await fs.readFile(path.join(__dirname, '../../../../.eslintrc'));
 
       return `${eslintConfig.toString()}\n`;
-    }
+    },
   });
 }
 
@@ -139,16 +139,16 @@ function ensureVscode() {
             'javascript',
             'javascriptreact',
             { language: 'typescript', autoFix: true },
-            { language: 'typescriptreact', autoFix: true }
+            { language: 'typescriptreact', autoFix: true },
           ],
           'eslint.provideLintTask': true,
           'typescript.format.enable': false,
-          'javascript.format.enable': false
+          'javascript.format.enable': false,
         }),
         null,
-        2
+        2,
       )}\n`;
-    }
+    },
   });
 
   pri.project.addProjectFiles({
@@ -160,13 +160,13 @@ function ensureVscode() {
             'dbaeumer.vscode-eslint',
             'eamodio.gitlens',
             'zhuangtongfa.material-theme',
-            'jasonhzq.vscode-pont'
-          ]
+            'jasonhzq.vscode-pont',
+          ],
         }),
         null,
-        2
+        2,
       )}\n`;
-    }
+    },
   });
 }
 
@@ -181,7 +181,7 @@ function ensureGitignore() {
         return `/${name}`;
       });
       return _.union(values, gitIgnoresInRoot).join('\n');
-    }
+    },
   });
 }
 
@@ -197,7 +197,7 @@ function ensureNpmignore() {
       });
 
       return _.union(values, npmIgnoresInRoot).join('\n');
-    }
+    },
   });
 }
 
@@ -206,7 +206,7 @@ function ensureNpmrc() {
     fileName: path.join(pri.projectRootPath, '.npmrc'),
     pipeContent: () => {
       return `package-lock=${globalState.projectConfig.packageLock ? 'true' : 'false'}`;
-    }
+    },
   });
 }
 
@@ -319,7 +319,7 @@ function ensureRootPackageJson() {
       }
 
       return `${JSON.stringify(_.merge({}, prevJson, commonComponentPackageJson), null, 2)}\n`;
-    }
+    },
   });
 }
 
@@ -329,12 +329,12 @@ function ensurePriConfig() {
     pipeContent: (prev: string) => {
       return `${JSON.stringify(
         _.merge({}, safeJsonParse(prev), {
-          type: pri.sourceConfig.type
+          type: pri.sourceConfig.type,
         }),
         null,
-        2
+        2,
       )}\n`;
-    }
+    },
   });
 }
 

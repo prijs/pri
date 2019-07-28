@@ -17,7 +17,7 @@ import {
   IWhiteFile,
   CommandRegister,
   ProjectType,
-  IDevDllList
+  IDevDllList,
 } from './define';
 
 import * as pluginClientSsr from '../built-in-plugins/client-ssr';
@@ -120,7 +120,7 @@ export const loadPlugins = async (pluginIncludeRoots: string[] = []) => {
     pluginProjectAnalyseLayouts,
     pluginProjectAnalyseNotFound,
     pluginProjectAnalysePages,
-    pluginServiceWorker
+    pluginServiceWorker,
   ];
   builtInPlugins.forEach(eachPlugin => {
     loadedPlugins.add(eachPlugin);
@@ -131,7 +131,7 @@ export const loadPlugins = async (pluginIncludeRoots: string[] = []) => {
       globalState.projectRootPath,
       pluginIncludeRoots.concat(globalState.projectRootPath).map(pluginIncludeRoot => {
         return path.join(pluginIncludeRoot, 'package.json');
-      })
+      }),
     );
   }
 
@@ -181,7 +181,7 @@ function getPriPlugins(pluginRootPath: string, packageJsonPaths: string[]) {
         : subPackageName;
 
       const subPackageRealEntryFilePath = require.resolve(subPackageRealEntry, {
-        paths: [__dirname, pluginRootPath]
+        paths: [__dirname, pluginRootPath],
       });
 
       const subPackageAbsolutePath = !subPackageVersion.startsWith('file:')
@@ -225,7 +225,7 @@ export function getPluginsByOrder() {
           })
         ) {
           logFatal(
-            `${loadedPlugin.getConfig().name}: No dependent "${depPluginName}"\nTry: npm install ${depPluginName}.`
+            `${loadedPlugin.getConfig().name}: No dependent "${depPluginName}"\nTry: npm install ${depPluginName}.`,
           );
         }
       });
@@ -301,6 +301,6 @@ function getDependencesByPackageJsonPath(packageJsonPath: string) {
 
   return {
     ..._.get(packageJson, 'dependencies', {}),
-    ..._.get(packageJson, 'devDependencies', {})
+    ..._.get(packageJson, 'devDependencies', {}),
   };
 }

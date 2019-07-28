@@ -24,9 +24,9 @@ function ensureEntryFile() {
           import * as React from 'react'
           export default () => <div>My Component</div>
         `,
-        { ...prettierConfig, parser: 'typescript' }
+        { ...prettierConfig, parser: 'typescript' },
       );
-    }
+    },
   });
 }
 
@@ -38,7 +38,7 @@ function ensureDocs() {
 
     const relativeToEntryPath = path.relative(
       path.parse(basicDocsPath).dir,
-      path.join(pri.sourceRoot, srcPath.dir, 'index')
+      path.join(pri.sourceRoot, srcPath.dir, 'index'),
     );
 
     pri.project.addProjectFiles({
@@ -56,9 +56,9 @@ function ensureDocs() {
   
             export default () => <Component />
           `,
-          { ...prettierConfig, parser: 'typescript' }
+          { ...prettierConfig, parser: 'typescript' },
         );
-      }
+      },
     });
   }
 }

@@ -11,7 +11,7 @@ export const runTest = async () => {
       findNearestNodemodulesFile('/.bin/jest'),
       `--testRegex "${path.join(pri.sourceRoot, testsPath.dir)}/.*\\.tsx?$"`,
       '--moduleFileExtensions ts tsx js jsx',
-      '--coverage'
+      '--coverage',
     ]
       .map(each => {
         return each.trim();
@@ -19,13 +19,13 @@ export const runTest = async () => {
       .join(' '),
     {
       stdio: 'inherit',
-      cwd: pri.projectRootPath
-    }
+      cwd: pri.projectRootPath,
+    },
   );
 
   // Open test html in brower
   logText(
-    `Open this url to see code coverage: file://${path.join(pri.projectRootPath, 'coverage/lcov-report/index.html')}`
+    `Open this url to see code coverage: file://${path.join(pri.projectRootPath, 'coverage/lcov-report/index.html')}`,
   );
 
   process.exit(0);

@@ -16,7 +16,7 @@ const stats = {
   version: false,
   modules: false,
   entrypoints: false,
-  hash: false
+  hash: false,
 };
 
 export default (opts: IOptions) => {
@@ -36,32 +36,32 @@ export default (opts: IOptions) => {
           'react-loadable',
           'react-router',
           'history',
-          `${PRI_PACKAGE_NAME}/client`
-        ]
-      )
+          `${PRI_PACKAGE_NAME}/client`,
+        ],
+      ),
     },
 
     output: {
       filename: opts.dllFileName,
       path: opts.dllOutPath,
-      library: 'library'
+      library: 'library',
     },
 
     plugins: [
       new webpack.DllPlugin({
         path: path.join(opts.dllOutPath, opts.dllMainfestName),
-        name: 'library'
+        name: 'library',
       }),
-      new WebpackBar()
+      new WebpackBar(),
     ],
 
     module: {
       rules: [
         {
           test: /\.css/,
-          use: ['style-loader', 'css-loader']
-        }
-      ]
+          use: ['style-loader', 'css-loader'],
+        },
+      ],
     },
 
     resolve: {
@@ -69,9 +69,9 @@ export default (opts: IOptions) => {
         // From project node_modules
         path.join(globalState.projectRootPath, 'node_modules'),
         // Self node_modules
-        path.join(__dirname, '../../../node_modules')
+        path.join(__dirname, '../../../node_modules'),
       ],
-      extensions: ['.js', '.jsx', '.tsx', '.ts', '.scss', '.less', '.css']
+      extensions: ['.js', '.jsx', '.tsx', '.ts', '.scss', '.less', '.css'],
     },
 
     resolveLoader: {
@@ -79,11 +79,11 @@ export default (opts: IOptions) => {
         // From project node_modules
         path.join(globalState.projectRootPath, 'node_modules'),
         // Self node_modules
-        path.join(__dirname, '../../../node_modules')
-      ]
+        path.join(__dirname, '../../../node_modules'),
+      ],
     },
 
-    stats
+    stats,
   };
 
   return result;

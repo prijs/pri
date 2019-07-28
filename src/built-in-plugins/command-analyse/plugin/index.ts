@@ -6,5 +6,5 @@ pri.commands.registerCommand({
   action: async () => {
     const commandAnalyseModule = await import('./command-analyse');
     await commandAnalyseModule.commandAnalyse();
-  }
+  },
 });

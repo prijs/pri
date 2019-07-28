@@ -40,7 +40,7 @@ export const StructComponent = React.memo(() => {
         onClick={() => {
           dispatch({
             type: 'setSelectedTreeKey',
-            selectedTreeKey: 'routes'
+            selectedTreeKey: 'routes',
           });
         }}
       >
@@ -51,7 +51,7 @@ export const StructComponent = React.memo(() => {
         onClick={() => {
           dispatch({
             type: 'setSelectedTreeKey',
-            selectedTreeKey: 'layout'
+            selectedTreeKey: 'layout',
           });
         }}
       >
@@ -67,7 +67,7 @@ export const StructComponent = React.memo(() => {
         onClick={() => {
           dispatch({
             type: 'setSelectedTreeKey',
-            selectedTreeKey: '404'
+            selectedTreeKey: '404',
           });
         }}
       >
@@ -83,7 +83,7 @@ export const StructComponent = React.memo(() => {
         onClick={() => {
           dispatch({
             type: 'setSelectedTreeKey',
-            selectedTreeKey: 'config'
+            selectedTreeKey: 'config',
           });
         }}
       >

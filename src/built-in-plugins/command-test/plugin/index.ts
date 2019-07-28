@@ -19,12 +19,12 @@ pri.commands.registerCommand({
     await pri.project.lint({
       lintAll: false,
       needFix: false,
-      showBreakError: true
+      showBreakError: true,
     });
     await pri.project.ensureProjectFiles();
     await pri.project.checkProjectFiles();
 
     const runTestModule = await import('./run-test');
     runTestModule.runTest();
-  }
+  },
 });

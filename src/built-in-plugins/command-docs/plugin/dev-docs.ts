@@ -33,7 +33,7 @@ export async function devDocs() {
   chokidar
     .watch(path.join(pri.sourceRoot, docsPath.dir, '/**'), {
       ignored: /(^|[/\\])\../,
-      ignoreInitial: true
+      ignoreInitial: true,
     })
     .on('add', async () => {
       await analyseProject();
@@ -67,8 +67,8 @@ export async function devDocs() {
         </style>
       `,
       appendBody: `
-          `
-    }
+          `,
+    },
   });
 }
 
@@ -107,8 +107,8 @@ function prepare(docsEntryPath: string) {
           })
           .map(file => {
             return { file };
-          })
-      }
+          }),
+      },
     };
 
     // Create entry file for docs
@@ -171,8 +171,8 @@ function prepare(docsEntryPath: string) {
     `,
       {
         ...prettierConfig,
-        parser: 'typescript'
-      }
+        parser: 'typescript',
+      },
     );
 
     fs.outputFileSync(docsEntryPath, docsEntryContent);

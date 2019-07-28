@@ -28,8 +28,8 @@ export async function addPage(options: { path: string }) {
         </div>
       )
     `,
-      { ...prettierConfig, parser: 'typescript' }
-    )
+      { ...prettierConfig, parser: 'typescript' },
+    ),
   );
 }
 
@@ -54,8 +54,8 @@ export async function createLayout() {
         </div>
       )
   `,
-      { ...prettierConfig, parser: 'typescript' }
-    )
+      { ...prettierConfig, parser: 'typescript' },
+    ),
   );
 }
 
@@ -80,8 +80,8 @@ export async function create404() {
         </div>
       )
   `,
-      { ...prettierConfig, parser: 'typescript' }
-    )
+      { ...prettierConfig, parser: 'typescript' },
+    ),
   );
 }
 

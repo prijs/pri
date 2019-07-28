@@ -26,7 +26,7 @@ pri.project.onAnalyseProject(files => {
   });
 
   return {
-    projectAnalyseNotFound: { hasNotFound: notFoundFiles.length === 1 }
+    projectAnalyseNotFound: { hasNotFound: notFoundFiles.length === 1 },
   };
 });
 
@@ -41,8 +41,8 @@ pri.project.onCreateEntry((analyseInfo: IResult, entry) => {
         import NotFoundComponent from "${normalizePath(
           path.relative(
             path.join(pri.projectRootPath, tempPath.dir),
-            path.join(pri.sourceRoot, path.join(notFoundPath.dir, notFoundPath.name))
-          )
+            path.join(pri.sourceRoot, path.join(notFoundPath.dir, notFoundPath.name)),
+          ),
         )}"
       `;
   });

@@ -3,5 +3,5 @@ export const prettierConfig = {
   semi: true,
   singleQuote: true,
   tabWidth: 2,
-  useTabs: false
+  useTabs: false,
 };

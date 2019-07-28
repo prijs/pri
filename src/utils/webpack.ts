@@ -14,7 +14,7 @@ const stats = {
   entrypoints: false,
   hash: false,
   colors: true,
-  children: false
+  children: false,
 };
 
 export const runWebpack = async (opts: IOptions<IExtraOptions>): Promise<any> => {

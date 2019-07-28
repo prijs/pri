@@ -17,7 +17,7 @@ const stats = {
   entrypoints: false,
   hash: false,
   colors: true,
-  children: false
+  children: false,
 };
 
 interface IOptions {

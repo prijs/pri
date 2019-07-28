@@ -7,5 +7,5 @@ pri.commands.registerCommand({
   action: async () => {
     const runInitModule = await import('./run-init');
     await runInitModule.runInit();
-  }
+  },
 });

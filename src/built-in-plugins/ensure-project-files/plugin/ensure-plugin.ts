@@ -28,7 +28,7 @@ function ensureEntry() {
           name: "pri-plugin-${pri.projectPackageJson.name}"
         });
       `);
-    }
+    },
   });
 
   pri.project.addProjectFiles({
@@ -86,9 +86,9 @@ function ensureEntry() {
           })
         }
       `,
-        { ...prettierConfig, parser: 'typescript' }
+        { ...prettierConfig, parser: 'typescript' },
       );
-    }
+    },
   });
 }
 
@@ -110,8 +110,8 @@ function ensureTest() {
             expect(true).toBe(true);
           });
           `,
-        { ...prettierConfig, parser: 'typescript' }
+        { ...prettierConfig, parser: 'typescript' },
       );
-    }
+    },
   });
 }

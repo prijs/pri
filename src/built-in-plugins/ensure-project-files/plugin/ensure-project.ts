@@ -35,9 +35,9 @@ function ensureProjectEntry() {
               )
             }
           `,
-        { ...prettierConfig, parser: 'typescript' }
+        { ...prettierConfig, parser: 'typescript' },
       );
-    }
+    },
   });
 }
 
@@ -56,8 +56,8 @@ export function ensureTest() {
             expect(true).toBe(true)
           })
         `,
-        { ...prettierConfig, parser: 'typescript' }
+        { ...prettierConfig, parser: 'typescript' },
       );
-    }
+    },
   });
 }

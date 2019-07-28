@@ -87,7 +87,7 @@ export class Entry {
       import * as ReactDOM from "react-dom"
       import Loadable from "react-loadable"
       import { Redirect, Route, Router, Switch, HashRouter } from "react-router-dom"
-    `
+    `,
     );
   }
 
@@ -96,7 +96,7 @@ export class Entry {
       'appBody',
       `
       export const pageLoadableMap = new Map<string, any>()
-    `
+    `,
     );
   }
 
@@ -117,7 +117,7 @@ export class Entry {
       }
 
       export default ${await pipe.get('appExportName', 'App')}
-    `
+    `,
     );
   }
 
@@ -141,7 +141,7 @@ export class Entry {
           ${await this.getAppRoutes()}
         </Switch>
       </${routerName}>
-    `
+    `,
     );
   }
 
@@ -159,7 +159,7 @@ export class Entry {
       import App, { pageLoadableMap } from "./app"
 
       const ROOT_ID = "root"
-    `
+    `,
     );
   }
 
@@ -184,7 +184,7 @@ export class Entry {
         Loadable.preloadAll()
         ReactDOM.render(${await pipe.get('entryRenderApp', '<App />')}, document.getElementById(ROOT_ID))
       }
-    `
+    `,
     );
   }
 
@@ -204,7 +204,7 @@ export class Entry {
       } else {
         (window as any)[tag] = priStore;
       }
-    `
+    `,
     );
   }
 }
@@ -235,8 +235,8 @@ export async function createEntry() {
     entryPath,
     prettier.format(entry, {
       ...prettierConfig,
-      parser: 'typescript'
-    })
+      parser: 'typescript',
+    }),
   );
 
   return entryPath;

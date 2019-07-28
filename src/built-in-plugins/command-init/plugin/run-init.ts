@@ -78,8 +78,8 @@ async function selectProjectType(message: string): Promise<ProjectType> {
         message,
         name: 'projectType',
         type: 'list',
-        choices: ['Project', 'Component', 'Pri Plugin']
-      }
+        choices: ['Project', 'Component', 'Pri Plugin'],
+      },
     ]);
 
     switch (inquirerInfo.projectType) {

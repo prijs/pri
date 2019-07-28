@@ -53,7 +53,7 @@ pri.project.onAnalyseProject(files => {
           .map(file => {
             const relativePathWithoutIndex = path.relative(pri.projectRootPath, file.dir);
             const routerPath = normalizePath(
-              `/${path.relative(path.join(pri.sourceRoot, pagesPath.dir), relativePathWithoutIndex)}`
+              `/${path.relative(path.join(pri.sourceRoot, pagesPath.dir), relativePathWithoutIndex)}`,
             );
             const chunkName = _.camelCase(routerPath) || 'index';
 
@@ -64,10 +64,10 @@ pri.project.onAnalyseProject(files => {
               routerPath,
               file,
               chunkName,
-              componentName
+              componentName,
             };
-          })
-      }
+          }),
+      },
     };
   }
 
@@ -109,7 +109,7 @@ pri.project.onAnalyseProject(files => {
 
             const relativePageFilePath = path.relative(
               pri.projectRootPath,
-              `${componentFile.dir}/${componentFile.name}`
+              `${componentFile.dir}/${componentFile.name}`,
             );
             const componentName = safeName(relativePageFilePath) + md5(relativePageFilePath).slice(0, 5);
 
@@ -118,18 +118,18 @@ pri.project.onAnalyseProject(files => {
               file: componentFile,
               chunkName: chunkName + index,
               componentName: componentName + index,
-              redirect: route.redirect
+              redirect: route.redirect,
             };
           }
           return {
             routerPath: route.path,
-            redirect: route.redirect
+            redirect: route.redirect,
           };
         })
         .filter(route => {
           return route !== null;
-        })
-    }
+        }),
+    },
   };
 });
 
@@ -145,7 +145,7 @@ pri.project.onCreateEntry((analyseInfo: IResult, entry) => {
             .filter(page => !!page.file)
             .map(async page => {
               const pageRequirePath = normalizePath(
-                path.relative(path.join(pri.projectRootPath, tempPath.dir), path.join(page.file.dir, page.file.name))
+                path.relative(path.join(pri.projectRootPath, tempPath.dir), path.join(page.file.dir, page.file.name)),
               );
 
               const importCode = `import(/* webpackChunkName: "${
@@ -163,7 +163,7 @@ pri.project.onCreateEntry((analyseInfo: IResult, entry) => {
                 loading: (): any => null
               })\n
             `;
-            })
+            }),
         )).join('\n')}
           ${entryComponent}
       `;
@@ -198,7 +198,7 @@ pri.project.onCreateEntry((analyseInfo: IResult, entry) => {
               <Redirect from="${page.routerPath}" to="${page.redirect}" />\n
             `;
             }
-          })
+          }),
         )).join('\n')}
         ${renderRoutes}
       `;

@@ -27,7 +27,7 @@ export const commandBundle = async (opts: IOpts = {}) => {
         }, Promise.resolve(config));
 
         return newConfig;
-      }
+      },
     });
   } else {
     const freePort = await portfinder.getPortPromise({ port: pri.sourceConfig.devPort });
@@ -49,7 +49,7 @@ export const commandBundle = async (opts: IOpts = {}) => {
         }, Promise.resolve(config));
 
         return newConfig;
-      }
+      },
     });
   }
 };
@@ -61,7 +61,7 @@ export const prepareBundle = async (opts: IOpts) => {
     await pri.project.lint({
       lintAll: true,
       needFix: false,
-      showBreakError: true
+      showBreakError: true,
     });
   }
 

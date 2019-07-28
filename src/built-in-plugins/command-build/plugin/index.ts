@@ -19,15 +19,15 @@ pri.commands.registerCommand({
   options: {
     cloud: {
       alias: 'c',
-      description: 'Cloud build tag'
+      description: 'Cloud build tag',
     },
     publicPath: {
       alias: 'p',
-      description: 'Rewrite publicPath'
+      description: 'Rewrite publicPath',
     },
     skipLint: {
-      description: 'Skip lint'
-    }
+      description: 'Skip lint',
+    },
   },
   description: text.commander.build.description,
   action: async (options: IOpts) => {
@@ -51,5 +51,5 @@ pri.commands.registerCommand({
       }
       default:
     }
-  }
+  },
 });

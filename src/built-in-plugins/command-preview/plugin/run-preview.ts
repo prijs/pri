@@ -34,9 +34,9 @@ export const CommandPreview = async () => {
         gzip: true,
         setHeaders: (res: any) => {
           res.setHeader('Access-Control-Allow-Origin', '*');
-        }
-      })
-    )
+        },
+      }),
+    ),
   );
 
   // const cssPath = path.join(distDir, 'main.css');
@@ -57,8 +57,8 @@ export const CommandPreview = async () => {
   } else {
     open(
       ensureEndWithSlash(
-        urlJoin(`${pri.sourceConfig.useHttps ? 'https' : 'http'}://localhost:${freePort}`, pri.sourceConfig.baseHref)
-      )
+        urlJoin(`${pri.sourceConfig.useHttps ? 'https' : 'http'}://localhost:${freePort}`, pri.sourceConfig.baseHref),
+      ),
     );
   }
 };

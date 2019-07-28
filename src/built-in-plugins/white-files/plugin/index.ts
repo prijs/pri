@@ -13,7 +13,7 @@ import {
   utilPath,
   packagesPath,
   expandPath,
-  typingsPath
+  typingsPath,
 } from '../../../utils/structor-config';
 import { addWhiteFilesByProjectType } from '../../../utils/white-file-helper';
 import { transferToAllAbsolutePaths } from '../../../utils/global-state';
@@ -24,7 +24,7 @@ const whiteList = [
   docsPath.dir,
   '.git',
   `src${path.sep}components`,
-  ...(pri.projectConfig.packageLock ? ['package-lock.json', 'yarn.lock'] : [])
+  ...(pri.projectConfig.packageLock ? ['package-lock.json', 'yarn.lock'] : []),
 ];
 
 const allIgnores = _.union(gitIgnores, npmIgnores).concat(whiteList);
@@ -32,7 +32,7 @@ const allIgnores = _.union(gitIgnores, npmIgnores).concat(whiteList);
 const allAbsoluteIgnores = _.flatten(
   allIgnores.map(fileName => {
     return transferToAllAbsolutePaths(fileName);
-  })
+  }),
 );
 
 // Add ignore file/dir to whiteRules
