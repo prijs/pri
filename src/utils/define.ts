@@ -46,6 +46,7 @@ export interface PackageInfo {
 interface CustomRoute {
   path: string;
   component: string;
+  redirect?: string;
 }
 
 export type PipeCallback = (text: string) => string | Promise<string>;

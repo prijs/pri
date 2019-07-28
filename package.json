@@ -1,6 +1,6 @@
 {
   "name": "pri",
-  "version": "3.2.7-beta15",
+  "version": "3.2.7-beta16",
   "types": "src/node/index.ts",
   "main": "built/node/index.js",
   "scripts": {
@@ -88,6 +88,7 @@
     "gulp-babel": "^8.0.0",
     "gulp-less": "^4.0.1",
     "gulp-sass": "^4.0.2",
+    "gulp-sourcemaps": "^2.6.5",
     "gulp-watch": "^5.0.1",
     "highlight.js": "9.15.8",
     "html-webpack-plugin": "3.2.0",

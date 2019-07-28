@@ -243,7 +243,7 @@ function ensureRootPackageJson() {
       }
 
       // Mv pri-plugins to devDeps except plugin
-      if (pri.sourceConfig.type === 'plugin') {
+      if (pri.projectConfig.type === 'plugin') {
         prevJson = mvPriPlugins(prevJson, 'devDependencies', 'dependencies');
         prevJson = mvPriPlugins(prevJson, 'peerDependencies', 'dependencies');
       } else {
@@ -251,7 +251,7 @@ function ensureRootPackageJson() {
         prevJson = mvPriPlugins(prevJson, 'peerDependencies', 'devDependencies');
       }
 
-      switch (pri.sourceConfig.type) {
+      switch (pri.projectConfig.type) {
         case 'project':
           {
             // Move pri from devDeps to deps
@@ -294,7 +294,7 @@ function ensureRootPackageJson() {
         default:
       }
 
-      switch (pri.sourceConfig.type) {
+      switch (pri.projectConfig.type) {
         case 'project':
         case 'plugin':
           _.set(prevJson, 'main', `${pri.projectConfig.distDir}/${pri.projectConfig.outFileName}`);

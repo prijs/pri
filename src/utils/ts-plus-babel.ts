@@ -2,6 +2,7 @@ import * as gulp from 'gulp';
 import * as gulpBabel from 'gulp-babel';
 import * as gulpSass from 'gulp-sass';
 import * as gulpWatch from 'gulp-watch';
+import * as gulpSourcemaps from 'gulp-sourcemaps';
 import * as path from 'path';
 import { pri, srcPath } from '../node';
 import { getBabelOptions } from './babel-options';
@@ -22,7 +23,9 @@ const buildTs = (watch: boolean, outdir: string, babelOptions: any, wholeProject
 
   return new Promise((resolve, reject) => {
     getGulpByWatch(watch, targetPath)
+      .pipe(gulpSourcemaps.init())
       .pipe(gulpBabel(babelOptions))
+      .pipe(gulpSourcemaps.write())
       .on('error', reject)
       .pipe(gulp.dest(outdir))
       .on('end', resolve);

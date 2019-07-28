@@ -6,14 +6,16 @@ import { md5 } from '../../../utils/md5';
 import { pagesPath, tempPath } from '../../../utils/structor-config';
 import { transferToAllAbsolutePaths } from '../../../utils/global-state';
 import { matchStructor } from '../../../utils/functional';
+import { logFatal } from '../../../utils/log';
 
 interface IResult {
   projectAnalysePages: {
     pages: {
       routerPath: string;
-      file: path.ParsedPath;
-      chunkName: string;
-      componentName: string;
+      file?: path.ParsedPath;
+      chunkName?: string;
+      componentName?: string;
+      redirect?: string;
     }[];
   };
 }
@@ -73,34 +75,55 @@ pri.project.onAnalyseProject(files => {
     projectAnalysePages: {
       pages: pri.sourceConfig.routes
         .filter(route => {
-          return route.component && route.path;
-        })
-        .map((route, index) => {
-          const componentFile = files.find(file => {
-            const relativePath = path.relative(pri.projectRootPath, path.join(file.dir, file.name));
-            return (
-              (route.component === relativePath && !file.isDir && ['.tsx', '.md', '.mdx'].indexOf(file.ext) > -1) ||
-              (path.join(route.component, 'index') === relativePath &&
-                !file.isDir &&
-                ['.tsx', '.md', '.mdx'].indexOf(file.ext) > -1)
-            );
-          });
-
-          if (!componentFile) {
-            return null;
+          if (route.redirect && route.component) {
+            logFatal(`route "redirect" and "component" are mutually exclusive.`);
           }
 
-          const routerPath = route.path;
-          const chunkName = _.camelCase(routerPath) || 'index';
+          if (route.path && route.component) {
+            return true;
+          }
 
-          const relativePageFilePath = path.relative(pri.projectRootPath, `${componentFile.dir}/${componentFile.name}`);
-          const componentName = safeName(relativePageFilePath) + md5(relativePageFilePath).slice(0, 5);
+          if (route.path && route.redirect) {
+            return true;
+          }
+          return false;
+        })
+        .map((route, index) => {
+          if (route.component) {
+            const componentFile = files.find(file => {
+              const relativePath = path.relative(pri.projectRootPath, path.join(file.dir, file.name));
+              return (
+                (route.component === relativePath && !file.isDir && ['.tsx', '.md', '.mdx'].indexOf(file.ext) > -1) ||
+                (path.join(route.component, 'index') === relativePath &&
+                  !file.isDir &&
+                  ['.tsx', '.md', '.mdx'].indexOf(file.ext) > -1)
+              );
+            });
 
+            if (!componentFile) {
+              return null;
+            }
+
+            const routerPath = route.path;
+            const chunkName = _.camelCase(routerPath) || 'index';
+
+            const relativePageFilePath = path.relative(
+              pri.projectRootPath,
+              `${componentFile.dir}/${componentFile.name}`
+            );
+            const componentName = safeName(relativePageFilePath) + md5(relativePageFilePath).slice(0, 5);
+
+            return {
+              routerPath,
+              file: componentFile,
+              chunkName: chunkName + index,
+              componentName: componentName + index,
+              redirect: route.redirect
+            };
+          }
           return {
-            routerPath,
-            file: componentFile,
-            chunkName: chunkName + index,
-            componentName: componentName + index
+            routerPath: route.path,
+            redirect: route.redirect
           };
         })
         .filter(route => {
@@ -118,25 +141,29 @@ pri.project.onCreateEntry((analyseInfo: IResult, entry) => {
   entry.pipeAppComponent(async entryComponent => {
     return `
         ${(await Promise.all(
-          analyseInfo.projectAnalysePages.pages.map(async page => {
-            const pageRequirePath = normalizePath(
-              path.relative(path.join(pri.projectRootPath, tempPath.dir), path.join(page.file.dir, page.file.name))
-            );
+          analyseInfo.projectAnalysePages.pages
+            .filter(page => !!page.file)
+            .map(async page => {
+              const pageRequirePath = normalizePath(
+                path.relative(path.join(pri.projectRootPath, tempPath.dir), path.join(page.file.dir, page.file.name))
+              );
 
-            const importCode = `import(/* webpackChunkName: "${page.chunkName}" */ "${pageRequirePath}").then(code => {
+              const importCode = `import(/* webpackChunkName: "${
+                page.chunkName
+              }" */ "${pageRequirePath}").then(code => {
                 const filePath = "${path.format(page.file)}"
 
                 ${await entry.pipe.get('afterPageLoad', '')}
                 ${await entry.pipe.get('returnPageInstance', 'return code.default')}
               })`;
 
-            return `
+              return `
               const ${page.componentName} = Loadable({
                 loader: () => ${importCode},
                 loading: (): any => null
               })\n
             `;
-          })
+            })
         )).join('\n')}
           ${entryComponent}
       `;
@@ -159,11 +186,18 @@ pri.project.onCreateEntry((analyseInfo: IResult, entry) => {
     return `
         ${(await Promise.all(
           analyseInfo.projectAnalysePages.pages.map(async page => {
-            return `
+            if (page.file) {
+              return `
               <${await entry.pipe.get('commonRoute', 'Route')} exact path="${page.routerPath}" component={${
-              page.componentName
-            }} />\n
+                page.componentName
+              }} />\n
             `;
+            }
+            if (page.redirect) {
+              return `
+              <Redirect from="${page.routerPath}" to="${page.redirect}" />\n
+            `;
+            }
           })
         )).join('\n')}
         ${renderRoutes}

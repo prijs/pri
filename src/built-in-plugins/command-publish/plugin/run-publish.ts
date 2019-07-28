@@ -18,44 +18,44 @@ import { getMonoAndNpmDepsOnce, DepMap } from '../../../utils/packages';
 import { ProjectConfig } from '../../../utils/define';
 
 export const publish = async (options: PublishOption) => {
-  await pri.project.ensureProjectFiles();
-  await pri.project.checkProjectFiles();
-
-  if (!options.skipLint) {
-    await pri.project.lint({
-      lintAll: true,
-      needFix: false,
-      showBreakError: true
-    });
-  }
-
-  const { depMonoPackages, depMap } = await getMonoAndNpmDepsOnce();
-
-  if (depMonoPackages.length > 0) {
-    const installAllPrompt = await inquirer.prompt([
-      {
-        message: `${pri.selectedSourceType} depends on monorepo ${depMonoPackages
-          .map(eachPackage => `"${eachPackage.name}"`)
-          .join(', ')} \n Do you want to publish these packages first?`,
-        name: 'installAll',
-        type: 'confirm'
-      }
-    ]);
-
-    await buildDeclaration();
-
-    if (installAllPrompt.installAll) {
-      for (const eachPackage of depMonoPackages) {
-        await publishByPackageName(eachPackage.name, options, depMap);
-      }
-    }
-  } else {
-    await buildDeclaration();
-  }
-
   switch (pri.sourceConfig.type) {
     case 'component':
     case 'plugin': {
+      await pri.project.ensureProjectFiles();
+      await pri.project.checkProjectFiles();
+
+      if (!options.skipLint) {
+        await pri.project.lint({
+          lintAll: true,
+          needFix: false,
+          showBreakError: true
+        });
+      }
+
+      const { depMonoPackages, depMap } = await getMonoAndNpmDepsOnce();
+
+      if (depMonoPackages.length > 0) {
+        const installAllPrompt = await inquirer.prompt([
+          {
+            message: `${pri.selectedSourceType} depends on monorepo ${depMonoPackages
+              .map(eachPackage => `"${eachPackage.name}"`)
+              .join(', ')} \n Do you want to publish these packages first?`,
+            name: 'installAll',
+            type: 'confirm'
+          }
+        ]);
+
+        await buildDeclaration();
+
+        if (installAllPrompt.installAll) {
+          for (const eachPackage of depMonoPackages) {
+            await publishByPackageName(eachPackage.name, options, depMap);
+          }
+        }
+      } else {
+        await buildDeclaration();
+      }
+
       await publishByPackageName(pri.selectedSourceType, options, depMap);
 
       await fs.remove(path.join(pri.projectRootPath, tempPath.dir, declarationPath.dir));
