@@ -189,14 +189,16 @@ async function publishByPackageName(sourceType: string, options: PublishOption, 
   }
 
   // Update version in depMao
-  depMap.forEach((value, key) => {
-    value.depMonoPackages.forEach(eachPackage => {
-      if (eachPackage.name === sourceType) {
-        // eslint-disable-next-line no-param-reassign
-        eachPackage.packageJson.version = targetPackageJson.version;
-      }
+  if (depMap) {
+    depMap.forEach((value, key) => {
+      value.depMonoPackages.forEach(eachPackage => {
+        if (eachPackage.name === sourceType) {
+          // eslint-disable-next-line no-param-reassign
+          eachPackage.packageJson.version = targetPackageJson.version;
+        }
+      });
     });
-  });
+  }
 
   await buildComponent({ skipLint: true });
 

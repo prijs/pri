@@ -1,6 +1,6 @@
 {
   "name": "pri",
-  "version": "3.2.7-beta16",
+  "version": "3.2.7-beta17",
   "types": "src/node/index.ts",
   "main": "built/node/index.js",
   "scripts": {
@@ -86,6 +86,7 @@
     "fs-extra": "8.1.0",
     "gulp": "^4.0.2",
     "gulp-babel": "^8.0.0",
+    "gulp-clean-css": "^4.2.0",
     "gulp-less": "^4.0.1",
     "gulp-sass": "^4.0.2",
     "gulp-sourcemaps": "^2.6.5",

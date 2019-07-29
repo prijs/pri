@@ -2,6 +2,7 @@ import * as gulp from 'gulp';
 import * as gulpBabel from 'gulp-babel';
 import * as gulpSass from 'gulp-sass';
 import * as gulpWatch from 'gulp-watch';
+import * as gulpCleanCss from 'gulp-clean-css';
 import * as gulpSourcemaps from 'gulp-sourcemaps';
 import * as path from 'path';
 import { pri, srcPath } from '../node';
@@ -40,6 +41,7 @@ const buildSass = (watch: boolean, outdir: string, wholeProject: boolean) => {
   return new Promise((resolve, reject) => {
     getGulpByWatch(watch, targetPath)
       .pipe(gulpSass())
+      .pipe(gulpCleanCss())
       .on('error', reject)
       .pipe(gulp.dest(outdir))
       .on('end', resolve);
