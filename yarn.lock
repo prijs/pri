@@ -9226,7 +9226,7 @@ optimist@^0.6.1:
     minimist "~0.0.1"
     wordwrap "~0.0.2"
 
-optimize-css-assets-webpack-plugin@5.0.3:
+optimize-css-assets-webpack-plugin@^5.0.3:
   version "5.0.3"
   resolved "https://registry.npm.alibaba-inc.com/optimize-css-assets-webpack-plugin/download/optimize-css-assets-webpack-plugin-5.0.3.tgz#e2f1d4d94ad8c0af8967ebd7cf138dcb1ef14572"
   integrity sha1-4vHU2UrYwK+JZ+vXzxONyx7xRXI=

@@ -46,20 +46,20 @@ export function getBabelOptions(options?: Partial<DefaultOptions>) {
       // TODO: gulp don't support css module
       ...(globalState.sourceConfig.type === 'project'
         ? [
-            [
-              babelPluginReactCssModules,
-              {
-                filetypes: {
-                  '.scss': {
-                    syntax: 'postcss-scss',
-                  },
-                  '.less': {
-                    syntax: 'postcss-less',
-                  },
+          [
+            babelPluginReactCssModules,
+            {
+              filetypes: {
+                '.scss': {
+                  syntax: 'postcss-scss',
+                },
+                '.less': {
+                  syntax: 'postcss-less',
                 },
               },
-            ],
-          ]
+            },
+          ],
+        ]
         : []),
       ...mergedOptions.plugins,
     ],

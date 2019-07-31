@@ -1,5 +1,6 @@
 import * as HtmlWebpackPlugin from 'html-webpack-plugin';
 import * as MiniCssExtractPlugin from 'mini-css-extract-plugin';
+import * as OptimizeCssAssetsPlugin from 'optimize-css-assets-webpack-plugin';
 import * as path from 'path';
 import * as webpack from 'webpack';
 import { globalState, transferToAllAbsolutePaths as transferToAllAbsolutePathsWithPackages } from './global-state';
@@ -338,6 +339,8 @@ export const getWebpackConfig = async (opts: IOptions) => {
         }),
       );
     }
+
+    config.plugins.push(new OptimizeCssAssetsPlugin());
   }
 
   if (globalState.isDevelopment) {

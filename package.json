@@ -1,6 +1,6 @@
 {
   "name": "pri",
-  "version": "3.2.7-beta.22",
+  "version": "3.2.7-beta.23",
   "types": "src/node/index.ts",
   "main": "built/node/index.js",
   "scripts": {
@@ -110,7 +110,7 @@
     "node-forge": "0.8.5",
     "normalize-path": "3.0.0",
     "open": "6.4.0",
-    "optimize-css-assets-webpack-plugin": "5.0.3",
+    "optimize-css-assets-webpack-plugin": "^5.0.3",
     "ora": "3.4.0",
     "portfinder": "1.0.20",
     "postcss-less": "3.1.4",
