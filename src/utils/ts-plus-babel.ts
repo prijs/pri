@@ -3,12 +3,14 @@ import * as gulpBabel from 'gulp-babel';
 import * as gulpSass from 'gulp-sass';
 import * as gulpWatch from 'gulp-watch';
 import * as gulpCleanCss from 'gulp-clean-css';
+import * as gulpConcat from 'gulp-concat';
+import * as gulpIf from 'gulp-if';
 import * as gulpSourcemaps from 'gulp-sourcemaps';
 import * as path from 'path';
 import { pri, srcPath } from '../node';
 import { getBabelOptions } from './babel-options';
 import { globalState } from './global-state';
-import { babelPluginTransformRenameImport } from './babel-plugin-rename-import';
+import { babelPluginTransformImport } from './babel-plugin-transfer-import';
 
 function getGulpByWatch(watch: boolean, filesPath: string) {
   if (watch) {
@@ -42,6 +44,7 @@ const buildSass = (watch: boolean, outdir: string, wholeProject: boolean) => {
     getGulpByWatch(watch, targetPath)
       .pipe(gulpSass())
       .pipe(gulpCleanCss())
+      .pipe(gulpIf(pri.sourceConfig.cssExtract, gulpConcat(pri.sourceConfig.outCssFileName)))
       .on('error', reject)
       .pipe(gulp.dest(outdir))
       .on('end', resolve);
@@ -63,8 +66,9 @@ const mvResources = (watch: boolean, outdir: string, wholeProject: boolean) => {
 
 function importRename(packageAbsoluteToRelative = false) {
   return [
-    babelPluginTransformRenameImport,
+    babelPluginTransformImport,
     {
+      removeCssImport: pri.sourceConfig.cssExtract,
       pipeImport: (text: string, filename: string) => {
         const scssRegex = '^(.+?)\\.scss$';
         const scssPattern = new RegExp(`^(${scssRegex}|${scssRegex}/.*)$`);

@@ -15,6 +15,9 @@ pri.commands.registerCommand({
     skipLint: {
       description: 'Skip lint',
     },
+    skipNpm: {
+      description: 'Skip npm publish',
+    },
     semver: {
       description: 'Semver version: patch minor major',
     },

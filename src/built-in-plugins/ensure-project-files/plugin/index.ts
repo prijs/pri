@@ -80,7 +80,7 @@ function ensureTsconfig() {
             skipLibCheck: true,
             outDir: globalState.sourceConfig.distDir,
             baseUrl: '.',
-            lib: ['dom', 'es5', 'es6', 'scripthost', 'es2018.promise'],
+            lib: ['dom', 'es5', 'es6', 'es7', 'scripthost', 'es2018.promise'],
             emitDecoratorMetadata: true,
             preserveConstEnums: true,
             paths: {
@@ -296,9 +296,9 @@ function ensureRootPackageJson() {
 
       switch (pri.projectConfig.type) {
         case 'project':
-        case 'plugin':
           _.set(prevJson, 'main', `${pri.projectConfig.distDir}/${pri.projectConfig.outFileName}`);
           break;
+        case 'plugin':
         case 'component':
           if (yargs.argv._[0] === 'dev') {
             // Component dev mode, has a whole project struct

@@ -9,16 +9,26 @@ function getReplacements(state: any) {
   return [state.opts];
 }
 
-export function babelPluginTransformRenameImport({ types: t }: any) {
+export function babelPluginTransformImport({ types: t }: any) {
   const source = (value: any, state: any, pipeImport: any) => t.stringLiteral(pipeImport(value, state.filename));
 
   return {
     visitor: {
       ImportDeclaration(path: any, state: any) {
         const replacements = getReplacements(state);
-        replacements.forEach(({ pipeImport }: any) => {
+        replacements.forEach(({ pipeImport, removeCssImport }: any) => {
           const { value } = path.node.source;
-          path.node.source = source(value, state, pipeImport);
+
+          if (removeCssImport) {
+            const cssRegex = '^(.+?)\\.(css|sass|scss|less)$';
+            const cssPattern = new RegExp(`^(${cssRegex}|${cssRegex}/.*)$`);
+
+            if (cssPattern.test(value)) {
+              path.remove();
+            }
+          } else {
+            path.node.source = source(value, state, pipeImport);
+          }
         });
       },
 

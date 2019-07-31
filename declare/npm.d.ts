@@ -64,3 +64,5 @@ declare module 'babel-plugin-import';
 declare module 'terser-webpack-plugin';
 declare module '@commitlint/lint';
 declare module 'gulp-clean-css';
+declare module 'gulp-if';
+

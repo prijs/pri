@@ -13,6 +13,7 @@
       "dom",
       "es5",
       "es6",
+      "es7",
       "scripthost",
       "es2018.promise"
     ],

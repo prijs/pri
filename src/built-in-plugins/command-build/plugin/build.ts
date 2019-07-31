@@ -125,19 +125,7 @@ export const buildComponent = async (opts: IOpts = {}) => {
 };
 
 export const buildPlugin = async (opts: IOpts = {}) => {
-  // Build component
-  const stats = await runWebpack({
-    mode: 'production',
-    target: 'node',
-    libraryTarget: 'commonjs2',
-    entryPath: path.join(pri.sourceRoot, path.format(pluginEntry)),
-    outFileName: pri.sourceConfig.outFileName,
-    externals: [nodeExternals()],
-  });
-
-  plugin.buildAfterProdBuild.forEach(afterProdBuild => {
-    return afterProdBuild(stats);
-  });
+  await buildComponent(opts);
 };
 
 // Copy assets dir to distDir
