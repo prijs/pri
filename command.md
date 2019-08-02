@@ -62,5 +62,6 @@
 
 - import()
   - lint
-  - **pure build**
-  - **pure bundle**
+  - monorepo loop
+    - **pure build**
+    - **pure bundle**

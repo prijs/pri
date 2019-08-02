@@ -2,8 +2,8 @@ import * as gulp from 'gulp';
 import * as gulpBabel from 'gulp-babel';
 import * as gulpSass from 'gulp-sass';
 import * as gulpWatch from 'gulp-watch';
-import * as gulpCleanCss from 'gulp-clean-css';
-import * as gulpConcat from 'gulp-concat';
+import * as gulpStripCssComments from 'gulp-strip-css-comments';
+import * as gulpConcatCss from 'gulp-concat-css';
 import * as gulpIf from 'gulp-if';
 import * as gulpSourcemaps from 'gulp-sourcemaps';
 import * as path from 'path';
@@ -43,8 +43,8 @@ const buildSass = (watch: boolean, outdir: string, wholeProject: boolean) => {
   return new Promise((resolve, reject) => {
     getGulpByWatch(watch, targetPath)
       .pipe(gulpSass())
-      .pipe(gulpCleanCss())
-      .pipe(gulpIf(pri.sourceConfig.cssExtract, gulpConcat(pri.sourceConfig.outCssFileName)))
+      .pipe(gulpIf(pri.sourceConfig.cssExtract, gulpConcatCss(pri.sourceConfig.outCssFileName)))
+      .pipe(gulpStripCssComments())
       .on('error', reject)
       .pipe(gulp.dest(outdir))
       .on('end', resolve);

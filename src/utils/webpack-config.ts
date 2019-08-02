@@ -3,6 +3,7 @@ import * as MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import * as OptimizeCssAssetsPlugin from 'optimize-css-assets-webpack-plugin';
 import * as path from 'path';
 import * as webpack from 'webpack';
+import * as yargs from 'yargs';
 import { globalState, transferToAllAbsolutePaths as transferToAllAbsolutePathsWithPackages } from './global-state';
 import { plugin } from './plugins';
 import { srcPath, tempPath } from './structor-config';
@@ -97,7 +98,8 @@ const babelLoader = {
  * Helper
  */
 function extraCssInProd(...loaders: any[]) {
-  if (globalState.sourceConfig.cssExtract) {
+  // Enable cssExtract, but not in bundle command.
+  if (globalState.sourceConfig.cssExtract && yargs.argv._[0] !== 'bundle') {
     if (globalState.isDevelopment) {
       return [styleLoader, ...loaders];
     }
@@ -332,7 +334,7 @@ export const getWebpackConfig = async (opts: IOptions) => {
   }
 
   if (!globalState.isDevelopment) {
-    if (globalState.sourceConfig.cssExtract) {
+    if (globalState.sourceConfig.cssExtract && yargs.argv._[0] !== 'bundle') {
       config.plugins.push(
         new MiniCssExtractPlugin({
           filename: outCssFileName,

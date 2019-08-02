@@ -65,4 +65,5 @@ declare module 'terser-webpack-plugin';
 declare module '@commitlint/lint';
 declare module 'gulp-clean-css';
 declare module 'gulp-if';
-
+declare module 'gulp-concat-css';
+declare module 'gulp-strip-css-comments';
