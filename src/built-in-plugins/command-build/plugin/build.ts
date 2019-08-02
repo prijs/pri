@@ -2,8 +2,6 @@ import * as fs from 'fs-extra';
 import * as HtmlWebpackPlugin from 'html-webpack-plugin';
 import * as path from 'path';
 import * as prettier from 'prettier';
-import * as nodeExternals from 'webpack-node-externals';
-import * as glob from 'glob';
 import { pri, tempPath } from '../../../node';
 import * as pipe from '../../../node/pipe';
 import { analyseProject } from '../../../utils/analyse-project';
@@ -13,7 +11,7 @@ import { globalState } from '../../../utils/global-state';
 import { logInfo, spinner } from '../../../utils/log';
 import { findNearestNodemodulesFile } from '../../../utils/npm-finder';
 import { plugin } from '../../../utils/plugins';
-import { pluginEntry, assetsPath, srcPath, declarationPath } from '../../../utils/structor-config';
+import { assetsPath } from '../../../utils/structor-config';
 import { runWebpack } from '../../../utils/webpack';
 import { getStaticHtmlPaths } from './generate-static-html';
 import { IOpts } from './interface';
@@ -74,7 +72,7 @@ export const buildProject = async (opts: IOpts = {}) => {
   });
 };
 
-export const buildComponent = async (opts: IOpts = {}) => {
+export const buildComponent = async () => {
   // FIXME:
   // Do not minimize in cloud build(def envirenment), because commnets will lead to
   // build error in cloud build.
@@ -124,8 +122,8 @@ export const buildComponent = async (opts: IOpts = {}) => {
   // });
 };
 
-export const buildPlugin = async (opts: IOpts = {}) => {
-  await buildComponent(opts);
+export const buildPlugin = async () => {
+  await buildComponent();
 };
 
 // Copy assets dir to distDir

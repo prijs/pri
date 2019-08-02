@@ -191,7 +191,7 @@ async function publishByPackageName(sourceType: string, options: PublishOption, 
 
   // Update version in depMao
   if (depMap) {
-    depMap.forEach((value, key) => {
+    depMap.forEach(value => {
       value.depMonoPackages.forEach(eachPackage => {
         if (eachPackage.name === sourceType) {
           // eslint-disable-next-line no-param-reassign

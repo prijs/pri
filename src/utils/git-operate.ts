@@ -1,6 +1,6 @@
 import * as semver from 'semver';
 import { exec } from './exec';
-import { logFatal, logWarn } from './log';
+import { logFatal } from './log';
 
 let hasCheckGitVersion = false;
 const gitVersionWarning: string = null;
