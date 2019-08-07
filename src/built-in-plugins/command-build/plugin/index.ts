@@ -41,12 +41,12 @@ pri.commands.registerCommand({
       }
       case 'component': {
         await buildModule.prepareBuild(options);
-        await buildModule.buildComponent(options);
+        await buildModule.buildComponent();
         break;
       }
       case 'plugin': {
         await buildModule.prepareBuild(options);
-        await buildModule.buildPlugin(options);
+        await buildModule.buildPlugin();
         break;
       }
       default:

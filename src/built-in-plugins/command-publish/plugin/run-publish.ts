@@ -137,11 +137,22 @@ async function publishByPackageName(sourceType: string, options: PublishOption, 
   }
 
   logInfo('Check if npm package exist');
-  const versionResult = execSync(
-    `${targetConfig.npmClient} view ${targetPackageJson.name}@${targetPackageJson.version} version`,
-  )
-    .toString()
-    .trim();
+
+  let versionResult = '';
+
+  try {
+    versionResult = execSync(
+      `${targetConfig.npmClient} view ${targetPackageJson.name}@${targetPackageJson.version} version`,
+      {
+        stdio: 'ignore',
+      },
+    )
+      .toString()
+      .trim();
+  } catch {
+    // Throw error means not exist
+    versionResult = '';
+  }
 
   if (options.tag === 'beta') {
     targetPackageJson.version = (semver.inc as any)(targetPackageJson.version, 'prerelease', 'beta');
@@ -201,7 +212,7 @@ async function publishByPackageName(sourceType: string, options: PublishOption, 
     });
   }
 
-  await buildComponent({ skipLint: true });
+  await buildComponent();
 
   if (options.bundle) {
     await commandBundle({ skipLint: true });

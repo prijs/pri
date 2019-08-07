@@ -4,7 +4,7 @@
  */
 
 import * as fs from 'fs-extra';
-import { merge } from 'lodash';
+import { merge, omit } from 'lodash';
 import * as path from 'path';
 import * as yargs from 'yargs';
 import * as inquirer from 'inquirer';
@@ -51,7 +51,8 @@ export function freshProjectConfig() {
       ...eachPackage,
       // Merge projectConfig and sourceConfig
       config: {
-        ...globalState.projectConfig,
+        // Omit type.
+        ...omit(globalState.projectConfig, ['type']),
         ...getPriConfig(eachPackage.rootPath),
       },
     };
