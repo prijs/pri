@@ -5,6 +5,7 @@ import * as yargs from 'yargs';
 import { logInfo, logWarn, logFatal } from './log';
 import { plugin } from './plugins';
 import { priEvent } from './pri-events';
+import { freshGlobalState, globalState } from './global-state';
 
 export const ensureFiles = async () => {
   if (yargs.argv.light) {
@@ -27,6 +28,9 @@ export const ensureFiles = async () => {
       );
     }),
   );
+
+  // Fresh package.json
+  await freshGlobalState(globalState.selectedSourceType);
 };
 
 export async function ensureFile(filePath: string, pipeContents: ((prev: string) => string | Promise<string>)[]) {

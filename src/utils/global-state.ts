@@ -25,7 +25,7 @@ export async function initGlobalState(preSelectPackage: string) {
   await freshGlobalState(preSelectPackage);
 }
 
-async function freshGlobalState(preSelectPackage: string) {
+export async function freshGlobalState(preSelectPackage: string) {
   const cliCurrentPath = (yargs.argv.cwd as string) || process.cwd();
   globalState.projectRootPath = cliCurrentPath;
 

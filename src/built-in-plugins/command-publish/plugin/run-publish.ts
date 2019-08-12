@@ -25,6 +25,8 @@ export const publish = async (options: PublishOption) => {
         await pri.project.ensureProjectFiles();
         await pri.project.checkProjectFiles();
 
+        const currentSelectedSourceType = pri.selectedSourceType;
+
         if (!options.skipLint) {
           await pri.project.lint({
             lintAll: true,
@@ -57,7 +59,7 @@ export const publish = async (options: PublishOption) => {
           await buildDeclaration();
         }
 
-        await publishByPackageName(pri.selectedSourceType, options, depMap);
+        await publishByPackageName(currentSelectedSourceType, options, depMap);
 
         await fs.remove(path.join(pri.projectRootPath, tempPath.dir, declarationPath.dir));
       }
@@ -92,6 +94,7 @@ async function publishByPackageName(sourceType: string, options: PublishOption, 
   // Change source config here
   pri.sourceConfig = targetConfig;
   pri.sourceRoot = targetRoot;
+  pri.selectedSourceType = sourceType;
 
   if (!targetPackageJson.name) {
     logFatal(`No name found in ${sourceType} package.json`);

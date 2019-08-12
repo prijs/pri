@@ -36,9 +36,10 @@ const buildTs = (watch: boolean, outdir: string, babelOptions: any, wholeProject
 };
 
 const buildSass = (watch: boolean, outdir: string, wholeProject: boolean) => {
-  const targetPath = wholeProject
-    ? path.join(pri.projectRootPath, '{src,packages}/**/*.scss')
-    : path.join(pri.sourceRoot, srcPath.dir, '**/*.scss');
+  const targetPath =
+    wholeProject || (pri.selectedSourceType === 'root' && pri.sourceConfig.cssExtract)
+      ? path.join(pri.projectRootPath, '{src,packages}/**/*.scss')
+      : path.join(pri.sourceRoot, srcPath.dir, '**/*.scss');
 
   return new Promise((resolve, reject) => {
     getGulpByWatch(watch, targetPath)
@@ -52,9 +53,10 @@ const buildSass = (watch: boolean, outdir: string, wholeProject: boolean) => {
 };
 
 const mvResources = (watch: boolean, outdir: string, wholeProject: boolean) => {
-  const targetPath = wholeProject
-    ? path.join(pri.projectRootPath, '{src,packages}/**/*.{js,png,jpg,jpeg,gif,woff,woff2,eot,ttf,svg}')
-    : path.join(pri.sourceRoot, srcPath.dir, '**/*.{js,png,jpg,jpeg,gif,woff,woff2,eot,ttf,svg}');
+  const targetPath =
+    wholeProject || (pri.selectedSourceType === 'root' && pri.sourceConfig.cssExtract)
+      ? path.join(pri.projectRootPath, '{src,packages}/**/*.{js,png,jpg,jpeg,gif,woff,woff2,eot,ttf,svg}')
+      : path.join(pri.sourceRoot, srcPath.dir, '**/*.{js,png,jpg,jpeg,gif,woff,woff2,eot,ttf,svg}');
 
   return new Promise((resolve, reject) => {
     getGulpByWatch(watch, targetPath)
@@ -96,12 +98,14 @@ function importRename(packageAbsoluteToRelative = false) {
 }
 
 export const tsPlusBabel = async (watch = false, wholeProject = false) => {
-  const mainDistPath = path.join(globalState.projectRootPath, pri.sourceConfig.distDir, 'main');
-  const moduleDistPath = path.join(globalState.projectRootPath, pri.sourceConfig.distDir, 'module');
+  const rootDistPath = path.join(globalState.projectRootPath, pri.sourceConfig.distDir);
+  const mainDistPath = path.join(rootDistPath, 'main');
+  const moduleDistPath = path.join(rootDistPath, 'module');
 
   return Promise.all([
     buildSass(watch, mainDistPath, wholeProject),
-    mvResources(watch, mainDistPath, wholeProject),
+    buildSass(watch, moduleDistPath, wholeProject),
+
     buildTs(
       watch,
       mainDistPath,
@@ -110,8 +114,6 @@ export const tsPlusBabel = async (watch = false, wholeProject = false) => {
       }),
       wholeProject,
     ),
-    buildSass(watch, moduleDistPath, wholeProject),
-    mvResources(watch, moduleDistPath, wholeProject),
     buildTs(
       watch,
       moduleDistPath,
@@ -121,5 +123,8 @@ export const tsPlusBabel = async (watch = false, wholeProject = false) => {
       }),
       wholeProject,
     ),
+
+    mvResources(watch, mainDistPath, wholeProject),
+    mvResources(watch, moduleDistPath, wholeProject),
   ]);
 };
