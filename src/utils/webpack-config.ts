@@ -99,7 +99,7 @@ const babelLoader = {
  */
 function extraCssInProd(...loaders: any[]) {
   // Enable cssExtract, but not in bundle command.
-  if (globalState.sourceConfig.cssExtract && yargs.argv._[0] !== 'bundle') {
+  if (globalState.sourceConfig.cssExtract && yargs.argv._[0] !== 'bundle' && yargs.argv._[0] !== 'debug') {
     if (globalState.isDevelopment) {
       return [styleLoader, ...loaders];
     }
@@ -334,7 +334,7 @@ export const getWebpackConfig = async (opts: IOptions) => {
   }
 
   if (!globalState.isDevelopment) {
-    if (globalState.sourceConfig.cssExtract && yargs.argv._[0] !== 'bundle') {
+    if (globalState.sourceConfig.cssExtract && yargs.argv._[0] !== 'bundle' && yargs.argv._[0] !== 'debug') {
       config.plugins.push(
         new MiniCssExtractPlugin({
           filename: outCssFileName,
