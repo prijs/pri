@@ -141,20 +141,21 @@ async function publishByPackageName(sourceType: string, options: PublishOption, 
 
   logInfo('Check if npm package exist');
 
-  let versionResult = '';
+  let versionResult: string = null;
 
   try {
-    versionResult = execSync(
+    const versionResultExec = execSync(
       `${targetConfig.npmClient} view ${targetPackageJson.name}@${targetPackageJson.version} version`,
-      {
-        stdio: 'ignore',
-      },
-    )
-      .toString()
-      .trim();
-  } catch {
+    );
+
+    if (versionResultExec) {
+      versionResult = versionResultExec.toString().trim();
+    } else {
+      versionResult = null;
+    }
+  } catch (error) {
     // Throw error means not exist
-    versionResult = '';
+    versionResult = null;
   }
 
   if (options.tag === 'beta') {
@@ -164,7 +165,7 @@ async function publishByPackageName(sourceType: string, options: PublishOption, 
     await exec(`git add -A; git commit -m "upgrade ${sourceType} version to ${targetPackageJson.version}" -n`, {
       cwd: pri.projectRootPath,
     });
-  } else if (versionResult !== '') {
+  } else if (!_.isNil(versionResult)) {
     if (!options.semver) {
       const versionPrompt = await inquirer.prompt([
         {

@@ -6,7 +6,15 @@ import { pri } from '../../../node';
 import { PRI_PACKAGE_NAME, CONFIG_FILE } from '../../../utils/constants';
 import { safeJsonParse } from '../../../utils/functional';
 import { globalState, transferToAllAbsolutePaths } from '../../../utils/global-state';
-import { declarePath, gitIgnores, npmIgnores, tempPath, tempTypesPath, srcPath } from '../../../utils/structor-config';
+import {
+  declarePath,
+  gitIgnores,
+  npmIgnores,
+  tempPath,
+  tempTypesPath,
+  srcPath,
+  typingsPath,
+} from '../../../utils/structor-config';
 import { ensureComponentFiles } from './ensure-component';
 import { ensurePluginFiles } from './ensure-plugin';
 import { ensureProjectFiles } from './ensure-project';
@@ -102,6 +110,7 @@ function ensureTsconfig() {
           },
           include: [
             `${tempPath.dir}/**/*`,
+            `${typingsPath.dir}/**/*`,
             ...transferToAllAbsolutePaths(srcPath.dir).map(filePath => {
               return `${path.relative(pri.projectRootPath, filePath)}/**/*`;
             }),
