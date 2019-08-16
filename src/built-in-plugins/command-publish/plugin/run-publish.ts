@@ -368,12 +368,14 @@ async function buildDeclaration() {
 async function copyDeclaration(sourceType: string, publishTempName: string) {
   const declarationRoot = path.join(pri.projectRootPath, tempPath.dir, declarationPath.dir);
 
+  const srcPathExtra = pri.packages.length > 0 ? srcPath.dir : '';
+
   // If select packages, pick it's own declaration
   if (sourceType !== 'root') {
-    const declarationFiles = glob.sync(path.join(declarationRoot, 'packages', sourceType, srcPath.dir, '/**/*.d.ts'));
+    const declarationFiles = glob.sync(path.join(declarationRoot, 'packages', sourceType, srcPathExtra, '/**/*.d.ts'));
 
     declarationFiles.map(eachFile => {
-      const targetPath = path.relative(path.join(declarationRoot, 'packages', sourceType, srcPath.dir), eachFile);
+      const targetPath = path.relative(path.join(declarationRoot, 'packages', sourceType, srcPathExtra), eachFile);
       fs.copySync(
         eachFile,
         path.join(pri.projectRootPath, tempPath.dir, publishTempName, declarationPath.dir, targetPath),
@@ -381,10 +383,10 @@ async function copyDeclaration(sourceType: string, publishTempName: string) {
     });
   } else {
     // get declaration from src
-    const declarationFiles = glob.sync(path.join(declarationRoot, srcPath.dir, '**/*.d.ts'));
+    const declarationFiles = glob.sync(path.join(declarationRoot, srcPathExtra, '**/*.d.ts'));
 
     declarationFiles.map(eachFile => {
-      const targetPath = path.relative(path.join(declarationRoot, srcPath.dir), eachFile);
+      const targetPath = path.relative(path.join(declarationRoot, srcPathExtra), eachFile);
       fs.copySync(
         eachFile,
         path.join(pri.projectRootPath, tempPath.dir, publishTempName, declarationPath.dir, targetPath),
