@@ -269,7 +269,7 @@ async function moveSourceFilesToTempFolderAndPublish(
       options.tag ? `--tag ${options.tag}` : '--tag latest'
     }`,
     {
-      cwd: tempRoot,
+      cwd: pri.projectRootPath,
     },
   );
 
