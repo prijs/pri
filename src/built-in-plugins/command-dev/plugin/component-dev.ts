@@ -5,7 +5,9 @@ import { pri } from '../../../node';
 
 export const componentDev = async (watchOnly = false) => {
   // Because component need create files, so clear dist first.
-  await cleanDist();
+  if (!watchOnly) {
+    await cleanDist();
+  }
 
   await spinner('Analyse project', async () => {
     await pri.project.ensureProjectFiles();
