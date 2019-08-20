@@ -165,7 +165,7 @@ async function publishByPackageName(sourceType: string, options: PublishOption, 
     await exec(`git add -A; git commit -m "upgrade ${sourceType} version to ${targetPackageJson.version}" -n`, {
       cwd: pri.projectRootPath,
     });
-  } else if (!_.isNil(versionResult)) {
+  } else if (versionResult) {
     if (!options.semver) {
       const versionPrompt = await inquirer.prompt([
         {
