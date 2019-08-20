@@ -8,6 +8,10 @@ pri.commands.registerCommand({
       alias: 'd',
       description: 'Debug dashboard',
     },
+    watchOnly: {
+      alias: 'w',
+      description: 'Watch only for component',
+    },
   },
   description: text.commander.dev.description,
   action: async (options: any) => {
@@ -19,7 +23,7 @@ pri.commands.registerCommand({
       }
       case 'component': {
         const componentDevModule = await import('./component-dev');
-        await componentDevModule.componentDev();
+        await componentDevModule.componentDev(options.watchOnly);
         break;
       }
       case 'plugin': {

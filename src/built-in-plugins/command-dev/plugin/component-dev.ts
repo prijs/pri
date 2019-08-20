@@ -3,7 +3,7 @@ import { tsPlusBabel } from '../../../utils/ts-plus-babel';
 import { spinner, logInfo } from '../../../utils/log';
 import { pri } from '../../../node';
 
-export const componentDev = async () => {
+export const componentDev = async (watchOnly = false) => {
   // Because component need create files, so clear dist first.
   await cleanDist();
 
@@ -25,9 +25,12 @@ export const componentDev = async () => {
   // });
 
   // Build all
-  await spinner(`Init build`, async () => {
-    await tsPlusBabel(false, true);
-  });
+  if (!watchOnly) {
+    await spinner(`Init build`, async () => {
+      await tsPlusBabel(false, true);
+    });
+  }
+
   // Watch
   logInfo('Watching files..');
   await tsPlusBabel(true, true);
