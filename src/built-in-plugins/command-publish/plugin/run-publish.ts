@@ -317,6 +317,12 @@ async function addMissingDeps(sourceType: string, depMap: DepMap, targetConfig: 
         };
       }
 
+      // add nested deps
+      sourceDeps = {
+        ...sourceDeps,
+        history: '*',
+      };
+
       newPackageJson.dependencies = {
         ...newPackageJson.dependencies,
         ...depNpmPackages
