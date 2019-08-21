@@ -6,6 +6,7 @@ import * as path from 'path';
 import * as urlJoin from 'url-join';
 import * as webpack from 'webpack';
 import * as WebpackBar from 'webpackbar';
+import * as _ from 'lodash';
 import * as WebpackDevServer from 'webpack-dev-server';
 import { globalState } from './global-state';
 import { tempPath } from './structor-config';
@@ -20,6 +21,7 @@ interface IExtraOptions {
   hot?: boolean;
   devUrl?: string;
   autoOpenBrowser?: boolean;
+  https?: boolean;
 }
 
 const stats = {
@@ -55,7 +57,7 @@ export const runWebpackDevServer = async (opts: IOptions<IExtraOptions>) => {
     ...(!opts.jsOnly && {
       historyApiFallback: { rewrites: [{ from: '/', to: normalizePath(path.join(opts.publicPath, 'index.html')) }] },
     }),
-    https: globalState.sourceConfig.useHttps,
+    https: _.defaults({ value: opts.https }, { value: globalState.sourceConfig.useHttps }).value,
     overlay: { warnings: true, errors: true },
     stats,
     watchOptions: {
@@ -78,7 +80,7 @@ export const runWebpackDevServer = async (opts: IOptions<IExtraOptions>) => {
   devServer.listen(opts.devServerPort, '127.0.0.1', () => {
     let devUrl: string = null;
     const localSuggestUrl = urlJoin(
-      `${globalState.sourceConfig.useHttps ? 'https' : 'http'}://localhost:${opts.devServerPort}`,
+      `${opts.https || globalState.sourceConfig.useHttps ? 'https' : 'http'}://localhost:${opts.devServerPort}`,
       globalState.sourceConfig.baseHref,
     );
 
