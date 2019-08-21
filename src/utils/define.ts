@@ -158,6 +158,11 @@ export class ProjectConfig {
   public bundleFileName?: string = 'bundle.js';
 
   /**
+   * Bundle library target
+   */
+  public bundleLibraryTarget?: string = 'umd';
+
+  /**
    * Specify the development url, work both for `npm start` and `npm run preview`.
    * In most scenes, it should not be configured.
    * > Conflict with `devPort`

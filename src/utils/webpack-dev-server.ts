@@ -70,6 +70,7 @@ export const runWebpackDevServer = async (opts: IOptions<IExtraOptions>) => {
   } as any;
 
   WebpackDevServer.addDevServerEntrypoints(webpackConfig, webpackDevServerConfig);
+
   const compiler = webpack(webpackConfig);
 
   const devServer = new WebpackDevServer(compiler, webpackDevServerConfig);

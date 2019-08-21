@@ -20,7 +20,7 @@ export const commandBundle = async (opts: IOpts = {}) => {
       pipeConfig: async config => {
         let newConfig = { ...config };
 
-        newConfig.output.libraryTarget = 'umd';
+        newConfig.output.libraryTarget = pri.sourceConfig.bundleLibraryTarget as any;
 
         newConfig = await plugin.bundleConfigPipes.reduce(async (nextConfig, fn) => {
           return fn(await nextConfig);
@@ -42,7 +42,7 @@ export const commandBundle = async (opts: IOpts = {}) => {
       pipeConfig: async config => {
         let newConfig = { ...config };
 
-        newConfig.output.libraryTarget = 'umd';
+        newConfig.output.libraryTarget = pri.sourceConfig.bundleLibraryTarget as any;
 
         newConfig = await plugin.bundleConfigPipes.reduce(async (nextConfig, fn) => {
           return fn(await nextConfig);
