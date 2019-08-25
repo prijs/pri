@@ -23,7 +23,6 @@ export const runTest = async () => {
     },
   );
 
-  // Open test html in brower
   logText(
     `Open this url to see code coverage: file://${path.join(pri.projectRootPath, 'coverage/lcov-report/index.html')}`,
   );

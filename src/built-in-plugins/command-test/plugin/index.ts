@@ -18,7 +18,7 @@ pri.commands.registerCommand({
   action: async () => {
     await pri.project.lint({
       lintAll: false,
-      needFix: false,
+      needFix: true,
       showBreakError: true,
     });
     await pri.project.ensureProjectFiles();

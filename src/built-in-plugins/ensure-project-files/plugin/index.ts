@@ -57,8 +57,9 @@ const commonComponentPackageJson = {
     preview: 'pri preview',
     analyse: 'pri analyse',
     publish: 'pri publish',
+    lint: 'pri lint',
+    format: `pri lint`,
     test: 'pri test',
-    format: `eslint --fix ${eslintParam}`,
   },
   husky: {
     hooks: {

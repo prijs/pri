@@ -8,8 +8,7 @@ import { globalState } from './global-state';
 import { PackageJson, PackageInfo } from './define';
 import { srcPath } from '../node';
 import { logFatal } from './log';
-
-export const packagesPath = 'packages';
+import { packagesPath } from './structor-config';
 
 export const getPackages = (() => {
   let result: {
@@ -38,7 +37,9 @@ export const getPackages = (() => {
       });
     result = await Promise.all(
       submodulePaths.map(async submodulePath => {
-        const packagesPathEndWithSep = packagesPath.endsWith(path.sep) ? packagesPath : packagesPath + path.sep;
+        const packagesPathEndWithSep = packagesPath.dir.endsWith(path.sep)
+          ? packagesPath.dir
+          : packagesPath.dir + path.sep;
         const submoduleName = submodulePath.replace(new RegExp(`^${packagesPathEndWithSep}`), '');
         const submodulePackageJson = await getPackageJson(path.join(globalState.projectRootPath, submodulePath));
         return {

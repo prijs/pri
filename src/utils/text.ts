@@ -15,6 +15,9 @@ export default {
     preview: {
       description: 'Preview the app in production mode.',
     },
+    lint: {
+      description: 'Lint code.',
+    },
     test: {
       description: 'Run all tests',
     },
