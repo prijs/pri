@@ -2,6 +2,7 @@ import * as fs from 'fs-extra';
 import * as HtmlWebpackPlugin from 'html-webpack-plugin';
 import * as path from 'path';
 import * as prettier from 'prettier';
+import { execSync } from 'child_process';
 import { pri, tempPath } from '../../../node';
 import * as pipe from '../../../node/pipe';
 import { analyseProject } from '../../../utils/analyse-project';
@@ -72,6 +73,12 @@ export const buildProject = async (opts: IOpts = {}) => {
   });
 };
 
+export const buildWholeTsc = async () => {
+  execSync(`npx tsc --target ES3 --outDir .temp/dist >> /dev/null 2>&1`, {
+    cwd: pri.projectRootPath,
+  });
+};
+
 export const buildComponent = async () => {
   // FIXME:
   // Do not minimize in cloud build(def envirenment), because commnets will lead to
@@ -113,7 +120,7 @@ export const buildComponent = async () => {
 
   // TODO:
   await spinner(`build source files`, async () => {
-    await tsPlusBabel(false);
+    await tsPlusBabel();
   });
 
   // TODO: add back after upgrade to webpack5

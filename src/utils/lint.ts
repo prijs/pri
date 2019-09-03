@@ -78,7 +78,7 @@ export async function lint(options?: Partial<DefaultOptions>) {
       .filter(eachMessage => eachMessage.warningCount > 0)
       .forEach(eachLintResult => {
         eachLintResult.messages
-          .filter(eachMessage => eachMessage.severity === 1)
+          .filter(eachMessage => eachMessage.severity === 1 && eachMessage.ruleId)
           .forEach(eachMessage => {
             const colorText = colors.yellow('warning');
             console.log(colors.underline(`${eachLintResult.filePath}:${eachMessage.line}:${eachMessage.column}`));
@@ -97,7 +97,7 @@ export async function lint(options?: Partial<DefaultOptions>) {
       .filter(eachMessage => eachMessage.errorCount > 0)
       .forEach(eachLintResult => {
         eachLintResult.messages
-          .filter(eachMessage => eachMessage.severity === 2)
+          .filter(eachMessage => eachMessage.severity === 2 && eachMessage.ruleId)
           .forEach(eachMessage => {
             const colorText = mergedOptions.showBreakError ? colors.red('error') : colors.yellow('error');
             console.log(colors.underline(`${eachLintResult.filePath}:${eachMessage.line}:${eachMessage.column}`));

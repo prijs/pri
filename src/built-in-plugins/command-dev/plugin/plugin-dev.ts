@@ -1,22 +1,20 @@
-import { pri } from '../../../node';
+import * as path from 'path';
+import * as nodeExternals from 'webpack-node-externals';
+import { pri, pluginEntry } from '../../../node';
 import { cleanDist } from '../../../utils/clean';
-import { spinner, logInfo } from '../../../utils/log';
-import { tsPlusBabel } from '../../../utils/ts-plus-babel';
+import { watchWebpack } from '../../../utils/webpack';
+import { globalState } from '../../../utils/global-state';
 
 export const pluginDev = async () => {
   // Because plugin need create files, so clear dist first.
   await cleanDist();
 
-  await spinner('Analyse project', async () => {
-    await pri.project.ensureProjectFiles();
-    await pri.project.checkProjectFiles();
+  await watchWebpack({
+    mode: 'development',
+    target: 'node',
+    libraryTarget: 'commonjs2',
+    entryPath: path.join(globalState.sourceRoot, path.format(pluginEntry)),
+    externals: [nodeExternals()],
+    outFileName: pri.sourceConfig.outFileName,
   });
-
-  // Build all
-  await spinner(`Init build`, async () => {
-    await tsPlusBabel(false, true);
-  });
-  // Watch
-  logInfo('Watching files..');
-  await tsPlusBabel(true, true);
 };

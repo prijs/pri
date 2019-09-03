@@ -89,6 +89,7 @@ function ensureTsconfig() {
             skipLibCheck: true,
             outDir: globalState.sourceConfig.distDir,
             baseUrl: '.',
+            rootDir: '.',
             lib: ['dom', 'es5', 'es6', 'es7', 'scripthost', 'es2018.promise'],
             emitDecoratorMetadata: true,
             preserveConstEnums: true,

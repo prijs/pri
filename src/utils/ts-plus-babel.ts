@@ -97,7 +97,13 @@ function importRename(packageAbsoluteToRelative = false) {
   ];
 }
 
-export const tsPlusBabel = async (watch = false, wholeProject = false) => {
+/**
+ * Only for component/plugin build
+ */
+export const tsPlusBabel = async () => {
+  const watch = false;
+  const wholeProject = false;
+
   const rootDistPath = path.join(globalState.projectRootPath, pri.sourceConfig.distDir);
   const mainDistPath = path.join(rootDistPath, 'main');
   const moduleDistPath = path.join(rootDistPath, 'module');
