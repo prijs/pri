@@ -29,7 +29,16 @@ export async function lint(options?: Partial<DefaultOptions>) {
   const { CLIEngine } = await import('eslint');
   const lintRules = fs.readJsonSync(path.join(globalState.projectRootPath, '.eslintrc'));
   const mergedOptions = _.defaults(options || {}, new DefaultOptions());
-  const cli = new CLIEngine({ ...(lintRules as any), fix: mergedOptions.needFix });
+  const eslintIgnorePath = path.join(globalState.projectRootPath, '.eslintignore');
+  const eslintIgnoreExist = fs.existsSync(eslintIgnorePath);
+  const cli = new CLIEngine({
+    ...(lintRules as any),
+    fix: mergedOptions.needFix,
+    ignore: true,
+    ignorePath: eslintIgnoreExist ? eslintIgnorePath : null,
+    globals: ['API', 'defs']
+  });
+
   let lintFiles: string[] = [];
 
   if (mergedOptions.lintAll) {
@@ -47,6 +56,8 @@ export async function lint(options?: Partial<DefaultOptions>) {
         return path.join(globalState.projectRootPath, file);
       });
   }
+
+  lintFiles = lintFiles.filter(file => !cli.isPathIgnored(file));
 
   const lintResult = await spinner(
     `Lint ${mergedOptions.lintAll ? 'all' : ''} ${lintFiles.length} files.`,
