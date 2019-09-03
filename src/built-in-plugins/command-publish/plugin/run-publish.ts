@@ -12,7 +12,7 @@ import { exec } from '../../../utils/exec';
 import { pri, tempPath, declarationPath, srcPath } from '../../../node';
 import { buildComponent } from '../../command-build/plugin/build';
 import { commandBundle } from '../../command-bundle/plugin/command-bundle';
-import { isWorkingTreeClean } from '../../../utils/git-operate';
+import { isWorkingTreeClean, getCurrentBranchName } from '../../../utils/git-operate';
 import { logFatal, logInfo, spinner, logText } from '../../../utils/log';
 import { getMonoAndNpmDepsOnce, DepMap } from '../../../utils/packages';
 import { ProjectConfig } from '../../../utils/define';
@@ -158,8 +158,16 @@ async function publishByPackageName(sourceType: string, options: PublishOption, 
     versionResult = null;
   }
 
-  if (options.tag === 'beta') {
-    targetPackageJson.version = (semver.inc as any)(targetPackageJson.version, 'prerelease', 'beta');
+  const currentBranchName = await getCurrentBranchName();
+
+  // Publish beta version if branch is not master or develop
+  if (options.tag === 'beta' || !['master', 'develop'].includes(currentBranchName)) {
+    targetPackageJson.version = (semver.inc as any)(
+      targetPackageJson.version,
+      'prerelease',
+      currentBranchName.replace('/', ''),
+    );
+
     await fs.outputFile(path.join(targetRoot, 'package.json'), `${JSON.stringify(targetPackageJson, null, 2)}\n`);
 
     await exec(`git add -A; git commit -m "upgrade ${sourceType} version to ${targetPackageJson.version}" -n`, {
@@ -264,14 +272,17 @@ async function moveSourceFilesToTempFolderAndPublish(
   _.merge(targetPackageJson, addedPackageJson);
   await fs.outputFile(path.join(tempRoot, 'package.json'), JSON.stringify(targetPackageJson, null, 2));
 
-  await exec(
-    `${targetConfig.npmClient} publish ${tempRoot} --ignore-scripts ${
-      options.tag ? `--tag ${options.tag}` : '--tag latest'
-    }`,
-    {
-      cwd: tempRoot,
-    },
-  );
+  let finalTag = options.tag || 'latest';
+
+  const currentBranchName = await getCurrentBranchName();
+
+  if (!['master', 'develop'].includes(currentBranchName)) {
+    finalTag = 'beta';
+  }
+
+  await exec(`${targetConfig.npmClient} publish ${tempRoot} --ignore-scripts --tag ${finalTag}`, {
+    cwd: tempRoot,
+  });
 
   await fs.remove(tempRoot);
 }
