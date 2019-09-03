@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 import * as path from 'path';
 import * as glob from 'glob';
 import * as fs from 'fs-extra';
-import { logInfo, spinner } from './log';
+import { spinner } from './log';
 import { globalState } from './global-state';
 import { srcPath, packagesPath } from './structor-config';
 
@@ -31,18 +31,24 @@ export async function lint(options?: Partial<DefaultOptions>) {
   const mergedOptions = _.defaults(options || {}, new DefaultOptions());
   const eslintIgnorePath = path.join(globalState.projectRootPath, '.eslintignore');
   const eslintIgnoreExist = fs.existsSync(eslintIgnorePath);
+
   const cli = new CLIEngine({
     ...(lintRules as any),
     fix: mergedOptions.needFix,
     ignore: true,
     ignorePath: eslintIgnoreExist ? eslintIgnorePath : null,
-    globals: ['API', 'defs']
   });
 
   let lintFiles: string[] = [];
 
   if (mergedOptions.lintAll) {
-    lintFiles = glob.sync(`${globalState.projectRootPath}/{${srcPath.dir},${packagesPath.dir}}/**/*.{ts,tsx}`);
+    if (globalState.selectedSourceType === 'root') {
+      lintFiles = glob.sync(`${globalState.projectRootPath}/{${srcPath.dir},${packagesPath.dir}}/**/*.{ts,tsx}`);
+    } else {
+      lintFiles = glob.sync(
+        `${globalState.projectRootPath}/${packagesPath.dir}/${globalState.selectedSourceType}/**/*.{ts,tsx}`,
+      );
+    }
   } else {
     lintFiles = _.compact(
       execSync('git diff --cached --name-only --diff-filter=ACM')
