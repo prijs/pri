@@ -18,6 +18,9 @@ import { getMonoAndNpmDepsOnce, DepMap } from '../../../utils/packages';
 import { ProjectConfig } from '../../../utils/define';
 
 export const publish = async (options: PublishOption) => {
+  const currentBranchName = await getCurrentBranchName();
+  const isDevelopBranch = ['master', 'develop'].includes(currentBranchName);
+
   switch (pri.sourceConfig.type) {
     case 'component':
     case 'plugin': {
@@ -52,14 +55,14 @@ export const publish = async (options: PublishOption) => {
 
           if (installAllPrompt.installAll) {
             for (const eachPackage of depMonoPackages) {
-              await publishByPackageName(eachPackage.name, options, depMap);
+              await publishByPackageName(eachPackage.name, options, depMap, isDevelopBranch, currentBranchName);
             }
           }
         } else {
           await buildDeclaration();
         }
 
-        await publishByPackageName(currentSelectedSourceType, options, depMap);
+        await publishByPackageName(currentSelectedSourceType, options, depMap, isDevelopBranch, currentBranchName);
 
         await fs.remove(path.join(pri.projectRootPath, tempPath.dir, declarationPath.dir));
       }
@@ -71,7 +74,13 @@ export const publish = async (options: PublishOption) => {
   }
 };
 
-async function publishByPackageName(sourceType: string, options: PublishOption, depMap: DepMap) {
+async function publishByPackageName(
+  sourceType: string,
+  options: PublishOption,
+  depMap: DepMap,
+  isDevelopBranch: boolean,
+  currentBranchName: string,
+) {
   logInfo(`Start publish ${sourceType}.`);
 
   const targetPackageJson =
@@ -135,7 +144,7 @@ async function publishByPackageName(sourceType: string, options: PublishOption, 
     }
 
     if (inquirerInfo.message) {
-      await exec(`git add -A; git commit -m "${inquirerInfo.message}" -n >> /dev/null 2>&1`, {
+      await exec(`git add -A; git commit -m "${inquirerInfo.message}" -n`, {
         cwd: pri.projectRootPath,
       });
     }
@@ -160,24 +169,21 @@ async function publishByPackageName(sourceType: string, options: PublishOption, 
     versionResult = null;
   }
 
-  const currentBranchName = await getCurrentBranchName();
-
   // Publish beta version if branch is not master or develop
-  if (options.tag === 'beta' || !['master', 'develop'].includes(currentBranchName)) {
+  if (options.tag === 'beta' || !isDevelopBranch) {
     targetPackageJson.version = (semver.inc as any)(
       targetPackageJson.version,
       'prerelease',
-      currentBranchName.replace('/', ''),
+      currentBranchName.replace(/\//g, '').replace(/\./g, ''),
     );
 
     await fs.outputFile(path.join(targetRoot, 'package.json'), `${JSON.stringify(targetPackageJson, null, 2)}\n`);
 
-    await exec(
-      `git add -A; git commit -m "upgrade ${sourceType} version to ${targetPackageJson.version}" -n >> /dev/null 2>&1`,
-      {
+    if (!(await isWorkingTreeClean())) {
+      await exec(`git add -A; git commit -m "upgrade ${sourceType} version to ${targetPackageJson.version}" -n`, {
         cwd: pri.projectRootPath,
-      },
-    );
+      });
+    }
   } else if (versionResult) {
     if (!options.semver) {
       const versionPrompt = await inquirer.prompt([
@@ -212,12 +218,11 @@ async function publishByPackageName(sourceType: string, options: PublishOption, 
     // Upgrade package.json's version
     await fs.outputFile(path.join(targetRoot, 'package.json'), `${JSON.stringify(targetPackageJson, null, 2)}\n`);
 
-    await exec(
-      `git add -A; git commit -m "upgrade ${sourceType} version to ${targetPackageJson.version}" -n >> /dev/null 2>&1`,
-      {
+    if (!(await isWorkingTreeClean())) {
+      await exec(`git add -A; git commit -m "upgrade ${sourceType} version to ${targetPackageJson.version}" -n`, {
         cwd: pri.projectRootPath,
-      },
-    );
+      });
+    }
   }
 
   // Update version in depMao
@@ -239,7 +244,7 @@ async function publishByPackageName(sourceType: string, options: PublishOption, 
   }
 
   await spinner(`Publish`, async () => {
-    await moveSourceFilesToTempFolderAndPublish(sourceType, options, targetConfig, targetRoot, depMap);
+    await moveSourceFilesToTempFolderAndPublish(sourceType, options, targetConfig, targetRoot, depMap, isDevelopBranch);
   });
 
   await spinner(`Add tag`, async () => {
@@ -263,6 +268,7 @@ async function moveSourceFilesToTempFolderAndPublish(
   targetConfig: ProjectConfig,
   targetRoot: string,
   depMap: DepMap,
+  isDevelopBranch: boolean,
 ) {
   const publishTempName = 'publish-temp';
   const tempRoot = path.join(pri.projectRootPath, tempPath.dir, publishTempName);
@@ -275,16 +281,14 @@ async function moveSourceFilesToTempFolderAndPublish(
 
   // Add external deps
   const targetPackageJson = await fs.readJson(path.join(tempRoot, 'package.json'));
-  const addedPackageJson = await addMissingDeps(sourceType, depMap, targetConfig);
+  const addedPackageJson = await addMissingDeps(options, sourceType, depMap, targetConfig, isDevelopBranch);
 
   _.merge(targetPackageJson, addedPackageJson);
   await fs.outputFile(path.join(tempRoot, 'package.json'), JSON.stringify(targetPackageJson, null, 2));
 
   let finalTag = options.tag || 'latest';
 
-  const currentBranchName = await getCurrentBranchName();
-
-  if (!['master', 'develop'].includes(currentBranchName)) {
+  if (!isDevelopBranch) {
     finalTag = 'beta';
   }
 
@@ -295,7 +299,13 @@ async function moveSourceFilesToTempFolderAndPublish(
   await fs.remove(tempRoot);
 }
 
-async function addMissingDeps(sourceType: string, depMap: DepMap, targetConfig: ProjectConfig) {
+async function addMissingDeps(
+  options: PublishOption,
+  sourceType: string,
+  depMap: DepMap,
+  targetConfig: ProjectConfig,
+  isDevelopBranch: boolean,
+) {
   const newPackageJson: any = {};
 
   if (targetConfig.npmClient === 'tnpm') {
@@ -312,9 +322,15 @@ async function addMissingDeps(sourceType: string, depMap: DepMap, targetConfig: 
         logFatal(`${sourceType} depend on ${next.name}, but missing "version" in ${next.name}'s package.json`);
       }
 
+      let prefix = '^';
+
+      if (options.tag === 'beta' || !isDevelopBranch) {
+        prefix = '';
+      }
+
       return {
         ...root,
-        [next.packageJson.name]: `^${next.packageJson.version}`,
+        [next.packageJson.name]: `${prefix}${next.packageJson.version}`,
       };
     }, {});
 
