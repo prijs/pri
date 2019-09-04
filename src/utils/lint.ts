@@ -37,6 +37,8 @@ export async function lint(options?: Partial<DefaultOptions>) {
     fix: mergedOptions.needFix,
     ignore: true,
     ignorePath: eslintIgnoreExist ? eslintIgnorePath : null,
+    // TODO: 临时加进来，@琳峰 记得改造
+    globals: ['API', 'defs'],
   });
 
   let lintFiles: string[] = [];
