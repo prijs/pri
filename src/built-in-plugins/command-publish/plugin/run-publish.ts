@@ -135,7 +135,9 @@ async function publishByPackageName(sourceType: string, options: PublishOption, 
     }
 
     if (inquirerInfo.message) {
-      await exec(`git add -A; git commit -m "${inquirerInfo.message}" -n`, { cwd: pri.projectRootPath });
+      await exec(`git add -A; git commit -m "${inquirerInfo.message}" -n >> /dev/null 2>&1`, {
+        cwd: pri.projectRootPath,
+      });
     }
   }
 
@@ -170,9 +172,12 @@ async function publishByPackageName(sourceType: string, options: PublishOption, 
 
     await fs.outputFile(path.join(targetRoot, 'package.json'), `${JSON.stringify(targetPackageJson, null, 2)}\n`);
 
-    await exec(`git add -A; git commit -m "upgrade ${sourceType} version to ${targetPackageJson.version}" -n`, {
-      cwd: pri.projectRootPath,
-    });
+    await exec(
+      `git add -A; git commit -m "upgrade ${sourceType} version to ${targetPackageJson.version}" -n >> /dev/null 2>&1`,
+      {
+        cwd: pri.projectRootPath,
+      },
+    );
   } else if (versionResult) {
     if (!options.semver) {
       const versionPrompt = await inquirer.prompt([
@@ -207,9 +212,12 @@ async function publishByPackageName(sourceType: string, options: PublishOption, 
     // Upgrade package.json's version
     await fs.outputFile(path.join(targetRoot, 'package.json'), `${JSON.stringify(targetPackageJson, null, 2)}\n`);
 
-    await exec(`git add -A; git commit -m "upgrade ${sourceType} version to ${targetPackageJson.version}" -n`, {
-      cwd: pri.projectRootPath,
-    });
+    await exec(
+      `git add -A; git commit -m "upgrade ${sourceType} version to ${targetPackageJson.version}" -n >> /dev/null 2>&1`,
+      {
+        cwd: pri.projectRootPath,
+      },
+    );
   }
 
   // Update version in depMao
