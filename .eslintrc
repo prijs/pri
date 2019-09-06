@@ -70,7 +70,12 @@
     "arrow-body-style": 0,
     "max-len": [
       1,
-      120
+      {
+        "code": 120,
+        "ignoreStrings": true,
+        "ignoreUrls": true,
+        "ignoreRegExpLiterals": true
+      }
     ],
     "consistent-return": "off",
     "default-case": 2,
@@ -141,6 +146,12 @@
     "react-hooks/exhaustive-deps": "warn",
     "@typescript-eslint/explicit-member-accessibility": 0,
     "@typescript-eslint/no-object-literal-type-assertion": 0,
-    "react/no-find-dom-node": 1
+    "react/no-find-dom-node": 1,
+    "no-param-reassign": [
+      2,
+      {
+        "props": false
+      }
+    ]
   }
 }

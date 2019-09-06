@@ -65,6 +65,8 @@ export const publish = async (options: PublishOption) => {
         await publishByPackageName(currentSelectedSourceType, options, depMap, isDevelopBranch, currentBranchName);
 
         await fs.remove(path.join(pri.projectRootPath, tempPath.dir, declarationPath.dir));
+
+        await exec(`git push`);
       }
       break;
     }
@@ -247,16 +249,20 @@ async function publishByPackageName(
     await moveSourceFilesToTempFolderAndPublish(sourceType, options, targetConfig, targetRoot, depMap, isDevelopBranch);
   });
 
+  let tagName = '';
+
+  if (sourceType !== 'root') {
+    tagName = `${sourceType}-v${targetPackageJson.version}`;
+  } else {
+    tagName = `v${targetPackageJson.version}`;
+  }
+
   await spinner(`Add tag`, async () => {
-    if (sourceType !== 'root') {
-      await exec(`git tag -a ${sourceType}-v${targetPackageJson.version} -m "release"`);
-    } else {
-      await exec(`git tag -a v${targetPackageJson.version} -m "release"`);
-    }
+    await exec(`git tag -a ${tagName} -m "release"`);
   });
 
-  await spinner(`Push`, async () => {
-    await exec(`git push --follow-tags`);
+  await spinner(`Push tag`, async () => {
+    await exec(`git push origin ${tagName}`);
   });
 
   logText(`+ ${targetPackageJson.name}@${targetPackageJson.version}`);
