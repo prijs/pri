@@ -57,7 +57,7 @@ export const commandBundle = async (opts: IOpts = {}) => {
 export const prepareBundle = async (opts: IOpts) => {
   await pri.project.ensureProjectFiles();
 
-  if (!opts.dev || !opts.skipLint) {
+  if (!opts.dev && !opts.skipLint) {
     await pri.project.lint({
       lintAll: true,
       needFix: false,
