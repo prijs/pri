@@ -66,7 +66,10 @@ export const publish = async (options: PublishOption) => {
 
         await fs.remove(path.join(pri.projectRootPath, tempPath.dir, declarationPath.dir));
 
-        await exec(`git push`);
+        const currentBranch = execSync('git rev-parse --abbrev-ref HEAD')
+          .toString('utf8')
+          .trim();
+        await exec(`git push origin ${currentBranch}`);
       }
       break;
     }
