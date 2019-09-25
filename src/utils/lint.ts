@@ -136,11 +136,9 @@ export async function lint(options?: Partial<DefaultOptions>) {
   }
 
   if (mergedOptions.needFix && lintResult.results.some(each => each.output)) {
-    console.log(
-      colors.yellow(
-        `${lintResult.results.filter(each => each.output).length} files autofixed, please recheck your code.`,
-      ),
-    );
+    const fixedFiles = lintResult.results.filter(each => each.output);
+    console.log(colors.yellow(`${fixedFiles.length} files autofixed, please recheck your code.`));
+    execSync(`git add ${fixedFiles.map(file => file.filePath).join(' ')}`);
     process.exit(1);
   }
 }
