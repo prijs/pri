@@ -1,6 +1,7 @@
 import * as path from 'path';
 import { pri } from '../../../node';
 import { testsPath } from '../../../utils/structor-config';
+import { typeChecker } from './type-checker';
 
 pri.project.whiteFileRules.add(file => {
   return path.format(file).startsWith(path.join(pri.projectRootPath, testsPath.dir));
@@ -16,11 +17,12 @@ pri.commands.registerCommand({
   name: ['test'],
   description: 'Run tests.',
   action: async () => {
-    await pri.project.lint({
-      lintAll: false,
-      needFix: true,
-      showBreakError: true,
-    });
+    // await pri.project.lint({
+    //   lintAll: false,
+    //   needFix: true,
+    //   showBreakError: true,
+    // });
+    typeChecker();
     await pri.project.ensureProjectFiles();
     await pri.project.checkProjectFiles();
 
