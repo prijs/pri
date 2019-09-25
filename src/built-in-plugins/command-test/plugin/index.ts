@@ -1,6 +1,7 @@
 import * as path from 'path';
 import { pri } from '../../../node';
 import { testsPath } from '../../../utils/structor-config';
+import { typeChecker } from './type-checker';
 
 pri.project.whiteFileRules.add(file => {
   return path.format(file).startsWith(path.join(pri.projectRootPath, testsPath.dir));
@@ -21,6 +22,7 @@ pri.commands.registerCommand({
       needFix: true,
       showBreakError: true,
     });
+    typeChecker();
     await pri.project.ensureProjectFiles();
     await pri.project.checkProjectFiles();
 
