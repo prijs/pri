@@ -9,7 +9,7 @@ import { pri, tempPath, declarationPath } from '../../../node';
 import { buildComponent } from '../../command-build/plugin/build';
 import { commandBundle } from '../../command-bundle/plugin/command-bundle';
 import { isWorkingTreeClean, getCurrentBranchName } from '../../../utils/git-operate';
-import { logFatal, logInfo, spinner } from '../../../utils/log';
+import { logInfo, spinner } from '../../../utils/log';
 import { getMonoAndNpmDepsOnce, DepMap } from '../../../utils/packages';
 import { PackageInfo } from '../../../utils/define';
 import {
@@ -17,9 +17,10 @@ import {
   generateVersion,
   addTagAndPush,
   moveSourceFilesToTempFolderAndPublish,
-  cleanWorkingTree,
   upgradePackageVersionAndPush,
   generateTag,
+  prePareParamsBeforePublish,
+  checkEnvBeforePublish,
 } from './utils.js';
 
 export const publish = async (options: PublishOption) => {
@@ -58,8 +59,8 @@ export const publish = async (options: PublishOption) => {
 
           await buildDeclaration();
 
-          if (installAllPrompt.publishAllPackages && currentSelectedSourceType === 'root') {
-            // parallel publish root
+          if (installAllPrompt.publishAllPackages) {
+            // async publish
             await publishPackageAndItsMonoPackage(
               currentSelectedSourceType,
               options,
@@ -68,11 +69,8 @@ export const publish = async (options: PublishOption) => {
               isDevelopBranch,
               currentBranchName,
             );
-          } else if (installAllPrompt.publishAllPackages && currentSelectedSourceType !== 'root') {
-            // Serial publish non root situation TODO: change to parallel
-            for (const eachPackage of depMonoPackages) {
-              await publishByPackageName(eachPackage.name, options, depMap, isDevelopBranch, currentBranchName);
-            }
+          } else {
+            await publishByPackageName(currentSelectedSourceType, options, depMap, isDevelopBranch, currentBranchName);
           }
         } else {
           await buildDeclaration();
@@ -103,42 +101,16 @@ async function publishByPackageName(
 ) {
   logInfo(`Start publish ${sourceType}.`);
 
-  const targetPackageJson =
-    sourceType === 'root'
-      ? pri.projectPackageJson || {}
-      : pri.packages.find(eachPackage => eachPackage.name === sourceType).packageJson || {};
-
-  const targetConfig =
-    sourceType === 'root'
-      ? pri.projectConfig
-      : pri.packages.find(eachPackage => eachPackage.name === sourceType).config;
-
-  const targetRoot =
-    sourceType === 'root'
-      ? pri.projectRootPath
-      : pri.packages.find(eachPackage => eachPackage.name === sourceType).rootPath;
-
-  await fs.remove(path.join(pri.projectRootPath, pri.sourceConfig.distDir));
+  const { targetPackageJson, targetConfig, targetRoot, targetPackageInfo } = prePareParamsBeforePublish(sourceType);
 
   // Change source config here
   pri.sourceConfig = targetConfig;
   pri.sourceRoot = targetRoot;
   pri.selectedSourceType = sourceType;
 
-  if (!targetPackageJson.name) {
-    logFatal(`No name found in ${sourceType} package.json`);
-  }
+  await fs.remove(path.join(pri.projectRootPath, pri.sourceConfig.distDir));
 
-  if (!targetPackageJson.version) {
-    logFatal(`No version found in ${sourceType} package.json`);
-  }
-
-  // clean workingTree before publish
-  if (!(await isWorkingTreeClean())) {
-    await cleanWorkingTree();
-  }
-
-  logInfo('Check if npm package exist');
+  await checkEnvBeforePublish(targetPackageJson, sourceType);
 
   targetPackageJson.version = await generateVersion(
     options,
@@ -162,7 +134,7 @@ async function publishByPackageName(
     });
   }
 
-  await buildComponent();
+  await buildComponent(targetPackageInfo);
 
   if (options.bundle) {
     await commandBundle({ skipLint: true });
@@ -188,81 +160,58 @@ async function publishPackageAndItsMonoPackage(
 ) {
   logInfo(`Start publish ${sourceType}.`);
 
-  const currentPackageJson =
-    sourceType === 'root'
-      ? pri.projectPackageJson || {}
-      : pri.packages.find(eachPackage => eachPackage.name === sourceType).packageJson || {};
+  const { targetPackageJson, targetConfig, targetRoot, targetPackageInfo } = prePareParamsBeforePublish(sourceType);
 
-  const currentConfig =
-    sourceType === 'root'
-      ? pri.projectConfig
-      : pri.packages.find(eachPackage => eachPackage.name === sourceType).config;
-
-  const currentRoot =
-    sourceType === 'root'
-      ? pri.projectRootPath
-      : pri.packages.find(eachPackage => eachPackage.name === sourceType).rootPath;
+  // Change source config here
+  pri.sourceConfig = targetConfig;
+  pri.sourceRoot = targetRoot;
+  pri.selectedSourceType = sourceType;
 
   await fs.remove(path.join(pri.projectRootPath, pri.sourceConfig.distDir));
 
-  // Change source config here
-  pri.sourceConfig = currentConfig;
-  pri.sourceRoot = currentRoot;
-  pri.selectedSourceType = sourceType;
-
-  if (!currentPackageJson.name) {
-    logFatal(`No name found in ${sourceType} package.json`);
-  }
-
-  if (!currentPackageJson.version) {
-    logFatal(`No version found in ${sourceType} package.json`);
-  }
+  await checkEnvBeforePublish(targetPackageJson, sourceType);
 
   const monoPackageVersion: {
     [key in string]: string;
   } = {};
 
-  if (sourceType === 'root') {
-    // Generate all package version and upgrade
-    await depMonoPackages.forEach(async item => {
-      const version = await generateVersion(options, isDevelopBranch, item.packageJson, item.config, currentBranchName);
+  // Generate all package version and upgrade
 
-      monoPackageVersion[item.name as string] = version;
+  await depMonoPackages.forEach(async item => {
+    const version = await generateVersion(options, isDevelopBranch, item.packageJson, item.config, currentBranchName);
 
-      item.packageJson.version = version;
+    monoPackageVersion[item.name as string] = version;
 
-      const rootPath = depMonoPackages.find(eachPackage => eachPackage.name === item.name).rootPath;
+    item.packageJson.version = version;
 
-      await fs.outputFile(path.join(rootPath, 'package.json'), `${JSON.stringify(item.packageJson, null, 2)}\n`);
+    const rootPath = item.rootPath;
+
+    await fs.outputFile(path.join(rootPath, 'package.json'), `${JSON.stringify(item.packageJson, null, 2)}\n`);
+  });
+
+  // Update depMonoPackages version
+
+  depMonoPackages.forEach(item => {
+    depMap.get(item.name).depMonoPackages.forEach(eachPackage => {
+      eachPackage.packageJson.version = monoPackageVersion[eachPackage.packageJson.name];
     });
-
-    // Update depMonoPackages version
-    if (depMap) {
-      depMap.forEach(value => {
-        value.depMonoPackages.forEach(eachPackage => {
-          eachPackage.packageJson.version = monoPackageVersion[eachPackage.packageJson.name];
-        });
-      });
-    }
-  } else {
-    // TODO: add non root situation, the packages dep relation
-  }
+  });
 
   // current package version
-  const projectVersion = await generateVersion(
+  const currentVersion = await generateVersion(
     options,
     isDevelopBranch,
-    currentPackageJson,
-    currentConfig,
+    targetPackageJson,
+    targetConfig,
     currentBranchName,
   );
 
-  currentPackageJson.version = projectVersion;
+  targetPackageJson.version = currentVersion;
 
-  await fs.outputFile(path.join(currentRoot, 'package.json'), `${JSON.stringify(currentPackageJson, null, 2)}\n`);
+  await fs.outputFile(path.join(targetRoot, 'package.json'), `${JSON.stringify(targetPackageJson, null, 2)}\n`);
 
   if (!(await isWorkingTreeClean())) {
-    const commitMessage = `upgrade ${sourceType} version to ${currentPackageJson.version} \n\n${depMonoPackages
+    const commitMessage = `upgrade ${sourceType} version to ${targetPackageJson.version} \n\n${depMonoPackages
       .map(i => `upgrade ${i.name} version to ${i.packageJson.version} \n\n`)
       .join('')}`;
     await exec(`git add -A; git commit -m "${commitMessage}" -n`, {
@@ -270,20 +219,20 @@ async function publishPackageAndItsMonoPackage(
     });
   }
 
-  await buildComponent();
-
-  if (options.bundle) {
-    await commandBundle({ skipLint: true });
-  }
-
-  /** parallel publish queue & tag with push */
+  // async publish queue & add tag and push
   const publishQueue = depMonoPackages.map(item => {
     return new Promise(async resolve => {
+      await buildComponent(item);
+
+      if (options.bundle) {
+        await commandBundle({ skipLint: true });
+      }
+
       await moveSourceFilesToTempFolderAndPublish(
         item.name,
         options,
         item.config,
-        pri.packages.find(eachPackage => eachPackage.name === item.name).rootPath,
+        item.rootPath,
         depMap,
         isDevelopBranch,
       );
@@ -296,16 +245,22 @@ async function publishPackageAndItsMonoPackage(
   // push current package into publishQueue
   publishQueue.push(
     new Promise(async resolve => {
+      await buildComponent(targetPackageInfo);
+
+      if (options.bundle) {
+        await commandBundle({ skipLint: true });
+      }
+
       await moveSourceFilesToTempFolderAndPublish(
         sourceType,
         options,
-        currentConfig,
-        currentRoot,
+        targetConfig,
+        targetRoot,
         depMap,
         isDevelopBranch,
       );
 
-      await addTagAndPush(generateTag(sourceType, currentPackageJson), currentPackageJson);
+      await addTagAndPush(generateTag(sourceType, targetPackageJson), targetPackageJson);
 
       resolve();
     }),

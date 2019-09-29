@@ -11,9 +11,54 @@ import { PublishOption } from './interface';
 import { exec } from '../../../utils/exec';
 import { pri, tempPath, declarationPath, srcPath } from '../../../node';
 import { isWorkingTreeClean } from '../../../utils/git-operate';
-import { logFatal, spinner, logText } from '../../../utils/log';
+import { logFatal, spinner, logText, logInfo } from '../../../utils/log';
 import { DepMap } from '../../../utils/packages';
-import { ProjectConfig, PackageJson } from '../../../utils/define';
+import { ProjectConfig, PackageJson, PackageInfo } from '../../../utils/define';
+
+// prePare the info before publish
+export function prePareParamsBeforePublish(sourceType: string) {
+  const targetPackageJson =
+    sourceType === 'root'
+      ? pri.projectPackageJson || {}
+      : pri.packages.find(eachPackage => eachPackage.name === sourceType).packageJson || {};
+
+  const targetConfig =
+    sourceType === 'root'
+      ? pri.projectConfig
+      : pri.packages.find(eachPackage => eachPackage.name === sourceType).config;
+
+  const targetRoot =
+    sourceType === 'root'
+      ? pri.projectRootPath
+      : pri.packages.find(eachPackage => eachPackage.name === sourceType).rootPath;
+
+  const targetPackageInfo: PackageInfo = {
+    name: sourceType,
+    rootPath: targetRoot,
+    packageJson: targetPackageJson as PackageJson,
+    config: targetConfig,
+  };
+
+  return { targetPackageJson, targetConfig, targetRoot, targetPackageInfo };
+}
+
+// check package.json and env etc.
+export async function checkEnvBeforePublish(targetPackageJson: Partial<PackageJson>, sourceType: string) {
+  if (!targetPackageJson.name) {
+    logFatal(`No name found in ${sourceType} package.json`);
+  }
+
+  if (!targetPackageJson.version) {
+    logFatal(`No version found in ${sourceType} package.json`);
+  }
+
+  // clean workingTree before publish
+  if (!(await isWorkingTreeClean())) {
+    await cleanWorkingTree();
+  }
+
+  logInfo('Check if npm package exist');
+}
 
 export async function addTagAndPush(tagName: string, targetPackageJson: Partial<PackageJson>) {
   await spinner(`Add tag`, async () => {
@@ -170,7 +215,10 @@ export async function moveSourceFilesToTempFolderAndPublish(
 
   await fs.remove(tempRoot);
 
-  await fs.copy(path.join(pri.projectRootPath, targetConfig.distDir), path.join(tempRoot, targetConfig.distDir));
+  await fs.copy(
+    path.join(pri.projectRootPath, targetConfig.distDir, sourceType),
+    path.join(tempRoot, targetConfig.distDir),
+  );
   await copyDeclaration(sourceType, publishTempName);
   await fs.copy(path.join(targetRoot, 'package.json'), path.join(tempRoot, 'package.json'));
 
@@ -314,7 +362,7 @@ export async function copyDeclaration(sourceType: string, publishTempName: strin
       const targetPath = path.relative(path.join(declarationRoot, 'packages', sourceType, srcPathExtra), eachFile);
       fs.copySync(
         eachFile,
-        path.join(pri.projectRootPath, tempPath.dir, publishTempName, declarationPath.dir, targetPath),
+        path.join(pri.projectRootPath, tempPath.dir, publishTempName, sourceType, declarationPath.dir, targetPath),
       );
     });
   } else {
@@ -325,7 +373,7 @@ export async function copyDeclaration(sourceType: string, publishTempName: strin
       const targetPath = path.relative(path.join(declarationRoot, srcPathExtra), eachFile);
       fs.copySync(
         eachFile,
-        path.join(pri.projectRootPath, tempPath.dir, publishTempName, declarationPath.dir, targetPath),
+        path.join(pri.projectRootPath, tempPath.dir, publishTempName, sourceType, declarationPath.dir, targetPath),
       );
     });
   }
