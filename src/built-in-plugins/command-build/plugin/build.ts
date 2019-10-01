@@ -113,7 +113,7 @@ export const buildComponent = async (packageInfo: PackageInfo = null) => {
   // );
 
   // TODO:
-  await spinner(`build source files ${(packageInfo && packageInfo.name) || ''}`, async () => {
+  await spinner(`build source files ${(packageInfo && packageInfo.name) || ''} \n`, async () => {
     await tsPlusBabel(false, false, packageInfo);
   });
 
