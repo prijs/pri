@@ -189,7 +189,9 @@ async function publishPackageAndItsMonoPackage(
 
   depMonoPackages.forEach(item => {
     depMap.get(item.name).depMonoPackages.forEach(eachPackage => {
-      eachPackage.packageJson.version = monoPackageVersion[eachPackage.packageJson.name];
+      if (monoPackageVersion[eachPackage.packageJson.name]) {
+        eachPackage.packageJson.version = monoPackageVersion[eachPackage.packageJson.name];
+      }
     });
   });
 
