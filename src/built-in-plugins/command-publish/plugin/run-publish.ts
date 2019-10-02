@@ -1,21 +1,26 @@
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as inquirer from 'inquirer';
-import * as commitLint from '@commitlint/lint';
-import * as semver from 'semver';
-import { execSync } from 'child_process';
 import * as _ from 'lodash';
-import * as glob from 'glob';
-import * as pkg from '../../../../package.json';
 import { PublishOption } from './interface';
 import { exec } from '../../../utils/exec';
-import { pri, tempPath, declarationPath, srcPath } from '../../../node';
+import { pri, tempPath, declarationPath } from '../../../node';
 import { buildComponent } from '../../command-build/plugin/build';
 import { commandBundle } from '../../command-bundle/plugin/command-bundle';
 import { isWorkingTreeClean, getCurrentBranchName } from '../../../utils/git-operate';
-import { logFatal, logInfo, spinner, logText } from '../../../utils/log';
+import { logInfo, spinner } from '../../../utils/log';
 import { getMonoAndNpmDepsOnce, DepMap } from '../../../utils/packages';
-import { ProjectConfig } from '../../../utils/define';
+import { PackageInfo } from '../../../utils/define';
+import {
+  buildDeclaration,
+  generateVersion,
+  addTagAndPush,
+  moveSourceFilesToTempFolderAndPublish,
+  upgradePackageVersionAndPush,
+  generateTag,
+  prePareParamsBeforePublish,
+  checkEnvBeforePublish,
+} from './utils.js';
 
 export const publish = async (options: PublishOption) => {
   const currentBranchName = await getCurrentBranchName();
@@ -45,24 +50,31 @@ export const publish = async (options: PublishOption) => {
             {
               message: `${pri.selectedSourceType} depends on monorepo ${depMonoPackages
                 .map(eachPackage => `"${eachPackage.name}"`)
-                .join(', ')} \n Do you want to publish these packages first?`,
-              name: 'installAll',
+                .join(', ')} \n Do you want to publish all packages?`,
+              name: 'publishAllPackages',
               type: 'confirm',
             },
           ]);
 
           await buildDeclaration();
 
-          if (installAllPrompt.installAll) {
-            for (const eachPackage of depMonoPackages) {
-              await publishByPackageName(eachPackage.name, options, depMap, isDevelopBranch, currentBranchName);
-            }
+          if (installAllPrompt.publishAllPackages) {
+            // async publish
+            await publishPackageAndItsMonoPackage(
+              currentSelectedSourceType,
+              options,
+              depMap,
+              depMonoPackages,
+              isDevelopBranch,
+              currentBranchName,
+            );
+          } else {
+            await publishByPackageName(currentSelectedSourceType, options, depMap, isDevelopBranch, currentBranchName);
           }
         } else {
           await buildDeclaration();
+          await publishByPackageName(currentSelectedSourceType, options, depMap, isDevelopBranch, currentBranchName);
         }
-
-        await publishByPackageName(currentSelectedSourceType, options, depMap, isDevelopBranch, currentBranchName);
 
         await fs.remove(path.join(pri.projectRootPath, tempPath.dir, declarationPath.dir));
 
@@ -85,147 +97,26 @@ async function publishByPackageName(
 ) {
   logInfo(`Start publish ${sourceType}.`);
 
-  const targetPackageJson =
-    sourceType === 'root'
-      ? pri.projectPackageJson || {}
-      : pri.packages.find(eachPackage => eachPackage.name === sourceType).packageJson || {};
-
-  const targetConfig =
-    sourceType === 'root'
-      ? pri.projectConfig
-      : pri.packages.find(eachPackage => eachPackage.name === sourceType).config;
-
-  const targetRoot =
-    sourceType === 'root'
-      ? pri.projectRootPath
-      : pri.packages.find(eachPackage => eachPackage.name === sourceType).rootPath;
-
-  await fs.remove(path.join(pri.projectRootPath, pri.sourceConfig.distDir));
+  const { targetPackageJson, targetConfig, targetRoot, targetPackageInfo } = prePareParamsBeforePublish(sourceType);
 
   // Change source config here
   pri.sourceConfig = targetConfig;
   pri.sourceRoot = targetRoot;
   pri.selectedSourceType = sourceType;
 
-  if (!targetPackageJson.name) {
-    logFatal(`No name found in ${sourceType} package.json`);
-  }
+  await fs.remove(path.join(pri.projectRootPath, pri.sourceConfig.distDir));
 
-  if (!targetPackageJson.version) {
-    logFatal(`No version found in ${sourceType} package.json`);
-  }
+  await checkEnvBeforePublish(targetPackageJson, sourceType);
 
-  if (!(await isWorkingTreeClean())) {
-    const inquirerInfo = await inquirer.prompt([
-      {
-        message: 'Working tree is not clean, your commit message:',
-        name: 'message',
-        type: 'input',
-      },
-    ]);
+  targetPackageJson.version = await generateVersion(
+    options,
+    isDevelopBranch,
+    targetPackageJson,
+    targetConfig,
+    currentBranchName,
+  );
 
-    if (!inquirerInfo.message) {
-      logFatal(`Need commit message`);
-    }
-
-    const result = await commitLint(inquirerInfo.message, {
-      'body-leading-blank': [1, 'always'],
-      'footer-leading-blank': [1, 'always'],
-      'header-max-length': [2, 'always', 72],
-      'scope-case': [2, 'always', 'lower-case'],
-      'subject-case': [2, 'never', ['sentence-case', 'start-case', 'pascal-case', 'upper-case']],
-      'subject-empty': [2, 'never'],
-      'subject-full-stop': [2, 'never', '.'],
-      'type-case': [2, 'always', 'lower-case'],
-      'type-empty': [2, 'never'],
-      'type-enum': [2, 'always', ['build', 'ci', 'docs', 'feat', 'fix', 'perf', 'refactor', 'revert', 'style', 'test']],
-    });
-
-    if (!result.valid) {
-      logFatal(`\n${result.errors.map((eachError: any) => eachError.message).join('\n')}`);
-    }
-
-    if (inquirerInfo.message) {
-      await exec(`git add -A; git commit -m "${inquirerInfo.message}" -n`, {
-        cwd: pri.projectRootPath,
-      });
-    }
-  }
-
-  logInfo('Check if npm package exist');
-
-  let versionResult: string = null;
-
-  try {
-    const versionResultExec = execSync(
-      `${targetConfig.npmClient} view ${targetPackageJson.name}@${targetPackageJson.version} version`,
-    );
-
-    if (versionResultExec) {
-      versionResult = versionResultExec.toString().trim();
-    } else {
-      versionResult = null;
-    }
-  } catch (error) {
-    // Throw error means not exist
-    versionResult = null;
-  }
-
-  // Publish beta version if branch is not master or develop
-  if (options.tag === 'beta' || !isDevelopBranch) {
-    targetPackageJson.version = (semver.inc as any)(
-      targetPackageJson.version,
-      'prerelease',
-      currentBranchName.replace(/\//g, '').replace(/\./g, ''),
-    );
-
-    await fs.outputFile(path.join(targetRoot, 'package.json'), `${JSON.stringify(targetPackageJson, null, 2)}\n`);
-
-    if (!(await isWorkingTreeClean())) {
-      await exec(`git add -A; git commit -m "upgrade ${sourceType} version to ${targetPackageJson.version}" -n`, {
-        cwd: pri.projectRootPath,
-      });
-    }
-  } else if (versionResult) {
-    if (!options.semver) {
-      const versionPrompt = await inquirer.prompt([
-        {
-          message: `${targetPackageJson.name}@${targetPackageJson.version} exist, can upgrade to`,
-          name: 'version',
-          type: 'list',
-          choices: [
-            {
-              name: `Patch(${semver.inc(targetPackageJson.version, 'patch')})`,
-              value: semver.inc(targetPackageJson.version, 'patch'),
-            },
-            {
-              name: `Minor(${semver.inc(targetPackageJson.version, 'minor')})`,
-              value: semver.inc(targetPackageJson.version, 'minor'),
-            },
-            {
-              name: `Major(${semver.inc(targetPackageJson.version, 'major')})`,
-              value: semver.inc(targetPackageJson.version, 'major'),
-            },
-          ],
-        },
-      ]);
-
-      targetPackageJson.version = versionPrompt.version;
-    } else if (['patch', 'minor', 'major'].some(each => each === options.semver)) {
-      targetPackageJson.version = semver.inc(targetPackageJson.version, options.semver as semver.ReleaseType);
-    } else {
-      logFatal(`semver must be "patch" "minor" or "major"`);
-    }
-
-    // Upgrade package.json's version
-    await fs.outputFile(path.join(targetRoot, 'package.json'), `${JSON.stringify(targetPackageJson, null, 2)}\n`);
-
-    if (!(await isWorkingTreeClean())) {
-      await exec(`git add -A; git commit -m "upgrade ${sourceType} version to ${targetPackageJson.version}" -n`, {
-        cwd: pri.projectRootPath,
-      });
-    }
-  }
+  await upgradePackageVersionAndPush(sourceType, targetRoot, targetPackageJson);
 
   // Update version in depMao
   if (depMap) {
@@ -239,7 +130,7 @@ async function publishByPackageName(
     });
   }
 
-  await buildComponent();
+  await buildComponent(targetPackageInfo);
 
   if (options.bundle) {
     await commandBundle({ skipLint: true });
@@ -249,195 +140,129 @@ async function publishByPackageName(
     await moveSourceFilesToTempFolderAndPublish(sourceType, options, targetConfig, targetRoot, depMap, isDevelopBranch);
   });
 
-  let tagName = '';
+  const tagName = generateTag(sourceType, targetPackageJson);
 
-  if (sourceType !== 'root') {
-    tagName = `${sourceType}-v${targetPackageJson.version}`;
-  } else {
-    tagName = `v${targetPackageJson.version}`;
-  }
-
-  await spinner(`Add tag`, async () => {
-    await exec(`git tag -a ${tagName} -m "release"`);
-  });
-
-  await spinner(`Push tag`, async () => {
-    await exec(`git push origin ${tagName}`);
-  });
-
-  logText(`+ ${targetPackageJson.name}@${targetPackageJson.version}`);
+  await addTagAndPush(tagName, targetPackageJson);
 }
 
-async function moveSourceFilesToTempFolderAndPublish(
+/** publish the packages and its mono */
+async function publishPackageAndItsMonoPackage(
   sourceType: string,
   options: PublishOption,
-  targetConfig: ProjectConfig,
-  targetRoot: string,
   depMap: DepMap,
+  depMonoPackages: PackageInfo[],
   isDevelopBranch: boolean,
+  currentBranchName: string,
 ) {
-  const publishTempName = 'publish-temp';
-  const tempRoot = path.join(pri.projectRootPath, tempPath.dir, publishTempName);
+  logInfo(`Start publish ${sourceType}.`);
 
-  await fs.remove(tempRoot);
+  const { targetPackageJson, targetConfig, targetRoot, targetPackageInfo } = prePareParamsBeforePublish(sourceType);
 
-  await fs.copy(path.join(pri.projectRootPath, targetConfig.distDir), path.join(tempRoot, targetConfig.distDir));
-  await copyDeclaration(sourceType, publishTempName);
-  await fs.copy(path.join(targetRoot, 'package.json'), path.join(tempRoot, 'package.json'));
+  // Change source config here
+  pri.sourceConfig = targetConfig;
+  pri.sourceRoot = targetRoot;
+  pri.selectedSourceType = sourceType;
 
-  // Add external deps
-  const targetPackageJson = await fs.readJson(path.join(tempRoot, 'package.json'));
-  const addedPackageJson = await addMissingDeps(options, sourceType, depMap, targetConfig, isDevelopBranch);
+  await fs.remove(path.join(pri.projectRootPath, pri.sourceConfig.distDir));
 
-  _.merge(targetPackageJson, addedPackageJson);
-  await fs.outputFile(path.join(tempRoot, 'package.json'), JSON.stringify(targetPackageJson, null, 2));
+  await checkEnvBeforePublish(targetPackageJson, sourceType);
 
-  let finalTag = options.tag || 'latest';
+  const monoPackageVersion: {
+    [key in string]: string;
+  } = {};
 
-  if (!isDevelopBranch) {
-    finalTag = 'beta';
-  }
+  // Generate all package version and upgrade
 
-  await exec(`${targetConfig.npmClient} publish ${tempRoot} --ignore-scripts --tag ${finalTag}`, {
-    cwd: tempRoot,
+  await depMonoPackages.forEach(async item => {
+    const version = await generateVersion(options, isDevelopBranch, item.packageJson, item.config, currentBranchName);
+
+    monoPackageVersion[item.name as string] = version;
+
+    item.packageJson.version = version;
+
+    const rootPath = item.rootPath;
+
+    await fs.outputFile(path.join(rootPath, 'package.json'), `${JSON.stringify(item.packageJson, null, 2)}\n`);
   });
 
-  await fs.remove(tempRoot);
-}
+  // Update depMonoPackages version
 
-async function addMissingDeps(
-  options: PublishOption,
-  sourceType: string,
-  depMap: DepMap,
-  targetConfig: ProjectConfig,
-  isDevelopBranch: boolean,
-) {
-  const newPackageJson: any = {};
-
-  if (targetConfig.npmClient === 'tnpm') {
-    newPackageJson.publishConfig = {
-      registry: 'https://registry.npm.alibaba-inc.com',
-    };
-  }
-
-  if (depMap) {
-    const { depMonoPackages, depNpmPackages } = depMap.get(sourceType);
-
-    newPackageJson.dependencies = depMonoPackages.reduce((root, next) => {
-      if (!next.packageJson.version) {
-        logFatal(`${sourceType} depend on ${next.name}, but missing "version" in ${next.name}'s package.json`);
-      }
-
-      let prefix = '^';
-
-      if (options.tag === 'beta' || !isDevelopBranch) {
-        prefix = '';
-      }
-
-      return {
-        ...root,
-        [next.packageJson.name]: `${prefix}${next.packageJson.version}`,
-      };
-    }, {});
-
-    if (sourceType !== 'root') {
-      // Find depNpmPackages's version from rootPackageJson
-      const projectPackageJsonDeps = (pri.projectPackageJson as any).dependencies || {};
-
-      let sourceDeps: any = {};
-      sourceDeps = {
-        ...sourceDeps,
-        ...projectPackageJsonDeps,
-      };
-
-      // If root type is project, also find in pri deps.
-      if (pri.projectConfig.type === 'project') {
-        sourceDeps = {
-          ...sourceDeps,
-          ...(pkg.dependencies || {}),
-        };
-      }
-
-      // add nested deps
-      sourceDeps = {
-        ...sourceDeps,
-        history: '*',
-      };
-
-      newPackageJson.dependencies = {
-        ...newPackageJson.dependencies,
-        ...depNpmPackages
-          .filter(npmName => !['react', 'react-dom', 'antd'].includes(npmName))
-          .reduce((root, next) => {
-            if (!sourceDeps[next]) {
-              logFatal(
-                `${pri.selectedSourceType}'s code depends on ${next}, but it doesn't exist in root package.json`,
-              );
-            }
-
-            return {
-              ...root,
-              [next]: sourceDeps[next],
-            };
-          }, {}),
-      };
-    }
-  }
-
-  if (sourceType !== 'root') {
-    _.set(newPackageJson, 'main', `${pri.projectConfig.distDir}/main`);
-    _.set(newPackageJson, 'module', `${pri.projectConfig.distDir}/module`);
-    _.set(newPackageJson, 'types', 'declaration/index.d.ts');
-  }
-
-  return newPackageJson;
-}
-
-async function buildDeclaration() {
-  // Create d.ts
-  await spinner(`create declaration`, async () => {
-    try {
-      await exec(
-        `npx tsc --declaration --declarationDir ${path.join(
-          pri.projectRootPath,
-          `./${tempPath.dir}/${declarationPath.dir}`,
-        )} --emitDeclarationOnly >> /dev/null 2>&1`,
-        {
-          cwd: pri.projectRootPath,
-        },
-      );
-    } catch {
-      //
-    }
+  depMonoPackages.forEach(item => {
+    depMap.get(item.name).depMonoPackages.forEach(eachPackage => {
+      eachPackage.packageJson.version = monoPackageVersion[eachPackage.packageJson.name];
+    });
   });
-}
 
-async function copyDeclaration(sourceType: string, publishTempName: string) {
-  const declarationRoot = path.join(pri.projectRootPath, tempPath.dir, declarationPath.dir);
+  // current package version
+  const currentVersion = await generateVersion(
+    options,
+    isDevelopBranch,
+    targetPackageJson,
+    targetConfig,
+    currentBranchName,
+  );
 
-  const srcPathExtra = pri.packages.length > 0 ? srcPath.dir : '';
+  targetPackageJson.version = currentVersion;
 
-  // If select packages, pick it's own declaration
-  if (sourceType !== 'root') {
-    const declarationFiles = glob.sync(path.join(declarationRoot, 'packages', sourceType, srcPathExtra, '/**/*.d.ts'));
+  await fs.outputFile(path.join(targetRoot, 'package.json'), `${JSON.stringify(targetPackageJson, null, 2)}\n`);
 
-    declarationFiles.map(eachFile => {
-      const targetPath = path.relative(path.join(declarationRoot, 'packages', sourceType, srcPathExtra), eachFile);
-      fs.copySync(
-        eachFile,
-        path.join(pri.projectRootPath, tempPath.dir, publishTempName, declarationPath.dir, targetPath),
-      );
-    });
-  } else {
-    // get declaration from src
-    const declarationFiles = glob.sync(path.join(declarationRoot, srcPathExtra, '**/*.d.ts'));
-
-    declarationFiles.map(eachFile => {
-      const targetPath = path.relative(path.join(declarationRoot, srcPathExtra), eachFile);
-      fs.copySync(
-        eachFile,
-        path.join(pri.projectRootPath, tempPath.dir, publishTempName, declarationPath.dir, targetPath),
-      );
+  if (!(await isWorkingTreeClean())) {
+    const commitMessage = `upgrade ${sourceType} version to ${targetPackageJson.version} \n\n${depMonoPackages
+      .map(i => `upgrade ${i.name} version to ${i.packageJson.version} \n\n`)
+      .join('')}`;
+    await exec(`git add -A; git commit -m "${commitMessage}" -n`, {
+      cwd: pri.projectRootPath,
     });
   }
+
+  // async publish queue & add tag and push
+  const publishQueue = depMonoPackages.map(item => {
+    return new Promise(async resolve => {
+      await buildComponent(item);
+
+      if (options.bundle) {
+        await commandBundle({ skipLint: true });
+      }
+
+      await moveSourceFilesToTempFolderAndPublish(
+        item.name,
+        options,
+        item.config,
+        item.rootPath,
+        depMap,
+        isDevelopBranch,
+      );
+
+      await addTagAndPush(generateTag(item.name, item.packageJson), item.packageJson);
+      resolve();
+    });
+  });
+
+  // push current package into publishQueue
+  publishQueue.push(
+    new Promise(async resolve => {
+      await buildComponent(targetPackageInfo);
+
+      if (options.bundle) {
+        await commandBundle({ skipLint: true });
+      }
+
+      await moveSourceFilesToTempFolderAndPublish(
+        sourceType,
+        options,
+        targetConfig,
+        targetRoot,
+        depMap,
+        isDevelopBranch,
+      );
+
+      await addTagAndPush(generateTag(sourceType, targetPackageJson), targetPackageJson);
+
+      resolve();
+    }),
+  );
+
+  await spinner(`Publish`, async () => {
+    await Promise.all(publishQueue);
+  });
 }

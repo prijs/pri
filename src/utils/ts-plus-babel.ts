@@ -11,6 +11,7 @@ import { pri, srcPath } from '../node';
 import { getBabelOptions } from './babel-options';
 import { globalState } from './global-state';
 import { babelPluginTransformImport } from './babel-plugin-transfer-import';
+import { PackageInfo } from './define';
 
 function getGulpByWatch(watch: boolean, filesPath: string) {
   if (watch) {
@@ -19,10 +20,10 @@ function getGulpByWatch(watch: boolean, filesPath: string) {
   return gulp.src(filesPath);
 }
 
-const buildTs = (watch: boolean, outdir: string, babelOptions: any, wholeProject: boolean) => {
+const buildTs = (watch: boolean, outdir: string, babelOptions: any, wholeProject: boolean, sourcePath: string) => {
   const targetPath = wholeProject
     ? path.join(pri.projectRootPath, '{src,packages}/**/*.{ts,tsx}')
-    : path.join(pri.sourceRoot, srcPath.dir, '**/*.{ts,tsx}');
+    : path.join(sourcePath || pri.sourceRoot, srcPath.dir, '**/*.{ts,tsx}');
 
   return new Promise((resolve, reject) => {
     getGulpByWatch(watch, targetPath)
@@ -35,11 +36,11 @@ const buildTs = (watch: boolean, outdir: string, babelOptions: any, wholeProject
   });
 };
 
-const buildSass = (watch: boolean, outdir: string, wholeProject: boolean) => {
+const buildSass = (watch: boolean, outdir: string, wholeProject: boolean, sourcePath: string) => {
   const targetPath =
     wholeProject || (pri.selectedSourceType === 'root' && pri.sourceConfig.cssExtract)
       ? path.join(pri.projectRootPath, '{src,packages}/**/*.scss')
-      : path.join(pri.sourceRoot, srcPath.dir, '**/*.scss');
+      : path.join(sourcePath || pri.sourceRoot, srcPath.dir, '**/*.scss');
 
   return new Promise((resolve, reject) => {
     getGulpByWatch(watch, targetPath)
@@ -52,11 +53,12 @@ const buildSass = (watch: boolean, outdir: string, wholeProject: boolean) => {
   });
 };
 
-const mvResources = (watch: boolean, outdir: string, wholeProject: boolean) => {
+const mvResources = (watch: boolean, outdir: string, wholeProject: boolean, sourcePath: string, sourceType: string) => {
+  const selectedSourceType = sourceType || pri.selectedSourceType;
   const targetPath =
-    wholeProject || (pri.selectedSourceType === 'root' && pri.sourceConfig.cssExtract)
+    wholeProject || (selectedSourceType === 'root' && pri.sourceConfig.cssExtract)
       ? path.join(pri.projectRootPath, '{src,packages}/**/*.{js,png,jpg,jpeg,gif,woff,woff2,eot,ttf,svg}')
-      : path.join(pri.sourceRoot, srcPath.dir, '**/*.{js,png,jpg,jpeg,gif,woff,woff2,eot,ttf,svg}');
+      : path.join(sourcePath || pri.sourceRoot, srcPath.dir, '**/*.{js,png,jpg,jpeg,gif,woff,woff2,eot,ttf,svg}');
 
   return new Promise((resolve, reject) => {
     getGulpByWatch(watch, targetPath)
@@ -97,14 +99,18 @@ function importRename(packageAbsoluteToRelative = false) {
   ];
 }
 
-export const tsPlusBabel = async (watch = false, wholeProject = false) => {
-  const rootDistPath = path.join(globalState.projectRootPath, pri.sourceConfig.distDir);
+export const tsPlusBabel = async (watch = false, wholeProject = false, packageInfo: PackageInfo = null) => {
+  const packagePath = packageInfo ? packageInfo.name : '';
+  const rootDistPath = path.join(globalState.projectRootPath, pri.sourceConfig.distDir, packagePath);
   const mainDistPath = path.join(rootDistPath, 'main');
   const moduleDistPath = path.join(rootDistPath, 'module');
 
+  const sourcePath = packageInfo ? packageInfo.rootPath : null;
+  const sourceType = packageInfo ? packageInfo.name : null;
+
   return Promise.all([
-    buildSass(watch, mainDistPath, wholeProject),
-    buildSass(watch, moduleDistPath, wholeProject),
+    buildSass(watch, mainDistPath, wholeProject, sourcePath),
+    buildSass(watch, moduleDistPath, wholeProject, sourcePath),
 
     buildTs(
       watch,
@@ -113,6 +119,7 @@ export const tsPlusBabel = async (watch = false, wholeProject = false) => {
         plugins: [importRename(wholeProject)],
       }),
       wholeProject,
+      sourcePath,
     ),
     buildTs(
       watch,
@@ -122,9 +129,10 @@ export const tsPlusBabel = async (watch = false, wholeProject = false) => {
         plugins: [importRename(wholeProject)],
       }),
       wholeProject,
+      sourcePath,
     ),
 
-    mvResources(watch, mainDistPath, wholeProject),
-    mvResources(watch, moduleDistPath, wholeProject),
+    mvResources(watch, mainDistPath, wholeProject, sourcePath, sourceType),
+    mvResources(watch, moduleDistPath, wholeProject, sourcePath, sourceType),
   ]);
 };
