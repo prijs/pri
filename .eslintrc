@@ -13,13 +13,7 @@
     },
     "import/resolver": {
       "node": {
-        "extensions": [
-          ".js",
-          ".jsx",
-          ".ts",
-          ".tsx",
-          ".eslintrc"
-        ]
+        "extensions": [".js", ".jsx", ".ts", ".tsx", ".eslintrc"]
       },
       "webpack": {
         "config": {
@@ -32,37 +26,18 @@
       }
     }
   },
-  "plugins": [
-    "babel",
-    "@typescript-eslint",
-    "react-hooks"
-  ],
+  "plugins": ["babel", "@typescript-eslint", "react-hooks"],
   "extends": [
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:react/recommended",
     "airbnb-base",
     "prettier/@typescript-eslint",
-    "plugin:prettier/recommended",
     "prettier"
   ],
   "rules": {
-    "prettier/prettier": [
-      "error",
-      {
-        "printWidth": 120,
-        "semi": true,
-        "singleQuote": true,
-        "tabWidth": 2,
-        "useTabs": false,
-        "trailingComma": "all"
-      }
-    ],
     "func-names": 0,
-    "one-var": [
-      1,
-      "never"
-    ],
+    "one-var": [1, "never"],
     "prefer-const": 1,
     "no-unused-expressions": 1,
     "new-cap": 2,
@@ -84,11 +59,7 @@
     "no-console": [
       2,
       {
-        "allow": [
-          "info",
-          "error",
-          "warn"
-        ]
+        "allow": ["info", "error", "warn"]
       }
     ],
     "no-duplicate-imports": 2,
@@ -101,10 +72,7 @@
     "no-unused-vars": 0,
     "@typescript-eslint/no-unused-vars": 1,
     "react/self-closing-comp": 2,
-    "react/jsx-indent-props": [
-      2,
-      2
-    ],
+    "react/jsx-indent-props": [2, 2],
     "no-plusplus": 0,
     "react/jsx-uses-vars": 1,
     "react/no-multi-comp": [

@@ -29,6 +29,7 @@ export const main = async () => {
   ensureTsconfig();
   ensureVscode();
   ensureEslint();
+  ensurePrettier();
   ensureRootPackageJson();
   ensurePriConfig();
 
@@ -132,6 +133,17 @@ function ensureEslint() {
       const eslintConfig = await fs.readFile(path.join(__dirname, '../../../../.eslintrc'));
 
       return `${eslintConfig.toString()}\n`;
+    },
+  });
+}
+
+function ensurePrettier() {
+  pri.project.addProjectFiles({
+    fileName: path.join(pri.projectRootPath, '.prettierrc'),
+    pipeContent: async () => {
+      const prettierConfig = await fs.readFile(path.join(__dirname, '../../../../.prettierrc'));
+
+      return `${prettierConfig.toString()}\n`;
     },
   });
 }
