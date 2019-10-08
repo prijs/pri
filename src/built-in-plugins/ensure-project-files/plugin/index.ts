@@ -84,6 +84,7 @@ function ensureTsconfig() {
             moduleResolution: 'node',
             strict: true,
             strictNullChecks: false,
+            incremental: true,
             jsx: 'react',
             target: 'esnext',
             experimentalDecorators: true,

@@ -27,7 +27,7 @@ const shScript = `
   if [ "$TS_CHANGED" -gt 0 ]
   then
     echo '正在检查 TypeScript 类型，请稍候'
-    tsc -p . --noEmit || exit 1
+    tsc -p . || exit 1
   fi
 `;
 
@@ -60,7 +60,7 @@ export function typeChecker() {
   if (tsChangedFilesCnt) {
     logInfo('正在检查 Typescript 类型，请稍后');
     try {
-      execSync(`tsc -p . --noEmit || exit 1`, {
+      execSync(`tsc -p . || exit 1`, {
         stdio: [0, 1, 2],
       });
     } catch (e) {
