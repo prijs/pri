@@ -1497,11 +1497,6 @@
   resolved "https://registry.npm.alibaba-inc.com/@types/node/download/@types/node-12.6.8.tgz#e469b4bf9d1c9832aee4907ba8a051494357c12c"
   integrity sha1-5Gm0v50cmDKu5JB7qKBRSUNXwSw=
 
-"@types/normalize-package-data@^2.4.0":
-  version "2.4.0"
-  resolved "https://registry.npm.alibaba-inc.com/@types/normalize-package-data/download/@types/normalize-package-data-2.4.0.tgz#e486d0d97396d79beedd0a6e33f4534ff6b4973e"
-  integrity sha1-5IbQ2XOW15vu3QpuM/RTT/a0lz4=
-
 "@types/prop-types@*":
   version "15.7.1"
   resolved "https://registry.npm.alibaba-inc.com/@types/prop-types/download/@types/prop-types-15.7.1.tgz#f1a11e7babb0c3cad68100be381d1e064c68f1f6"
@@ -3656,9 +3651,9 @@ cors@2.8.5:
     object-assign "^4"
     vary "^1"
 
-cosmiconfig@^5.0.0, cosmiconfig@^5.2.1:
+cosmiconfig@^5.0.0, cosmiconfig@^5.0.7:
   version "5.2.1"
-  resolved "https://registry.npm.alibaba-inc.com/cosmiconfig/download/cosmiconfig-5.2.1.tgz#040f726809c591e77a17c0a3626ca45b4f168b1a"
+  resolved "https://registry.npm.taobao.org/cosmiconfig/download/cosmiconfig-5.2.1.tgz#040f726809c591e77a17c0a3626ca45b4f168b1a"
   integrity sha1-BA9yaAnFked6F8CjYmykW08Wixo=
   dependencies:
     import-fresh "^2.0.0"
@@ -5263,14 +5258,6 @@ find-up@^3.0.0:
   dependencies:
     locate-path "^3.0.0"
 
-find-up@^4.0.0:
-  version "4.1.0"
-  resolved "https://registry.npm.alibaba-inc.com/find-up/download/find-up-4.1.0.tgz#97afe7d6cdc0bc5928584b7c8d7b16e8a9aa5d19"
-  integrity sha1-l6/n1s3AvFkoWEt8jXsW6KmqXRk=
-  dependencies:
-    locate-path "^5.0.0"
-    path-exists "^4.0.0"
-
 findup-sync@^2.0.0:
   version "2.0.0"
   resolved "https://registry.npm.alibaba-inc.com/findup-sync/download/findup-sync-2.0.0.tgz#9326b1488c22d1a6088650a86901b2d9a90a2cbc"
@@ -5550,11 +5537,6 @@ get-stdin@^6.0.0:
   version "6.0.0"
   resolved "https://registry.npm.alibaba-inc.com/get-stdin/download/get-stdin-6.0.0.tgz#9e09bf712b360ab9225e812048f71fde9c89657b"
   integrity sha1-ngm/cSs2CrkiXoEgSPcf3pyJZXs=
-
-get-stdin@^7.0.0:
-  version "7.0.0"
-  resolved "https://registry.npm.alibaba-inc.com/get-stdin/download/get-stdin-7.0.0.tgz#8d5de98f15171a125c5e516643c7a6d0ea8a96f6"
-  integrity sha1-jV3pjxUXGhJcXlFmQ8em0OqKlvY=
 
 get-stream@^3.0.0:
   version "3.0.0"
@@ -6373,21 +6355,21 @@ https-proxy-agent@^2.2.1:
     agent-base "^4.3.0"
     debug "^3.1.0"
 
-husky@3.0.0:
-  version "3.0.0"
-  resolved "https://registry.npm.alibaba-inc.com/husky/download/husky-3.0.0.tgz#de63821a7049dc412b1afd753c259e2f6e227562"
-  integrity sha1-3mOCGnBJ3EErGv11PCWeL24idWI=
+husky@1.3.1:
+  version "1.3.1"
+  resolved "https://registry.npm.taobao.org/husky/download/husky-1.3.1.tgz#26823e399300388ca2afff11cfa8a86b0033fae0"
+  integrity sha1-JoI+OZMAOIyir/8Rz6ioawAz+uA=
   dependencies:
-    cosmiconfig "^5.2.1"
+    cosmiconfig "^5.0.7"
     execa "^1.0.0"
-    get-stdin "^7.0.0"
+    find-up "^3.0.0"
+    get-stdin "^6.0.0"
     is-ci "^2.0.0"
-    opencollective-postinstall "^2.0.2"
-    pkg-dir "^4.2.0"
+    pkg-dir "^3.0.0"
     please-upgrade-node "^3.1.1"
-    read-pkg "^5.1.1"
+    read-pkg "^4.0.1"
     run-node "^1.0.0"
-    slash "^3.0.0"
+    slash "^2.0.0"
 
 hyphenate-style-name@^1.0.3:
   version "1.0.3"
@@ -8019,11 +8001,6 @@ liftoff@^3.1.0:
     rechoir "^0.6.2"
     resolve "^1.1.7"
 
-lines-and-columns@^1.1.6:
-  version "1.1.6"
-  resolved "https://registry.npm.alibaba-inc.com/lines-and-columns/download/lines-and-columns-1.1.6.tgz#1c00c743b433cd0a4e80758f7b64a57440d9ff00"
-  integrity sha1-HADHQ7QzzQpOgHWPe2SldEDZ/wA=
-
 load-json-file@^1.0.0:
   version "1.1.0"
   resolved "https://registry.npm.alibaba-inc.com/load-json-file/download/load-json-file-1.1.0.tgz#956905708d58b4bab4c2261b04f59f31c99374c0"
@@ -8094,13 +8071,6 @@ locate-path@^3.0.0:
   dependencies:
     p-locate "^3.0.0"
     path-exists "^3.0.0"
-
-locate-path@^5.0.0:
-  version "5.0.0"
-  resolved "https://registry.npm.alibaba-inc.com/locate-path/download/locate-path-5.0.0.tgz#1afba396afd676a6d42504d0a67a3a7eb9f62aa0"
-  integrity sha1-Gvujlq/WdqbUJQTQpno6frn2KqA=
-  dependencies:
-    p-locate "^4.1.0"
 
 lodash._arrayeach@^3.0.0:
   version "3.0.0"
@@ -9055,7 +9025,7 @@ nopt@^4.0.1:
     abbrev "1"
     osenv "^0.1.4"
 
-normalize-package-data@^2.3.2, normalize-package-data@^2.3.4, normalize-package-data@^2.5.0:
+normalize-package-data@^2.3.2, normalize-package-data@^2.3.4:
   version "2.5.0"
   resolved "https://registry.npm.alibaba-inc.com/normalize-package-data/download/normalize-package-data-2.5.0.tgz#e66db1838b200c1dfc233225d12cb36520e234a8"
   integrity sha1-5m2xg4sgDB38IzIl0SyzZSDiNKg=
@@ -9329,11 +9299,6 @@ open@6.4.0:
   dependencies:
     is-wsl "^1.1.0"
 
-opencollective-postinstall@^2.0.2:
-  version "2.0.2"
-  resolved "https://registry.npm.alibaba-inc.com/opencollective-postinstall/download/opencollective-postinstall-2.0.2.tgz#5657f1bede69b6e33a45939b061eb53d3c6c3a89"
-  integrity sha1-Vlfxvt5ptuM6RZObBh61PTxsOok=
-
 opener@^1.5.1:
   version "1.5.1"
   resolved "https://registry.npm.alibaba-inc.com/opener/download/opener-1.5.1.tgz#6d2f0e77f1a0af0032aca716c2c1fbb8e7e8abed"
@@ -9473,7 +9438,7 @@ p-limit@^1.1.0:
   dependencies:
     p-try "^1.0.0"
 
-p-limit@^2.0.0, p-limit@^2.2.0:
+p-limit@^2.0.0:
   version "2.2.0"
   resolved "https://registry.npm.alibaba-inc.com/p-limit/download/p-limit-2.2.0.tgz#417c9941e6027a9abcba5092dd2904e255b5fbc2"
   integrity sha1-QXyZQeYCepq8ulCS3SkE4lW1+8I=
@@ -9493,13 +9458,6 @@ p-locate@^3.0.0:
   integrity sha1-Mi1poFwCZLJZl9n0DNiokasAZKQ=
   dependencies:
     p-limit "^2.0.0"
-
-p-locate@^4.1.0:
-  version "4.1.0"
-  resolved "https://registry.npm.alibaba-inc.com/p-locate/download/p-locate-4.1.0.tgz#a3428bb7088b3a60292f66919278b7c297ad4f07"
-  integrity sha1-o0KLtwiLOmApL2aRkni3wpetTwc=
-  dependencies:
-    p-limit "^2.2.0"
 
 p-map@^2.0.0:
   version "2.1.0"
@@ -9631,16 +9589,6 @@ parse-json@^4.0.0:
     error-ex "^1.3.1"
     json-parse-better-errors "^1.0.1"
 
-parse-json@^5.0.0:
-  version "5.0.0"
-  resolved "https://registry.npm.alibaba-inc.com/parse-json/download/parse-json-5.0.0.tgz#73e5114c986d143efa3712d4ea24db9a4266f60f"
-  integrity sha1-c+URTJhtFD76NxLU6iTbmkJm9g8=
-  dependencies:
-    "@babel/code-frame" "^7.0.0"
-    error-ex "^1.3.1"
-    json-parse-better-errors "^1.0.1"
-    lines-and-columns "^1.1.6"
-
 parse-node-version@^1.0.0:
   version "1.0.1"
   resolved "https://registry.npm.alibaba-inc.com/parse-node-version/download/parse-node-version-1.0.1.tgz#e2b5dbede00e7fa9bc363607f53327e8b073189b"
@@ -9706,11 +9654,6 @@ path-exists@^3.0.0:
   version "3.0.0"
   resolved "https://registry.npm.alibaba-inc.com/path-exists/download/path-exists-3.0.0.tgz#ce0ebeaa5f78cb18925ea7d810d7b59b010fd515"
   integrity sha1-zg6+ql94yxiSXqfYENe1mwEP1RU=
-
-path-exists@^4.0.0:
-  version "4.0.0"
-  resolved "https://registry.npm.alibaba-inc.com/path-exists/download/path-exists-4.0.0.tgz#513bdbe2d3b95d7762e8c1137efa195c6c61b5b3"
-  integrity sha1-UTvb4tO5XXdi6METfvoZXGxhtbM=
 
 path-is-absolute@1.0.1, path-is-absolute@^1.0.0, path-is-absolute@^1.0.1:
   version "1.0.1"
@@ -9855,13 +9798,6 @@ pkg-dir@^3.0.0:
   integrity sha1-J0kCDyOe2ZCIGx9xIQ1R62UjvqM=
   dependencies:
     find-up "^3.0.0"
-
-pkg-dir@^4.2.0:
-  version "4.2.0"
-  resolved "https://registry.npm.alibaba-inc.com/pkg-dir/download/pkg-dir-4.2.0.tgz#f099133df7ede422e81d1d8448270eeb3e4261f3"
-  integrity sha1-8JkTPfft5CLoHR2ESCcO6z5CYfM=
-  dependencies:
-    find-up "^4.0.0"
 
 please-upgrade-node@^3.1.1:
   version "3.1.1"
@@ -10791,15 +10727,14 @@ read-pkg@^3.0.0:
     normalize-package-data "^2.3.2"
     path-type "^3.0.0"
 
-read-pkg@^5.1.1:
-  version "5.2.0"
-  resolved "https://registry.npm.alibaba-inc.com/read-pkg/download/read-pkg-5.2.0.tgz#7bf295438ca5a33e56cd30e053b34ee7250c93cc"
-  integrity sha1-e/KVQ4yloz5WzTDgU7NO5yUMk8w=
+read-pkg@^4.0.1:
+  version "4.0.1"
+  resolved "https://registry.npm.taobao.org/read-pkg/download/read-pkg-4.0.1.tgz?cache=0&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fread-pkg%2Fdownload%2Fread-pkg-4.0.1.tgz#963625378f3e1c4d48c85872b5a6ec7d5d093237"
+  integrity sha1-ljYlN48+HE1IyFhytabsfV0JMjc=
   dependencies:
-    "@types/normalize-package-data" "^2.4.0"
-    normalize-package-data "^2.5.0"
-    parse-json "^5.0.0"
-    type-fest "^0.6.0"
+    normalize-package-data "^2.3.2"
+    parse-json "^4.0.0"
+    pify "^3.0.0"
 
 "readable-stream@1 || 2", readable-stream@^2.0.0, readable-stream@^2.0.1, readable-stream@^2.0.2, readable-stream@^2.0.5, readable-stream@^2.0.6, readable-stream@^2.1.5, readable-stream@^2.2.2, readable-stream@^2.3.3, readable-stream@^2.3.5, readable-stream@^2.3.6, readable-stream@~2.3.6:
   version "2.3.6"
@@ -11661,11 +11596,6 @@ slash@^2.0.0:
   version "2.0.0"
   resolved "https://registry.npm.alibaba-inc.com/slash/download/slash-2.0.0.tgz#de552851a1759df3a8f206535442f5ec4ddeab44"
   integrity sha1-3lUoUaF1nfOo8gZTVEL17E3eq0Q=
-
-slash@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.npm.alibaba-inc.com/slash/download/slash-3.0.0.tgz#6539be870c165adbd5240220dbe361f1bc4d4634"
-  integrity sha1-ZTm+hwwWWtvVJAIg2+Nh8bxNRjQ=
 
 slice-ansi@^2.1.0:
   version "2.1.0"
@@ -12661,11 +12591,6 @@ type-fest@^0.5.2:
   version "0.5.2"
   resolved "https://registry.npm.alibaba-inc.com/type-fest/download/type-fest-0.5.2.tgz#d6ef42a0356c6cd45f49485c3b6281fc148e48a2"
   integrity sha1-1u9CoDVsbNRfSUhcO2KB/BSOSKI=
-
-type-fest@^0.6.0:
-  version "0.6.0"
-  resolved "https://registry.npm.alibaba-inc.com/type-fest/download/type-fest-0.6.0.tgz#8d2a2370d3df886eb5c90ada1c5bf6188acf838b"
-  integrity sha1-jSojcNPfiG61yQraHFv2GIrPg4s=
 
 type-is@^1.6.16, type-is@~1.6.17, type-is@~1.6.18:
   version "1.6.18"

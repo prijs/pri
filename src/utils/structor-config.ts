@@ -126,6 +126,7 @@ export const ignoreScanFiles = _.union([
   'package.json',
   'tsconfig.json',
   '.eslintrc',
+  '.prettierrc',
   '.npmrc',
   '.travis.yml',
   '.prettierignore',
