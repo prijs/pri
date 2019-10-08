@@ -6,6 +6,7 @@ import * as path from 'path';
 import * as urlJoin from 'url-join';
 import * as webpack from 'webpack';
 import * as WebpackBar from 'webpackbar';
+import * as CircularDependencyPlugin from 'circular-dependency-plugin';
 import * as _ from 'lodash';
 import * as WebpackDevServer from 'webpack-dev-server';
 import { globalState } from './global-state';
@@ -25,7 +26,7 @@ interface IExtraOptions {
 }
 
 const stats = {
-  warnings: false,
+  warnings: true,
   version: false,
   modules: false,
   entrypoints: false,
@@ -44,6 +45,13 @@ export const runWebpackDevServer = async (opts: IOptions<IExtraOptions>) => {
   webpackConfig.plugins.push(new webpack.HotModuleReplacementPlugin());
 
   webpackConfig.plugins.push(new WebpackBar());
+
+  webpackConfig.plugins.push(
+    new CircularDependencyPlugin({
+      exclude: /node_modules/,
+      cwd: process.cwd(),
+    }),
+  );
 
   const webpackDevServerConfig: WebpackDevServer.Configuration = {
     host: '127.0.0.1',
@@ -66,7 +74,7 @@ export const runWebpackDevServer = async (opts: IOptions<IExtraOptions>) => {
       }),
     },
     headers: { 'Access-Control-Allow-Origin': '*' },
-    clientLogLevel: 'warning',
+    clientLogLevel: 'warn',
     disableHostCheck: true,
     port: opts.devServerPort,
   } as any;
