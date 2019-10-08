@@ -66,7 +66,7 @@ export const runWebpackDevServer = async (opts: IOptions<IExtraOptions>) => {
       historyApiFallback: { rewrites: [{ from: '/', to: normalizePath(path.join(opts.publicPath, 'index.html')) }] },
     }),
     https: _.defaults({ value: opts.https }, { value: globalState.sourceConfig.useHttps }).value,
-    overlay: { warnings: true, errors: true },
+    overlay: { warnings: false, errors: true },
     stats,
     watchOptions: {
       ...(!globalState.sourceConfig.watchNodeModules && {
