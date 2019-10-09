@@ -76,7 +76,13 @@ async function initPackages(cliCurrentPath: string, preSelectPackage: string) {
   const currentPackagesPath = path.join(cliCurrentPath, PACKAGES_NAME);
 
   if (fs.existsSync(currentPackagesPath)) {
-    globalState.packages = fs.readdirSync(currentPackagesPath).map(folderName => {
+    globalState.packages = fs.readdirSync(currentPackagesPath).filter(folderName=>{
+      if (folderName==='.DS_Store'){
+        return false
+      }
+      
+      return true
+    }).map(folderName => {
       const packagePath = path.join(cliCurrentPath, PACKAGES_NAME, folderName);
       const packageJson: PackageJson = fs.readJSONSync(path.join(packagePath, 'package.json'), { throws: false });
 

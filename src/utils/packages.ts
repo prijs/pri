@@ -35,6 +35,7 @@ export const getPackages = (() => {
       .filter(each => {
         return !!each;
       });
+
     result = await Promise.all(
       submodulePaths.map(async submodulePath => {
         const packagesPathEndWithSep = packagesPath.dir.endsWith(path.sep)
