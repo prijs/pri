@@ -158,7 +158,7 @@ pri.project.onCreateEntry((analyseInfo: IResult, entry) => {
               })`;
 
               return `
-              const ${page.componentName} = Loadable({
+              const ${page.componentName} = Loadable<any, any>({
                 loader: () => ${importCode},
                 loading: (): any => null
               })\n
