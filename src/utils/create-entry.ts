@@ -85,7 +85,7 @@ export class Entry {
       import { history as customHistory } from "${PRI_PACKAGE_NAME}/client"
       import * as React from "react"
       import * as ReactDOM from "react-dom"
-      import Loadable from "react-loadable"
+      import * as Loadable from "react-loadable"
       import { Redirect, Route, Router, Switch, HashRouter } from "react-router-dom"
     `,
     );
@@ -155,7 +155,7 @@ export class Entry {
       `
       import * as React from "react"
       import * as ReactDOM from "react-dom"
-      import Loadable from "react-loadable"
+      import * as Loadable from "react-loadable"
       import App, { pageLoadableMap } from "./app"
 
       const ROOT_ID = "root"
