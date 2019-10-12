@@ -308,7 +308,7 @@ export async function addMissingDeps(
           .reduce((root, next) => {
             if (!sourceDeps[next]) {
               logFatal(
-                `${pri.selectedSourceType}'s code depends on ${next}, but it doesn't exist in root package.json`,
+                `${pri.selectedSourceType}'s code depends on "${next}", but it doesn't exist in root package.json`,
               );
             }
 
