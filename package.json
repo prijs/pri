@@ -1,6 +1,6 @@
 {
   "name": "pri",
-  "version": "3.3.28-beta.4",
+  "version": "3.3.28-beta.5",
   "types": "src/node/index.ts",
   "main": "built/node/index.js",
   "scripts": {
@@ -9,7 +9,8 @@
     "build": "rm -rf built && rm -rf .cache && tsc && npm run create-client-declaration",
     "prepublishOnly": "npm run build",
     "format": "eslint --fix './src/**/*.?(ts|tsx)'",
-    "generateDocument": "typedoc --out ./document --mode file --ignoreCompilerErrors ./src/node/index.ts"
+    "generateDocument": "typedoc --out ./document --mode file --ignoreCompilerErrors ./src/node/index.ts",
+    "publishBeta": "npm publish --tag=beta"
   },
   "husky": {
     "hooks": {
