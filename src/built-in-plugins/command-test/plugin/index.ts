@@ -1,7 +1,7 @@
 import * as path from 'path';
 import { pri } from '../../../node';
 import { testsPath } from '../../../utils/structor-config';
-import { typeChecker } from './type-checker';
+import { typeChecker } from '../../../utils/type-checker';
 
 pri.project.whiteFileRules.add(file => {
   return path.format(file).startsWith(path.join(pri.projectRootPath, testsPath.dir));
