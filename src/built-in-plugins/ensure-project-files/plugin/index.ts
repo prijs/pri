@@ -152,8 +152,9 @@ function ensureVscode() {
   pri.project.addProjectFiles({
     fileName: path.join(pri.projectRootPath, '.vscode/settings.json'),
     pipeContent: (prev: string) => {
+      const pickedPrev = _.omit(safeJsonParse(prev), 'eslint.provideLintTask');
       return `${JSON.stringify(
-        _.merge({}, safeJsonParse(prev), {
+        _.merge({}, pickedPrev, {
           'editor.formatOnSave': true,
           'typescript.tsdk': 'node_modules/typescript/lib',
           'eslint.autoFixOnSave': true,
@@ -163,9 +164,15 @@ function ensureVscode() {
             { language: 'typescript', autoFix: true },
             { language: 'typescriptreact', autoFix: true },
           ],
-          'eslint.provideLintTask': true,
+          'eslint.lintTask.enable': true,
           'typescript.format.enable': true,
           'javascript.format.enable': true,
+          '[typescriptreact]': {
+            'editor.defaultFormatter': 'esbenp.prettier-vscode',
+          },
+          '[typescript]': {
+            'editor.defaultFormatter': 'esbenp.prettier-vscode',
+          },
         }),
         null,
         2,
