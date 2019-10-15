@@ -8,6 +8,7 @@ import * as fs from 'fs-extra';
 import { spinner } from './log';
 import { globalState } from './global-state';
 import { srcPath, packagesPath } from './structor-config';
+import { typeChecker } from './type-checker';
 
 export const eslintParam = "'./?(src|packages|docs|tests)/**/*.?(ts|tsx)'";
 
@@ -15,6 +16,7 @@ interface Options {
   lintAll?: boolean;
   needFix?: boolean;
   showBreakError?: boolean;
+  typeCheck?: boolean;
 }
 
 class DefaultOptions {
@@ -23,6 +25,8 @@ class DefaultOptions {
   needFix = true;
 
   showBreakError = true;
+
+  typeCheck = false;
 }
 
 export async function lint(options?: Partial<DefaultOptions>) {
@@ -140,5 +144,9 @@ export async function lint(options?: Partial<DefaultOptions>) {
     console.log(colors.yellow(`${fixedFiles.length} files autofixed, please recheck your code.`));
     execSync(`git add ${fixedFiles.map(file => file.filePath).join(' ')}`);
     process.exit(1);
+  }
+
+  if (mergedOptions.typeCheck) {
+    typeChecker();
   }
 }

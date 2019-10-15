@@ -1,7 +1,6 @@
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as inquirer from 'inquirer';
-import * as _ from 'lodash';
 import { PublishOption } from './interface';
 import { exec } from '../../../utils/exec';
 import { pri, tempPath, declarationPath } from '../../../node';
