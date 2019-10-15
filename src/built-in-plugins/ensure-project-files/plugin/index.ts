@@ -18,7 +18,6 @@ import {
 import { ensureComponentFiles } from './ensure-component';
 import { ensurePluginFiles } from './ensure-plugin';
 import { ensureProjectFiles } from './ensure-project';
-import { eslintParam } from '../../../utils/lint';
 
 import yargs = require('yargs');
 
