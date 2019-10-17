@@ -7,7 +7,7 @@ import { getPackageJson } from './file-operate';
 import { globalState } from './global-state';
 import { PackageJson, PackageInfo } from './define';
 import { srcPath } from '../node';
-import { logFatal } from './log';
+import { logFatal, logWarn } from './log';
 import { packagesPath } from './structor-config';
 
 export const getPackages = (() => {
@@ -140,6 +140,23 @@ function getMonoDepASC(depMap: DepMap) {
     });
 
     if (zeroMonoDepsPackageName === null) {
+      // Find which packages have circular dependencies.
+      newMap.forEach((value, key) => {
+        const cycleDepPackage = value.depMonoPackages.find(depMonoPackage => {
+          // dep package which depend to them.
+          if (newMap.has(depMonoPackage.name)) {
+            return newMap
+              .get(depMonoPackage.name)
+              .depMonoPackages.find(eachDepMonoPackage => eachDepMonoPackage.name === key);
+          }
+          return false;
+        });
+
+        if (cycleDepPackage) {
+          logWarn(`Cyclic dependence: ${cycleDepPackage.name} <= ${key}`);
+        }
+      });
+
       logFatal(`Cyclic dependence happend!`);
     }
 
