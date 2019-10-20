@@ -61,12 +61,9 @@ export async function checkEnvBeforePublish(targetPackageJson: Partial<PackageJs
 }
 
 export async function addTagAndPush(tagName: string, targetPackageJson: Partial<PackageJson>) {
-  await spinner(`Add tag`, async () => {
-    await exec(`git tag -a ${tagName} -m "release"`);
-  });
-
-  await spinner(`Push tag`, async () => {
-    await exec(`git push origin ${tagName}`);
+  await spinner(`Add and push tag`, async () => {
+    await exec(`git tag -a ${tagName} -m "release" -f`);
+    await exec(`git push origin ${tagName} -f`);
   });
 
   logText(`+ ${targetPackageJson.name}@${targetPackageJson.version}`);
@@ -115,6 +112,15 @@ export async function generateVersion(
         'prerelease',
         currentBranchName.replace(/\//g, '').replace(/\./g, ''),
       );
+      let checkBetaVersionResult;
+      version = targetPackageJson.version;
+      // check the package verion and if it existing auto increase it
+      do {
+        version = (semver.inc as any)(version, 'prerelease', currentBranchName.replace(/\//g, '').replace(/\./g, ''));
+        checkBetaVersionResult = execSync(`${targetConfig.npmClient} view ${targetPackageJson.name}@${version} version`)
+          .toString()
+          .trim();
+      } while (checkBetaVersionResult);
     } else if (versionResult) {
       if (!options.semver) {
         const versionPrompt = await inquirer.prompt([

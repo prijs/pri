@@ -217,54 +217,48 @@ async function publishPackageAndItsMonoPackage(
     });
   }
 
-  // async publish queue & add tag and push
-  const publishQueue = depMonoPackages.map(item => {
-    return new Promise(async resolve => {
-      await buildComponent(item);
-
-      if (options.bundle) {
-        await commandBundle({ skipLint: true });
-      }
-
-      await moveSourceFilesToTempFolderAndPublish(
-        item.name,
-        options,
-        item.config,
-        item.rootPath,
-        depMap,
-        isDevelopBranch,
-      );
-
-      await addTagAndPush(generateTag(item.name, item.packageJson), item.packageJson);
-      resolve();
+  try {
+    const publishQueue = [];
+    // async publish & add tag and push
+    depMonoPackages.map(item => {
+      publishQueue.push(buildComponentAndPublish(item, options, depMap, isDevelopBranch));
     });
-  });
 
-  // push current package into publishQueue
-  publishQueue.push(
-    new Promise(async resolve => {
-      await buildComponent(targetPackageInfo);
+    // publish current package
+    publishQueue.push(buildComponentAndPublish(targetPackageInfo, options, depMap, isDevelopBranch));
 
-      if (options.bundle) {
-        await commandBundle({ skipLint: true });
-      }
+    return Promise.all(publishQueue);
+  } catch (e) {
+    logInfo(`publish error ${e} stop publish`);
+    await fs.remove(path.join(pri.projectRootPath, tempPath.dir, declarationPath.dir));
+    await exec(`git push origin ${currentBranchName}`);
+    return process.exit(0);
+  }
+}
 
-      await moveSourceFilesToTempFolderAndPublish(
-        sourceType,
-        options,
-        targetConfig,
-        targetRoot,
-        depMap,
-        isDevelopBranch,
-      );
+async function buildComponentAndPublish(
+  packageInfo: PackageInfo,
+  options: PublishOption,
+  depMap: DepMap,
+  isDevelopBranch: boolean,
+) {
+  return new Promise(async resolve => {
+    await buildComponent(packageInfo);
 
-      await addTagAndPush(generateTag(sourceType, targetPackageJson), targetPackageJson);
+    if (options.bundle) {
+      await commandBundle({ skipLint: true });
+    }
 
-      resolve();
-    }),
-  );
+    await moveSourceFilesToTempFolderAndPublish(
+      packageInfo.name,
+      options,
+      packageInfo.config,
+      packageInfo.rootPath,
+      depMap,
+      isDevelopBranch,
+    );
 
-  await spinner(`Publish`, async () => {
-    await Promise.all(publishQueue);
+    await addTagAndPush(generateTag(packageInfo.name, packageInfo.packageJson), packageInfo.packageJson);
+    resolve();
   });
 }
