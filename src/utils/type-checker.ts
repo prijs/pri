@@ -21,7 +21,7 @@ export function typeChecker() {
     } catch (e) {}
 
     if (debugFiles) {
-      logFatal('待提交代码中存在 @DEBUG 标识符，提交终止');
+      logFatal('@DEBUG identifier exists, the commit is terminated');
       process.exit(1);
     }
   }
@@ -30,15 +30,15 @@ export function typeChecker() {
     'utf8',
   );
   if (tsChangedFilesCnt) {
-    logInfo('正在检查 Typescript 类型，请稍后');
+    logInfo('Checking TypeScript type, please wait');
     try {
       execSync(`${pri.projectRootPath}/node_modules/.bin/tsc -p . || exit 1`, {
         stdio: [0, 1, 2],
       });
     } catch (e) {
-      logFatal('类型检查出错！');
+      logFatal('Type checks error!');
       process.exit(1);
     }
-    logSuccess('所有代码类型检查通过！');
+    logSuccess('Type checks passed!');
   }
 }
