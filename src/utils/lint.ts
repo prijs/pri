@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { execSync } from 'child_process';
 import * as colors from 'colors';
 import * as _ from 'lodash';
@@ -91,8 +90,11 @@ export async function lint(options?: Partial<DefaultOptions>) {
 
   if (lintResult.errorCount > 0) {
     if (lintResult.warningCount > 0) {
+      // eslint-disable-next-line no-console
       console.log('');
+      // eslint-disable-next-line no-console
       console.log(colors.yellow('Warnings:'));
+      // eslint-disable-next-line no-console
       console.log('');
     }
 
@@ -104,14 +106,19 @@ export async function lint(options?: Partial<DefaultOptions>) {
           .filter(eachMessage => eachMessage.severity === 1)
           .forEach(eachMessage => {
             const colorText = colors.yellow('warning');
+            // eslint-disable-next-line no-console
             console.log(colors.underline(`${eachLintResult.filePath}:${eachMessage.line}:${eachMessage.column}`));
+            // eslint-disable-next-line no-console
             console.log(`  ${colorText}  ${eachMessage.message}  ${colors.grey(eachMessage.ruleId)}`);
           });
       });
 
     if (lintResult.errorCount > 0) {
+      // eslint-disable-next-line no-console
       console.log('');
+      // eslint-disable-next-line no-console
       console.log(colors.red('Errors:'));
+      // eslint-disable-next-line no-console
       console.log('');
     }
 
@@ -123,14 +130,18 @@ export async function lint(options?: Partial<DefaultOptions>) {
           .filter(eachMessage => eachMessage.severity === 2)
           .forEach(eachMessage => {
             const colorText = mergedOptions.showBreakError ? colors.red('error') : colors.yellow('error');
+            // eslint-disable-next-line no-console
             console.log(colors.underline(`${eachLintResult.filePath}:${eachMessage.line}:${eachMessage.column}`));
+            // eslint-disable-next-line no-console
             console.log(`  ${colorText}  ${eachMessage.message}  ${colors.grey(eachMessage.ruleId)}`);
           });
       });
 
     if (mergedOptions.showBreakError) {
+      // eslint-disable-next-line no-console
       console.log(`\n${colors.red(summaryText)}`);
     } else {
+      // eslint-disable-next-line no-console
       console.log(`\n${colors.yellow(summaryText)}`);
     }
 
@@ -141,6 +152,7 @@ export async function lint(options?: Partial<DefaultOptions>) {
 
   if (mergedOptions.needFix && lintResult.results.some(each => each.output)) {
     const fixedFiles = lintResult.results.filter(each => each.output);
+    // eslint-disable-next-line no-console
     console.log(colors.yellow(`${fixedFiles.length} files autofixed, please recheck your code.`));
     execSync(`git add ${fixedFiles.map(file => file.filePath).join(' ')}`);
     process.exit(1);
