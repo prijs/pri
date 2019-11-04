@@ -45,6 +45,7 @@ export async function lint(options?: Partial<DefaultOptions>) {
   });
 
   let lintFiles: string[] = [];
+  let prettierFiles: string[] = [];
 
   if (mergedOptions.lintAll) {
     if (globalState.selectedSourceType === 'root') {
@@ -73,6 +74,10 @@ export async function lint(options?: Partial<DefaultOptions>) {
   const lintResult = await spinner(
     `Lint ${mergedOptions.lintAll ? 'all' : ''} ${lintFiles.length} files.`,
     async () => {
+      const files = execSync(
+        `${globalState.projectRootPath}/node_modules/.bin/prettier --list-different --write ${lintFiles.join(' ')}`,
+      );
+      prettierFiles = _.compact(files.toString().split('\n'));
       return cli.executeOnFiles(lintFiles);
     },
   );
@@ -150,15 +155,21 @@ export async function lint(options?: Partial<DefaultOptions>) {
     }
   }
 
-  if (mergedOptions.needFix && lintResult.results.some(each => each.output)) {
-    const fixedFiles = lintResult.results.filter(each => each.output);
+  if (mergedOptions.needFix && (lintResult.results.some(each => each.output) || prettierFiles.length > 0)) {
+    const fixedFiles = _.uniq(
+      lintResult.results
+        .filter(each => each.output)
+        .map(item => item.filePath)
+        .concat(prettierFiles),
+    );
+
     // eslint-disable-next-line no-console
     console.log(colors.yellow(`${fixedFiles.length} files autofixed, please recheck your code.`));
-    execSync(`git add ${fixedFiles.map(file => file.filePath).join(' ')}`);
-    process.exit(1);
+    execSync(`git add ${fixedFiles.join(' ')}`);
   }
 
   if (mergedOptions.typeCheck) {
     typeChecker();
+    process.exit(1);
   }
 }
