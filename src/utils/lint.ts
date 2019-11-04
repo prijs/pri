@@ -74,9 +74,7 @@ export async function lint(options?: Partial<DefaultOptions>) {
   const lintResult = await spinner(
     `Lint ${mergedOptions.lintAll ? 'all' : ''} ${lintFiles.length} files.`,
     async () => {
-      const files = execSync(
-        `${globalState.projectRootPath}/node_modules/.bin/prettier --list-different --write ${lintFiles.join(' ')}`,
-      );
+      const files = execSync(`npx prettier --list-different --write ${lintFiles.join(' ')}`);
       prettierFiles = _.compact(files.toString().split('\n'));
       return cli.executeOnFiles(lintFiles);
     },
@@ -156,7 +154,7 @@ export async function lint(options?: Partial<DefaultOptions>) {
   }
 
   if (mergedOptions.needFix && (lintResult.results.some(each => each.output) || prettierFiles.length > 0)) {
-    const fixedFiles = _.uniq(
+    const fixedFilePaths = _.uniq(
       lintResult.results
         .filter(each => each.output)
         .map(item => item.filePath)
@@ -164,8 +162,8 @@ export async function lint(options?: Partial<DefaultOptions>) {
     );
 
     // eslint-disable-next-line no-console
-    console.log(colors.yellow(`${fixedFiles.length} files autofixed, please recheck your code.`));
-    execSync(`git add ${fixedFiles.join(' ')}`);
+    console.log(colors.yellow(`${fixedFilePaths.length} files autofixed, please recheck your code.`));
+    execSync(`git add ${fixedFilePaths.join(' ')}`);
   }
 
   if (mergedOptions.typeCheck) {
