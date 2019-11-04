@@ -1,10 +1,19 @@
-<a name="3.3.28-beta.6"></a>
-## [3.3.28-beta.6](https://github.com/prijs/pri/compare/3.3.28-beta.5...3.3.28-beta.6) (2019-10-21)
+<a name="3.3.28-beta.7"></a>
+## [3.3.28-beta.7](https://github.com/prijs/pri/compare/3.3.28-beta.5...3.3.28-beta.7) (2019-11-04)
 
 
 ### Bug Fixes
 
+* add prettier format to lint ([d6f8261](https://github.com/prijs/pri/commit/d6f8261))
 * fix publish error situation ([03ff947](https://github.com/prijs/pri/commit/03ff947))
+* npx ([18e799c](https://github.com/prijs/pri/commit/18e799c))
+* rm global no-console ([bc216db](https://github.com/prijs/pri/commit/bc216db))
+
+
+### Features
+
+* update docs ([afa3110](https://github.com/prijs/pri/commit/afa3110))
+* update gitignore ([6ac2310](https://github.com/prijs/pri/commit/6ac2310))
 
 
 
