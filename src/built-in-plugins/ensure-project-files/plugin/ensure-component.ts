@@ -22,7 +22,11 @@ function ensureEntryFile() {
       return prettier.format(
         `
           import * as React from 'react'
-          export default () => <div>My Component</div>
+          export default () => {
+            return (
+              <div>My Component</div>
+            )
+          }
         `,
         { ...prettierConfig, parser: 'typescript' },
       );
