@@ -1,6 +1,6 @@
 {
   "name": "pri",
-  "version": "3.3.28-beta.6",
+  "version": "3.3.28-beta.7",
   "types": "src/node/index.ts",
   "main": "built/node/index.js",
   "scripts": {
@@ -137,7 +137,7 @@
     "socket.io": "2.2.0",
     "socket.io-client": "2.2.0",
     "style-loader": "0.23.1",
-    "typescript": "3.5.3",
+    "typescript": "3.7.2",
     "update-notifier": "3.0.1",
     "url-join": "4.0.1",
     "url-loader": "2.0.1",
