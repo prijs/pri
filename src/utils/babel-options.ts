@@ -6,6 +6,7 @@ import babelPluginProposalJsonStrings from '@babel/plugin-proposal-json-strings'
 import babelPluginProposalNumericSeparator from '@babel/plugin-proposal-numeric-separator';
 import babelPluginProposalOptionalCatchBinding from '@babel/plugin-proposal-optional-catch-binding';
 import babelPluginProposalThrowExpressions from '@babel/plugin-proposal-throw-expressions';
+import babelPluginProposalOptionalChaining from '@babel/plugin-proposal-optional-chaining';
 import babelPluginSyntaxDynamicImport from '@babel/plugin-syntax-dynamic-import';
 import babelPluginSyntaxImportMeta from '@babel/plugin-syntax-import-meta';
 import transformRuntime from '@babel/plugin-transform-runtime';
@@ -38,6 +39,7 @@ export function getBabelOptions(options?: Partial<DefaultOptions>) {
       [babelPluginProposalFunctionSent],
       [babelPluginProposalNumericSeparator],
       [babelPluginProposalThrowExpressions],
+      [babelPluginProposalOptionalChaining],
       [babelPluginSyntaxDynamicImport],
       [babelPluginSyntaxImportMeta],
       [babelPluginProposalClassProperties, { loose: true }],

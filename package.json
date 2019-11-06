@@ -1,6 +1,6 @@
 {
   "name": "pri",
-  "version": "3.3.28-beta.8",
+  "version": "3.3.28-beta.9",
   "types": "src/node/index.ts",
   "main": "built/node/index.js",
   "scripts": {
@@ -35,6 +35,7 @@
     "@babel/plugin-proposal-json-strings": "7.2.0",
     "@babel/plugin-proposal-numeric-separator": "7.2.0",
     "@babel/plugin-proposal-optional-catch-binding": "7.2.0",
+    "@babel/plugin-proposal-optional-chaining": "^7.6.0",
     "@babel/plugin-proposal-throw-expressions": "7.2.0",
     "@babel/plugin-syntax-dynamic-import": "7.2.0",
     "@babel/plugin-syntax-import-meta": "7.2.0",
