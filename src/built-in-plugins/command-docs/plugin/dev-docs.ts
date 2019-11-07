@@ -73,6 +73,24 @@ export async function devDocs() {
 }
 
 function prepare(docsEntryPath: string) {
+  pri.build.pipeSassLoaderOptions(options => {
+    return {
+      ...options,
+      sourceMap: true,
+    };
+  });
+  pri.build.pipeLessLoaderOptions(options => {
+    return {
+      ...options,
+      sourceMap: true,
+    };
+  });
+  pri.build.pipeCssLoaderOptions(options => {
+    return {
+      ...options,
+      sourceMap: true,
+    };
+  });
   pri.build.pipeJsInclude(paths => {
     paths.push(path.join(pri.sourceRoot, docsPath.dir));
     return paths;
