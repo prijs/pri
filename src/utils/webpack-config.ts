@@ -41,73 +41,6 @@ const selfAndProjectNodeModules = [
   path.join(__dirname, '../../node_modules'),
 ];
 
-/**
- * Mutilpe loaders
- */
-const styleLoader = {
-  loader: 'style-loader',
-  options: plugin.buildConfigStyleLoaderOptionsPipes.reduce((options, fn) => {
-    return fn(options);
-  }, {}),
-};
-
-const cssPureLoader = {
-  loader: 'css-loader',
-  options: plugin.buildConfigCssLoaderOptionsPipes.reduce((options, fn) => {
-    return fn(options);
-  }, {}),
-};
-
-const cssModuleLoader = {
-  loader: 'css-loader',
-  options: plugin.buildConfigCssLoaderOptionsPipes.reduce(
-    (options, fn) => {
-      return fn(options);
-    },
-    {
-      importLoaders: 1,
-      modules: {
-        localIdentName: '[path][name]-[local]-[hash:base64:5]',
-      },
-    },
-  ),
-};
-
-const sassLoader = {
-  loader: 'sass-loader',
-  options: plugin.buildConfigSassLoaderOptionsPipes.reduce((options, fn) => {
-    return fn(options);
-  }, {}),
-};
-
-const lessLoader = {
-  loader: 'less-loader',
-  options: plugin.buildConfigLessLoaderOptionsPipes.reduce((options, fn) => {
-    return fn(options);
-  }, {}),
-};
-
-const babelLoader = {
-  loader: 'babel-loader',
-  options: plugin.buildConfigBabelLoaderOptionsPipes.reduce((options, fn) => {
-    return fn(options);
-  }, getBabelOptions()),
-};
-
-/**
- * Helper
- */
-function extraCssInProd(...loaders: any[]) {
-  // Enable cssExtract, but not in bundle command.
-  if (globalState.sourceConfig.cssExtract && yargs.argv._[0] !== 'bundle' && yargs.argv._[0] !== 'debug') {
-    if (globalState.isDevelopment) {
-      return [styleLoader, ...loaders];
-    }
-    return [MiniCssExtractPlugin.loader, ...loaders];
-  }
-  return [styleLoader, ...loaders];
-}
-
 const stats = {
   warnings: false,
   version: false,
@@ -152,6 +85,67 @@ export const getWebpackConfig = async (opts: IOptions) => {
   const distDir = opts.distDir || path.join(globalState.projectRootPath, globalState.sourceConfig.distDir);
   const outFileName = opts.outFileName || globalState.sourceConfig.outFileName;
   const outCssFileName = opts.outCssFileName || globalState.sourceConfig.outCssFileName;
+
+  const styleLoader = {
+    loader: 'style-loader',
+    options: plugin.buildConfigStyleLoaderOptionsPipes.reduce((options, fn) => {
+      return fn(options);
+    }, {}),
+  };
+
+  const cssPureLoader = {
+    loader: 'css-loader',
+    options: plugin.buildConfigCssLoaderOptionsPipes.reduce((options, fn) => {
+      return fn(options);
+    }, {}),
+  };
+
+  const cssModuleLoader = {
+    loader: 'css-loader',
+    options: plugin.buildConfigCssLoaderOptionsPipes.reduce(
+      (options, fn) => {
+        return fn(options);
+      },
+      {
+        importLoaders: 1,
+        modules: {
+          localIdentName: '[path][name]-[local]-[hash:base64:5]',
+        },
+      },
+    ),
+  };
+
+  const sassLoader = {
+    loader: 'sass-loader',
+    options: plugin.buildConfigSassLoaderOptionsPipes.reduce((options, fn) => {
+      return fn(options);
+    }, {}),
+  };
+
+  const lessLoader = {
+    loader: 'less-loader',
+    options: plugin.buildConfigLessLoaderOptionsPipes.reduce((options, fn) => {
+      return fn(options);
+    }, {}),
+  };
+
+  const babelLoader = {
+    loader: 'babel-loader',
+    options: plugin.buildConfigBabelLoaderOptionsPipes.reduce((options, fn) => {
+      return fn(options);
+    }, getBabelOptions()),
+  };
+
+  const extraCssInProd = (...loaders: any[]) => {
+    // Enable cssExtract, but not in bundle command.
+    if (globalState.sourceConfig.cssExtract && yargs.argv._[0] !== 'bundle' && yargs.argv._[0] !== 'debug') {
+      if (globalState.isDevelopment) {
+        return [styleLoader, ...loaders];
+      }
+      return [MiniCssExtractPlugin.loader, ...loaders];
+    }
+    return [styleLoader, ...loaders];
+  };
 
   let publicPath: string = opts.publicPath || globalState.sourceConfig.publicPath || '/';
   if (!publicPath.endsWith('/')) {
@@ -205,7 +199,11 @@ export const getWebpackConfig = async (opts: IOptions) => {
           use: [babelLoader, '@mdx-js/loader'],
           ...tsLoaderConfig,
         },
-        { test: /\.css$/, use: extraCssInProd(cssPureLoader), exclude: [/\.module\.css$/] },
+        {
+          test: /\.css$/,
+          use: extraCssInProd(cssPureLoader),
+          exclude: [/\.module\.css$/],
+        },
         {
           test: /\.module\.css$/,
           use: extraCssInProd(cssModuleLoader),
@@ -275,7 +273,9 @@ export const getWebpackConfig = async (opts: IOptions) => {
       modules: selfAndProjectNodeModules,
       alias: {
         // Src alias to ./src
-        ...(globalState.sourceConfig.type === 'project' && { src: path.join(globalState.projectRootPath, '/src') }),
+        ...(globalState.sourceConfig.type === 'project' && {
+          src: path.join(globalState.projectRootPath, '/src'),
+        }),
         // For react hot loader.
         ...(globalState.isDevelopment && {
           'react-dom': '@hot-loader/react-dom',
