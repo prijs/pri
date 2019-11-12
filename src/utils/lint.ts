@@ -168,6 +168,5 @@ export async function lint(options?: Partial<DefaultOptions>) {
 
   if (mergedOptions.typeCheck) {
     typeChecker();
-    process.exit(1);
   }
 }
