@@ -26,13 +26,21 @@ const buildTs = (watch: boolean, outdir: string, babelOptions: any, wholeProject
     : path.join(sourcePath || pri.sourceRoot, srcPath.dir, '**/*.{ts,tsx}');
 
   return new Promise((resolve, reject) => {
-    getGulpByWatch(watch, targetPath)
-      .pipe(gulpSourcemaps.init())
-      .pipe(gulpBabel(babelOptions))
-      .pipe(gulpSourcemaps.write())
-      .on('error', reject)
-      .pipe(gulp.dest(outdir))
-      .on('end', resolve);
+    if (globalState.isDevelopment) {
+      getGulpByWatch(watch, targetPath)
+        .pipe(gulpSourcemaps.init())
+        .pipe(gulpBabel(babelOptions))
+        .pipe(gulpSourcemaps.write())
+        .on('error', reject)
+        .pipe(gulp.dest(outdir))
+        .on('end', resolve);
+    } else {
+      getGulpByWatch(watch, targetPath)
+        .pipe(gulpBabel(babelOptions))
+        .on('error', reject)
+        .pipe(gulp.dest(outdir))
+        .on('end', resolve);
+    }
   });
 };
 
