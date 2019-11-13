@@ -58,7 +58,7 @@ const commonComponentPackageJson = {
     analyse: 'pri analyse',
     publish: 'pri publish',
     lint: 'pri lint',
-    format: `pri lint`,
+    format: 'pri lint',
     test: 'pri test',
   },
   husky: {
@@ -334,7 +334,7 @@ function ensureRootPackageJson() {
             if (pri.selectedSourceType === 'root') {
               _.set(prevJson, 'main', `${pri.projectConfig.distDir}/main/src`);
               _.set(prevJson, 'module', `${pri.projectConfig.distDir}/module/src`);
-              _.set(prevJson, 'types', `src`);
+              _.set(prevJson, 'types', 'src');
             } else {
               _.set(prevJson, 'main', `${pri.projectConfig.distDir}/main/packages/${pri.selectedSourceType}/src`);
               _.set(prevJson, 'module', `${pri.projectConfig.distDir}/module/packages/${pri.selectedSourceType}/src`);

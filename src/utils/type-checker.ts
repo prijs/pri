@@ -11,7 +11,7 @@ export function typeChecker() {
 
     try {
       debugFiles = execSync(
-        `grep -in '@DEBUG' --include *.ts --include *.tsx --include *.js --include *.scss --include *.css $(git diff --cached --name-only --diff-filter=ACM) /dev/null`,
+        "grep -in '@DEBUG' --include *.ts --include *.tsx --include *.js --include *.scss --include *.css $(git diff --cached --name-only --diff-filter=ACM) /dev/null",
         {
           shell: 'bash',
           stdio: [0, 1],
@@ -26,7 +26,7 @@ export function typeChecker() {
     }
   }
 
-  const tsChangedFilesCnt = +execSync(`git diff --cached --numstat --diff-filter=ACM | grep -F '.ts' | wc -l`).toString(
+  const tsChangedFilesCnt = +execSync("git diff --cached --numstat --diff-filter=ACM | grep -F '.ts' | wc -l").toString(
     'utf8',
   );
   if (tsChangedFilesCnt) {

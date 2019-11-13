@@ -76,7 +76,7 @@ pri.project.onAnalyseProject(files => {
       pages: pri.sourceConfig.routes
         .filter(route => {
           if (route.redirect && route.component) {
-            logFatal(`route "redirect" and "component" are mutually exclusive.`);
+            logFatal('route "redirect" and "component" are mutually exclusive.');
           }
 
           if (route.path && route.component) {

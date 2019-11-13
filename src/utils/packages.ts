@@ -157,7 +157,7 @@ function getMonoDepASC(depMap: DepMap) {
         }
       });
 
-      logFatal(`Cyclic dependence happend!`);
+      logFatal('Cyclic dependence happend!');
     }
 
     monoDepASC.push(zeroMonoDepsPackageName);
@@ -190,7 +190,7 @@ export async function getMonoAndNpmDepsByPath(rootPath: string) {
       if ([ts.SyntaxKind.ImportDeclaration, ts.SyntaxKind.ExportDeclaration].includes(statement.kind)) {
         statement.forEachChild(each => {
           if (each.kind === ts.SyntaxKind.StringLiteral) {
-            const importStringLiteral = _.trim(each.getText(sourceFile), `'"`);
+            const importStringLiteral = _.trim(each.getText(sourceFile), '\'"');
             const targetPackage = globalState.packages.find(
               eachPackage => eachPackage.packageJson && eachPackage.packageJson.name === importStringLiteral,
             );

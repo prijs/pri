@@ -108,7 +108,7 @@ export class GlobalState {
   /**
    * Development enviroment.
    */
-  public isDevelopment: boolean = false;
+  public isDevelopment = false;
 
   /**
    * packages info

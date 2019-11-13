@@ -28,7 +28,7 @@ export const componentDev = async (watchOnly = false) => {
 
   // Build all
   if (!watchOnly) {
-    await spinner(`Init build`, async () => {
+    await spinner('Init build', async () => {
       await tsPlusBabel(false, true);
     });
   }

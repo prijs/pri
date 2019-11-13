@@ -189,7 +189,7 @@ export class Entry {
   }
 
   protected async getEnvironmentHeader() {
-    return pipe.get('environmentHeader', ``);
+    return pipe.get('environmentHeader', '');
   }
 
   protected async getEnvironmentBody() {

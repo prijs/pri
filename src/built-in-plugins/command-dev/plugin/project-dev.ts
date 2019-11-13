@@ -82,7 +82,7 @@ async function debugProject() {
         document.body.appendChild(dllScript);
         function runEntry() {
       `,
-        `}`,
+        '}',
       ),
     );
     return config;

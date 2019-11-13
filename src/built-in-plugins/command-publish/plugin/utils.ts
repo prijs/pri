@@ -39,7 +39,12 @@ export function prePareParamsBeforePublish(sourceType: string) {
     config: targetConfig,
   };
 
-  return { targetPackageJson, targetConfig, targetRoot, targetPackageInfo };
+  return {
+    targetPackageJson,
+    targetConfig,
+    targetRoot,
+    targetPackageInfo,
+  };
 }
 
 // check package.json and env etc.
@@ -61,7 +66,7 @@ export async function checkEnvBeforePublish(targetPackageJson: Partial<PackageJs
 }
 
 export async function addTagAndPush(tagName: string, targetPackageJson: Partial<PackageJson>) {
-  await spinner(`Add and push tag`, async () => {
+  await spinner('Add and push tag', async () => {
     await exec(`git tag -a ${tagName} -m "release" -f`);
     await exec(`git push origin ${tagName} -f`);
   });
@@ -148,7 +153,7 @@ export async function generateVersion(
       } else if (['patch', 'minor', 'major'].some(each => each === options.semver)) {
         version = semver.inc(targetPackageJson.version, options.semver as semver.ReleaseType);
       } else {
-        logFatal(`semver must be "patch" "minor" or "major"`);
+        logFatal('semver must be "patch" "minor" or "major"');
       }
     }
     resolve(version);
@@ -181,7 +186,7 @@ export async function cleanWorkingTree() {
   ]);
 
   if (!inquirerInfo.message) {
-    logFatal(`Need commit message`);
+    logFatal('Need commit message');
   }
 
   const result = await commitLint(inquirerInfo.message, {
@@ -338,7 +343,7 @@ export async function addMissingDeps(
 
 export async function buildDeclaration() {
   // Create d.ts
-  await spinner(`create declaration`, async () => {
+  await spinner('create declaration', async () => {
     try {
       await exec(
         `npx tsc --declaration --declarationDir ${path.join(

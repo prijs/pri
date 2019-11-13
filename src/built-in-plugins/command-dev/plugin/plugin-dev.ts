@@ -13,7 +13,7 @@ export const pluginDev = async () => {
   });
 
   // Build all
-  await spinner(`Init build`, async () => {
+  await spinner('Init build', async () => {
     await tsPlusBabel(false, true);
   });
   // Watch

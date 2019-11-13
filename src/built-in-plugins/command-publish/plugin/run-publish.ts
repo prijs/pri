@@ -135,7 +135,7 @@ async function publishByPackageName(
     await commandBundle({ skipLint: true });
   }
 
-  await spinner(`Publish`, async () => {
+  await spinner('Publish', async () => {
     await moveSourceFilesToTempFolderAndPublish(sourceType, options, targetConfig, targetRoot, depMap, isDevelopBranch);
   });
 

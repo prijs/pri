@@ -53,6 +53,6 @@ export const isWorkingTreeClean = async (cwd?: string) => {
 };
 
 export const getCurrentBranchName = async (cwd?: string) => {
-  const branchName = await exec(`git rev-parse --abbrev-ref HEAD 2>/dev/null`, { cwd });
+  const branchName = await exec('git rev-parse --abbrev-ref HEAD 2>/dev/null', { cwd });
   return branchName;
 };

@@ -55,7 +55,7 @@ export const StructComponent = React.memo(() => {
           });
         }}
       >
-        <ListItemText primary={`Layout`} />
+        <ListItemText primary={'Layout'} />
         {!hasLayout && (
           <ListItemSecondaryAction>
             <Button onClick={createLayout}>Add</Button>
@@ -71,7 +71,7 @@ export const StructComponent = React.memo(() => {
           });
         }}
       >
-        <ListItemText primary={`404`} />
+        <ListItemText primary={'404'} />
         {!hasNotFound && (
           <ListItemSecondaryAction>
             <Button onClick={create404}>Add</Button>
@@ -87,7 +87,7 @@ export const StructComponent = React.memo(() => {
           });
         }}
       >
-        <ListItemText primary={`Config`} />
+        <ListItemText primary={'Config'} />
         {!hasConfig && (
           <ListItemSecondaryAction>
             <Button onClick={createConfig}>Add</Button>
