@@ -27,14 +27,7 @@
     }
   },
   "plugins": ["babel", "@typescript-eslint", "react-hooks"],
-  "extends": [
-    "eslint:recommended",
-    "plugin:@typescript-eslint/recommended",
-    "plugin:react/recommended",
-    "airbnb-base",
-    "prettier/@typescript-eslint",
-    "prettier"
-  ],
+  "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended", "plugin:react/recommended", "airbnb-base"],
   "rules": {
     "func-names": 0,
     "one-var": [1, "never"],
