@@ -79,11 +79,11 @@ export const runWebpackDevServer = async (opts: IOptions<IExtraOptions>) => {
     port: opts.devServerPort,
   } as any;
 
-  WebpackDevServer.addDevServerEntrypoints(webpackConfig, webpackDevServerConfig);
+  WebpackDevServer.addDevServerEntrypoints(webpackConfig as any, webpackDevServerConfig);
 
   const compiler = webpack(webpackConfig);
 
-  const devServer = new WebpackDevServer(compiler, webpackDevServerConfig);
+  const devServer = new WebpackDevServer(compiler as any, webpackDevServerConfig);
 
   devServer.listen(opts.devServerPort, '127.0.0.1', () => {
     let devUrl: string = null;
