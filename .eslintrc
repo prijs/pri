@@ -32,8 +32,7 @@
     "plugin:@typescript-eslint/recommended",
     "plugin:react/recommended",
     "airbnb-base",
-    "prettier/@typescript-eslint",
-    "prettier"
+    "prettier/@typescript-eslint"
   ],
   "rules": {
     "func-names": 0,
