@@ -107,6 +107,8 @@ async function publishByPackageName(
 
   await checkEnvBeforePublish(targetPackageJson, sourceType);
 
+  logInfo('Check if npm package exist');
+
   targetPackageJson.version = await generateVersion(
     options,
     isDevelopBranch,
@@ -165,6 +167,8 @@ async function publishPackageAndItsMonoPackage(
   await fs.remove(path.join(pri.projectRootPath, pri.sourceConfig.distDir));
 
   await checkEnvBeforePublish(targetPackageJson, sourceType);
+
+  logInfo('Check if npm package exist');
 
   const monoPackageVersion: {
     [key in string]: string;

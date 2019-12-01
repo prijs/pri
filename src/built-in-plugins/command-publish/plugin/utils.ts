@@ -61,8 +61,6 @@ export async function checkEnvBeforePublish(targetPackageJson: Partial<PackageJs
   if (!(await isWorkingTreeClean())) {
     await cleanWorkingTree();
   }
-
-  logInfo('Check if npm package exist');
 }
 
 export async function addTagAndPush(tagName: string, targetPackageJson: Partial<PackageJson>) {
@@ -112,20 +110,43 @@ export async function generateVersion(
 
     // Generate beta version if branch is not master or develop
     if (options.tag === 'beta' || !isDevelopBranch) {
-      version = (semver.inc as any)(
-        targetPackageJson.version,
-        'prerelease',
-        currentBranchName.replace(/\//g, '').replace(/\./g, ''),
-      );
-      let checkBetaVersionResult;
-      version = targetPackageJson.version;
-      // check the package verion and if it existing auto increase it
-      do {
-        version = (semver.inc as any)(version, 'prerelease', currentBranchName.replace(/\//g, '').replace(/\./g, ''));
-        checkBetaVersionResult = execSync(`${targetConfig.npmClient} view ${targetPackageJson.name}@${version} version`)
-          .toString()
-          .trim();
-      } while (checkBetaVersionResult);
+      const basicVersion = execSync(`${targetConfig.npmClient} view ${targetPackageJson.name} version`)
+        .toString()
+        .trim();
+
+      const branchNameInVersion = currentBranchName.replace(/\//g, '').replace(/\./g, '');
+
+      let publishedVersions = execSync(`${targetConfig.npmClient} view ${targetPackageJson.name} versions`)
+        .toString()
+        .trim()
+        .replace(/\n|'| |\[|\]/g, '')
+        .split(',');
+
+      let maxBetaVersionNum = 0;
+
+      // get max beta version
+      publishedVersions = publishedVersions.filter((v: string) => {
+        if (v.includes(branchNameInVersion)) {
+          const tempBetaVersion = Number(v.split(`${branchNameInVersion}.`)[1]);
+
+          if (maxBetaVersionNum < tempBetaVersion) {
+            maxBetaVersionNum = tempBetaVersion;
+          }
+
+          return true;
+        }
+
+        return false;
+      });
+
+      // basic version include branchName -> use basic version
+      if (basicVersion.includes(branchNameInVersion)) {
+        const tempVersion = basicVersion.split('.').reverse();
+        tempVersion[0] = maxBetaVersionNum.toString();
+        version = tempVersion.reverse().join('.');
+      } else {
+        version = `${basicVersion}-${branchNameInVersion}.${maxBetaVersionNum + 1}`;
+      }
     } else if (versionResult) {
       if (!options.semver) {
         const versionPrompt = await inquirer.prompt([
