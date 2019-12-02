@@ -116,7 +116,8 @@ export async function generateVersion(
 
       const branchNameInVersion = currentBranchName.replace(/\//g, '').replace(/\./g, '');
 
-      let publishedVersions = execSync(`${targetConfig.npmClient} view ${targetPackageJson.name} versions`)
+      // all of package versions
+      const publishedVersions = execSync(`${targetConfig.npmClient} view ${targetPackageJson.name} versions`)
         .toString()
         .trim()
         .replace(/\n|'| |\[|\]/g, '')
@@ -125,18 +126,14 @@ export async function generateVersion(
       let maxBetaVersionNum = 0;
 
       // get max beta version
-      publishedVersions = publishedVersions.filter((v: string) => {
+      publishedVersions.forEach((v: string) => {
         if (v.includes(branchNameInVersion)) {
           const tempBetaVersion = Number(v.split(`${branchNameInVersion}.`)[1]);
 
           if (maxBetaVersionNum < tempBetaVersion) {
             maxBetaVersionNum = tempBetaVersion;
           }
-
-          return true;
         }
-
-        return false;
       });
 
       // basic version include branchName -> use basic version
@@ -145,6 +142,7 @@ export async function generateVersion(
         tempVersion[0] = maxBetaVersionNum.toString();
         version = tempVersion.reverse().join('.');
       } else {
+        // basic version without branchName -> use basic version + branch name + beta version
         version = `${basicVersion}-${branchNameInVersion}.${maxBetaVersionNum + 1}`;
       }
     } else if (versionResult) {
