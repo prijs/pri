@@ -93,10 +93,10 @@ pri.project.onAnalyseProject(files => {
             const componentFile = files.find(file => {
               const relativePath = path.relative(pri.projectRootPath, path.join(file.dir, file.name));
               return (
-                (route.component === relativePath && !file.isDir && ['.tsx', '.md', '.mdx'].indexOf(file.ext) > -1)
-                || (path.join(route.component, 'index') === relativePath
-                  && !file.isDir
-                  && ['.tsx', '.md', '.mdx'].indexOf(file.ext) > -1)
+                (route.component === relativePath && !file.isDir && ['.tsx', '.md', '.mdx'].indexOf(file.ext) > -1) ||
+                (path.join(route.component, 'index') === relativePath &&
+                  !file.isDir &&
+                  ['.tsx', '.md', '.mdx'].indexOf(file.ext) > -1)
               );
             });
 
