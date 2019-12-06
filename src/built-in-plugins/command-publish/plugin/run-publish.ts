@@ -245,23 +245,20 @@ async function buildComponentAndPublish(
   depMap: DepMap,
   isDevelopBranch: boolean,
 ) {
-  return new Promise(async resolve => {
-    await buildComponent(packageInfo);
+  await buildComponent(packageInfo);
 
-    if (options.bundle) {
-      await commandBundle({ skipLint: true });
-    }
+  if (options.bundle) {
+    await commandBundle({ skipLint: true });
+  }
 
-    await moveSourceFilesToTempFolderAndPublish(
-      packageInfo.name,
-      options,
-      packageInfo.config,
-      packageInfo.rootPath,
-      depMap,
-      isDevelopBranch,
-    );
+  await moveSourceFilesToTempFolderAndPublish(
+    packageInfo.name,
+    options,
+    packageInfo.config,
+    packageInfo.rootPath,
+    depMap,
+    isDevelopBranch,
+  );
 
-    await addTagAndPush(generateTag(packageInfo.name, packageInfo.packageJson), packageInfo.packageJson);
-    resolve();
-  });
+  await addTagAndPush(generateTag(packageInfo.name, packageInfo.packageJson), packageInfo.packageJson);
 }

@@ -32,6 +32,7 @@
     "plugin:@typescript-eslint/recommended",
     "plugin:react/recommended",
     "airbnb-base",
+    "prettier",
     "prettier/@typescript-eslint"
   ],
   "rules": {
@@ -119,6 +120,10 @@
       {
         "props": false
       }
-    ]
+    ],
+    "arrow-parens": [2, "as-needed"],
+    "indent": 0,
+    "operator-linebreak": [2, "before"],
+    "max-classes-per-file": [2, 10]
   }
 }

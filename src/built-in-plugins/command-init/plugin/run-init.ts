@@ -18,7 +18,7 @@ export const runInit = async () => {
   if (!globalState.sourceConfig.type) {
     globalState.sourceConfig.type = await selectProjectType('Choose project type');
     if (globalState.selectedSourceType === 'root') {
-      globalState.sourceConfig.type = globalState.sourceConfig.type;
+      globalState.projectConfig.type = globalState.sourceConfig.type;
     }
   }
 
