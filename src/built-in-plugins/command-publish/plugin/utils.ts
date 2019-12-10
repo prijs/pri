@@ -110,24 +110,36 @@ export async function generateVersion(
 
     // Generate beta version if branch is not master or develop
     if (options.tag === 'beta' || !isDevelopBranch) {
-      const basicVersion = execSync(`${targetConfig.npmClient} view ${targetPackageJson.name} version`)
-        .toString()
-        .trim();
+      // fixed basicVersion to 1.0.0
+      const basicVersion = '1.0.0';
 
       const branchNameInVersion = currentBranchName.replace(/\//g, '').replace(/\./g, '');
 
-      // all of package versions
-      const publishedVersions = execSync(`${targetConfig.npmClient} view ${targetPackageJson.name} versions`)
-        .toString()
-        .trim()
-        .replace(/\n|'| |\[|\]/g, '')
-        .split(',');
+      let publishedVersions: string[] = [];
+      try {
+        // all of package versions
+        const tempVersions = execSync(`${targetConfig.npmClient} view ${targetPackageJson.name} versions`);
+        if (tempVersions) {
+          publishedVersions = tempVersions
+            .toString()
+            .trim()
+            .replace(/\n|'| |\[|\]/g, '')
+            .split(',');
+        } else {
+          publishedVersions = [];
+        }
+      } catch (e) {
+        publishedVersions = [];
+      }
 
       let maxBetaVersionNum = 0;
 
+      // 1.0.0-branchName.version
+      const betaVersionReg = new RegExp(`\\d+\\.\\d+\\.\\d+-${branchNameInVersion}\\.\\d+`);
+
       // get max beta version
       publishedVersions.forEach((v: string) => {
-        if (v.includes(branchNameInVersion)) {
+        if (betaVersionReg.test(v)) {
           const tempBetaVersion = Number(v.split(`${branchNameInVersion}.`)[1]);
 
           if (maxBetaVersionNum < tempBetaVersion) {
@@ -136,15 +148,8 @@ export async function generateVersion(
         }
       });
 
-      // basic version include branchName -> use basic version
-      if (basicVersion.includes(branchNameInVersion)) {
-        const tempVersion = basicVersion.split('.').reverse();
-        tempVersion[0] = maxBetaVersionNum.toString();
-        version = tempVersion.reverse().join('.');
-      } else {
-        // basic version without branchName -> use basic version + branch name + beta version
-        version = `${basicVersion}-${branchNameInVersion}.${maxBetaVersionNum + 1}`;
-      }
+      // basic version without branchName -> use basic version + branch name + beta version
+      version = `${basicVersion}-${branchNameInVersion}.${maxBetaVersionNum + 1}`;
     } else if (versionResult) {
       if (!options.semver) {
         const versionPrompt = await inquirer.prompt([
@@ -337,9 +342,7 @@ export async function addMissingDeps(
           .filter(npmName => !['react', 'react-dom', 'antd'].includes(npmName))
           .reduce((root, next) => {
             if (!sourceDeps[next]) {
-              logFatal(
-                `${pri.selectedSourceType}'s code depends on "${next}", but it doesn't exist in root package.json`,
-              );
+              logFatal(`package ${sourceType}'s code depends on "${next}", but it doesn't exist in root package.json`);
             }
 
             return {
