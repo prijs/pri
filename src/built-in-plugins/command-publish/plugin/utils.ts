@@ -17,18 +17,18 @@ import { ProjectConfig, PackageJson, PackageInfo } from '../../../utils/define';
 
 // prePare the info before publish
 export function prePareParamsBeforePublish(sourceType: string) {
-  const targetPackageJson =
-    sourceType === 'root'
+  const targetPackageJson
+    = sourceType === 'root'
       ? pri.projectPackageJson || {}
       : pri.packages.find(eachPackage => eachPackage.name === sourceType).packageJson || {};
 
-  const targetConfig =
-    sourceType === 'root'
+  const targetConfig
+    = sourceType === 'root'
       ? pri.projectConfig
       : pri.packages.find(eachPackage => eachPackage.name === sourceType).config;
 
-  const targetRoot =
-    sourceType === 'root'
+  const targetRoot
+    = sourceType === 'root'
       ? pri.projectRootPath
       : pri.packages.find(eachPackage => eachPackage.name === sourceType).rootPath;
 
@@ -88,94 +88,100 @@ export async function generateVersion(
   targetConfig: ProjectConfig,
   currentBranchName: string,
 ): Promise<string> {
-  let versionResult: string = null;
+  return new Promise(async resolve => {
+    let versionResult: string = null;
 
-  let version = '';
+    let version = '';
 
-  try {
-    const versionResultExec = execSync(
-      `${targetConfig.npmClient} view ${targetPackageJson.name}@${targetPackageJson.version} version`,
-    );
+    try {
+      const versionResultExec = execSync(
+        `${targetConfig.npmClient} view ${targetPackageJson.name}@${targetPackageJson.version} version`,
+      );
 
-    if (versionResultExec) {
-      versionResult = versionResultExec.toString().trim();
-    } else {
+      if (versionResultExec) {
+        versionResult = versionResultExec.toString().trim();
+      } else {
+        versionResult = null;
+      }
+    } catch (error) {
+      // Throw error means not exist
       versionResult = null;
     }
-  } catch (error) {
-    // Throw error means not exist
-    versionResult = null;
-  }
 
-  // Generate beta version if branch is not master or develop
-  if (options.tag === 'beta' || !isDevelopBranch) {
-    const basicVersion = execSync(`${targetConfig.npmClient} view ${targetPackageJson.name} version`)
-      .toString()
-      .trim();
+    // Generate beta version if branch is not master or develop
+    if (options.tag === 'beta' || !isDevelopBranch) {
+      // fixed basicVersion to 1.0.0
+      const basicVersion = '1.0.0';
 
-    const branchNameInVersion = currentBranchName.replace(/\//g, '').replace(/\./g, '');
+      const branchNameInVersion = currentBranchName.replace(/\//g, '').replace(/\./g, '');
 
-    // all of package versions
-    const publishedVersions = execSync(`${targetConfig.npmClient} view ${targetPackageJson.name} versions`)
-      .toString()
-      .trim()
-      .replace(/\n|'| |\[|\]/g, '')
-      .split(',');
-
-    let maxBetaVersionNum = 0;
-
-    // get max beta version
-    publishedVersions.forEach((v: string) => {
-      if (v.includes(branchNameInVersion)) {
-        const tempBetaVersion = Number(v.split(`${branchNameInVersion}.`)[1]);
-
-        if (maxBetaVersionNum < tempBetaVersion) {
-          maxBetaVersionNum = tempBetaVersion;
+      let publishedVersions: string[] = [];
+      try {
+        // all of package versions
+        const tempVersions = execSync(`${targetConfig.npmClient} view ${targetPackageJson.name} versions`);
+        if (tempVersions) {
+          publishedVersions = tempVersions
+            .toString()
+            .trim()
+            .replace(/\n|'| |\[|\]/g, '')
+            .split(',');
+        } else {
+          publishedVersions = [];
         }
+      } catch (e) {
+        publishedVersions = [];
       }
-    });
 
-    // basic version include branchName -> use basic version
-    if (basicVersion.includes(branchNameInVersion)) {
-      const tempVersion = basicVersion.split('.').reverse();
-      tempVersion[0] = maxBetaVersionNum.toString();
-      version = tempVersion.reverse().join('.');
-    } else {
+      let maxBetaVersionNum = 0;
+
+      // 1.0.0-branchName.version
+      const betaVersionReg = new RegExp(`\\d+\\.\\d+\\.\\d+-${branchNameInVersion}\\.\\d+`);
+
+      // get max beta version
+      publishedVersions.forEach((v: string) => {
+        if (betaVersionReg.test(v)) {
+          const tempBetaVersion = Number(v.split(`${branchNameInVersion}.`)[1]);
+
+          if (maxBetaVersionNum < tempBetaVersion) {
+            maxBetaVersionNum = tempBetaVersion;
+          }
+        }
+      });
+
       // basic version without branchName -> use basic version + branch name + beta version
       version = `${basicVersion}-${branchNameInVersion}.${maxBetaVersionNum + 1}`;
+    } else if (versionResult) {
+      if (!options.semver) {
+        const versionPrompt = await inquirer.prompt([
+          {
+            message: `${targetPackageJson.name}@${targetPackageJson.version} exist, can upgrade to`,
+            name: 'version',
+            type: 'list',
+            choices: [
+              {
+                name: `Patch(${semver.inc(targetPackageJson.version, 'patch')})`,
+                value: semver.inc(targetPackageJson.version, 'patch'),
+              },
+              {
+                name: `Minor(${semver.inc(targetPackageJson.version, 'minor')})`,
+                value: semver.inc(targetPackageJson.version, 'minor'),
+              },
+              {
+                name: `Major(${semver.inc(targetPackageJson.version, 'major')})`,
+                value: semver.inc(targetPackageJson.version, 'major'),
+              },
+            ],
+          },
+        ]);
+        version = versionPrompt.version;
+      } else if (['patch', 'minor', 'major'].some(each => each === options.semver)) {
+        version = semver.inc(targetPackageJson.version, options.semver as semver.ReleaseType);
+      } else {
+        logFatal('semver must be "patch" "minor" or "major"');
+      }
     }
-  } else if (versionResult) {
-    if (!options.semver) {
-      const versionPrompt = await inquirer.prompt([
-        {
-          message: `${targetPackageJson.name}@${targetPackageJson.version} exist, can upgrade to`,
-          name: 'version',
-          type: 'list',
-          choices: [
-            {
-              name: `Patch(${semver.inc(targetPackageJson.version, 'patch')})`,
-              value: semver.inc(targetPackageJson.version, 'patch'),
-            },
-            {
-              name: `Minor(${semver.inc(targetPackageJson.version, 'minor')})`,
-              value: semver.inc(targetPackageJson.version, 'minor'),
-            },
-            {
-              name: `Major(${semver.inc(targetPackageJson.version, 'major')})`,
-              value: semver.inc(targetPackageJson.version, 'major'),
-            },
-          ],
-        },
-      ]);
-      version = versionPrompt.version;
-    } else if (['patch', 'minor', 'major'].some(each => each === options.semver)) {
-      version = semver.inc(targetPackageJson.version, options.semver as semver.ReleaseType);
-    } else {
-      logFatal('semver must be "patch" "minor" or "major"');
-    }
-  }
-
-  return version;
+    resolve(version);
+  });
 }
 
 /** Upgrade package.json's version */
@@ -336,9 +342,7 @@ export async function addMissingDeps(
           .filter(npmName => !['react', 'react-dom', 'antd'].includes(npmName))
           .reduce((root, next) => {
             if (!sourceDeps[next]) {
-              logFatal(
-                `${pri.selectedSourceType}'s code depends on "${next}", but it doesn't exist in root package.json`,
-              );
+              logFatal(`package ${sourceType}'s code depends on "${next}", but it doesn't exist in root package.json`);
             }
 
             return {
