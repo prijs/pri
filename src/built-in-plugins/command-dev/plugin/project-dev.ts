@@ -50,7 +50,7 @@ async function debugDashboard() {
   await runWebpackDevServer({
     mode: 'development',
     autoOpenBrowser: true,
-    hot: true,
+    hot: pri.sourceConfig.hotReload,
     publicPath: '/static/',
     entryPath: dashboardEntryFilePath,
     devServerPort: freePort,
@@ -144,7 +144,7 @@ async function debugProject() {
   await runWebpackDevServer({
     mode: 'development',
     autoOpenBrowser: true,
-    hot: true,
+    hot:pri.sourceConfig.hotReload,
     publicPath: globalState.sourceConfig.publicPath,
     entryPath: path.join(globalState.projectRootPath, path.format(tempJsEntryPath)),
     devServerPort: freePort,

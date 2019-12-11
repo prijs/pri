@@ -252,6 +252,11 @@ export class ProjectConfig {
   public incrementalLint?: boolean = false;
 
   public npmClient?: string = 'npm';
+
+  /**
+   * Enable hot loader
+   */
+  public hotReload = true
 }
 
 export type SetPipe = (pipeName: string, callback: PipeCallback) => void;
