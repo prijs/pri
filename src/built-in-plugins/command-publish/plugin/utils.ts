@@ -17,18 +17,18 @@ import { ProjectConfig, PackageJson, PackageInfo } from '../../../utils/define';
 
 // prePare the info before publish
 export function prePareParamsBeforePublish(sourceType: string) {
-  const targetPackageJson
-    = sourceType === 'root'
+  const targetPackageJson =
+    sourceType === 'root'
       ? pri.projectPackageJson || {}
       : pri.packages.find(eachPackage => eachPackage.name === sourceType).packageJson || {};
 
-  const targetConfig
-    = sourceType === 'root'
+  const targetConfig =
+    sourceType === 'root'
       ? pri.projectConfig
       : pri.packages.find(eachPackage => eachPackage.name === sourceType).config;
 
-  const targetRoot
-    = sourceType === 'root'
+  const targetRoot =
+    sourceType === 'root'
       ? pri.projectRootPath
       : pri.packages.find(eachPackage => eachPackage.name === sourceType).rootPath;
 

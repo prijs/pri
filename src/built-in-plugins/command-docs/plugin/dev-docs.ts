@@ -52,7 +52,7 @@ export async function devDocs() {
     mode: 'development',
     publicPath: '/',
     autoOpenBrowser: true,
-    hot:pri.sourceConfig.hotReload,
+    hot: pri.sourceConfig.hotReload,
     devUrl: 'localhost',
     entryPath: docsEntryPath,
     devServerPort: freePort,

@@ -96,9 +96,7 @@ async function publishByPackageName(
 ) {
   logInfo(`Start publish ${sourceType}.`);
 
-  const {
-    targetPackageJson, targetConfig, targetRoot, targetPackageInfo,
-  } = prePareParamsBeforePublish(sourceType);
+  const { targetPackageJson, targetConfig, targetRoot, targetPackageInfo } = prePareParamsBeforePublish(sourceType);
 
   // Change source config here
   pri.sourceConfig = targetConfig;
@@ -123,8 +121,8 @@ async function publishByPackageName(
 
   // Update version in depMao
   if (depMap) {
-    depMap.forEach((value) => {
-      value.depMonoPackages.forEach((eachPackage) => {
+    depMap.forEach(value => {
+      value.depMonoPackages.forEach(eachPackage => {
         if (eachPackage.name === sourceType) {
           // eslint-disable-next-line no-param-reassign
           eachPackage.packageJson.version = targetPackageJson.version;
@@ -159,9 +157,7 @@ async function publishPackageAndItsMonoPackage(
 ) {
   logInfo(`Start publish ${sourceType}.`);
 
-  const {
-    targetPackageJson, targetConfig, targetRoot, targetPackageInfo,
-  } = prePareParamsBeforePublish(sourceType);
+  const { targetPackageJson, targetConfig, targetRoot, targetPackageInfo } = prePareParamsBeforePublish(sourceType);
 
   // Change source config here
   pri.sourceConfig = targetConfig;
@@ -180,7 +176,7 @@ async function publishPackageAndItsMonoPackage(
 
   // Generate all package version and upgrade
 
-  await depMonoPackages.forEach(async (item) => {
+  await depMonoPackages.forEach(async item => {
     const version = await generateVersion(options, isDevelopBranch, item.packageJson, item.config, currentBranchName);
 
     monoPackageVersion[item.name as string] = version;
@@ -194,8 +190,8 @@ async function publishPackageAndItsMonoPackage(
 
   // Update depMonoPackages version
 
-  depMonoPackages.forEach((item) => {
-    depMap.get(item.name).depMonoPackages.forEach((eachPackage) => {
+  depMonoPackages.forEach(item => {
+    depMap.get(item.name).depMonoPackages.forEach(eachPackage => {
       if (monoPackageVersion[eachPackage.packageJson.name]) {
         eachPackage.packageJson.version = monoPackageVersion[eachPackage.packageJson.name];
       }
@@ -226,14 +222,14 @@ async function publishPackageAndItsMonoPackage(
 
   const publishQueue = [];
   // async publish & add tag and push
-  depMonoPackages.map((item) => {
+  depMonoPackages.map(item => {
     publishQueue.push(buildComponentAndPublish(item, options, depMap, isDevelopBranch));
   });
 
   // publish current package
   publishQueue.push(buildComponentAndPublish(targetPackageInfo, options, depMap, isDevelopBranch));
 
-  return Promise.all(publishQueue).catch(async (e) => {
+  return Promise.all(publishQueue).catch(async e => {
     await fs.remove(path.join(pri.projectRootPath, tempPath.dir, declarationPath.dir));
     await exec(`git push origin ${currentBranchName}`);
     logFatal(`publish error stop publish: ${e}`);

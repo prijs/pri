@@ -256,7 +256,7 @@ export class ProjectConfig {
   /**
    * Enable hot loader
    */
-  public hotReload = true
+  public hotReload = true;
 }
 
 export type SetPipe = (pipeName: string, callback: PipeCallback) => void;
