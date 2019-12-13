@@ -121,6 +121,7 @@
     "arrow-parens": [2, "as-needed"],
     "indent": 0,
     "operator-linebreak": [0],
-    "max-classes-per-file": [2, 10]
+    "max-classes-per-file": [2, 10],
+    "@typescript-eslint/no-empty-function": [0]
   }
 }
