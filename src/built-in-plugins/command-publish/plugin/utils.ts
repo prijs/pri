@@ -103,11 +103,11 @@ export async function generateVersion(
       if (versionResultExec) {
         versionResult = versionResultExec.toString().trim();
       } else {
-        versionResult = null;
+        versionResult = '1.0.0';
       }
     } catch (error) {
       // Throw error means not exist
-      versionResult = null;
+      versionResult = '1.0.0';
     }
 
     // Generate beta version if branch is not master or develop
