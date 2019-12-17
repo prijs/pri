@@ -1,5 +1,6 @@
 import * as fs from 'fs-extra';
 import * as path from 'path';
+import { pri } from '../node';
 import * as pipe from '../node/pipe';
 import { PRI_PACKAGE_NAME } from './constants';
 import { globalState } from './global-state';
@@ -158,7 +159,7 @@ export class Entry {
       import * as Loadable from "react-loadable"
       import App, { pageLoadableMap } from "./app"
 
-      const ROOT_ID = "root"
+      const ROOT_ID = "${pri.sourceConfig.projectRootId}"
     `,
     );
   }
