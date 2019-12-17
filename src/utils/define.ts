@@ -257,6 +257,11 @@ export class ProjectConfig {
    * Enable hot loader
    */
   public hotReload = true;
+
+  /**
+   * Project Root Dom Id
+   */
+  public rootId = 'root';
 }
 
 export type SetPipe = (pipeName: string, callback: PipeCallback) => void;

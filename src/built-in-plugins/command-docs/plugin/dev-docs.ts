@@ -172,7 +172,7 @@ function prepare(docsEntryPath: string) {
 
       const Docs = () => <DocsWrapper docs={DocComponents}/>
 
-      const ROOT_ID = 'root';
+      const ROOT_ID = '${pri.sourceConfig.rootId}';
 
       setConfig({ pureSFC: true, pureRender: true })
 
