@@ -261,7 +261,7 @@ export class ProjectConfig {
   /**
    * Project Root Dom Id
    */
-  public rootId = 'root';
+  public projectRootId = 'root';
 }
 
 export type SetPipe = (pipeName: string, callback: PipeCallback) => void;

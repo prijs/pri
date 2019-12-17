@@ -159,7 +159,7 @@ export class Entry {
       import * as Loadable from "react-loadable"
       import App, { pageLoadableMap } from "./app"
 
-      const ROOT_ID = "${pri.sourceConfig.rootId}"
+      const ROOT_ID = "${pri.sourceConfig.projectRootId}"
     `,
     );
   }
