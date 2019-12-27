@@ -178,7 +178,10 @@ export async function generateVersion(
     } else {
       logFatal('semver must be "patch" "minor" or "major"');
     }
+  } else {
+    version = targetPackageJson.version;
   }
+
   return version;
 }
 
