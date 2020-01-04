@@ -340,7 +340,7 @@ export async function addMissingDeps(
       newPackageJson.dependencies = {
         ...newPackageJson.dependencies,
         ...depNpmPackages
-          .filter(npmName => !['react', 'react-dom', 'antd'].includes(npmName))
+          .filter(npmName => !['react', 'react-dom', 'react-router-dom'].includes(npmName))
           .reduce((root, next) => {
             if (!sourceDeps[next]) {
               logFatal(`package ${sourceType}'s code depends on "${next}", but it doesn't exist in root package.json`);
