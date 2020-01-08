@@ -12,6 +12,7 @@ import { getBabelOptions } from './babel-options';
 import { globalState } from './global-state';
 import { babelPluginTransformImport } from './babel-plugin-transfer-import';
 import { PackageInfo } from './define';
+import { gulpPrivatePublish } from './gulp-private-publish';
 
 function getGulpByWatch(watch: boolean, filesPath: string) {
   if (watch) {
@@ -20,7 +21,14 @@ function getGulpByWatch(watch: boolean, filesPath: string) {
   return gulp.src(filesPath);
 }
 
-const buildTs = (watch: boolean, outdir: string, babelOptions: any, wholeProject: boolean, sourcePath: string) => {
+const buildTs = (
+  watch: boolean,
+  outdir: string,
+  babelOptions: any,
+  wholeProject: boolean,
+  sourcePath: string,
+  rootDistPath: string,
+) => {
   const targetPath = wholeProject
     ? path.join(pri.projectRootPath, '{src,packages}/**/*.{ts,tsx}')
     : path.join(sourcePath || pri.sourceRoot, srcPath.dir, '**/*.{ts,tsx}');
@@ -37,6 +45,7 @@ const buildTs = (watch: boolean, outdir: string, babelOptions: any, wholeProject
     } else {
       getGulpByWatch(watch, targetPath)
         .pipe(gulpBabel(babelOptions))
+        .pipe(gulpPrivatePublish(rootDistPath))
         .on('error', reject)
         .pipe(gulp.dest(outdir))
         .on('end', resolve);
@@ -128,6 +137,7 @@ export const tsPlusBabel = async (watch = false, wholeProject = false, packageIn
       }),
       wholeProject,
       sourcePath,
+      rootDistPath,
     ),
     buildTs(
       watch,
@@ -138,6 +148,7 @@ export const tsPlusBabel = async (watch = false, wholeProject = false, packageIn
       }),
       wholeProject,
       sourcePath,
+      rootDistPath,
     ),
 
     mvResources(watch, mainDistPath, wholeProject, sourcePath, sourceType),

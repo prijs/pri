@@ -69,3 +69,4 @@ declare module 'gulp-concat-css';
 declare module 'gulp-strip-css-comments';
 declare module 'circular-dependency-plugin';
 declare module '@babel/plugin-proposal-optional-chaining';
+declare module 'follow-redirects';

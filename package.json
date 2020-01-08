@@ -90,6 +90,7 @@
     "eslint-plugin-react": "7.17.0",
     "eslint-plugin-react-hooks": "2.3.0",
     "file-loader": "5.0.2",
+    "follow-redirects": "^1.9.0",
     "fs-extra": "8.1.0",
     "gulp": "^4.0.2",
     "gulp-babel": "^8.0.0",
