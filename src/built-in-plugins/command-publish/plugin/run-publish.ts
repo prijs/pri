@@ -131,7 +131,7 @@ async function publishByPackageName(
     });
   }
 
-  await buildComponent(targetPackageInfo);
+  await buildComponent(targetPackageInfo, options);
 
   if (options.bundle) {
     await commandBundle({ skipLint: true });
@@ -243,7 +243,7 @@ async function buildComponentAndPublish(
   depMap: DepMap,
   isDevelopBranch: boolean,
 ) {
-  await buildComponent(packageInfo);
+  await buildComponent(packageInfo, options);
 
   if (options.bundle) {
     await commandBundle({ skipLint: true });

@@ -21,6 +21,9 @@ pri.commands.registerCommand({
     semver: {
       description: 'Semver version: patch minor major',
     },
+    private: {
+      description: 'private publish',
+    },
   },
   action: async (options: PublishOption) => {
     const commandPublishModule = await import('./run-publish');

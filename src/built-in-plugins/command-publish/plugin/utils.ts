@@ -271,6 +271,10 @@ export async function moveSourceFilesToTempFolderAndPublish(
     finalTag = 'beta';
   }
 
+  if (options.private) {
+    finalTag = 'private';
+  }
+
   await exec(`${targetConfig.npmClient} publish ${tempRoot} --ignore-scripts --tag ${finalTag}`, {
     cwd: tempRoot,
   });

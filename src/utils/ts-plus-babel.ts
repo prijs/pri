@@ -7,6 +7,7 @@ import * as gulpConcatCss from 'gulp-concat-css';
 import * as gulpIf from 'gulp-if';
 import * as gulpSourcemaps from 'gulp-sourcemaps';
 import * as path from 'path';
+import { PublishOption } from '../built-in-plugins/command-publish/plugin/interface';
 import { pri, srcPath } from '../node';
 import { getBabelOptions } from './babel-options';
 import { globalState } from './global-state';
@@ -28,6 +29,7 @@ const buildTs = (
   wholeProject: boolean,
   sourcePath: string,
   rootDistPath: string,
+  options: PublishOption,
 ) => {
   const targetPath = wholeProject
     ? path.join(pri.projectRootPath, '{src,packages}/**/*.{ts,tsx}')
@@ -42,10 +44,16 @@ const buildTs = (
         .on('error', reject)
         .pipe(gulp.dest(outdir))
         .on('end', resolve);
-    } else {
+    } else if (options.private) {
       getGulpByWatch(watch, targetPath)
         .pipe(gulpBabel(babelOptions))
         .pipe(gulpPrivatePublish(rootDistPath))
+        .on('error', reject)
+        .pipe(gulp.dest(outdir))
+        .on('end', resolve);
+    } else {
+      getGulpByWatch(watch, targetPath)
+        .pipe(gulpBabel(babelOptions))
         .on('error', reject)
         .pipe(gulp.dest(outdir))
         .on('end', resolve);
@@ -53,20 +61,38 @@ const buildTs = (
   });
 };
 
-const buildSass = (watch: boolean, outdir: string, wholeProject: boolean, sourcePath: string) => {
+const buildSass = (
+  watch: boolean,
+  outdir: string,
+  wholeProject: boolean,
+  sourcePath: string,
+  rootDistPath: string,
+  options: PublishOption,
+) => {
   const targetPath =
     wholeProject || (pri.selectedSourceType === 'root' && pri.sourceConfig.cssExtract)
       ? path.join(pri.projectRootPath, '{src,packages}/**/*.scss')
       : path.join(sourcePath || pri.sourceRoot, srcPath.dir, '**/*.scss');
 
   return new Promise((resolve, reject) => {
-    getGulpByWatch(watch, targetPath)
-      .pipe(gulpSass())
-      .pipe(gulpIf(pri.sourceConfig.cssExtract, gulpConcatCss(pri.sourceConfig.outCssFileName)))
-      .pipe(gulpStripCssComments())
-      .on('error', reject)
-      .pipe(gulp.dest(outdir))
-      .on('end', resolve);
+    if (options.private) {
+      getGulpByWatch(watch, targetPath)
+        .pipe(gulpSass())
+        .pipe(gulpIf(pri.sourceConfig.cssExtract, gulpConcatCss(pri.sourceConfig.outCssFileName)))
+        .pipe(gulpStripCssComments())
+        .on('error', reject)
+        .pipe(gulp.dest(outdir))
+        .on('end', resolve);
+    } else {
+      getGulpByWatch(watch, targetPath)
+        .pipe(gulpSass())
+        .pipe(gulpIf(pri.sourceConfig.cssExtract, gulpConcatCss(pri.sourceConfig.outCssFileName)))
+        .pipe(gulpStripCssComments())
+        .pipe(gulpPrivatePublish(rootDistPath))
+        .on('error', reject)
+        .pipe(gulp.dest(outdir))
+        .on('end', resolve);
+    }
   });
 };
 
@@ -116,7 +142,12 @@ function importRename(packageAbsoluteToRelative = false) {
   ];
 }
 
-export const tsPlusBabel = async (watch = false, wholeProject = false, packageInfo: PackageInfo = null) => {
+export const tsPlusBabel = async (
+  watch = false,
+  wholeProject = false,
+  packageInfo: PackageInfo = null,
+  options: PublishOption = null,
+) => {
   const packagePath = packageInfo ? packageInfo.name : '';
   const rootDistPath = path.join(globalState.projectRootPath, pri.sourceConfig.distDir, packagePath);
   const mainDistPath = path.join(rootDistPath, 'main');
@@ -126,8 +157,8 @@ export const tsPlusBabel = async (watch = false, wholeProject = false, packageIn
   const sourceType = packageInfo ? packageInfo.name : null;
 
   return Promise.all([
-    buildSass(watch, mainDistPath, wholeProject, sourcePath),
-    buildSass(watch, moduleDistPath, wholeProject, sourcePath),
+    buildSass(watch, mainDistPath, wholeProject, sourcePath, rootDistPath, options),
+    buildSass(watch, moduleDistPath, wholeProject, sourcePath, rootDistPath, options),
 
     buildTs(
       watch,
@@ -138,6 +169,7 @@ export const tsPlusBabel = async (watch = false, wholeProject = false, packageIn
       wholeProject,
       sourcePath,
       rootDistPath,
+      options,
     ),
     buildTs(
       watch,
@@ -149,6 +181,7 @@ export const tsPlusBabel = async (watch = false, wholeProject = false, packageIn
       wholeProject,
       sourcePath,
       rootDistPath,
+      options,
     ),
 
     mvResources(watch, mainDistPath, wholeProject, sourcePath, sourceType),

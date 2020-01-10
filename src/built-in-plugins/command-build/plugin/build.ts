@@ -17,6 +17,7 @@ import { getStaticHtmlPaths } from './generate-static-html';
 import { IOpts } from './interface';
 import { tsPlusBabel } from '../../../utils/ts-plus-babel';
 import { PackageInfo } from '../../../utils/define';
+import { PublishOption } from '../../command-publish/plugin/interface';
 
 export const buildProject = async (opts: IOpts = {}) => {
   const result = await spinner('Analyse project', async () => {
@@ -73,7 +74,7 @@ export const buildProject = async (opts: IOpts = {}) => {
   });
 };
 
-export const buildComponent = async (packageInfo: PackageInfo = null) => {
+export const buildComponent = async (packageInfo: PackageInfo = null, options: PublishOption = null) => {
   // FIXME:
   // Do not minimize in cloud build(def envirenment), because commnets will lead to
   // build error in cloud build.
@@ -114,7 +115,7 @@ export const buildComponent = async (packageInfo: PackageInfo = null) => {
 
   // TODO:
   await spinner(`build source files ${(packageInfo && packageInfo.name) || ''} \n`, async () => {
-    await tsPlusBabel(false, false, packageInfo);
+    await tsPlusBabel(false, false, packageInfo, options);
   });
 
   // TODO: add back after upgrade to webpack5
