@@ -343,6 +343,9 @@ export async function addMissingDeps(
           .filter(npmName => !['react', 'react-dom', 'react-router-dom'].includes(npmName))
           .reduce((root, next) => {
             if (!sourceDeps[next]) {
+              if (next === 'src') {
+                console.error('package cannot reference project content');
+              }
               logFatal(`package ${sourceType}'s code depends on "${next}", but it doesn't exist in root package.json`);
             }
 

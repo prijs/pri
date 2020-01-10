@@ -17,6 +17,7 @@ export const commandBundle = async (opts: IOpts = {}) => {
       mode: 'production',
       outFileName: pri.sourceConfig.bundleFileName,
       entryPath: path.join(pri.sourceRoot, path.format(componentEntry)),
+      publicPath: opts.publicPath,
       pipeConfig: async config => {
         let newConfig = { ...config };
 

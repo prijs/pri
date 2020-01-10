@@ -10,7 +10,11 @@ pri.commands.registerCommand({
       description: 'Skip lint',
     },
     dev: {
-      description: 'For development?',
+      description: 'Is for development',
+    },
+    publicPath: {
+      alias: 'p',
+      description: 'Rewrite publicPath',
     },
   },
   action: async (opts?: IOpts) => {
