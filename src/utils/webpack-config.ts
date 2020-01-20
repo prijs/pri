@@ -270,7 +270,6 @@ export const getWebpackConfig = async (opts: IOptions) => {
       ],
     },
     resolve: {
-      modules: selfAndProjectNodeModules,
       alias: {
         // Src alias to ./src
         ...(globalState.sourceConfig.type === 'project' && {
