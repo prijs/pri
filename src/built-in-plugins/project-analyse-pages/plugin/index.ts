@@ -51,13 +51,13 @@ pri.project.onAnalyseProject(files => {
             return true;
           })
           .map(file => {
-            const relativePathWithoutIndex = path.relative(pri.projectRootPath, file.dir);
+            const relativePathWithoutIndex = path.relative(pri.sourceRoot, file.dir);
             const routerPath = normalizePath(
               `/${path.relative(path.join(pri.sourceRoot, pagesPath.dir), relativePathWithoutIndex)}`,
             );
             const chunkName = _.camelCase(routerPath) || 'index';
 
-            const relativePageFilePath = path.relative(pri.projectRootPath, `${file.dir}/${file.name}`);
+            const relativePageFilePath = path.relative(pri.sourceRoot, `${file.dir}/${file.name}`);
             const componentName = safeName(relativePageFilePath) + md5(relativePageFilePath).slice(0, 5);
 
             return {
@@ -91,7 +91,7 @@ pri.project.onAnalyseProject(files => {
         .map((route, index) => {
           if (route.component) {
             const componentFile = files.find(file => {
-              const relativePath = path.relative(pri.projectRootPath, path.join(file.dir, file.name));
+              const relativePath = path.relative(pri.sourceRoot, path.join(file.dir, file.name));
               return (
                 (route.component === relativePath && !file.isDir && ['.tsx', '.md', '.mdx'].indexOf(file.ext) > -1) ||
                 (path.join(route.component, 'index') === relativePath &&
@@ -107,10 +107,7 @@ pri.project.onAnalyseProject(files => {
             const routerPath = route.path;
             const chunkName = _.camelCase(routerPath) || 'index';
 
-            const relativePageFilePath = path.relative(
-              pri.projectRootPath,
-              `${componentFile.dir}/${componentFile.name}`,
-            );
+            const relativePageFilePath = path.relative(pri.sourceRoot, `${componentFile.dir}/${componentFile.name}`);
             const componentName = safeName(relativePageFilePath) + md5(relativePageFilePath).slice(0, 5);
 
             return {
