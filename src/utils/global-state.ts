@@ -72,12 +72,11 @@ function getPriConfig(rootPath: string) {
   return fs.readJsonSync(configFilePath, { throws: false }) || {};
 }
 
-async function initPackages(cliCurrentPath: string, preSelectPackage: string) {
-  const currentPackagesPath = path.join(cliCurrentPath, PACKAGES_NAME);
+function collectPackages(packageRootPath: string) {
+  const currentPackagesPath = path.join(packageRootPath, PACKAGES_NAME);
 
   if (fs.existsSync(currentPackagesPath)) {
-    globalState.packages = fs
-      .readdirSync(currentPackagesPath)
+    fs.readdirSync(currentPackagesPath)
       .filter(folderName => {
         if (folderName === '.DS_Store') {
           return false;
@@ -85,20 +84,29 @@ async function initPackages(cliCurrentPath: string, preSelectPackage: string) {
 
         return true;
       })
-      .map(folderName => {
-        const packagePath = path.join(cliCurrentPath, PACKAGES_NAME, folderName);
+      .forEach(folderName => {
+        const packagePath = path.join(packageRootPath, PACKAGES_NAME, folderName);
         const packageJson: PackageJson = fs.readJSONSync(path.join(packagePath, 'package.json'), { throws: false });
 
         const config = fs.readJsonSync(path.join(packagePath, CONFIG_FILE), { throws: false }) || {};
 
-        return {
+        const eachPackage = {
           name: folderName,
           rootPath: packagePath,
           packageJson,
           config,
         };
+
+        globalState.packages.push(eachPackage);
+
+        // find nested packages
+        collectPackages(eachPackage.rootPath);
       });
   }
+}
+
+async function initPackages(projectRootPath: string, preSelectPackage: string) {
+  collectPackages(projectRootPath);
 
   if (globalState.packages.length > 0) {
     if (!preSelectPackage) {
@@ -137,10 +145,12 @@ async function initPackages(cliCurrentPath: string, preSelectPackage: string) {
 
   switch (globalState.selectedSourceType) {
     case 'root':
-      globalState.sourceRoot = cliCurrentPath;
+      globalState.sourceRoot = projectRootPath;
       break;
     default:
-      globalState.sourceRoot = path.join(cliCurrentPath, PACKAGES_NAME, globalState.selectedSourceType);
+      globalState.sourceRoot = globalState.packages.find(
+        eachPackage => eachPackage.name === globalState.selectedSourceType,
+      ).rootPath;
   }
 }
 
