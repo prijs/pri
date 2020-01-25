@@ -37,7 +37,7 @@ export const commandBundle = async (opts: IOpts = {}) => {
       mode: 'development',
       outFileName: pri.sourceConfig.bundleFileName,
       devServerPort: freePort,
-      publicPath: '/',
+      publicPath: `https://localhost:${freePort}`,
       jsOnly: true,
       entryPath: path.join(pri.sourceRoot, path.format(componentEntry)),
       pipeConfig: async config => {

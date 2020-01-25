@@ -54,7 +54,7 @@ export const runWebpackDevServer = async (opts: IOptions<IExtraOptions>) => {
   );
 
   const webpackDevServerConfig: WebpackDevServer.Configuration = {
-    host: '127.0.0.1',
+    host: 'localhost',
     hot: opts.hot,
     hotOnly: opts.hot,
     publicPath: opts.publicPath,
@@ -85,7 +85,7 @@ export const runWebpackDevServer = async (opts: IOptions<IExtraOptions>) => {
 
   const devServer = new WebpackDevServer(compiler as any, webpackDevServerConfig);
 
-  devServer.listen(opts.devServerPort, '127.0.0.1', () => {
+  devServer.listen(opts.devServerPort, 'localhost', () => {
     let devUrl: string = null;
     const localSuggestUrl = urlJoin(
       `${opts.https || globalState.sourceConfig.useHttps ? 'https' : 'http'}://localhost:${opts.devServerPort}`,
