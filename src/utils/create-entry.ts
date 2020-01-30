@@ -86,7 +86,6 @@ export class Entry {
       import { history as customHistory } from "${PRI_PACKAGE_NAME}/client"
       import * as React from "react"
       import * as ReactDOM from "react-dom"
-      import * as Loadable from "react-loadable"
       import { Redirect, Route, Router, Switch, HashRouter } from "react-router-dom"
     `,
     );
@@ -97,6 +96,7 @@ export class Entry {
       'appBody',
       `
       export const pageLoadableMap = new Map<string, any>()
+      const PageLazyFallback = () => <div />;
     `,
     );
   }
@@ -156,8 +156,7 @@ export class Entry {
       `
       import * as React from "react"
       import * as ReactDOM from "react-dom"
-      import * as Loadable from "react-loadable"
-      import App, { pageLoadableMap } from "./app"
+      import App from "./app"
 
       const ROOT_ID = "${pri.sourceConfig.projectRootId}"
     `,
@@ -177,12 +176,11 @@ export class Entry {
 
       if ((window as any).enableSsr) {
         // Need wait preloadAll, because we already have ssr html.
-        Loadable.preloadAll().then(() => {
-          (ReactDOM as any).hydrate(${await pipe.get('entryRenderApp', '<App />')}, document.getElementById(ROOT_ID))
-        })
+        // TODO:
+        // Loadable.preloadAll().then(() => {
+        //   (ReactDOM as any).hydrate(${await pipe.get('entryRenderApp', '<App />')}, document.getElementById(ROOT_ID))
+        // })
       } else {
-        // Don't need wait preloadAll.
-        Loadable.preloadAll()
         ReactDOM.render(${await pipe.get('entryRenderApp', '<App />')}, document.getElementById(ROOT_ID))
       }
     `,

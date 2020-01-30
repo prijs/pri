@@ -33,7 +33,6 @@ export default (opts: IOptions) => {
           'react-dom',
           'lodash',
           'highlight.js',
-          'react-loadable',
           'react-router',
           'history',
           `${PRI_PACKAGE_NAME}/client`,

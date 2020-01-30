@@ -147,19 +147,21 @@ pri.project.onCreateEntry((analyseInfo: IResult, entry) => {
                 );
 
                 const importCode = `import(/* webpackChunkName: "${
-                  page.chunkName
+                  page.componentName
                 }" */ "${pageRequirePath}").then(code => {
                 const filePath = "${path.format(page.file)}"
 
                 ${await entry.pipe.get('afterPageLoad', '')}
-                ${await entry.pipe.get('returnPageInstance', 'return code.default')}
-              })`;
+                ${await entry.pipe.get('returnPageInstance', 'return code')}
+              }),`;
 
                 return `
-              const ${page.componentName} = Loadable<any, any>({
-                loader: () => ${importCode},
-                loading: (): any => null
-              })\n
+              const ${page.componentName}Lazy: any = React.lazy(() => ${importCode});
+              const ${page.componentName}: React.FC = props => (
+                <React.Suspense fallback={PageLazyFallback}>
+                  <${page.componentName}Lazy {...props} />
+                </React.Suspense>
+              );
             `;
               }),
           )
