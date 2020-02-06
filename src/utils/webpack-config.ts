@@ -155,7 +155,7 @@ export const getWebpackConfig = async (opts: IOptions) => {
   let { devtool } = opts;
 
   if (devtool === undefined) {
-    devtool = opts.mode === 'development' ? 'eval-source-map' : false;
+    devtool = opts.mode === 'development' ? 'cheap-module-eval-source-map' : false;
   }
 
   const config: webpack.Configuration = {
@@ -315,7 +315,14 @@ export const getWebpackConfig = async (opts: IOptions) => {
       modules: selfAndProjectNodeModules,
     },
     plugins: [],
-    optimization: { namedChunks: false },
+    optimization: {
+      namedChunks: false,
+      splitChunks: {
+        cacheGroups: {
+          default: false,
+        },
+      },
+    },
     stats,
   };
 

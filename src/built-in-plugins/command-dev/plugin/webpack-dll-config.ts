@@ -28,15 +28,7 @@ export default (opts: IOptions) => {
         (all, fn) => {
           return fn(all);
         },
-        [
-          'react',
-          'react-dom',
-          'lodash',
-          'highlight.js',
-          'react-router',
-          'history',
-          `${PRI_PACKAGE_NAME}/client`,
-        ],
+        ['react', 'react-dom', 'lodash', 'highlight.js', 'react-router', 'history', `${PRI_PACKAGE_NAME}/client`],
       ),
     },
 
