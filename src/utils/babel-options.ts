@@ -8,6 +8,7 @@ import babelPluginProposalOptionalCatchBinding from '@babel/plugin-proposal-opti
 import babelPluginProposalThrowExpressions from '@babel/plugin-proposal-throw-expressions';
 import babelPluginProposalOptionalChaining from '@babel/plugin-proposal-optional-chaining';
 import babelPluginProposalNullishCoalescingOperator from '@babel/plugin-proposal-nullish-coalescing-operator';
+import babelPluginTransformReactDisplayName from '@babel/plugin-transform-react-display-name';
 import babelPluginSyntaxDynamicImport from '@babel/plugin-syntax-dynamic-import';
 import babelPluginSyntaxImportMeta from '@babel/plugin-syntax-import-meta';
 import transformRuntime from '@babel/plugin-transform-runtime';
@@ -40,6 +41,7 @@ export function getBabelOptions(options?: Partial<DefaultOptions>) {
       [babelPluginProposalFunctionSent],
       [babelPluginProposalNumericSeparator],
       [babelPluginProposalThrowExpressions],
+      [babelPluginTransformReactDisplayName],
       [babelPluginProposalOptionalChaining],
       [babelPluginProposalNullishCoalescingOperator],
       [babelPluginSyntaxDynamicImport],

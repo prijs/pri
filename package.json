@@ -1,6 +1,6 @@
 {
   "name": "pri",
-  "version": "4.0.13",
+  "version": "4.0.14",
   "types": "src/node/index.ts",
   "main": "built/node/index.js",
   "scripts": {
@@ -40,6 +40,7 @@
     "@babel/plugin-proposal-throw-expressions": "7.7.4",
     "@babel/plugin-syntax-dynamic-import": "7.7.4",
     "@babel/plugin-syntax-import-meta": "7.7.4",
+    "@babel/plugin-transform-react-display-name": "^7.8.3",
     "@babel/plugin-transform-runtime": "7.7.5",
     "@babel/preset-env": "7.7.5",
     "@babel/preset-react": "7.7.4",
