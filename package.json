@@ -1,6 +1,6 @@
 {
   "name": "pri",
-  "version": "4.0.15",
+  "version": "4.0.16",
   "types": "src/node/index.ts",
   "main": "built/node/index.js",
   "scripts": {
@@ -74,6 +74,7 @@
     "babel-core": "7.0.0-bridge.0",
     "babel-loader": "8.0.6",
     "babel-plugin-react-css-modules": "5.2.6",
+    "babel-plugin-react-wrapped-display-name": "^1.0.0",
     "chokidar": "3.3.0",
     "circular-dependency-plugin": "5.2.0",
     "codecov": "3.6.1",
