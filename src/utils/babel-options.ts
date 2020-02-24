@@ -42,7 +42,7 @@ export function getBabelOptions(options?: Partial<DefaultOptions>) {
       [babelPluginProposalNumericSeparator],
       [babelPluginProposalThrowExpressions],
       [babelPluginProposalOptionalChaining],
-      // [babelPluginReactWrappedDisplayName],
+      [babelPluginReactWrappedDisplayName],
       [babelPluginProposalNullishCoalescingOperator],
       [babelPluginSyntaxDynamicImport],
       [babelPluginSyntaxImportMeta],
