@@ -17,6 +17,7 @@ import babelPresetTypescript from '@babel/preset-typescript';
 import babelPluginReactCssModules from 'babel-plugin-react-css-modules';
 import * as babelPluginReactHotLoader from 'react-hot-loader/babel';
 import * as _ from 'lodash';
+import { babelPluginReactWrappedDisplayName } from './babel-plugin-react-wrapped-display-name';
 import { globalState } from './global-state';
 
 class DefaultOptions {
@@ -41,6 +42,7 @@ export function getBabelOptions(options?: Partial<DefaultOptions>) {
       [babelPluginProposalNumericSeparator],
       [babelPluginProposalThrowExpressions],
       [babelPluginProposalOptionalChaining],
+      // [babelPluginReactWrappedDisplayName],
       [babelPluginProposalNullishCoalescingOperator],
       [babelPluginSyntaxDynamicImport],
       [babelPluginSyntaxImportMeta],

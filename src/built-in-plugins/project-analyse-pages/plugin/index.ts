@@ -158,7 +158,7 @@ pri.project.onCreateEntry((analyseInfo: IResult, entry) => {
                 return `
               const ${page.componentName}Lazy: any = React.lazy(() => ${importCode});
               const ${page.componentName}: React.FC = props => (
-                <React.Suspense fallback={PageLazyFallback}>
+                <React.Suspense fallback={<PageLazyFallback />}>
                   <${page.componentName}Lazy {...props} />
                 </React.Suspense>
               );
