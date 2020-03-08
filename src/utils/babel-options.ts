@@ -50,7 +50,7 @@ export function getBabelOptions(options?: Partial<DefaultOptions>) {
       [babelPluginProposalJsonStrings],
       [babelPluginProposalOptionalCatchBinding],
       // TODO: gulp don't support css module
-      ...(globalState.sourceConfig.type === 'project'
+      ...(globalState && globalState.sourceConfig && globalState.sourceConfig.type === 'project'
         ? [
             [
               babelPluginReactCssModules,

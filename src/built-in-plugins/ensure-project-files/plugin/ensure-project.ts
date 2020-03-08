@@ -43,7 +43,7 @@ function ensureProjectEntry() {
 
 export function ensureTest() {
   pri.project.addProjectFiles({
-    fileName: path.join(pri.sourceRoot, testsPath.dir, 'index.ts'),
+    fileName: path.join(pri.sourceRoot, testsPath.dir, 'index.tsx'),
     pipeContent: async (prev: string) => {
       if (prev) {
         return prev;
