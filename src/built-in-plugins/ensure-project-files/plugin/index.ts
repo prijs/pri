@@ -48,18 +48,19 @@ export const main = async () => {
   }
 };
 
+const maxSizePri = 'node --max-old-space-size=16384 --max_old_space_size=16384  ./node_modules/.bin/pri';
+
 const commonComponentPackageJson = {
   scripts: {
-    start: 'pri dev',
-    docs: 'pri docs',
-    build: 'pri build',
-    bundle: 'pri bundle',
-    preview: 'pri preview',
-    analyse: 'pri analyse',
-    publish: 'pri publish',
-    lint: 'pri lint',
-    format: 'pri lint',
-    test: 'pri test',
+    start: `${maxSizePri} dev`,
+    docs: `${maxSizePri} docs`,
+    build: `${maxSizePri} build`,
+    bundle: `${maxSizePri} bundle`,
+    preview: `${maxSizePri} preview`,
+    analyse: `${maxSizePri} analyse`,
+    publish: `${maxSizePri} publish`,
+    lint: `${maxSizePri} lint`,
+    test: `${maxSizePri} test`,
   },
   husky: {
     hooks: {
