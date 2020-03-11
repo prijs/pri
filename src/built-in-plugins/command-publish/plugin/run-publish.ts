@@ -176,7 +176,7 @@ async function publishByPackageName(
     targetPackageJson.version = (semver.inc as any)(
       targetPackageJson.version,
       'prerelease',
-      currentBranchName.replace(/\//g, '').replace(/\./g, ''),
+      currentBranchName.replace(/\//g, '').replace(/\./g, '').replace(/_/g, ''),
     );
 
     await fs.outputFile(path.join(targetRoot, 'package.json'), `${JSON.stringify(targetPackageJson, null, 2)}\n`);
