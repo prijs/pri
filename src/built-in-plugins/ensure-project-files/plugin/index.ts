@@ -48,7 +48,7 @@ export const main = async () => {
   }
 };
 
-const maxSizePri = 'node --max-old-space-size=16384 --max_old_space_size=16384  ./node_modules/.bin/pri';
+const maxSizePri = 'node --max-old-space-size=16384 --max_old_space_size=16384 ./node_modules/.bin/pri';
 
 const commonComponentPackageJson = {
   scripts: {
