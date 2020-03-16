@@ -41,15 +41,21 @@ export const publish = async (options: PublishOption) => {
         const { depMonoPackages, depMap } = await getMonoAndNpmDepsOnce();
 
         if (depMonoPackages.length > 0) {
-          const installAllPrompt = await inquirer.prompt([
-            {
-              message: `${pri.selectedSourceType} depends on monorepo ${depMonoPackages
-                .map(eachPackage => `"${eachPackage.name}"`)
-                .join(', ')} \n Do you want to publish these packages first?`,
-              name: 'installAll',
-              type: 'confirm',
-            },
-          ]);
+          let installAllPrompt = { installAll: false };
+
+          if (options.installAll) {
+            installAllPrompt = { installAll: true };
+          } else {
+            installAllPrompt = await inquirer.prompt([
+              {
+                message: `${pri.selectedSourceType} depends on monorepo ${depMonoPackages
+                  .map(eachPackage => `"${eachPackage.name}"`)
+                  .join(', ')} \n Do you want to publish these packages first?`,
+                name: 'installAll',
+                type: 'confirm',
+              },
+            ]);
+          }
 
           await buildDeclaration();
 

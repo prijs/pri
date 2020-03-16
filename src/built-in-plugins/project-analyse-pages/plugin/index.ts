@@ -137,25 +137,24 @@ pri.project.onCreateEntry((analyseInfo: IResult, entry) => {
 
   entry.pipeAppComponent(async entryComponent => {
     return `
-        ${(
-          await Promise.all(
-            analyseInfo.projectAnalysePages.pages
-              .filter(page => !!page.file)
-              .map(async page => {
-                const pageRequirePath = normalizePath(
-                  path.relative(path.join(pri.projectRootPath, tempPath.dir), path.join(page.file.dir, page.file.name)),
-                );
+        ${(await Promise.all(
+          analyseInfo.projectAnalysePages.pages
+            .filter(page => !!page.file)
+            .map(async page => {
+              const pageRequirePath = normalizePath(
+                path.relative(path.join(pri.projectRootPath, tempPath.dir), path.join(page.file.dir, page.file.name)),
+              );
 
-                const importCode = `import(/* webpackChunkName: "${
-                  page.componentName
-                }" */ "${pageRequirePath}").then(code => {
+              const importCode = `import(/* webpackChunkName: "${
+                page.componentName
+              }" */ "${pageRequirePath}").then(code => {
                 const filePath = "${path.format(page.file)}"
 
                 ${await entry.pipe.get('afterPageLoad', '')}
                 ${await entry.pipe.get('returnPageInstance', 'return code')}
               }),`;
 
-                return `
+              return `
               const ${page.componentName}Lazy: any = React.lazy(() => ${importCode});
               const ${page.componentName}: React.FC = props => (
                 <React.Suspense fallback={<PageLazyFallback />}>
@@ -163,9 +162,8 @@ pri.project.onCreateEntry((analyseInfo: IResult, entry) => {
                 </React.Suspense>
               );
             `;
-              }),
-          )
-        ).join('\n')}
+            }),
+        )).join('\n')}
           ${entryComponent}
       `;
   });
@@ -185,24 +183,22 @@ pri.project.onCreateEntry((analyseInfo: IResult, entry) => {
 
   entry.pipeAppRoutes(async renderRoutes => {
     return `
-        ${(
-          await Promise.all(
-            analyseInfo.projectAnalysePages.pages.map(async page => {
-              if (page.file) {
-                return `
+        ${(await Promise.all(
+          analyseInfo.projectAnalysePages.pages.map(async page => {
+            if (page.file) {
+              return `
               <${await entry.pipe.get('commonRoute', 'Route')} exact path="${page.routerPath}" component={${
-                  page.componentName
-                }} />\n
+                page.componentName
+              }} />\n
             `;
-              }
-              if (page.redirect) {
-                return `
+            }
+            if (page.redirect) {
+              return `
               <Redirect from="${page.routerPath}" to="${page.redirect}" />\n
             `;
-              }
-            }),
-          )
-        ).join('\n')}
+            }
+          }),
+        )).join('\n')}
         ${renderRoutes}
       `;
   });

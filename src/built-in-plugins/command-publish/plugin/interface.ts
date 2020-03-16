@@ -4,4 +4,5 @@ export interface PublishOption {
   skipLint?: boolean;
   skipNpm?: boolean;
   semver?: string;
+  installAll?: boolean;
 }
