@@ -8,6 +8,7 @@ import * as gulpIf from 'gulp-if';
 import * as gulpSourcemaps from 'gulp-sourcemaps';
 import * as path from 'path';
 import { pri, srcPath } from '../node';
+import { plugin } from './plugins';
 import { getBabelOptions } from './babel-options';
 import { globalState } from './global-state';
 import { babelPluginTransformImport } from './babel-plugin-transfer-import';
@@ -123,19 +124,28 @@ export const tsPlusBabel = async (watch = false, wholeProject = false, packageIn
     buildTs(
       watch,
       mainDistPath,
-      getBabelOptions({
-        plugins: [importRename(wholeProject)],
-      }),
+      plugin.buildConfigBabelLoaderOptionsPipes.reduce(
+        (options, fn) => {
+          return fn(options);
+        },
+        getBabelOptions({
+          plugins: [importRename(wholeProject)],
+        }),
+      ),
       wholeProject,
       sourcePath,
     ),
     buildTs(
       watch,
       moduleDistPath,
-      getBabelOptions({
-        modules: false,
-        plugins: [importRename(wholeProject)],
-      }),
+      plugin.buildConfigBabelLoaderOptionsPipes.reduce(
+        (options, fn) => {
+          return fn(options);
+        },
+        getBabelOptions({
+          plugins: [importRename(wholeProject)],
+        }),
+      ),
       wholeProject,
       sourcePath,
     ),
