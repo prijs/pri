@@ -252,22 +252,6 @@ async function publishByPackageName(
     await moveSourceFilesToTempFolderAndPublish(sourceType, options, targetConfig, targetRoot, depMap, isDevelopBranch);
   });
 
-  let tagName = '';
-
-  if (sourceType !== 'root') {
-    tagName = `${sourceType}-v${targetPackageJson.version}`;
-  } else {
-    tagName = `v${targetPackageJson.version}`;
-  }
-
-  await spinner(`Add tag`, async () => {
-    await exec(`git tag -a ${tagName} -m "release"`);
-  });
-
-  await spinner(`Push tag`, async () => {
-    await exec(`git push origin ${tagName}`);
-  });
-
   logText(`+ ${targetPackageJson.name}@${targetPackageJson.version}`);
 }
 
