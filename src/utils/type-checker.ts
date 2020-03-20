@@ -28,7 +28,7 @@ export function typeChecker() {
 
   logInfo('Checking TypeScript type, please wait');
   try {
-    execSync(`${pri.projectRootPath}/node_modules/.bin/tsc -p . || exit 1`, {
+    execSync(`npx tsc -p . || exit 1`, {
       stdio: [0, 1, 2],
     });
   } catch (e) {
