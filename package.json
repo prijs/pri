@@ -1,6 +1,6 @@
 {
   "name": "pri",
-  "version": "4.0.28",
+  "version": "4.0.29",
   "types": "src/node/index.ts",
   "main": "built/node/index.js",
   "scripts": {
@@ -134,7 +134,7 @@
     "react-hot-loader": "4.12.19",
     "react-router-dom": "5.1.2",
     "rimraf": "3.0.0",
-    "sass-loader": "8.0.0",
+    "sass-loader": "7.1.0",
     "semver": "6.3.0",
     "signale": "1.4.0",
     "socket.io": "2.3.0",
