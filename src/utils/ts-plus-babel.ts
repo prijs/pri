@@ -53,7 +53,11 @@ const buildSass = (watch: boolean, outdir: string, wholeProject: boolean, source
 
   return new Promise((resolve, reject) => {
     getGulpByWatch(watch, targetPath)
-      .pipe(gulpSass())
+      .pipe(
+        gulpSass({
+          includePaths: path.join(pri.projectRootPath, 'node_modules'),
+        }),
+      )
       .pipe(gulpIf(pri.sourceConfig.cssExtract, gulpConcatCss(pri.sourceConfig.outCssFileName)))
       .pipe(gulpStripCssComments())
       .on('error', reject)
