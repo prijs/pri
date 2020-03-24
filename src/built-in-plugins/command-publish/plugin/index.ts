@@ -21,6 +21,15 @@ pri.commands.registerCommand({
     semver: {
       description: 'Semver version: patch minor major',
     },
+    commitOnly: {
+      description: 'commit version update without publishing',
+    },
+    publishOnly: {
+      description: 'publish without commit or any other git workflow',
+    },
+    branch: {
+      description: 'branch name',
+    },
   },
   action: async (options: PublishOption) => {
     const commandPublishModule = await import('./run-publish');

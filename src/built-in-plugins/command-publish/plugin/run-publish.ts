@@ -18,7 +18,7 @@ import { getMonoAndNpmDepsOnce, DepMap } from '../../../utils/packages';
 import { ProjectConfig } from '../../../utils/define';
 
 export const publish = async (options: PublishOption) => {
-  const currentBranchName = await getCurrentBranchName();
+  const currentBranchName = options.branch ? options.branch : await getCurrentBranchName();
   const isDevelopBranch = ['master', 'develop'].includes(currentBranchName);
 
   switch (pri.sourceConfig.type) {
@@ -50,8 +50,8 @@ export const publish = async (options: PublishOption) => {
               type: 'confirm',
             },
           ]);
-
-          await buildDeclaration();
+          // eslint-disable-next-line no-unused-expressions
+          !options.commitOnly && (await buildDeclaration());
 
           if (installAllPrompt.installAll) {
             for (const eachPackage of depMonoPackages) {
@@ -59,14 +59,15 @@ export const publish = async (options: PublishOption) => {
             }
           }
         } else {
-          await buildDeclaration();
+          // eslint-disable-next-line no-unused-expressions
+          !options.commitOnly && (await buildDeclaration());
         }
 
         await publishByPackageName(currentSelectedSourceType, options, depMap, isDevelopBranch, currentBranchName);
 
         await fs.remove(path.join(pri.projectRootPath, tempPath.dir, declarationPath.dir));
-
-        await exec(`git push origin ${currentBranchName}`);
+        // eslint-disable-next-line no-unused-expressions
+        !options.publishOnly && (await exec(`git push origin ${currentBranchName}`));
       }
       break;
     }
@@ -115,7 +116,7 @@ async function publishByPackageName(
     logFatal(`No version found in ${sourceType} package.json`);
   }
 
-  if (!(await isWorkingTreeClean())) {
+  if (!options.publishOnly && !(await isWorkingTreeClean())) {
     const inquirerInfo = await inquirer.prompt([
       {
         message: 'Working tree is not clean, your commit message:',
@@ -152,81 +153,85 @@ async function publishByPackageName(
     }
   }
 
-  logInfo('Check if npm package exist');
-
   let versionResult: string = null;
 
-  try {
-    const versionResultExec = execSync(
-      `${targetConfig.npmClient} view ${targetPackageJson.name}@${targetPackageJson.version} version`,
-    );
+  if (options.tag !== 'beta' && isDevelopBranch) {
+    logInfo('Check if npm package exist');
 
-    if (versionResultExec) {
-      versionResult = versionResultExec.toString().trim();
-    } else {
+    try {
+      const versionResultExec = execSync(
+        `${targetConfig.npmClient} view ${targetPackageJson.name}@${targetPackageJson.version} version`,
+      );
+
+      if (versionResultExec) {
+        versionResult = versionResultExec.toString().trim();
+      } else {
+        versionResult = null;
+      }
+    } catch (error) {
+      // Throw error means not exist
       versionResult = null;
     }
-  } catch (error) {
-    // Throw error means not exist
-    versionResult = null;
   }
 
   // Publish beta version if branch is not master or develop
-  if (options.tag === 'beta' || !isDevelopBranch) {
-    targetPackageJson.version = (semver.inc as any)(
-      targetPackageJson.version,
-      'prerelease',
-      currentBranchName
-        .replace(/\//g, '')
-        .replace(/\./g, '')
-        .replace(/_/g, ''),
-    );
+  if (!options.publishOnly) {
+    if (options.tag === 'beta' || !isDevelopBranch) {
+      targetPackageJson.version = (semver.inc as any)(
+        targetPackageJson.version,
+        'prerelease',
+        currentBranchName
+          .replace(/\//g, '')
+          .replace(/\./g, '')
+          .replace(/_/g, ''),
+      );
 
-    await fs.outputFile(path.join(targetRoot, 'package.json'), `${JSON.stringify(targetPackageJson, null, 2)}\n`);
+      await fs.outputFile(path.join(targetRoot, 'package.json'), `${JSON.stringify(targetPackageJson, null, 2)}\n`);
 
-    if (!(await isWorkingTreeClean())) {
-      await exec(`git add -A; git commit -m "upgrade ${sourceType} version to ${targetPackageJson.version}" -n`, {
-        cwd: pri.projectRootPath,
-      });
-    }
-  } else if (versionResult) {
-    if (!options.semver) {
-      const versionPrompt = await inquirer.prompt([
-        {
-          message: `${targetPackageJson.name}@${targetPackageJson.version} exist, can upgrade to`,
-          name: 'version',
-          type: 'list',
-          choices: [
-            {
-              name: `Patch(${semver.inc(targetPackageJson.version, 'patch')})`,
-              value: semver.inc(targetPackageJson.version, 'patch'),
-            },
-            {
-              name: `Minor(${semver.inc(targetPackageJson.version, 'minor')})`,
-              value: semver.inc(targetPackageJson.version, 'minor'),
-            },
-            {
-              name: `Major(${semver.inc(targetPackageJson.version, 'major')})`,
-              value: semver.inc(targetPackageJson.version, 'major'),
-            },
-          ],
-        },
-      ]);
+      if (!(await isWorkingTreeClean())) {
+        await exec(`git add -A; git commit -m "upgrade ${sourceType} version to ${targetPackageJson.version}" -n`, {
+          cwd: pri.projectRootPath,
+        });
+      }
+    } else if (versionResult) {
+      if (!options.semver) {
+        const versionPrompt = await inquirer.prompt([
+          {
+            message: `${targetPackageJson.name}@${targetPackageJson.version} exist, can upgrade to`,
+            name: 'version',
+            type: 'list',
+            choices: [
+              {
+                name: `Patch(${semver.inc(targetPackageJson.version, 'patch')})`,
+                value: semver.inc(targetPackageJson.version, 'patch'),
+              },
+              {
+                name: `Minor(${semver.inc(targetPackageJson.version, 'minor')})`,
+                value: semver.inc(targetPackageJson.version, 'minor'),
+              },
+              {
+                name: `Major(${semver.inc(targetPackageJson.version, 'major')})`,
+                value: semver.inc(targetPackageJson.version, 'major'),
+              },
+            ],
+          },
+        ]);
 
-      targetPackageJson.version = versionPrompt.version;
-    } else if (['patch', 'minor', 'major'].some(each => each === options.semver)) {
-      targetPackageJson.version = semver.inc(targetPackageJson.version, options.semver as semver.ReleaseType);
-    } else {
-      logFatal(`semver must be "patch" "minor" or "major"`);
-    }
+        targetPackageJson.version = versionPrompt.version;
+      } else if (['patch', 'minor', 'major'].some(each => each === options.semver)) {
+        targetPackageJson.version = semver.inc(targetPackageJson.version, options.semver as semver.ReleaseType);
+      } else {
+        logFatal(`semver must be "patch" "minor" or "major"`);
+      }
 
-    // Upgrade package.json's version
-    await fs.outputFile(path.join(targetRoot, 'package.json'), `${JSON.stringify(targetPackageJson, null, 2)}\n`);
+      // Upgrade package.json's version
+      await fs.outputFile(path.join(targetRoot, 'package.json'), `${JSON.stringify(targetPackageJson, null, 2)}\n`);
 
-    if (!(await isWorkingTreeClean())) {
-      await exec(`git add -A; git commit -m "upgrade ${sourceType} version to ${targetPackageJson.version}" -n`, {
-        cwd: pri.projectRootPath,
-      });
+      if (!(await isWorkingTreeClean())) {
+        await exec(`git add -A; git commit -m "upgrade ${sourceType} version to ${targetPackageJson.version}" -n`, {
+          cwd: pri.projectRootPath,
+        });
+      }
     }
   }
 
@@ -241,16 +246,24 @@ async function publishByPackageName(
       });
     });
   }
+  if (!options.commitOnly) {
+    await buildComponent();
 
-  await buildComponent();
+    if (options.bundle) {
+      await commandBundle({ skipLint: true });
+    }
 
-  if (options.bundle) {
-    await commandBundle({ skipLint: true });
+    await spinner(`Publish`, async () => {
+      await moveSourceFilesToTempFolderAndPublish(
+        sourceType,
+        options,
+        targetConfig,
+        targetRoot,
+        depMap,
+        isDevelopBranch,
+      );
+    });
   }
-
-  await spinner(`Publish`, async () => {
-    await moveSourceFilesToTempFolderAndPublish(sourceType, options, targetConfig, targetRoot, depMap, isDevelopBranch);
-  });
 
   logText(`+ ${targetPackageJson.name}@${targetPackageJson.version}`);
 }
