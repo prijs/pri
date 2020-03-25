@@ -7,4 +7,5 @@ export interface PublishOption {
   commitOnly?: boolean;
   publishOnly?: boolean;
   branch?: string;
+  installAll?: boolean;
 }
