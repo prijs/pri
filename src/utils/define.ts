@@ -262,6 +262,11 @@ export class ProjectConfig {
    * Project Root Dom Id
    */
   public projectRootId = 'root';
+
+  /**
+   * Enable ensure files
+   */
+  public ensureFiles = true;
 }
 
 export type SetPipe = (pipeName: string, callback: PipeCallback) => void;
