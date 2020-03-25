@@ -62,7 +62,7 @@ export const publish = async (options: PublishOption) => {
           !options.commitOnly && (await buildDeclaration());
 
           if (includeAllPrompt.includeAll) {
-            await authPublish([pri.projectPackageJson.name, ...depMonoPackages.map(v => v.packageJson.name)])
+            await authPublish([pri.projectPackageJson.name, ...depMonoPackages.map(v => v.packageJson.name)]);
             for (const eachPackage of depMonoPackages) {
               await publishByPackageName(eachPackage.name, options, depMap, isDevelopBranch, currentBranchName);
             }
@@ -71,7 +71,7 @@ export const publish = async (options: PublishOption) => {
           // eslint-disable-next-line no-unused-expressions
           !options.commitOnly && (await buildDeclaration());
         }
-        await authPublish([pri.projectPackageJson.name])
+        await authPublish([pri.projectPackageJson.name]);
         await publishByPackageName(currentSelectedSourceType, options, depMap, isDevelopBranch, currentBranchName);
 
         await fs.remove(path.join(pri.projectRootPath, tempPath.dir, declarationPath.dir));
@@ -109,7 +109,7 @@ async function authPublish(packageNames: string[]) {
   const pkgsP = packageNames.map(p => checkOwner(name, p));
   await Promise.all(pkgsP);
   if (failedPkgSet.size > 0) {
-    logFatal(`以下 npm 包无权限发布 \n ${Array.from(failedPkgSet).join('\n')}`);
+    logFatal(`Permission error: need ownership to publish these packages. \n ${Array.from(failedPkgSet).join('\n')}`);
   }
 }
 
