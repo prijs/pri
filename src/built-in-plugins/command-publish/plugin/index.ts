@@ -21,6 +21,15 @@ pri.commands.registerCommand({
     semver: {
       description: 'Semver version: patch minor major',
     },
+    commitOnly: {
+      description: 'Commit version update without publishing',
+    },
+    publishOnly: {
+      description: 'Publish without commit or any other git workflow',
+    },
+    branch: {
+      description: 'branch name',
+    },
     includeAll: {
       description: 'Include all sub packages',
     },
