@@ -16,6 +16,7 @@ import { isWorkingTreeClean, getCurrentBranchName } from '../../../utils/git-ope
 import { logFatal, logInfo, spinner, logText } from '../../../utils/log';
 import { getMonoAndNpmDepsOnce, DepMap } from '../../../utils/packages';
 import { ProjectConfig } from '../../../utils/define';
+import { isOwner } from '../../../utils/npm';
 
 export const publish = async (options: PublishOption) => {
   const currentBranchName = options.branch ? options.branch : await getCurrentBranchName();
@@ -61,6 +62,7 @@ export const publish = async (options: PublishOption) => {
           !options.commitOnly && (await buildDeclaration());
 
           if (installAllPrompt.installAll) {
+            await authPublish([pri.projectPackageJson.name, ...depMonoPackages.map(v => v.packageJson.name)])
             for (const eachPackage of depMonoPackages) {
               await publishByPackageName(eachPackage.name, options, depMap, isDevelopBranch, currentBranchName);
             }
@@ -69,7 +71,7 @@ export const publish = async (options: PublishOption) => {
           // eslint-disable-next-line no-unused-expressions
           !options.commitOnly && (await buildDeclaration());
         }
-
+        await authPublish([pri.projectPackageJson.name])
         await publishByPackageName(currentSelectedSourceType, options, depMap, isDevelopBranch, currentBranchName);
 
         await fs.remove(path.join(pri.projectRootPath, tempPath.dir, declarationPath.dir));
@@ -83,6 +85,33 @@ export const publish = async (options: PublishOption) => {
     // Not sure what to do, so keep empty.
   }
 };
+
+async function authPublish(packageNames: string[]) {
+  let name: string;
+  try {
+    const nameRet = execSync('tnpm whoami');
+    name = nameRet.toString().trim();
+  } catch (error) {
+    logFatal(error);
+  }
+  const failedPkgSet = new Set<string>();
+  const checkOwner = (uName: string, pName: string) =>
+    new Promise((res, rej) => {
+      isOwner(uName, pName)
+        .then(v => {
+          if (!v) {
+            failedPkgSet.add(pName);
+          }
+          res(v);
+        })
+        .catch(e => rej(e));
+    });
+  const pkgsP = packageNames.map(p => checkOwner(name, p));
+  await Promise.all(pkgsP);
+  if (failedPkgSet.size > 0) {
+    logFatal(`以下 npm 包无权限发布 \n ${Array.from(failedPkgSet).join('\n')}`);
+  }
+}
 
 async function publishByPackageName(
   sourceType: string,
