@@ -8,4 +8,5 @@ export interface PublishOption {
   publishOnly?: boolean;
   branch?: string;
   includeAll?: boolean;
+  exitAfterPublish?: boolean;
 }

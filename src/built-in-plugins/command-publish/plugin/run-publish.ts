@@ -84,6 +84,8 @@ export const publish = async (options: PublishOption) => {
     default:
     // Not sure what to do, so keep empty.
   }
+  // eslint-disable-next-line no-unused-expressions
+  options.exitAfterPublish && process.exit(0);
 };
 
 async function authPublish(packageNames: string[]) {
