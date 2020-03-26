@@ -7,6 +7,10 @@ import { priEvent } from './pri-events';
 import { freshGlobalState, globalState } from './global-state';
 
 export const ensureFiles = async () => {
+  if (!globalState.sourceConfig.ensureFiles) {
+    return;
+  }
+
   priEvent.emit('beforeEnsureFiles');
 
   const ensureProjectFilesQueueGroupByPath = _.groupBy(plugin.ensureProjectFilesQueue, 'fileName');
