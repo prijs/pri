@@ -33,6 +33,9 @@ pri.commands.registerCommand({
     includeAll: {
       description: 'Include all sub packages',
     },
+    exitAfterPublish: {
+      description: 'Force exit after publish',
+    },
   },
   action: async (options: PublishOption) => {
     const commandPublishModule = await import('./run-publish');
