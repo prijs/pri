@@ -29,6 +29,13 @@ class DefaultOptions {
 }
 
 export async function lint(options?: Partial<DefaultOptions>) {
+  // https://nodejs.org/api/process.html#process_a_note_on_process_i_o
+  // 通过 child_process 运行 pri，stdio 设置 pipe 模式时, 标准输出是异步的, 导致输出被截断,
+  // 此处判断在 pipe 模式设置成同步输出
+  if (!process.stdout.isTTY) {
+    (process.stdout as any)?._handle?.setBlocking(true);
+    (process.stderr as any)?._handle?.setBlocking(true);
+  }
   const { CLIEngine } = await import('eslint');
   const lintRules = fs.readJsonSync(path.join(globalState.projectRootPath, '.eslintrc'));
   const mergedOptions = _.defaults(options || {}, new DefaultOptions());
