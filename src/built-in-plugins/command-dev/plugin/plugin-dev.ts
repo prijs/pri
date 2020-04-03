@@ -14,9 +14,9 @@ export const pluginDev = async () => {
 
   // Build all
   await spinner('Init build', async () => {
-    await tsPlusBabel(false, true);
+    await tsPlusBabel(false);
   });
   // Watch
   logInfo('Watching files..');
-  await tsPlusBabel(true, true);
+  await tsPlusBabel(true);
 };

@@ -96,7 +96,7 @@ function ensureTsconfig() {
             preserveConstEnums: true,
             paths: {
               [`${PRI_PACKAGE_NAME}/*`]: [PRI_PACKAGE_NAME, path.join(tempTypesPath.dir, '*')],
-              ...(pri.sourceConfig.type === 'project' && { 'src/*': ['src/*'] }),
+              'src/*': ['src/*'],
               // Packages alias names
               ...globalState.packages.reduce((obj, eachPackage) => {
                 if (eachPackage.packageJson && eachPackage.packageJson.name) {
@@ -328,25 +328,25 @@ function ensureRootPackageJson() {
         case 'project':
           _.set(prevJson, 'main', `${pri.projectConfig.distDir}/${pri.projectConfig.outFileName}`);
           break;
-        case 'plugin':
-        case 'component':
-          if (yargs.argv._[0] === 'dev') {
-            // Component dev mode, has a whole project struct
-            if (pri.selectedSourceType === 'root') {
-              _.set(prevJson, 'main', `${pri.projectConfig.distDir}/main/src`);
-              _.set(prevJson, 'module', `${pri.projectConfig.distDir}/module/src`);
-              _.set(prevJson, 'types', 'src');
-            } else {
-              _.set(prevJson, 'main', `${pri.projectConfig.distDir}/main/packages/${pri.selectedSourceType}/src`);
-              _.set(prevJson, 'module', `${pri.projectConfig.distDir}/module/packages/${pri.selectedSourceType}/src`);
-              _.set(prevJson, 'types', `packages/${pri.selectedSourceType}/src`);
-            }
-          } else {
-            _.set(prevJson, 'main', `${pri.projectConfig.distDir}/main`);
-            _.set(prevJson, 'module', `${pri.projectConfig.distDir}/module`);
-            _.set(prevJson, 'types', 'declaration/index.d.ts');
-          }
-          break;
+        // case 'plugin':
+        // case 'component':
+        //   if (yargs.argv._[0] === 'dev') {
+        //     // Component dev mode, has a whole project struct
+        //     if (pri.selectedSourceType === 'root') {
+        //       _.set(prevJson, 'main', `${pri.projectConfig.distDir}/main/src`);
+        //       _.set(prevJson, 'module', `${pri.projectConfig.distDir}/module/src`);
+        //       _.set(prevJson, 'types', 'src');
+        //     } else {
+        //       _.set(prevJson, 'main', `${pri.projectConfig.distDir}/main/packages/${pri.selectedSourceType}/src`);
+        //       _.set(prevJson, 'module', `${pri.projectConfig.distDir}/module/packages/${pri.selectedSourceType}/src`);
+        //       _.set(prevJson, 'types', `packages/${pri.selectedSourceType}/src`);
+        //     }
+        //   } else {
+        //     _.set(prevJson, 'main', `${pri.projectConfig.distDir}/main`);
+        //     _.set(prevJson, 'module', `${pri.projectConfig.distDir}/module`);
+        //     _.set(prevJson, 'types', 'declaration/index.d.ts');
+        //   }
+        //   break;
         default:
       }
 

@@ -29,11 +29,11 @@ export const componentDev = async (watchOnly = false) => {
   // Build all
   if (!watchOnly) {
     await spinner('Init build', async () => {
-      await tsPlusBabel(false, true);
+      await tsPlusBabel(false);
     });
   }
 
   // Watch
   logInfo('Watching files..');
-  await tsPlusBabel(true, true);
+  await tsPlusBabel(true);
 };
