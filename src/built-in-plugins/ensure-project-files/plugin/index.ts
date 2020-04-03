@@ -328,25 +328,12 @@ function ensureRootPackageJson() {
         case 'project':
           _.set(prevJson, 'main', `${pri.projectConfig.distDir}/${pri.projectConfig.outFileName}`);
           break;
-        // case 'plugin':
-        // case 'component':
-        //   if (yargs.argv._[0] === 'dev') {
-        //     // Component dev mode, has a whole project struct
-        //     if (pri.selectedSourceType === 'root') {
-        //       _.set(prevJson, 'main', `${pri.projectConfig.distDir}/main/src`);
-        //       _.set(prevJson, 'module', `${pri.projectConfig.distDir}/module/src`);
-        //       _.set(prevJson, 'types', 'src');
-        //     } else {
-        //       _.set(prevJson, 'main', `${pri.projectConfig.distDir}/main/packages/${pri.selectedSourceType}/src`);
-        //       _.set(prevJson, 'module', `${pri.projectConfig.distDir}/module/packages/${pri.selectedSourceType}/src`);
-        //       _.set(prevJson, 'types', `packages/${pri.selectedSourceType}/src`);
-        //     }
-        //   } else {
-        //     _.set(prevJson, 'main', `${pri.projectConfig.distDir}/main`);
-        //     _.set(prevJson, 'module', `${pri.projectConfig.distDir}/module`);
-        //     _.set(prevJson, 'types', 'declaration/index.d.ts');
-        //   }
-        //   break;
+        case 'plugin':
+        case 'component':
+          _.set(prevJson, 'main', `${pri.projectConfig.distDir}/main`);
+          _.set(prevJson, 'module', `${pri.projectConfig.distDir}/module`);
+          _.set(prevJson, 'types', 'declaration/index.d.ts');
+          break;
         default:
       }
 
