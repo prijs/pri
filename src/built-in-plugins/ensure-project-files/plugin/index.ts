@@ -158,13 +158,8 @@ function ensureVscode() {
         _.merge({}, pickedPrev, {
           'editor.formatOnSave': true,
           'typescript.tsdk': 'node_modules/typescript/lib',
-          'eslint.autoFixOnSave': true,
-          'eslint.validate': [
-            'javascript',
-            'javascriptreact',
-            { language: 'typescript', autoFix: true },
-            { language: 'typescriptreact', autoFix: true },
-          ],
+          'eslint.codeActionsOnSave': true,
+          'eslint.validate': ['javascript', 'javascriptreact', 'typescript', 'typescriptreact'],
           'eslint.lintTask.enable': true,
           'typescript.format.enable': true,
           'javascript.format.enable': true,
