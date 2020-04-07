@@ -53,14 +53,17 @@ export async function lint(options?: Partial<DefaultOptions>) {
 
   let lintFiles: string[] = [];
   let prettierFiles: string[] = [];
+  let lintFilesPattern: string = '';
 
   if (mergedOptions.lintAll) {
     if (globalState.selectedSourceType === 'root') {
       lintFiles = glob.sync(`${globalState.projectRootPath}/{${srcPath.dir},${packagesPath.dir}}/**/*.{ts,tsx}`);
+      lintFilesPattern = `${globalState.projectRootPath}/{${srcPath.dir},${packagesPath.dir}}/**/*.{ts,tsx}`;
     } else {
       lintFiles = glob.sync(
         `${globalState.projectRootPath}/${packagesPath.dir}/${globalState.selectedSourceType}/**/*.{ts,tsx}`,
       );
+      lintFilesPattern = `${globalState.projectRootPath}/${packagesPath.dir}/${globalState.selectedSourceType}/**/*.{ts,tsx}`;
     }
   } else {
     lintFiles = _.compact(
@@ -74,6 +77,7 @@ export async function lint(options?: Partial<DefaultOptions>) {
       .map(file => {
         return path.join(globalState.projectRootPath, file);
       });
+    lintFilesPattern = lintFiles.filter(file => !cli.isPathIgnored(file)).join(' ');
   }
 
   lintFiles = lintFiles.filter(file => !cli.isPathIgnored(file));
@@ -81,7 +85,7 @@ export async function lint(options?: Partial<DefaultOptions>) {
   const lintResult = await spinner(
     `Lint ${mergedOptions.lintAll ? 'all' : ''} ${lintFiles.length} files.`,
     async () => {
-      const files = execSync(`npx prettier --list-different --write ${lintFiles.join(' ')}`);
+      const files = execSync(`npx prettier --ignore-path ${eslintIgnorePath} --list-different --write ${lintFilesPattern}`);
       prettierFiles = _.compact(files.toString().split('\n'));
       return cli.executeOnFiles(lintFiles);
     },
