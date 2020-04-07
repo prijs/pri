@@ -122,6 +122,7 @@
     "indent": 0,
     "operator-linebreak": [0],
     "max-classes-per-file": [2, 10],
-    "@typescript-eslint/no-empty-function": [0]
+    "@typescript-eslint/no-empty-function": [0],
+    "import/extensions": 0
   }
 }
