@@ -57,13 +57,11 @@ export async function lint(options?: Partial<DefaultOptions>) {
 
   if (mergedOptions.lintAll) {
     if (globalState.selectedSourceType === 'root') {
-      lintFiles = glob.sync(`${globalState.projectRootPath}/{${srcPath.dir},${packagesPath.dir}}/**/*.{ts,tsx}`);
       lintFilesPattern = `${globalState.projectRootPath}/{${srcPath.dir},${packagesPath.dir}}/**/*.{ts,tsx}`;
+      lintFiles = glob.sync(lintFilesPattern);
     } else {
-      lintFiles = glob.sync(
-        `${globalState.projectRootPath}/${packagesPath.dir}/${globalState.selectedSourceType}/**/*.{ts,tsx}`,
-      );
       lintFilesPattern = `${globalState.projectRootPath}/${packagesPath.dir}/${globalState.selectedSourceType}/**/*.{ts,tsx}`;
+      lintFiles = glob.sync(lintFilesPattern);
     }
   } else {
     lintFiles = _.compact(
