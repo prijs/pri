@@ -111,7 +111,7 @@
     "react-hooks/exhaustive-deps": "warn",
     "@typescript-eslint/explicit-member-accessibility": 0,
     "@typescript-eslint/no-object-literal-type-assertion": 0,
-    "react/no-find-dom-node": 1,
+    "react/no-find-dom-node": 0,
     "no-param-reassign": [
       2,
       {
