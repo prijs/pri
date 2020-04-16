@@ -1,5 +1,6 @@
 import { exec } from './exec';
 import { globalState } from './global-state';
+import * as fetch from 'isomorphic-fetch';
 
 const npmWebSite = 'http://web.npm.alibaba-inc.com/package';
 

@@ -73,3 +73,4 @@ declare module '@babel/plugin-proposal-nullish-coalescing-operator';
 declare module '@babel/plugin-transform-react-display-name';
 declare module 'babel-plugin-react-wrapped-display-name';
 declare module 'enzyme-adapter-react-16';
+declare module 'isomorphic-fetch';
