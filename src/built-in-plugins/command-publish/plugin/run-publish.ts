@@ -457,10 +457,17 @@ async function copyDeclaration(sourceType: string, publishTempName: string) {
 
   // If select packages, pick it's own declaration
   if (sourceType !== 'root') {
-    const declarationFiles = glob.sync(path.join(declarationRoot, 'packages', sourceType, srcPathExtra, '/**/*.d.ts'));
+    const declarationSourceRoot = path.join(
+      declarationRoot,
+      path.relative(pri.projectRootPath, pri.packages.find(each => each.name === sourceType).rootPath),
+      srcPathExtra,
+    );
+
+    const declarationFiles = glob.sync(path.join(declarationSourceRoot, '/**/*.d.ts'));
 
     declarationFiles.map(eachFile => {
-      const targetPath = path.relative(path.join(declarationRoot, 'packages', sourceType, srcPathExtra), eachFile);
+      const targetPath = path.relative(declarationSourceRoot, eachFile);
+
       fs.copySync(
         eachFile,
         path.join(pri.projectRootPath, tempPath.dir, publishTempName, declarationPath.dir, targetPath),
