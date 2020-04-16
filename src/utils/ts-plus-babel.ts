@@ -133,7 +133,6 @@ export const tsPlusBabel = async (watch = false, wholeProject = false, packageIn
           return fn(options);
         },
         getBabelOptions({
-          modules: false,
           plugins: [importRename(wholeProject)],
         }),
       ),
