@@ -50,7 +50,7 @@ export async function devDocs() {
 
   await runWebpackDevServer({
     mode: 'development',
-    publicPath: `https://localhost:${freePort}`,
+    publicPath: `${pri.sourceConfig.useHttps ? 'https' : 'http'}://localhost:${freePort}`,
     autoOpenBrowser: true,
     hot: pri.sourceConfig.hotReload,
     devUrl: 'localhost',
