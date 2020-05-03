@@ -35,16 +35,15 @@ const Docs = React.memo((props: Props) => {
           style={{
             display: 'flex',
             alignItems: 'center',
-            height: 30,
+            minHeight: 30,
             cursor: 'pointer',
             paddingLeft: 10,
             boxSizing: 'border-box',
-            backgroundColor: docName === index ? 'white' : null,
+            backgroundColor: docName === doc.name ? 'white' : null,
             fontSize: 14,
             color: '#333',
             borderBottom: '1px solid #eee',
           }}
-          // eslint-disable-next-line react/jsx-no-bind
           onClick={() => {
             selectDoc(doc.name);
           }}
@@ -86,6 +85,7 @@ const Docs = React.memo((props: Props) => {
             minWidth: 200,
             borderRight: '1px solid #eee',
             boxSizing: 'border-box',
+            overflowY: 'auto',
           }}
         >
           {renderLeftMenus()}
@@ -111,7 +111,7 @@ const Docs = React.memo((props: Props) => {
             boxSizing: 'border-box',
           }}
         >
-          <DocInstance />
+          <DocInstance key={docName} />
         </div>
       </div>
     </div>
