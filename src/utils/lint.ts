@@ -53,7 +53,7 @@ export async function lint(options?: Partial<DefaultOptions>) {
 
   let lintFiles: string[] = [];
   let prettierFiles: string[] = [];
-  let lintFilesPattern: string = '';
+  let lintFilesPattern = '';
 
   if (mergedOptions.lintAll) {
     if (globalState.selectedSourceType === 'root') {
@@ -85,7 +85,9 @@ export async function lint(options?: Partial<DefaultOptions>) {
   const lintResult = await spinner(
     `Lint ${mergedOptions.lintAll ? 'all' : ''} ${lintFiles.length} files.`,
     async () => {
-      const files = execSync(`npx prettier --ignore-path ${eslintIgnorePath} --list-different --write ${lintFilesPattern}`);
+      const files = execSync(
+        `npx prettier --ignore-path ${eslintIgnorePath} --list-different --write ${lintFilesPattern}`,
+      );
       prettierFiles = _.compact(files.toString().split('\n'));
       return cli.executeOnFiles(lintFiles);
     },

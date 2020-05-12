@@ -30,6 +30,10 @@ export const publish = async (options: PublishOption) => {
         await pri.project.checkProjectFiles();
 
         const currentSelectedSourceType = pri.selectedSourceType;
+        const selectedPkgJson =
+          currentSelectedSourceType === 'root'
+            ? pri.projectPackageJson
+            : pri.packages.find(p => p.name === currentSelectedSourceType)?.packageJson;
 
         if (!options.skipLint) {
           await pri.project.lint({
@@ -62,7 +66,8 @@ export const publish = async (options: PublishOption) => {
           !options.commitOnly && (await buildDeclaration());
 
           if (includeAllPrompt.includeAll) {
-            await authPublish([pri.projectPackageJson.name, ...depMonoPackages.map(v => v.packageJson.name)]);
+            const authList = [selectedPkgJson?.name, ...depMonoPackages.map(v => v.packageJson.name)].filter(n => !!n);
+            await authPublish(authList);
             for (const eachPackage of depMonoPackages) {
               await publishByPackageName(eachPackage.name, options, depMap, isDevelopBranch, currentBranchName);
             }
@@ -71,7 +76,9 @@ export const publish = async (options: PublishOption) => {
           // eslint-disable-next-line no-unused-expressions
           !options.commitOnly && (await buildDeclaration());
         }
-        await authPublish([pri.projectPackageJson.name]);
+        if (selectedPkgJson?.name) {
+          await authPublish([selectedPkgJson.name]);
+        }
         await publishByPackageName(currentSelectedSourceType, options, depMap, isDevelopBranch, currentBranchName);
 
         await fs.remove(path.join(pri.projectRootPath, tempPath.dir, declarationPath.dir));
