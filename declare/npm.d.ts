@@ -22,6 +22,7 @@ declare module 'preload-webpack-plugin';
 declare module 'gulp';
 declare module 'gulp-babel';
 declare module 'gulp-sass';
+declare module 'gulp-less';
 declare module 'gulp-concat';
 declare module 'gulp-typescript';
 declare module 'gulp-watch';

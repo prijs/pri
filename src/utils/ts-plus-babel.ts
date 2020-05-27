@@ -1,6 +1,7 @@
 import * as gulp from 'gulp';
 import * as gulpBabel from 'gulp-babel';
 import * as gulpSass from 'gulp-sass';
+import * as gulpLess from 'gulp-less';
 import * as gulpWatch from 'gulp-watch';
 import * as gulpStripCssComments from 'gulp-strip-css-comments';
 import * as gulpConcatCss from 'gulp-concat-css';
@@ -56,6 +57,27 @@ const buildSass = (watch: boolean, outdir: string, wholeProject: boolean, source
       .pipe(
         gulpSass({
           includePaths: path.join(pri.projectRootPath, 'node_modules'),
+        }),
+      )
+      .pipe(gulpIf(pri.sourceConfig.cssExtract, gulpConcatCss(pri.sourceConfig.outCssFileName)))
+      .pipe(gulpStripCssComments())
+      .on('error', reject)
+      .pipe(gulp.dest(outdir))
+      .on('end', resolve);
+  });
+};
+
+const buildLess = (watch: boolean, outdir: string, wholeProject: boolean, sourcePath: string) => {
+  const targetPath =
+    wholeProject || (pri.selectedSourceType === 'root' && pri.sourceConfig.cssExtract)
+      ? path.join(pri.projectRootPath, '{src,packages}/**/*.less')
+      : path.join(sourcePath || pri.sourceRoot, srcPath.dir, '**/*.less');
+
+  return new Promise((resolve, reject) => {
+    getGulpByWatch(watch, targetPath)
+      .pipe(
+        gulpLess({
+          paths: [path.join(pri.projectRootPath, 'node_modules')],
         }),
       )
       .pipe(gulpIf(pri.sourceConfig.cssExtract, gulpConcatCss(pri.sourceConfig.outCssFileName)))
@@ -124,6 +146,9 @@ export const tsPlusBabel = async (watch = false, wholeProject = false, packageIn
   return Promise.all([
     buildSass(watch, mainDistPath, wholeProject, sourcePath),
     buildSass(watch, moduleDistPath, wholeProject, sourcePath),
+
+    buildLess(watch, mainDistPath, wholeProject, sourcePath),
+    buildLess(watch, moduleDistPath, wholeProject, sourcePath),
 
     buildTs(
       watch,
