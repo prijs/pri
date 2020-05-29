@@ -1,5 +1,5 @@
-<a name="4.1.6"></a>
-## [4.1.6](https://github.com/prijs/pri/compare/3.3.28-beta.5...4.1.6) (2020-05-27)
+<a name="4.1.7"></a>
+## [4.1.7](https://github.com/prijs/pri/compare/3.3.28-beta.5...4.1.7) (2020-05-29)
 
 
 ### Bug Fixes
@@ -40,6 +40,7 @@
 
 * add [@babel](https://github.com/babel)/plugin-transform-react-display-name ([20a9c51](https://github.com/prijs/pri/commit/20a9c51))
 * add babelPluginReactWrappedDisplayName ([6dd820e](https://github.com/prijs/pri/commit/6dd820e))
+* add changeLog to publish script ([66526f7](https://github.com/prijs/pri/commit/66526f7))
 * add ensure files config ([2e78cc5](https://github.com/prijs/pri/commit/2e78cc5))
 * add hotLoader option ([52c8bdb](https://github.com/prijs/pri/commit/52c8bdb))
 * add hotLoader option ([ceb6f48](https://github.com/prijs/pri/commit/ceb6f48))
@@ -59,6 +60,7 @@
 * fix bug ([5c6e107](https://github.com/prijs/pri/commit/5c6e107))
 * fix bug ([ecbe690](https://github.com/prijs/pri/commit/ecbe690))
 * fix memo name ([a5ea73d](https://github.com/prijs/pri/commit/a5ea73d))
+* remove  ensure root package.json for extend type ([0ad22e6](https://github.com/prijs/pri/commit/0ad22e6))
 * remove react-loadable instead of react.lazy ([be8bcbd](https://github.com/prijs/pri/commit/be8bcbd))
 * rename rootId to projectRootId ([f03aa40](https://github.com/prijs/pri/commit/f03aa40))
 * revert webpack version ([a022d94](https://github.com/prijs/pri/commit/a022d94))
