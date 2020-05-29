@@ -1,5 +1,5 @@
-<a name="4.1.7"></a>
-## [4.1.7](https://github.com/prijs/pri/compare/3.3.28-beta.5...4.1.7) (2020-05-29)
+<a name="4.1.8"></a>
+## [4.1.8](https://github.com/prijs/pri/compare/3.3.28-beta.5...4.1.8) (2020-05-29)
 
 
 ### Bug Fixes
