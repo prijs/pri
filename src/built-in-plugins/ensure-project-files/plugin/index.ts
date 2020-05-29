@@ -29,20 +29,21 @@ export const main = async () => {
   ensureVscode();
   ensureEslint();
   ensurePrettier();
-  ensureRootPackageJson();
   ensurePriConfig();
-
   ensureDeclares();
 
   switch (pri.sourceConfig.type) {
     case 'project':
       ensureProjectFiles();
+      ensureRootPackageJson();
       break;
     case 'component':
       ensureComponentFiles();
+      ensureRootPackageJson();
       break;
     case 'plugin':
       ensurePluginFiles();
+      ensureRootPackageJson();
       break;
     default:
   }

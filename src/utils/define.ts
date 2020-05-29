@@ -34,7 +34,7 @@ export interface StructorConfig {
 
 export type SourceType = 'root' | string;
 
-export type ProjectType = 'project' | 'component' | 'plugin' | null;
+export type ProjectType = 'project' | 'component' | 'plugin' | 'DPComponent' | null;
 
 export interface PackageInfo {
   name: string;

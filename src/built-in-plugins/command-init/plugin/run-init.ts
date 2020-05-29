@@ -78,7 +78,7 @@ async function selectProjectType(message: string): Promise<ProjectType> {
         message,
         name: 'projectType',
         type: 'list',
-        choices: ['Project', 'Component', 'Pri Plugin'],
+        choices: ['Project', 'Component', 'Pri Plugin', 'Dataphin Component'],
       },
     ]);
 
@@ -91,6 +91,9 @@ async function selectProjectType(message: string): Promise<ProjectType> {
         break;
       case 'Pri Plugin':
         userSelectType = 'plugin';
+        break;
+      case 'Dataphin Component':
+        userSelectType = 'DPComponent';
         break;
       default:
     }
