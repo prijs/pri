@@ -58,7 +58,7 @@ pri.project.onCreateEntry((analyseInfo: IResult, entry) => {
         const ${LAYOUT_ROUTE} = ({ component: Component, ...rest }: any) => {
           return (
             <Route {...rest} render={(matchProps: any) => (
-              <${LAYOUT}>
+              <${LAYOUT} {...matchProps}>
                 <Component {...matchProps} />
               </${LAYOUT}>
             )} />
