@@ -267,6 +267,11 @@ export class ProjectConfig {
    * Enable ensure files
    */
   public ensureFiles = true;
+
+  /**
+   * is material component
+   */
+  public materialComponent = false;
 }
 
 export type SetPipe = (pipeName: string, callback: PipeCallback) => void;
