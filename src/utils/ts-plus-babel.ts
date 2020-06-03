@@ -115,8 +115,13 @@ function importRename(packageAbsoluteToRelative = false) {
 export const tsPlusBabel = async (watch = false, wholeProject = false, packageInfo: PackageInfo = null) => {
   const packagePath = packageInfo ? packageInfo.name : '';
   const rootDistPath = path.join(globalState.projectRootPath, pri.sourceConfig.distDir, packagePath);
-  const mainDistPath = path.join(rootDistPath, 'main');
-  const moduleDistPath = path.join(rootDistPath, 'module');
+  let mainDistPath = path.join(rootDistPath, 'main');
+  let moduleDistPath = path.join(rootDistPath, 'module');
+
+  if (pri.sourceConfig.materialComponent) {
+    mainDistPath = path.join(globalState.sourceRoot, 'lib');
+    moduleDistPath = path.join(globalState.sourceRoot, 'es');
+  }
 
   const sourcePath = packageInfo ? packageInfo.rootPath : null;
   const sourceType = packageInfo ? packageInfo.name : null;
