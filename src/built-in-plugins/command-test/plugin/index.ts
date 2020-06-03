@@ -36,6 +36,6 @@ pri.commands.registerCommand({
     await pri.project.checkProjectFiles();
 
     const runTestModule = await import('./run-test');
-    runTestModule.runTest();
+    runTestModule.runTest(options);
   },
 });
