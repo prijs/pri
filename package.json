@@ -1,13 +1,13 @@
 {
   "name": "pri",
-  "version": "4.1.7",
+  "version": "4.1.9-beta.1",
   "types": "src/node/index.ts",
   "main": "built/node/index.js",
   "scripts": {
     "start": "tsc -w",
     "create-client-declaration": "tsc --lib dom,es5,es6,scripthost --declaration src/client/index --declarationDir declare/client --skipLibCheck --outDir declare/client && find declare/client -type f -name \"*.js\" -delete",
     "build": "rm -rf built && rm -rf .cache && tsc && npm run create-client-declaration",
-    "prepublishOnly": "npm run build",
+    "prepublishOnly": "npm run build &&  npm run changelog",
     "lint": "eslint --fix './src/**/*.?(ts|tsx)' && prettier --list-different --write './src/**'",
     "generateDocument": "typedoc --out ./document --mode file --ignoreCompilerErrors ./src/node/index.ts",
     "publishBeta": "npm publish --tag=beta",

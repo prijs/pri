@@ -326,7 +326,12 @@ async function moveSourceFilesToTempFolderAndPublish(
 
   await fs.remove(tempRoot);
 
-  await fs.copy(path.join(pri.projectRootPath, targetConfig.distDir), path.join(tempRoot, targetConfig.distDir));
+  if (pri.sourceConfig.materialComponent) {
+    await fs.copy(path.join(pri.sourceRoot, 'es'), path.join(tempRoot, 'es'));
+    await fs.copy(path.join(pri.sourceRoot, 'lib'), path.join(tempRoot, 'lib'));
+  } else {
+    await fs.copy(path.join(pri.projectRootPath, targetConfig.distDir), path.join(tempRoot, targetConfig.distDir));
+  }
   await copyDeclaration(sourceType, publishTempName);
   await fs.copy(path.join(targetRoot, 'package.json'), path.join(tempRoot, 'package.json'));
 
@@ -430,8 +435,13 @@ async function addMissingDeps(
   }
 
   if (sourceType !== 'root') {
-    _.set(newPackageJson, 'main', `${pri.projectConfig.distDir}/main`);
-    _.set(newPackageJson, 'module', `${pri.projectConfig.distDir}/module`);
+    if (pri.sourceConfig.materialComponent) {
+      _.set(newPackageJson, 'main', `lib`);
+      _.set(newPackageJson, 'module', `es`);
+    } else {
+      _.set(newPackageJson, 'main', `${pri.projectConfig.distDir}/main`);
+      _.set(newPackageJson, 'module', `${pri.projectConfig.distDir}/module`);
+    }
     _.set(newPackageJson, 'types', 'declaration/index.d.ts');
   }
 

@@ -29,7 +29,6 @@ export const main = async () => {
   ensureVscode();
   ensureEslint();
   ensurePrettier();
-  ensureRootPackageJson();
   ensurePriConfig();
 
   ensureDeclares();
@@ -37,14 +36,18 @@ export const main = async () => {
   switch (pri.sourceConfig.type) {
     case 'project':
       ensureProjectFiles();
+      ensureRootPackageJson();
       break;
     case 'component':
       ensureComponentFiles();
+      ensureRootPackageJson();
       break;
     case 'plugin':
       ensurePluginFiles();
+      ensureRootPackageJson();
       break;
     default:
+    // don't need ensure root package.json for extend type
   }
 };
 
