@@ -15,7 +15,7 @@ import { commandBundle } from '../../command-bundle/plugin/command-bundle';
 import { isWorkingTreeClean, getCurrentBranchName } from '../../../utils/git-operate';
 import { logFatal, logInfo, spinner, logText } from '../../../utils/log';
 import { getMonoAndNpmDepsOnce, DepMap } from '../../../utils/packages';
-import { ProjectConfig } from '../../../utils/define';
+import { ProjectConfig, PackageInfo } from '../../../utils/define';
 import { isOwner } from '../../../utils/npm';
 
 export const publish = async (options: PublishOption) => {

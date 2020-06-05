@@ -1,5 +1,6 @@
 import * as fs from 'fs-extra';
 import * as _ from 'lodash';
+import * as fp from 'lodash/fp';
 import * as path from 'path';
 import * as glob from 'glob';
 import { exec } from './exec';
@@ -106,8 +107,11 @@ async function getMonoAndNpmDeps() {
       );
     }
 
-    const selectedDepMonoPackages = depMap.get(globalState.selectedSourceType).depMonoPackages;
     const selectedDepNpmPackages = depMap.get(globalState.selectedSourceType).depNpmPackages;
+
+    // Find nested selectedDepMonoPackages
+    const selectedDepMonoPackagesDe = findNestedSelectedDepMonoPackages(globalState.selectedSourceType, depMap);
+    const selectedDepMonoPackages = fp.uniqBy(each => each.name, selectedDepMonoPackagesDe);
 
     const monoDepASC = getMonoDepASC(depMap);
 
@@ -215,4 +219,15 @@ export async function getMonoAndNpmDepsByPath(rootPath: string) {
   });
 
   return { depMonoPackages: Array.from(depMonoPackages), depNpmPackages: Array.from(depNpmPackages) };
+}
+
+function findNestedSelectedDepMonoPackages(sourceType: string, depMap: DepMap) {
+  let depMonoPackages = depMap.get(sourceType).depMonoPackages;
+  const depMonoPackagesNames = depMonoPackages.map(depMonoPackage => depMonoPackage.name);
+
+  depMonoPackagesNames.forEach(packageName => {
+    depMonoPackages = depMonoPackages.concat(findNestedSelectedDepMonoPackages(packageName, depMap));
+  });
+
+  return depMonoPackages;
 }
