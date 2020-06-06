@@ -1,4 +1,5 @@
 import * as gulp from 'gulp';
+import * as fs from 'fs-extra';
 import * as gulpBabel from 'gulp-babel';
 import * as gulpSass from 'gulp-sass';
 import * as gulpWatch from 'gulp-watch';
@@ -13,6 +14,7 @@ import { getBabelOptions } from './babel-options';
 import { globalState } from './global-state';
 import { babelPluginTransformImport } from './babel-plugin-transfer-import';
 import { PackageInfo } from './define';
+import { runWebpack } from './webpack';
 
 function getGulpByWatch(watch: boolean, filesPath: string) {
   if (watch) {
@@ -63,6 +65,27 @@ const buildSass = (watch: boolean, outdir: string, wholeProject: boolean, source
       .on('error', reject)
       .pipe(gulp.dest(outdir))
       .on('end', resolve);
+  });
+};
+
+const buildCssWithWebpack = (outDir: string, copyDir: string) => {
+  const cssFileNames = Object.keys(pri.sourceConfig.componentEntries).map(file => `${file}.css`);
+
+  return runWebpack({
+    mode: 'production',
+    entryPath: pri.sourceConfig.componentEntries,
+    distDir: outDir,
+    outFileName: '[name].js',
+    outCssFileName: '[name].css',
+  }).then(() => {
+    const distFiles = fs.readdirSync(outDir);
+    distFiles.forEach(file => {
+      const basename = path.basename(file);
+      if (!cssFileNames.includes(basename)) {
+        fs.removeSync(path.join(outDir, file));
+      }
+    });
+    fs.copySync(outDir, copyDir);
   });
 };
 
@@ -126,9 +149,14 @@ export const tsPlusBabel = async (watch = false, wholeProject = false, packageIn
   const sourcePath = packageInfo ? packageInfo.rootPath : null;
   const sourceType = packageInfo ? packageInfo.name : null;
 
+  // build component with webpack if config multy entries
+  if (pri.sourceConfig.componentEntries) {
+    await buildCssWithWebpack(mainDistPath, moduleDistPath);
+  }
+
   return Promise.all([
-    buildSass(watch, mainDistPath, wholeProject, sourcePath),
-    buildSass(watch, moduleDistPath, wholeProject, sourcePath),
+    pri.sourceConfig.componentEntries ? null : buildSass(watch, mainDistPath, wholeProject, sourcePath),
+    pri.sourceConfig.componentEntries ? null : buildSass(watch, moduleDistPath, wholeProject, sourcePath),
 
     buildTs(
       watch,

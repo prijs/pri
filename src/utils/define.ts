@@ -49,6 +49,10 @@ interface CustomRoute {
   redirect?: string;
 }
 
+export interface IEntryPath {
+  [key: string]: string;
+}
+
 export type PipeCallback = (text: string) => string | Promise<string>;
 
 export class ProjectInfo {
@@ -272,6 +276,11 @@ export class ProjectConfig {
    * is material component
    */
   public materialComponent = false;
+
+  /**
+   * entries for component build
+   */
+  componentEntries: IEntryPath;
 }
 
 export type SetPipe = (pipeName: string, callback: PipeCallback) => void;
