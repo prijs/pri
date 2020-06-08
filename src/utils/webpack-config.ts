@@ -8,6 +8,7 @@ import { globalState, transferToAllAbsolutePaths as transferToAllAbsolutePathsWi
 import { plugin } from './plugins';
 import { srcPath, tempPath } from './structor-config';
 import { getBabelOptions } from './babel-options';
+import { IEntryPath } from './define';
 
 export interface IHtmlTemplateArgs {
   dashboardServerPort?: number;
@@ -18,7 +19,7 @@ export interface IHtmlTemplateArgs {
 
 export type IOptions<T = {}> = {
   mode: 'development' | 'production';
-  entryPath: string | string[];
+  entryPath: string | string[] | IEntryPath;
   htmlTemplatePath?: string;
   htmlTemplateArgs?: IHtmlTemplateArgs;
   publicPath?: string;
