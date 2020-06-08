@@ -1,5 +1,5 @@
-<a name="4.1.9"></a>
-## [4.1.9](https://github.com/prijs/pri/compare/3.3.28-beta.5...4.1.9) (2020-06-05)
+<a name="4.2.0-beta.2"></a>
+# [4.2.0-beta.2](https://github.com/prijs/pri/compare/3.3.28-beta.5...4.2.0-beta.2) (2020-06-08)
 
 
 ### Bug Fixes
@@ -65,11 +65,14 @@
 * rename rootId to projectRootId ([f03aa40](https://github.com/prijs/pri/commit/f03aa40))
 * revert webpack version ([a022d94](https://github.com/prijs/pri/commit/a022d94))
 * support material component ([caf27b3](https://github.com/prijs/pri/commit/caf27b3))
+* support max two level packages ([19e89c1](https://github.com/prijs/pri/commit/19e89c1))
 * support nested packages ([d1029b9](https://github.com/prijs/pri/commit/d1029b9))
+* support remote version ([8712f28](https://github.com/prijs/pri/commit/8712f28))
 * support skiplint for test command ([f251b22](https://github.com/prijs/pri/commit/f251b22))
-* update ([b0c585b](https://github.com/prijs/pri/commit/b0c585b))
+* support webpack for component build ([ff78bfe](https://github.com/prijs/pri/commit/ff78bfe))
 * update ([e959701](https://github.com/prijs/pri/commit/e959701))
 * update ([bb4ea0b](https://github.com/prijs/pri/commit/bb4ea0b))
+* update ([b0c585b](https://github.com/prijs/pri/commit/b0c585b))
 * update .vscode ([4f48549](https://github.com/prijs/pri/commit/4f48549))
 * update deps ([5678dcc](https://github.com/prijs/pri/commit/5678dcc))
 * update docs ([afa3110](https://github.com/prijs/pri/commit/afa3110))
@@ -77,8 +80,8 @@
 * update eslintrc ([d949c81](https://github.com/prijs/pri/commit/d949c81))
 * update gitignore ([6ac2310](https://github.com/prijs/pri/commit/6ac2310))
 * update lock ([ede0ce8](https://github.com/prijs/pri/commit/ede0ce8))
-* update lock ([4efdb17](https://github.com/prijs/pri/commit/4efdb17))
 * update lock ([692edae](https://github.com/prijs/pri/commit/692edae))
+* update lock ([4efdb17](https://github.com/prijs/pri/commit/4efdb17))
 * update type check ([16353e1](https://github.com/prijs/pri/commit/16353e1))
 * upgrade eslint-plugin-react-hooks ([5f5ae96](https://github.com/prijs/pri/commit/5f5ae96))
 * upgrade ts 3.8 ([261bf1d](https://github.com/prijs/pri/commit/261bf1d))
