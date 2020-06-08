@@ -72,7 +72,12 @@ function getPriConfig(rootPath: string) {
   return fs.readJsonSync(configFilePath, { throws: false }) || {};
 }
 
-function collectPackages(packageRootPath: string) {
+function collectPackages(packageRootPath: string, deep = 0) {
+  // Only support two level packages
+  if (deep >= 2) {
+    return;
+  }
+
   const currentPackagesPath = path.join(packageRootPath, PACKAGES_NAME);
 
   if (fs.existsSync(currentPackagesPath)) {
@@ -100,7 +105,7 @@ function collectPackages(packageRootPath: string) {
         globalState.packages.push(eachPackage);
 
         // find nested packages
-        collectPackages(eachPackage.rootPath);
+        collectPackages(eachPackage.rootPath, deep + 1);
       });
   }
 }
