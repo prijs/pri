@@ -1,5 +1,5 @@
-<a name="4.2.0-beta.2"></a>
-# [4.2.0-beta.2](https://github.com/prijs/pri/compare/3.3.28-beta.5...4.2.0-beta.2) (2020-06-08)
+<a name="4.2.0-beta.3"></a>
+# [4.2.0-beta.3](https://github.com/prijs/pri/compare/3.3.28-beta.5...4.2.0-beta.3) (2020-06-17)
 
 
 ### Bug Fixes
