@@ -19,6 +19,17 @@ const stats = {
   hash: false,
 };
 
+const vendors = [
+  'react',
+  'react-dom',
+  'lodash',
+  'highlight.js',
+  'react-router',
+  'history',
+  `${PRI_PACKAGE_NAME}/client`,
+  ...(globalState.sourceConfig.extraVendors ?? []),
+];
+
 export default (opts: IOptions) => {
   const result: webpack.Configuration = {
     mode: 'development',
@@ -28,7 +39,8 @@ export default (opts: IOptions) => {
         (all, fn) => {
           return fn(all);
         },
-        ['react', 'react-dom', 'lodash', 'highlight.js', 'react-router', 'history', `${PRI_PACKAGE_NAME}/client`],
+        // ['react', 'react-dom', 'lodash', 'highlight.js', 'react-router', 'history', `${PRI_PACKAGE_NAME}/client`],
+        vendors,
       ),
     },
 
