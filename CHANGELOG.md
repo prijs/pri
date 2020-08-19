@@ -1,5 +1,5 @@
-<a name="4.2.0-beta.3"></a>
-# [4.2.0-beta.3](https://github.com/prijs/pri/compare/3.3.28-beta.5...4.2.0-beta.3) (2020-06-17)
+<a name="4.2.0-beta.4"></a>
+# [4.2.0-beta.4](https://github.com/prijs/pri/compare/3.3.28-beta.5...4.2.0-beta.4) (2020-08-11)
 
 
 ### Bug Fixes
@@ -9,13 +9,14 @@
 * auth selected package ([6987871](https://github.com/prijs/pri/commit/6987871))
 * autofix package.version while betaBranch ([596b803](https://github.com/prijs/pri/commit/596b803))
 * bug ([c37b05b](https://github.com/prijs/pri/commit/c37b05b))
-* bug ([b65ab71](https://github.com/prijs/pri/commit/b65ab71))
 * bug ([3510f52](https://github.com/prijs/pri/commit/3510f52))
-* correct module type ([027bd79](https://github.com/prijs/pri/commit/027bd79))
+* bug ([b65ab71](https://github.com/prijs/pri/commit/b65ab71))
 * correct module type ([a088f61](https://github.com/prijs/pri/commit/a088f61))
+* correct module type ([027bd79](https://github.com/prijs/pri/commit/027bd79))
 * deps analysis add react-router-dom ([0148632](https://github.com/prijs/pri/commit/0148632))
 * execSync with reasonable args length ([22342bb](https://github.com/prijs/pri/commit/22342bb))
 * fix publish error situation ([03ff947](https://github.com/prijs/pri/commit/03ff947))
+* fix typescript compile error when import modules from src/ to run test case ([7bef279](https://github.com/prijs/pri/commit/7bef279))
 * force exit after publish ([4ba8b4a](https://github.com/prijs/pri/commit/4ba8b4a))
 * lint abnormal exit ([e5601bf](https://github.com/prijs/pri/commit/e5601bf))
 * modify error msg ([13b05e0](https://github.com/prijs/pri/commit/13b05e0))
