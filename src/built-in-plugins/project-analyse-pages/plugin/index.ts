@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
 import * as normalizePath from 'normalize-path';
 import * as path from 'path';
+import * as yargs from 'yargs';
 import { pri } from '../../../node';
 import { md5 } from '../../../utils/md5';
 import { pagesPath, tempPath } from '../../../utils/structor-config';
@@ -71,9 +72,18 @@ pri.project.onAnalyseProject(files => {
     };
   }
 
+  const paths = ((yargs.argv.path ?? '') as string).split(',').filter(each => !!each);
+
   return {
     projectAnalysePages: {
       pages: pri.sourceConfig.routes
+        .filter(route => {
+          if (paths.length <= 0) {
+            return true;
+          }
+
+          return paths.includes(route.path);
+        })
         .filter(route => {
           if (route.redirect && route.component) {
             logFatal('route "redirect" and "component" are mutually exclusive.');
