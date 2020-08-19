@@ -35,13 +35,9 @@ export default (opts: IOptions) => {
     mode: 'development',
 
     entry: {
-      library: plugin.devDllPipes.reduce(
-        (all, fn) => {
-          return fn(all);
-        },
-        // ['react', 'react-dom', 'lodash', 'highlight.js', 'react-router', 'history', `${PRI_PACKAGE_NAME}/client`],
-        vendors,
-      ),
+      library: plugin.devDllPipes.reduce((all, fn) => {
+        return fn(all);
+      }, vendors),
     },
 
     output: {
