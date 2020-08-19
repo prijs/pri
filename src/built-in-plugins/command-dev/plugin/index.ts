@@ -12,6 +12,10 @@ pri.commands.registerCommand({
       alias: 'w',
       description: 'Watch only for component',
     },
+    path: {
+      alias: 'p',
+      description: 'specify paths to build',
+    },
   },
   description: text.commander.dev.description,
   action: async (options: any) => {
