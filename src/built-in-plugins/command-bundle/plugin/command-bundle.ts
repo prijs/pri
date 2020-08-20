@@ -1,11 +1,16 @@
 import * as path from 'path';
 import * as portfinder from 'portfinder';
+import * as webpack from 'webpack';
+import * as urlJoin from 'url-join';
 import { componentEntry, pri } from '../../../node';
 import { logFatal } from '../../../utils/log';
 import { plugin } from '../../../utils/plugins';
 import { IOpts } from './interface';
 import { runWebpack } from '../../../utils/webpack';
 import { runWebpackDevServer } from '../../../utils/webpack-dev-server';
+import { bundleDlls, dllMainfestName, dllOutPath, libraryStaticPath } from '../../command-dev/plugin/dll';
+import { globalState } from '../../../utils/global-state';
+import { WrapContent } from '../../../utils/webpack-plugin-wrap-content';
 
 export const commandBundle = async (opts: IOpts = {}) => {
   if (pri.sourceConfig.type !== 'component') {
@@ -33,6 +38,8 @@ export const commandBundle = async (opts: IOpts = {}) => {
   } else {
     const freePort = await portfinder.getPortPromise({ port: pri.sourceConfig.devPort });
 
+    await bundleDlls();
+
     runWebpackDevServer({
       mode: 'development',
       outFileName: pri.sourceConfig.bundleFileName,
@@ -48,6 +55,33 @@ export const commandBundle = async (opts: IOpts = {}) => {
         newConfig = await plugin.bundleConfigPipes.reduce(async (nextConfig, fn) => {
           return fn(await nextConfig);
         }, Promise.resolve(config));
+
+        // bundle dev 模式支持 dll
+        config.plugins.push(
+          new webpack.DllReferencePlugin({
+            context: '.',
+            // eslint-disable-next-line import/no-dynamic-require,global-require
+            manifest: require(path.join(dllOutPath, dllMainfestName)),
+          }),
+        );
+
+        const dllHttpPath = urlJoin(
+          `${globalState.sourceConfig.useHttps ? 'https' : 'http'}://localhost:${freePort}`,
+          libraryStaticPath,
+        );
+
+        config.plugins.push(
+          new WrapContent(
+            `
+            var dllScript = document.createElement("script");
+            dllScript.src = "${dllHttpPath}";
+            dllScript.onload = runEntry;
+            document.body.appendChild(dllScript);
+            function runEntry() {
+          `,
+            '}',
+          ),
+        );
 
         return newConfig;
       },
