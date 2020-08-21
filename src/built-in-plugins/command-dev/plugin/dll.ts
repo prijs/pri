@@ -53,7 +53,7 @@ function runCompiler(compiler: webpack.Compiler) {
 }
 
 /**
- * Bundle dlls when node_modules changed, dlls not exist, extraDll changed, or package to dev changed;
+ * Bundle dlls when node_modules changed, dlls not exist, extraVendors changed, or package to dev changed;
  */
 export async function bundleDlls() {
   if (
