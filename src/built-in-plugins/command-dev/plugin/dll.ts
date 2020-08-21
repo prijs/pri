@@ -2,7 +2,12 @@ import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as webpack from 'webpack';
 import { globalState } from '../../../utils/global-state';
-import { hasNodeModules, hasNodeModulesModified } from '../../../utils/project-helper';
+import {
+  hasNodeModules,
+  hasNodeModulesModified,
+  hasExtraVendorsChanged,
+  hasPackageChanged,
+} from '../../../utils/project-helper';
 import getWebpackDllConfig from './webpack-dll-config';
 
 export const dllFileName = 'main.dll.js';
@@ -48,10 +53,15 @@ function runCompiler(compiler: webpack.Compiler) {
 }
 
 /**
- * Bundle dlls if node_modules changed, or dlls not exist.
+ * Bundle dlls when node_modules changed, dlls not exist, extraDll changed, or package to dev changed;
  */
 export async function bundleDlls() {
-  if ((hasNodeModules() && hasNodeModulesModified()) || !fs.existsSync(path.join(dllOutPath, dllFileName))) {
+  if (
+    hasPackageChanged() ||
+    hasExtraVendorsChanged() ||
+    (hasNodeModules() && hasNodeModulesModified()) ||
+    !fs.existsSync(path.join(dllOutPath, dllFileName))
+  ) {
     await runDllWebpack({ dllOutPath, dllFileName, dllMainfestName });
   }
 }
