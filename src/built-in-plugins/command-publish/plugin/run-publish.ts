@@ -223,54 +223,54 @@ async function publishByPackageName(
   if (!options.publishOnly) {
     // Generate beta version if branch is not master or develop
     if (options.tag === 'beta' || !isDevelopBranch) {
-    // fixed basicVersion to 1.0.0
-    const basicVersion = '1.0.0';
+      // fixed basicVersion to 1.0.0
+      const basicVersion = '1.0.0';
 
-    const branchNameInVersion = currentBranchName.replace(/\//g, '').replace(/\./g, '');
+      const branchNameInVersion = currentBranchName.replace(/\//g, '').replace(/\./g, '');
 
-    let publishedVersions: string[] = [];
-    try {
-      // all of package versions
-      const tempVersions = execSync(`${targetConfig.npmClient} view ${targetPackageJson.name} versions`);
-      if (tempVersions) {
-        publishedVersions = tempVersions
-          .toString()
-          .trim()
-          .replace(/\n|'| |\[|\]/g, '')
-          .split(',');
-      } else {
+      let publishedVersions: string[] = [];
+      try {
+        // all of package versions
+        const tempVersions = execSync(`${targetConfig.npmClient} view ${targetPackageJson.name} versions`);
+        if (tempVersions) {
+          publishedVersions = tempVersions
+            .toString()
+            .trim()
+            .replace(/\n|'| |\[|\]/g, '')
+            .split(',');
+        } else {
+          publishedVersions = [];
+        }
+      } catch (e) {
         publishedVersions = [];
       }
-    } catch (e) {
-      publishedVersions = [];
-    }
 
-    let maxBetaVersionNum = 0;
+      let maxBetaVersionNum = 0;
 
-    // 1.0.0-branchName.version
-    const betaVersionReg = new RegExp(`\\d+\\.\\d+\\.\\d+-${branchNameInVersion}\\.\\d+`);
+      // 1.0.0-branchName.version
+      const betaVersionReg = new RegExp(`\\d+\\.\\d+\\.\\d+-${branchNameInVersion}\\.\\d+`);
 
-    // get max beta version
-    publishedVersions.forEach((v: string) => {
-      if (betaVersionReg.test(v)) {
-        const tempBetaVersion = Number(v.split(`${branchNameInVersion}.`)[1]);
+      // get max beta version
+      publishedVersions.forEach((v: string) => {
+        if (betaVersionReg.test(v)) {
+          const tempBetaVersion = Number(v.split(`${branchNameInVersion}.`)[1]);
 
-        if (maxBetaVersionNum < tempBetaVersion) {
-          maxBetaVersionNum = tempBetaVersion;
+          if (maxBetaVersionNum < tempBetaVersion) {
+            maxBetaVersionNum = tempBetaVersion;
+          }
         }
-      }
-    });
-
-    // basic version without branchName -> use basic version + branch name + beta version
-    targetPackageJson.version = `${basicVersion}-${branchNameInVersion}.${maxBetaVersionNum + 1}`;
-
-    await fs.outputFile(path.join(targetRoot, 'package.json'), `${JSON.stringify(targetPackageJson, null, 2)}\n`);
-
-    if (!(await isWorkingTreeClean())) {
-      await exec(`git add -A; git commit -m "upgrade ${sourceType} version to ${targetPackageJson.version}" -n`, {
-        cwd: pri.projectRootPath,
       });
-    }
+
+      // basic version without branchName -> use basic version + branch name + beta version
+      targetPackageJson.version = `${basicVersion}-${branchNameInVersion}.${maxBetaVersionNum + 1}`;
+
+      await fs.outputFile(path.join(targetRoot, 'package.json'), `${JSON.stringify(targetPackageJson, null, 2)}\n`);
+
+      if (!(await isWorkingTreeClean())) {
+        await exec(`git add -A; git commit -m "upgrade ${sourceType} version to ${targetPackageJson.version}" -n`, {
+          cwd: pri.projectRootPath,
+        });
+      }
     } else if (versionResult) {
       if (!options.semver) {
         const versionPrompt = await inquirer.prompt([
@@ -367,6 +367,10 @@ async function moveSourceFilesToTempFolderAndPublish(
   }
   await copyDeclaration(sourceType, publishTempName);
   await fs.copy(path.join(targetRoot, 'package.json'), path.join(tempRoot, 'package.json'));
+
+  if (fs.existsSync(path.join(targetRoot, 'README.md'))) {
+    await fs.copy(path.join(targetRoot, 'README.md'), path.join(tempRoot, 'README.md'));
+  }
 
   // Add external deps
   const targetPackageJson = await fs.readJson(path.join(tempRoot, 'package.json'));
