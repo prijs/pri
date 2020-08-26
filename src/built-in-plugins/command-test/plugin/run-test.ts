@@ -9,10 +9,11 @@ export const runTest = async () => {
   execSync(
     [
       findNearestNodemodulesFile('/.bin/jest'),
+      `--roots "${pri.sourceRoot}"`,
       `--testRegex "${path.join(pri.sourceRoot, testsPath.dir)}/.*\\.tsx?$"`,
       '--moduleFileExtensions ts tsx js jsx',
       `--transform '${JSON.stringify({
-        [`${path.join(pri.sourceRoot, testsPath.dir)}/.*\\.tsx?$`]: path.join(__dirname, './jest-transformer'),
+        [`${pri.sourceRoot}/.*\\.tsx?$`]: path.join(__dirname, './jest-transformer'),
       })}'`,
       // `--setupFilesAfterEnv '${path.join(__dirname, './jest-setup')}'`,
       '--coverage',

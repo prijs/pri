@@ -19,17 +19,25 @@ const stats = {
   hash: false,
 };
 
+const vendors = [
+  'react',
+  'react-dom',
+  'lodash',
+  'highlight.js',
+  'react-router',
+  'history',
+  `${PRI_PACKAGE_NAME}/client`,
+  ...(globalState.sourceConfig.extraVendors ?? []),
+];
+
 export default (opts: IOptions) => {
   const result: webpack.Configuration = {
     mode: 'development',
 
     entry: {
-      library: plugin.devDllPipes.reduce(
-        (all, fn) => {
-          return fn(all);
-        },
-        ['react', 'react-dom', 'lodash', 'highlight.js', 'react-router', 'history', `${PRI_PACKAGE_NAME}/client`],
-      ),
+      library: plugin.devDllPipes.reduce((all, fn) => {
+        return fn(all);
+      }, vendors),
     },
 
     output: {
