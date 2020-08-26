@@ -17,6 +17,7 @@ import { logFatal, logInfo, spinner, logText } from '../../../utils/log';
 import { getMonoAndNpmDepsOnce, DepMap } from '../../../utils/packages';
 import { ProjectConfig, PackageInfo } from '../../../utils/define';
 import { isOwner } from '../../../utils/npm';
+import { README_FILE } from '../../../utils/constants';
 
 export const publish = async (options: PublishOption) => {
   const currentBranchName = options.branch ? options.branch : await getCurrentBranchName();
@@ -367,6 +368,12 @@ async function moveSourceFilesToTempFolderAndPublish(
   }
   await copyDeclaration(sourceType, publishTempName);
   await fs.copy(path.join(targetRoot, 'package.json'), path.join(tempRoot, 'package.json'));
+
+  if (fs.existsSync(path.join(targetRoot, README_FILE))) {
+    await fs.copy(path.join(targetRoot, README_FILE), path.join(tempRoot, README_FILE));
+  } else if (fs.existsSync(path.join(targetRoot, README_FILE.toLowerCase()))) {
+    await fs.copy(path.join(targetRoot, README_FILE.toLowerCase()), path.join(tempRoot, README_FILE));
+  }
 
   // Add external deps
   const targetPackageJson = await fs.readJson(path.join(tempRoot, 'package.json'));
