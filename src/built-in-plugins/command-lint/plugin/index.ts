@@ -21,5 +21,6 @@ pri.commands.registerCommand({
     } catch (error) {
       logFatal(error);
     }
+    process.exit(0);
   },
 });
