@@ -73,7 +73,12 @@ export const runWebpackDevServer = async (opts: IOptions<IExtraOptions>) => {
         ignored: /node_modules/,
       }),
     },
-    headers: { 'Access-Control-Allow-Origin': '*' },
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Credentials': 'true',
+      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
+      'Access-Control-Allow-Headers': 'X-Requested-With, content-type, Authorization, x-csrf-token',
+    },
     clientLogLevel: 'warn',
     disableHostCheck: true,
     port: opts.devServerPort,
