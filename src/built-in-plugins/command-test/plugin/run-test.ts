@@ -4,6 +4,7 @@ import { pri } from '../../../node';
 import { logText } from '../../../utils/log';
 import { findNearestNodemodulesFile } from '../../../utils/npm-finder';
 import { testsPath } from '../../../utils/structor-config';
+import { globalState } from '../../../utils/global-state';
 
 export const runTest = async () => {
   execSync(
@@ -17,6 +18,18 @@ export const runTest = async () => {
       })}'`,
       // `--setupFilesAfterEnv '${path.join(__dirname, './jest-setup')}'`,
       '--coverage',
+      // 测试支持自定义 packages 别名
+      `--moduleNameMapper '${JSON.stringify(
+        globalState.packages.reduce((obj, eachPackage) => {
+          if (eachPackage.packageJson && eachPackage.packageJson.name) {
+            return {
+              ...obj,
+              [eachPackage.packageJson.name]: path.join(eachPackage.rootPath, 'src'),
+            };
+          }
+          return obj;
+        }, {}),
+      )}'`,
     ]
       .map(each => {
         return each.trim();
