@@ -156,7 +156,7 @@ export const getWebpackConfig = async (opts: IOptions) => {
   let { devtool } = opts;
 
   if (devtool === undefined) {
-    devtool = opts.mode === 'development' ? 'cheap-module-source-map' : false;
+    devtool = opts.mode === 'development' ? 'cheap-module-eval-source-map' : false;
   }
 
   const config: webpack.Configuration = {
