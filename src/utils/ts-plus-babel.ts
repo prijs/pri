@@ -89,12 +89,26 @@ const buildCssWithWebpack = (outDir: string, copyDir: string) => {
   });
 };
 
-const mvResources = (watch: boolean, outdir: string, wholeProject: boolean, sourcePath: string, sourceType: string) => {
+const mvResources = (
+  watch: boolean,
+  outdir: string,
+  wholeProject: boolean,
+  sourcePath: string,
+  sourceType: string,
+  moveStyle?: boolean,
+) => {
   const selectedSourceType = sourceType || pri.selectedSourceType;
   const targetPath =
     wholeProject || (selectedSourceType === 'root' && pri.sourceConfig.cssExtract)
-      ? path.join(pri.projectRootPath, '{src,packages}/**/*.{js,png,jpg,jpeg,gif,woff,woff2,eot,ttf,svg}')
-      : path.join(sourcePath || pri.sourceRoot, srcPath.dir, '**/*.{js,png,jpg,jpeg,gif,woff,woff2,eot,ttf,svg}');
+      ? path.join(
+          pri.projectRootPath,
+          `{src,packages}/**/*.{js,png,jpg,jpeg,gif,woff,woff2,eot,ttf,svg${moveStyle ? ',css,scss,less' : ''}}`,
+        )
+      : path.join(
+          sourcePath || pri.sourceRoot,
+          srcPath.dir,
+          `**/*.{js,png,jpg,jpeg,gif,woff,woff2,eot,ttf,svg${moveStyle ? ',css,scss,less' : ''}}`,
+        );
 
   return new Promise((resolve, reject) => {
     getGulpByWatch(watch, targetPath)
@@ -140,10 +154,12 @@ export const tsPlusBabel = async (watch = false, wholeProject = false, packageIn
   const rootDistPath = path.join(globalState.projectRootPath, pri.sourceConfig.distDir, packagePath);
   let mainDistPath = path.join(rootDistPath, 'main');
   let moduleDistPath = path.join(rootDistPath, 'module');
+  let esm5DistPath = path.join(rootDistPath, 'esm5');
 
   if (pri.sourceConfig.materialComponent) {
     mainDistPath = path.join(globalState.sourceRoot, 'lib');
     moduleDistPath = path.join(globalState.sourceRoot, 'es');
+    esm5DistPath = '';
   }
 
   const sourcePath = packageInfo ? packageInfo.rootPath : null;
@@ -187,8 +203,24 @@ export const tsPlusBabel = async (watch = false, wholeProject = false, packageIn
       wholeProject,
       sourcePath,
     ),
+    esm5DistPath &&
+      buildTs(
+        watch,
+        esm5DistPath,
+        plugin.buildConfigBabelLoaderOptionsPipes.reduce(
+          (options, fn) => {
+            return fn(options);
+          },
+          getBabelOptions({
+            modules: false,
+          }),
+        ),
+        wholeProject,
+        sourcePath,
+      ),
 
     mvResources(watch, mainDistPath, wholeProject, sourcePath, sourceType),
     mvResources(watch, moduleDistPath, wholeProject, sourcePath, sourceType),
+    esm5DistPath && mvResources(watch, esm5DistPath, wholeProject, sourcePath, sourceType, true),
   ]);
 };
