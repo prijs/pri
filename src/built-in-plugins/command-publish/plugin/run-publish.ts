@@ -481,6 +481,7 @@ async function addMissingDeps(
     } else {
       _.set(newPackageJson, 'main', `${pri.projectConfig.distDir}/main`);
       _.set(newPackageJson, 'module', `${pri.projectConfig.distDir}/module`);
+      _.set(newPackageJson, 'esm5', `${pri.projectConfig.distDir}/esm5`);
     }
     _.set(newPackageJson, 'types', 'declaration/index.d.ts');
   }
