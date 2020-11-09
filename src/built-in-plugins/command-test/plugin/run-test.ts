@@ -15,6 +15,15 @@ export const runTest = async () => {
       '--moduleFileExtensions ts tsx js jsx',
       `--transform '${JSON.stringify({
         [`${pri.sourceRoot}/.*\\.tsx?$`]: path.join(__dirname, './jest-transformer'),
+        ...globalState.packages.reduce((obj, eachPackage) => {
+          if (eachPackage.rootPath) {
+            return {
+              ...obj,
+              [`${path.join(eachPackage.rootPath, 'src')}/.*\\.tsx?$`]: path.join(__dirname, './jest-transformer'),
+            };
+          }
+          return obj;
+        }, {}),
       })}'`,
       // `--setupFilesAfterEnv '${path.join(__dirname, './jest-setup')}'`,
       '--coverage',
