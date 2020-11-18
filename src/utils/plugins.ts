@@ -18,6 +18,7 @@ import {
   CommandRegister,
   ProjectType,
   IDevDllList,
+  IJestConfigPipe,
 } from './define';
 
 import * as pluginClientSsr from '../built-in-plugins/client-ssr';
@@ -88,6 +89,8 @@ export class IPluginConfig {
   public lintFilters: ILintFilter[] = [];
 
   public devDllPipes: IDevDllList[] = [];
+
+  public jestConfigPipes: IJestConfigPipe[] = [];
 
   // Lock init type
   public initType: ProjectType = null;

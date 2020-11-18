@@ -21,6 +21,16 @@ pri.commands.registerCommand({
     skipLint: {
       description: 'Skip lint',
     },
+    updateSnapshot: {
+      alias: 'u',
+      description: 'Update snapshot',
+    },
+    watch: {
+      description: 'Watch files for changes and rerun tests related to changed files',
+    },
+    watchAll: {
+      description: 'Watch files for changes and rerun all tests',
+    },
   },
   action: async (options: IOpts) => {
     if (!options.skipLint) {
@@ -36,6 +46,6 @@ pri.commands.registerCommand({
     await pri.project.checkProjectFiles();
 
     const runTestModule = await import('./run-test');
-    runTestModule.runTest();
+    runTestModule.runTest(options);
   },
 });
