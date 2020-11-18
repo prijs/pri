@@ -139,7 +139,7 @@ export const getWebpackConfig = async (opts: IOptions) => {
 
   const extraCssInProd = (...loaders: any[]) => {
     // Enable cssExtract, but not in bundle command.
-    if (globalState.sourceConfig.cssExtract && yargs.argv._[0] !== 'bundle' && yargs.argv._[0] !== 'debug') {
+    if (globalState.sourceConfig.cssExtract && yargs.argv._[0] !== 'bundle' && !yargs.argv._[0].startsWith('debug')) {
       if (globalState.isDevelopment) {
         return [styleLoader, ...loaders];
       }
