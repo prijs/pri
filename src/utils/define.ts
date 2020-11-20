@@ -326,3 +326,5 @@ export interface IPluginModule {
 }
 
 export type IDevDllList = (list: string[]) => string[];
+
+export type IJestConfigPipe = (options: any) => any;
