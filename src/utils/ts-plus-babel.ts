@@ -52,7 +52,7 @@ const buildSass = (watch: boolean, outdir: string, wholeProject: boolean, source
     wholeProject || (pri.selectedSourceType === 'root' && pri.sourceConfig.cssExtract)
       ? path.join(pri.projectRootPath, '{src,packages}/**/*.scss')
       : path.join(sourcePath || pri.sourceRoot, srcPath.dir, '**/*.scss');
-
+  const a = 1;
   return new Promise((resolve, reject) => {
     getGulpByWatch(watch, targetPath)
       .pipe(
