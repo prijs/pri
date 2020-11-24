@@ -17,7 +17,7 @@ import { babelPluginTransformImport } from './babel-plugin-transfer-import';
 import { PackageInfo } from './define';
 import { runWebpack } from './webpack';
 
-function getGulpByWatch(watch: boolean, filesPath: string) {
+function getGulpByWatch(watch: boolean, filesPath: string | string[]) {
   if (watch) {
     return gulpWatch(filesPath);
   }
@@ -25,13 +25,6 @@ function getGulpByWatch(watch: boolean, filesPath: string) {
   return gulp.src(filesPath);
 }
 
-function getCssByWatch(watch: boolean, filesPath: Array<any>) {
-  if (watch) {
-    return gulpWatch(filesPath);
-  }
-  /** 文件匹配 */
-  return gulp.src(filesPath);
-}
 const buildTs = (watch: boolean, outdir: string, babelOptions: any, wholeProject: boolean, sourcePath: string) => {
   const targetPath = wholeProject
     ? path.join(pri.projectRootPath, '{src,packages}/**/*.{ts,tsx}')
@@ -67,7 +60,7 @@ const buildSassAndLess = (watch: boolean, outdir: string, wholeProject: boolean,
   const targetScssPath = getStyleFilePath('scss', wholeProject, sourcePath);
   const targetLessPath = getStyleFilePath('less', wholeProject, sourcePath);
   return new Promise((resolve, reject) => {
-    getCssByWatch(watch, [targetScssPath, targetLessPath])
+    getGulpByWatch(watch, [targetScssPath, targetLessPath])
       .pipe(
         gulpSass({
           includePaths: path.join(pri.projectRootPath, 'node_modules'),
