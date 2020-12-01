@@ -31,7 +31,6 @@ export function getBabelOptions(options?: Partial<DefaultOptions>) {
   return {
     babelrc: false,
     comments: globalState.isDevelopment,
-    cacheDirectory: true,
     presets: [[babelPresetEnv, { modules: mergedOptions.modules }], [babelPresetReact], [babelPresetTypescript]],
     plugins: [
       [transformRuntime],

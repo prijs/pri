@@ -132,9 +132,12 @@ export const getWebpackConfig = async (opts: IOptions) => {
 
   const babelLoader = {
     loader: 'babel-loader',
-    options: plugin.buildConfigBabelLoaderOptionsPipes.reduce((options, fn) => {
-      return fn(options);
-    }, getBabelOptions()),
+    options: plugin.buildConfigBabelLoaderOptionsPipes.reduce(
+      (options, fn) => {
+        return fn(options);
+      },
+      { ...getBabelOptions(), cacheDirectory: true },
+    ),
   };
 
   const extraCssInProd = (...loaders: any[]) => {
