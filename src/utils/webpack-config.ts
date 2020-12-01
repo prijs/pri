@@ -341,7 +341,7 @@ export const getWebpackConfig = async (opts: IOptions) => {
   }
 
   if (!globalState.isDevelopment) {
-    if (globalState.sourceConfig.cssExtract && yargs.argv._[0] !== 'bundle' && yargs.argv._[0] !== 'debug') {
+    if (globalState.sourceConfig.cssExtract && yargs.argv._[0] !== 'bundle' && !yargs.argv._[0].startsWith('debug')) {
       config.plugins.push(
         new MiniCssExtractPlugin({
           filename: outCssFileName,
