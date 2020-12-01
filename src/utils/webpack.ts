@@ -1,11 +1,15 @@
 import * as webpack from 'webpack';
 import * as WebpackBar from 'webpackbar';
+import * as SpeedMeasurePlugin from 'speed-measure-webpack-plugin';
+import * as yargs from 'yargs';
 import { getWebpackConfig, IOptions } from './webpack-config';
 import { logWarn } from './log';
 
 interface IExtraOptions {
   pipeConfig?: (config?: webpack.Configuration) => Promise<webpack.Configuration>;
 }
+
+const smp = new SpeedMeasurePlugin();
 
 const stats = {
   warnings: false,
@@ -25,6 +29,10 @@ export const runWebpack = async (opts: IOptions<IExtraOptions>): Promise<any> =>
   }
 
   webpackConfig.plugins.push(new WebpackBar());
+
+  if (yargs.argv.measureSpeed) {
+    webpackConfig = smp.wrap(webpackConfig);
+  }
 
   const compiler = webpack(webpackConfig);
 
