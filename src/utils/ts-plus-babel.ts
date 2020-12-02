@@ -102,12 +102,12 @@ const mvResources = (
     wholeProject || (selectedSourceType === 'root' && pri.sourceConfig.cssExtract)
       ? path.join(
           pri.projectRootPath,
-          `{src,packages}/**/*.{js,png,jpg,jpeg,gif,woff,woff2,eot,ttf,svg${moveStyle ? ',css,scss,less' : ''}}`,
+          `{src,packages}/**/*.{js,json,png,jpg,jpeg,gif,woff,woff2,eot,ttf,svg${moveStyle ? ',css,scss,less' : ''}}`,
         )
       : path.join(
           sourcePath || pri.sourceRoot,
           srcPath.dir,
-          `**/*.{js,png,jpg,jpeg,gif,woff,woff2,eot,ttf,svg${moveStyle ? ',css,scss,less' : ''}}`,
+          `**/*.{js,json,png,jpg,jpeg,gif,woff,woff2,eot,ttf,svg${moveStyle ? ',css,scss,less' : ''}}`,
         );
 
   return new Promise((resolve, reject) => {
