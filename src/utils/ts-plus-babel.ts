@@ -2,6 +2,7 @@ import * as gulp from 'gulp';
 import * as fs from 'fs-extra';
 import * as gulpBabel from 'gulp-babel';
 import * as gulpSass from 'gulp-sass';
+import * as gulpLess from 'gulp-less';
 import * as gulpWatch from 'gulp-watch';
 import * as gulpStripCssComments from 'gulp-strip-css-comments';
 import * as gulpConcatCss from 'gulp-concat-css';
@@ -16,10 +17,11 @@ import { babelPluginTransformImport } from './babel-plugin-transfer-import';
 import { PackageInfo } from './define';
 import { runWebpack } from './webpack';
 
-function getGulpByWatch(watch: boolean, filesPath: string) {
+function getGulpByWatch(watch: boolean, filesPath: string | string[]) {
   if (watch) {
     return gulpWatch(filesPath);
   }
+  /** 文件匹配 */
   return gulp.src(filesPath);
 }
 
@@ -47,17 +49,26 @@ const buildTs = (watch: boolean, outdir: string, babelOptions: any, wholeProject
   });
 };
 
-const buildSass = (watch: boolean, outdir: string, wholeProject: boolean, sourcePath: string) => {
-  const targetPath =
-    wholeProject || (pri.selectedSourceType === 'root' && pri.sourceConfig.cssExtract)
-      ? path.join(pri.projectRootPath, '{src,packages}/**/*.scss')
-      : path.join(sourcePath || pri.sourceRoot, srcPath.dir, '**/*.scss');
+/** 获取样式文件路径 */
+function getStyleFilePath(suffix: string, wholeProject: boolean, sourcePath: string) {
+  return wholeProject || (pri.selectedSourceType === 'root' && pri.sourceConfig.cssExtract)
+    ? path.join(pri.projectRootPath, `{src,packages}/**/*.${suffix}`)
+    : path.join(sourcePath || pri.sourceRoot, srcPath.dir, `**/*.${suffix}`);
+}
 
+const buildSassAndLess = (watch: boolean, outdir: string, wholeProject: boolean, sourcePath: string) => {
+  const targetScssPath = getStyleFilePath('scss', wholeProject, sourcePath);
+  const targetLessPath = getStyleFilePath('less', wholeProject, sourcePath);
   return new Promise((resolve, reject) => {
-    getGulpByWatch(watch, targetPath)
+    getGulpByWatch(watch, [targetScssPath, targetLessPath])
       .pipe(
         gulpSass({
           includePaths: path.join(pri.projectRootPath, 'node_modules'),
+        }),
+      )
+      .pipe(
+        gulpLess({
+          paths: [path.join(pri.projectRootPath, 'node_modules', 'includes')],
         }),
       )
       .pipe(gulpIf(pri.sourceConfig.cssExtract, gulpConcatCss(pri.sourceConfig.outCssFileName)))
@@ -171,8 +182,8 @@ export const tsPlusBabel = async (watch = false, wholeProject = false, packageIn
   }
 
   return Promise.all([
-    pri.sourceConfig.componentEntries ? null : buildSass(watch, mainDistPath, wholeProject, sourcePath),
-    pri.sourceConfig.componentEntries ? null : buildSass(watch, moduleDistPath, wholeProject, sourcePath),
+    pri.sourceConfig.componentEntries ? null : buildSassAndLess(watch, mainDistPath, wholeProject, sourcePath),
+    pri.sourceConfig.componentEntries ? null : buildSassAndLess(watch, moduleDistPath, wholeProject, sourcePath),
 
     buildTs(
       watch,
