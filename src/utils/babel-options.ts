@@ -14,7 +14,6 @@ import transformRuntime from '@babel/plugin-transform-runtime';
 import babelPresetEnv from '@babel/preset-env';
 import babelPresetReact from '@babel/preset-react';
 import babelPresetTypescript from '@babel/preset-typescript';
-import babelPluginReactCssModules from 'babel-plugin-react-css-modules';
 import * as babelPluginReactHotLoader from 'react-hot-loader/babel';
 import * as _ from 'lodash';
 import { babelPluginReactWrappedDisplayName } from './babel-plugin-react-wrapped-display-name';
@@ -49,24 +48,6 @@ export function getBabelOptions(options?: Partial<DefaultOptions>) {
       [babelPluginProposalClassProperties, { loose: true }],
       [babelPluginProposalJsonStrings],
       [babelPluginProposalOptionalCatchBinding],
-      // TODO: gulp don't support css module
-      ...(globalState && globalState.sourceConfig && globalState.sourceConfig.type === 'project'
-        ? [
-            [
-              babelPluginReactCssModules,
-              {
-                filetypes: {
-                  '.scss': {
-                    syntax: 'postcss-scss',
-                  },
-                  '.less': {
-                    syntax: 'postcss-less',
-                  },
-                },
-              },
-            ],
-          ]
-        : []),
       ...mergedOptions.plugins,
     ],
   };

@@ -97,17 +97,21 @@ export const publish = async (options: PublishOption) => {
 };
 
 async function authPublish(packageNames: string[]) {
-  let name: string;
-  try {
-    const nameRet = execSync('tnpm whoami');
-    name = nameRet.toString().trim();
-  } catch (error) {
-    logFatal(error);
-  }
+  const getUserName = (npmClient = 'npm') => {
+    let name: string;
+    try {
+      const nameRet = execSync(`${npmClient} whoami`);
+      name = nameRet.toString().trim();
+    } catch (error) {
+      logFatal(error);
+    }
+    return name;
+  };
+
   const failedPkgSet = new Set<string>();
-  const checkOwner = (uName: string, pName: string) =>
+  const checkOwner = (uName: string, pName: string, npmClient?: string) =>
     new Promise((res, rej) => {
-      isOwner(uName, pName)
+      isOwner(uName, pName, npmClient)
         .then(v => {
           if (!v) {
             failedPkgSet.add(pName);
@@ -116,7 +120,14 @@ async function authPublish(packageNames: string[]) {
         })
         .catch(e => rej(e));
     });
-  const pkgsP = packageNames.map(p => checkOwner(name, p));
+
+  const pkgsP = packageNames.map(p => {
+    const packageConfig =
+      p === pri.projectPackageJson.name
+        ? pri.projectConfig
+        : pri.packages.find(eachPackage => eachPackage.packageJson.name === p)?.config;
+    return checkOwner(getUserName(packageConfig?.npmClient), p, packageConfig?.npmClient);
+  });
   await Promise.all(pkgsP);
   if (failedPkgSet.size > 0) {
     logFatal(`Permission error: need ownership to publish these packages. \n ${Array.from(failedPkgSet).join('\n')}`);

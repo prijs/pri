@@ -132,9 +132,12 @@ export const getWebpackConfig = async (opts: IOptions) => {
 
   const babelLoader = {
     loader: 'babel-loader',
-    options: plugin.buildConfigBabelLoaderOptionsPipes.reduce((options, fn) => {
-      return fn(options);
-    }, getBabelOptions()),
+    options: plugin.buildConfigBabelLoaderOptionsPipes.reduce(
+      (options, fn) => {
+        return fn(options);
+      },
+      { ...getBabelOptions(), cacheDirectory: true },
+    ),
   };
 
   const extraCssInProd = (...loaders: any[]) => {
@@ -341,7 +344,7 @@ export const getWebpackConfig = async (opts: IOptions) => {
   }
 
   if (!globalState.isDevelopment) {
-    if (globalState.sourceConfig.cssExtract && yargs.argv._[0] !== 'bundle' && yargs.argv._[0] !== 'debug') {
+    if (globalState.sourceConfig.cssExtract && yargs.argv._[0] !== 'bundle' && !yargs.argv._[0].startsWith('debug')) {
       config.plugins.push(
         new MiniCssExtractPlugin({
           filename: outCssFileName,
