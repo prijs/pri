@@ -4,15 +4,19 @@ import * as normalizePath from 'normalize-path';
 import * as open from 'open';
 import * as path from 'path';
 import * as urlJoin from 'url-join';
+import * as yargs from 'yargs';
 import * as webpack from 'webpack';
 import * as WebpackBar from 'webpackbar';
 import * as CircularDependencyPlugin from 'circular-dependency-plugin';
 import * as _ from 'lodash';
 import * as WebpackDevServer from 'webpack-dev-server';
+import * as SpeedMeasurePlugin from 'speed-measure-webpack-plugin';
 import { globalState } from './global-state';
 import { tempPath } from './structor-config';
 import { logInfo } from './log';
 import { getWebpackConfig, IOptions } from './webpack-config';
+
+const smp = new SpeedMeasurePlugin();
 
 interface IExtraOptions {
   pipeConfig?: (config?: webpack.Configuration) => Promise<webpack.Configuration>;
@@ -85,6 +89,10 @@ export const runWebpackDevServer = async (opts: IOptions<IExtraOptions>) => {
   } as any;
 
   WebpackDevServer.addDevServerEntrypoints(webpackConfig as any, webpackDevServerConfig);
+
+  if (yargs.argv.measureSpeed) {
+    webpackConfig = smp.wrap(webpackConfig);
+  }
 
   const compiler = webpack(webpackConfig);
 
