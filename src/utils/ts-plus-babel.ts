@@ -17,7 +17,7 @@ import { babelPluginTransformImport } from './babel-plugin-transfer-import';
 import { PackageInfo } from './define';
 import { runWebpack } from './webpack';
 
-function getGulpByWatch(watch: boolean, filesPath: string | string[]) {
+function getGulpByWatch(watch: boolean, filesPath: string) {
   if (watch) {
     return gulpWatch(filesPath);
   }
@@ -56,16 +56,27 @@ function getStyleFilePath(suffix: string, wholeProject: boolean, sourcePath: str
     : path.join(sourcePath || pri.sourceRoot, srcPath.dir, `**/*.${suffix}`);
 }
 
-const buildSassAndLess = (watch: boolean, outdir: string, wholeProject: boolean, sourcePath: string) => {
+const buildSass = (watch: boolean, outdir: string, wholeProject: boolean, sourcePath: string) => {
   const targetScssPath = getStyleFilePath('scss', wholeProject, sourcePath);
-  const targetLessPath = getStyleFilePath('less', wholeProject, sourcePath);
   return new Promise((resolve, reject) => {
-    getGulpByWatch(watch, [targetScssPath, targetLessPath])
+    getGulpByWatch(watch, targetScssPath)
       .pipe(
         gulpSass({
           includePaths: path.join(pri.projectRootPath, 'node_modules'),
         }),
       )
+      .pipe(gulpIf(pri.sourceConfig.cssExtract, gulpConcatCss(pri.sourceConfig.outCssFileName)))
+      .pipe(gulpStripCssComments())
+      .on('error', reject)
+      .pipe(gulp.dest(outdir))
+      .on('end', resolve);
+  });
+};
+
+const buildLess = (watch: boolean, outdir: string, wholeProject: boolean, sourcePath: string) => {
+  const targetLessPath = getStyleFilePath('less', wholeProject, sourcePath);
+  return new Promise((resolve, reject) => {
+    getGulpByWatch(watch, targetLessPath)
       .pipe(
         gulpLess({
           paths: [path.join(pri.projectRootPath, 'node_modules', 'includes')],
@@ -77,6 +88,11 @@ const buildSassAndLess = (watch: boolean, outdir: string, wholeProject: boolean,
       .pipe(gulp.dest(outdir))
       .on('end', resolve);
   });
+};
+
+const buildSassOrLess = (watch: boolean, outdir: string, wholeProject: boolean, sourcePath: string) => {
+  buildSass(watch, outdir, wholeProject, sourcePath);
+  buildLess(watch, outdir, wholeProject, sourcePath);
 };
 
 const buildCssWithWebpack = (outDir: string, copyDir: string) => {
@@ -182,8 +198,8 @@ export const tsPlusBabel = async (watch = false, wholeProject = false, packageIn
   }
 
   return Promise.all([
-    pri.sourceConfig.componentEntries ? null : buildSassAndLess(watch, mainDistPath, wholeProject, sourcePath),
-    pri.sourceConfig.componentEntries ? null : buildSassAndLess(watch, moduleDistPath, wholeProject, sourcePath),
+    pri.sourceConfig.componentEntries ? null : buildSassOrLess(watch, mainDistPath, wholeProject, sourcePath),
+    pri.sourceConfig.componentEntries ? null : buildSassOrLess(watch, moduleDistPath, wholeProject, sourcePath),
 
     buildTs(
       watch,
