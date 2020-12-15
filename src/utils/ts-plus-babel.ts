@@ -8,6 +8,7 @@ import * as gulpStripCssComments from 'gulp-strip-css-comments';
 import * as gulpConcatCss from 'gulp-concat-css';
 import * as gulpIf from 'gulp-if';
 import * as gulpSourcemaps from 'gulp-sourcemaps';
+import * as mergeStream from 'merge-stream';
 import * as path from 'path';
 import { pri, srcPath } from '../node';
 import { plugin } from './plugins';
@@ -56,43 +57,41 @@ function getStyleFilePath(suffix: string, wholeProject: boolean, sourcePath: str
     : path.join(sourcePath || pri.sourceRoot, srcPath.dir, `**/*.${suffix}`);
 }
 
-const buildSass = (watch: boolean, outdir: string, wholeProject: boolean, sourcePath: string) => {
+const buildSass = (wholeProject: boolean, sourcePath: string) => {
   const targetScssPath = getStyleFilePath('scss', wholeProject, sourcePath);
-  return new Promise((resolve, reject) => {
-    getGulpByWatch(watch, targetScssPath)
-      .pipe(
-        gulpSass({
-          includePaths: path.join(pri.projectRootPath, 'node_modules'),
-        }),
-      )
-      .pipe(gulpIf(pri.sourceConfig.cssExtract, gulpConcatCss(pri.sourceConfig.outCssFileName)))
-      .pipe(gulpStripCssComments())
-      .on('error', reject)
-      .pipe(gulp.dest(outdir))
-      .on('end', resolve);
-  });
+  return gulp.src(targetScssPath).pipe(
+    gulpSass({
+      includePaths: path.join(pri.projectRootPath, 'node_modules'),
+    }),
+  );
 };
 
-const buildLess = (watch: boolean, outdir: string, wholeProject: boolean, sourcePath: string) => {
+const buildLess = (wholeProject: boolean, sourcePath: string) => {
   const targetLessPath = getStyleFilePath('less', wholeProject, sourcePath);
-  return new Promise((resolve, reject) => {
-    getGulpByWatch(watch, targetLessPath)
-      .pipe(
-        gulpLess({
-          paths: [path.join(pri.projectRootPath, 'node_modules', 'includes')],
-        }),
-      )
+  return gulp.src(targetLessPath).pipe(
+    gulpLess({
+      paths: [path.join(pri.projectRootPath, 'node_modules', 'includes')],
+    }),
+  );
+};
+
+const buildSassAndLess = (watch: boolean, outdir: string, wholeProject: boolean, sourcePath: string) => {
+  const targetPath = getStyleFilePath('{scss,less}', wholeProject, sourcePath);
+  const mergeStyle = (resolve: (value?: any) => void, reject: (value?: any) => void) =>
+    mergeStream(buildLess(wholeProject, sourcePath), buildSass(wholeProject, sourcePath))
       .pipe(gulpIf(pri.sourceConfig.cssExtract, gulpConcatCss(pri.sourceConfig.outCssFileName)))
       .pipe(gulpStripCssComments())
       .on('error', reject)
       .pipe(gulp.dest(outdir))
       .on('end', resolve);
-  });
-};
-
-const buildSassOrLess = (watch: boolean, outdir: string, wholeProject: boolean, sourcePath: string) => {
-  buildSass(watch, outdir, wholeProject, sourcePath);
-  buildLess(watch, outdir, wholeProject, sourcePath);
+  if (watch) {
+    return new Promise((resolve, reject) => {
+      gulpWatch(targetPath, () => {
+        mergeStyle(resolve, reject);
+      });
+    });
+  }
+  return new Promise(mergeStyle);
 };
 
 const buildCssWithWebpack = (outDir: string, copyDir: string) => {
@@ -198,8 +197,8 @@ export const tsPlusBabel = async (watch = false, wholeProject = false, packageIn
   }
 
   return Promise.all([
-    pri.sourceConfig.componentEntries ? null : buildSassOrLess(watch, mainDistPath, wholeProject, sourcePath),
-    pri.sourceConfig.componentEntries ? null : buildSassOrLess(watch, moduleDistPath, wholeProject, sourcePath),
+    pri.sourceConfig.componentEntries ? null : buildSassAndLess(watch, mainDistPath, wholeProject, sourcePath),
+    pri.sourceConfig.componentEntries ? null : buildSassAndLess(watch, moduleDistPath, wholeProject, sourcePath),
 
     buildTs(
       watch,
