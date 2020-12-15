@@ -1,6 +1,7 @@
 import * as fs from 'fs-extra';
 import * as _ from 'lodash';
 import * as path from 'path';
+import * as yargs from 'yargs';
 import * as pkg from '../../../../package.json';
 import { pri } from '../../../node';
 import { PRI_PACKAGE_NAME, CONFIG_FILE } from '../../../utils/constants';
@@ -18,8 +19,6 @@ import {
 import { ensureComponentFiles } from './ensure-component';
 import { ensurePluginFiles } from './ensure-plugin';
 import { ensureProjectFiles } from './ensure-project';
-
-import yargs = require('yargs');
 
 export const main = async () => {
   ensureGitignore();

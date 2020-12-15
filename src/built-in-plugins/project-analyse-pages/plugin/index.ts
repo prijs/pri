@@ -52,10 +52,7 @@ pri.project.onAnalyseProject(files => {
             return true;
           })
           .map(file => {
-            const relativePathWithoutIndex = path.relative(pri.sourceRoot, file.dir);
-            const routerPath = normalizePath(
-              `/${path.relative(path.join(pri.sourceRoot, pagesPath.dir), relativePathWithoutIndex)}`,
-            );
+            const routerPath = normalizePath(`/${path.relative(path.join(pri.sourceRoot, pagesPath.dir), file.dir)}`);
             const chunkName = _.camelCase(routerPath) || 'index';
 
             const relativePageFilePath = path.relative(pri.sourceRoot, `${file.dir}/${file.name}`);
