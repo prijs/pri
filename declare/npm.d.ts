@@ -25,6 +25,7 @@ declare module 'gulp-sass';
 declare module 'gulp-concat';
 declare module 'gulp-typescript';
 declare module 'gulp-watch';
+declare module 'merge-stream';
 declare module 'express';
 declare module 'react-markdown';
 declare module 'gulp-sourcemaps';

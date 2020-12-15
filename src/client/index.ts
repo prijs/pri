@@ -7,7 +7,7 @@ const priStore = (window as any).pri;
 const { globalState } = priStore;
 
 export const history = createBrowserHistory({
-  basename: globalState.projectConfig.baseHref,
+  basename: globalState.sourceConfig.baseHref,
 });
 
 export const { isDevelopment } = globalState;
