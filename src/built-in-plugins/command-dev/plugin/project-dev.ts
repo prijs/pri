@@ -14,11 +14,11 @@ import { getPluginsByOrder } from '../../../utils/plugins';
 import { prettierConfig } from '../../../utils/prettier-config';
 import * as projectState from '../../../utils/project-state';
 import { tempJsEntryPath, tempPath } from '../../../utils/structor-config';
-import { runWebpack } from '../../../utils/webpack';
+import { runWebpack, bundleDlls } from '../../../utils/webpack';
 import { runWebpackDevServer } from '../../../utils/webpack-dev-server';
 import dashboardClientServer from './dashboard/server/client-server';
 import dashboardServer from './dashboard/server/index';
-import { bundleDlls, dllMainfestName, dllOutPath, libraryStaticPath } from './dll';
+import { dllOutPath, dllFileName, dllMainfestName, libraryStaticPath } from './dll';
 
 const dashboardBundleFileName = 'main';
 
@@ -99,7 +99,7 @@ async function debugProject() {
     return scopeAnalyseInfo;
   });
 
-  await bundleDlls();
+  await bundleDlls({ dllOutPath, dllFileName, dllMainfestName });
 
   // Bundle dashboard if plugins changed or dashboard bundle not exist.
   const dashboardDistDir = path.join(pri.projectRootPath, tempPath.dir, 'static/dashboard-bundle');

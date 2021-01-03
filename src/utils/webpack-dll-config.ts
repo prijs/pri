@@ -1,14 +1,15 @@
 import * as path from 'path';
 import * as webpack from 'webpack';
 import * as WebpackBar from 'webpackbar';
-import { PRI_PACKAGE_NAME } from '../../../utils/constants';
-import { globalState } from '../../../utils/global-state';
-import { plugin } from '../../../utils/plugins';
+import { PRI_PACKAGE_NAME } from './constants';
+import { globalState } from './global-state';
+import { plugin } from './plugins';
 
-interface IOptions {
+export interface IDllOptions {
   dllOutPath: string;
   dllFileName: string;
   dllMainfestName: string;
+  pipeConfig?: (config?: webpack.Configuration) => Promise<webpack.Configuration>;
 }
 
 const stats = {
@@ -30,7 +31,7 @@ const vendors = [
   ...(globalState.sourceConfig.extraVendors ?? []),
 ];
 
-export default (opts: IOptions) => {
+export const getWebpackDllConfig = (opts: IDllOptions) => {
   const result: webpack.Configuration = {
     mode: 'development',
 
@@ -78,7 +79,7 @@ export default (opts: IOptions) => {
         // From project node_modules
         path.join(globalState.projectRootPath, 'node_modules'),
         // Self node_modules
-        path.join(__dirname, '../../../node_modules'),
+        path.join(__dirname, '../../node_modules'),
       ],
     },
 

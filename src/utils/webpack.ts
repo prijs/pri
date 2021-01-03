@@ -1,8 +1,12 @@
+import * as fs from 'fs';
+import * as path from 'path';
 import * as webpack from 'webpack';
 import * as WebpackBar from 'webpackbar';
 import * as SpeedMeasurePlugin from 'speed-measure-webpack-plugin';
 import * as yargs from 'yargs';
 import { getWebpackConfig, IOptions } from './webpack-config';
+import { getWebpackDllConfig, IDllOptions } from './webpack-dll-config';
+import { hasNodeModules, hasNodeModulesModified, hasExtraVendorsChanged, hasPackageChanged } from './project-helper';
 import { logWarn } from './log';
 
 interface IExtraOptions {
@@ -59,6 +63,31 @@ export const watchWebpack = async (opts: IOptions<IExtraOptions>): Promise<any> 
       logWarn(status.toString());
     }
   });
+};
+
+export const runWebpackDll = async (opts: IDllOptions): Promise<any> => {
+  let webpackConfig = getWebpackDllConfig(opts);
+
+  if (opts.pipeConfig) {
+    webpackConfig = await opts.pipeConfig(webpackConfig);
+  }
+
+  const compiler = webpack(webpackConfig);
+  return runCompiler(compiler);
+};
+
+/**
+ * Bundle dlls when node_modules changed, dlls not exist, extraVendors changed, or package to dev changed;
+ */
+export const bundleDlls = async (opts: IDllOptions): Promise<any> => {
+  if (
+    hasPackageChanged() ||
+    hasExtraVendorsChanged() ||
+    (hasNodeModules() && hasNodeModulesModified()) ||
+    !fs.existsSync(path.join(opts.dllOutPath, opts.dllFileName))
+  ) {
+    await runWebpackDll(opts);
+  }
 };
 
 function runCompiler(compiler: webpack.Compiler) {

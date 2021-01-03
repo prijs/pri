@@ -63,6 +63,14 @@ export const runWebpackDevServer = async (opts: IOptions<IExtraOptions>) => {
     hotOnly: opts.hot,
     publicPath: opts.publicPath,
     before: (app: any) => {
+      app.use((req: any, res: any, next: any) => {
+        // CORS
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+        res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+        res.setHeader('Access-Control-Allow-Credentials', true);
+        next();
+      });
       app.use('/', express.static(path.join(globalState.projectRootPath, tempPath.dir, 'static')));
     },
     compress: true,
