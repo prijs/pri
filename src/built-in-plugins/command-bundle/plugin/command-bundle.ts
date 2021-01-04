@@ -6,9 +6,9 @@ import { componentEntry, pri } from '../../../node';
 import { logFatal } from '../../../utils/log';
 import { plugin } from '../../../utils/plugins';
 import { IOpts } from './interface';
-import { runWebpack } from '../../../utils/webpack';
+import { runWebpack, bundleDlls } from '../../../utils/webpack';
 import { runWebpackDevServer } from '../../../utils/webpack-dev-server';
-import { bundleDlls, dllMainfestName, dllOutPath, libraryStaticPath } from '../../command-dev/plugin/dll';
+import { dllOutPath, dllFileName, dllMainfestName, libraryStaticPath } from '../../command-dev/plugin/dll';
 import { globalState } from '../../../utils/global-state';
 import { WrapContent } from '../../../utils/webpack-plugin-wrap-content';
 
@@ -38,7 +38,7 @@ export const commandBundle = async (opts: IOpts = {}) => {
   } else {
     const freePort = await portfinder.getPortPromise({ port: pri.sourceConfig.devPort });
 
-    await bundleDlls();
+    await bundleDlls({ dllOutPath, dllFileName, dllMainfestName });
 
     runWebpackDevServer({
       mode: 'development',

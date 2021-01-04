@@ -22,7 +22,6 @@ export function onAnalyseProject(mockFilesPath: string[]) {
   pri.serviceWorker.pipe(text => {
     return `
       ${text}
-      // Get mock list start
       ${mocks.join('\n')}
 
       var allMocks = {${mockFilesPath
@@ -36,7 +35,6 @@ export function onAnalyseProject(mockFilesPath: string[]) {
         var mock = allMocks[mockKey]
         mockList.push({ url: new URL(mockKey, location), value: mock })
       })
-      // Get mock list end
 
       self.addEventListener("fetch", event => {
         var requestUrl = new URL(event.request.url)

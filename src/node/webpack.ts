@@ -14,3 +14,8 @@ export const devServer = async (opts: any) => {
   const { runWebpackDevServer } = await import('../utils/webpack-dev-server');
   await runWebpackDevServer(opts);
 };
+
+export const dll = async (opts: any) => {
+  const { bundleDlls } = await import('../utils/webpack');
+  await bundleDlls(opts);
+};
