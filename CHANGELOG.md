@@ -1,5 +1,5 @@
-<a name="4.2.9-beta.0"></a>
-## [4.2.9-beta.0](https://github.com/prijs/pri/compare/4.2.8...4.2.9-beta.0) (2021-01-07)
+<a name="4.2.9"></a>
+## [4.2.9](https://github.com/prijs/pri/compare/4.2.8...4.2.9) (2021-01-07)
 
 
 ### Bug Fixes
