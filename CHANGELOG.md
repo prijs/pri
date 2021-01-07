@@ -1,5 +1,56 @@
-<a name="4.2.1"></a>
-## [4.2.1](https://github.com/prijs/pri/compare/3.3.28-beta.5...4.2.1) (2020-10-01)
+<a name="4.2.9"></a>
+## [4.2.9](https://github.com/prijs/pri/compare/4.2.8...4.2.9) (2021-01-07)
+
+
+### Bug Fixes
+
+* format ([a52444e](https://github.com/prijs/pri/commit/a52444e))
+
+
+### Features
+
+* upgrade prettier ([3331d3d](https://github.com/prijs/pri/commit/3331d3d))
+
+
+
+<a name="4.2.8"></a>
+## [4.2.8](https://github.com/prijs/pri/compare/4.2.7...4.2.8) (2021-01-03)
+
+
+### Bug Fixes
+
+* 子包路由解析问题 ([37da1be](https://github.com/prijs/pri/commit/37da1be))
+
+
+### Features
+
+* 合并scss和less编译 ([75b3d53](https://github.com/prijs/pri/commit/75b3d53))
+* **pri:** component构建添加less编译 ([1901397](https://github.com/prijs/pri/commit/1901397))
+* **pri:** fix ([5ef7134](https://github.com/prijs/pri/commit/5ef7134))
+* **pri:** 优化函数 ([299f196](https://github.com/prijs/pri/commit/299f196))
+* **pri:** 修改编译scss和less代码 ([1e587a1](https://github.com/prijs/pri/commit/1e587a1))
+
+
+
+<a name="4.2.7"></a>
+## [4.2.7](https://github.com/prijs/pri/compare/4.2.6...4.2.7) (2020-12-03)
+
+
+### Bug Fixes
+
+* babel-loader options ([01ec7be](https://github.com/prijs/pri/commit/01ec7be))
+* move json file ([414fb61](https://github.com/prijs/pri/commit/414fb61))
+* npmClient for publish ([7fcb940](https://github.com/prijs/pri/commit/7fcb940))
+
+
+### Features
+
+* add feat/speedMeasure ([940e817](https://github.com/prijs/pri/commit/940e817))
+
+
+
+<a name="4.2.6"></a>
+## [4.2.6](https://github.com/prijs/pri/compare/3.3.28-beta.5...4.2.6) (2020-12-01)
 
 
 ### Bug Fixes
@@ -8,11 +59,12 @@
 * add prettier format to lint ([d6f8261](https://github.com/prijs/pri/commit/d6f8261))
 * auth selected package ([6987871](https://github.com/prijs/pri/commit/6987871))
 * autofix package.version while betaBranch ([596b803](https://github.com/prijs/pri/commit/596b803))
-* bug ([3510f52](https://github.com/prijs/pri/commit/3510f52))
 * bug ([c37b05b](https://github.com/prijs/pri/commit/c37b05b))
 * bug ([b65ab71](https://github.com/prijs/pri/commit/b65ab71))
+* bug ([3510f52](https://github.com/prijs/pri/commit/3510f52))
 * correct module type ([a088f61](https://github.com/prijs/pri/commit/a088f61))
 * correct module type ([027bd79](https://github.com/prijs/pri/commit/027bd79))
+* debug ([1f3eee1](https://github.com/prijs/pri/commit/1f3eee1))
 * deps analysis add react-router-dom ([0148632](https://github.com/prijs/pri/commit/0148632))
 * eslint ([e592b8e](https://github.com/prijs/pri/commit/e592b8e))
 * execSync with reasonable args length ([22342bb](https://github.com/prijs/pri/commit/22342bb))
@@ -25,10 +77,10 @@
 * nested node_modules ([8e79cce](https://github.com/prijs/pri/commit/8e79cce))
 * npm test support packages alias name ([7bacda9](https://github.com/prijs/pri/commit/7bacda9))
 * npx ([18e799c](https://github.com/prijs/pri/commit/18e799c))
-* publish error ([c813439](https://github.com/prijs/pri/commit/c813439))
 * publish error ([594cec5](https://github.com/prijs/pri/commit/594cec5))
-* publish error ([f215748](https://github.com/prijs/pri/commit/f215748))
 * publish error ([d06c26e](https://github.com/prijs/pri/commit/d06c26e))
+* publish error ([c813439](https://github.com/prijs/pri/commit/c813439))
+* publish error ([f215748](https://github.com/prijs/pri/commit/f215748))
 * rebase error ([2fc0d6f](https://github.com/prijs/pri/commit/2fc0d6f))
 * rebuild dll when extraVendors changed or project changed ([45f2f36](https://github.com/prijs/pri/commit/45f2f36))
 * rebuild dll when extraVendors changed or project changed ([40a3c21](https://github.com/prijs/pri/commit/40a3c21))
@@ -39,6 +91,7 @@
 * rm global no-console ([bc216db](https://github.com/prijs/pri/commit/bc216db))
 * update ([722c764](https://github.com/prijs/pri/commit/722c764))
 * use sync mode when process.stdio is connected to pipe ([9eb7a50](https://github.com/prijs/pri/commit/9eb7a50))
+* 修复子package互相引用的时候，测试报错的问题 ([55570a9](https://github.com/prijs/pri/commit/55570a9))
 * 修复组件编译模式无差别产生 sourcemap ([06a444f](https://github.com/prijs/pri/commit/06a444f))
 
 
@@ -48,8 +101,9 @@
 * add babelPluginReactWrappedDisplayName ([6dd820e](https://github.com/prijs/pri/commit/6dd820e))
 * add changeLog to publish script ([66526f7](https://github.com/prijs/pri/commit/66526f7))
 * add ensure files config ([2e78cc5](https://github.com/prijs/pri/commit/2e78cc5))
-* add hotLoader option ([ceb6f48](https://github.com/prijs/pri/commit/ceb6f48))
+* add esm5 field ([8e20b94](https://github.com/prijs/pri/commit/8e20b94))
 * add hotLoader option ([52c8bdb](https://github.com/prijs/pri/commit/52c8bdb))
+* add hotLoader option ([ceb6f48](https://github.com/prijs/pri/commit/ceb6f48))
 * add jest react babel support ([949d38f](https://github.com/prijs/pri/commit/949d38f))
 * add path ([7cc1705](https://github.com/prijs/pri/commit/7cc1705))
 * add project root id to pri config ([ae38a55](https://github.com/prijs/pri/commit/ae38a55))
@@ -66,8 +120,9 @@
 * deploy 4.0.10 ([93970bb](https://github.com/prijs/pri/commit/93970bb))
 * deploy 4.0.3 ([2c38dd8](https://github.com/prijs/pri/commit/2c38dd8))
 * deploy 4.0.8 ([a97852a](https://github.com/prijs/pri/commit/a97852a))
-* extradll ([8c9ed2d](https://github.com/prijs/pri/commit/8c9ed2d))
+* deploy 4.2.5 ([16a2024](https://github.com/prijs/pri/commit/16a2024))
 * extradll ([4535505](https://github.com/prijs/pri/commit/4535505))
+* extradll ([8c9ed2d](https://github.com/prijs/pri/commit/8c9ed2d))
 * fix bug ([5c6e107](https://github.com/prijs/pri/commit/5c6e107))
 * fix bug ([ecbe690](https://github.com/prijs/pri/commit/ecbe690))
 * fix memo name ([a5ea73d](https://github.com/prijs/pri/commit/a5ea73d))
@@ -77,24 +132,25 @@
 * rename rootId to projectRootId ([f03aa40](https://github.com/prijs/pri/commit/f03aa40))
 * revert webpack version ([a022d94](https://github.com/prijs/pri/commit/a022d94))
 * support bundle dev dll ([e533954](https://github.com/prijs/pri/commit/e533954))
+* support customize jest config ([fd1fd15](https://github.com/prijs/pri/commit/fd1fd15))
 * support material component ([caf27b3](https://github.com/prijs/pri/commit/caf27b3))
 * support max two level packages ([19e89c1](https://github.com/prijs/pri/commit/19e89c1))
 * support nested packages ([d1029b9](https://github.com/prijs/pri/commit/d1029b9))
 * support remote version ([8712f28](https://github.com/prijs/pri/commit/8712f28))
 * support skiplint for test command ([f251b22](https://github.com/prijs/pri/commit/f251b22))
 * support webpack for component build ([ff78bfe](https://github.com/prijs/pri/commit/ff78bfe))
-* update ([bb4ea0b](https://github.com/prijs/pri/commit/bb4ea0b))
 * update ([e959701](https://github.com/prijs/pri/commit/e959701))
+* update ([bb4ea0b](https://github.com/prijs/pri/commit/bb4ea0b))
 * update ([b0c585b](https://github.com/prijs/pri/commit/b0c585b))
 * update .vscode ([4f48549](https://github.com/prijs/pri/commit/4f48549))
 * update deps ([5678dcc](https://github.com/prijs/pri/commit/5678dcc))
-* update docs ([afa3110](https://github.com/prijs/pri/commit/afa3110))
 * update docs ([8118dc7](https://github.com/prijs/pri/commit/8118dc7))
+* update docs ([afa3110](https://github.com/prijs/pri/commit/afa3110))
 * update eslintrc ([d949c81](https://github.com/prijs/pri/commit/d949c81))
 * update gitignore ([6ac2310](https://github.com/prijs/pri/commit/6ac2310))
-* update lock ([4efdb17](https://github.com/prijs/pri/commit/4efdb17))
 * update lock ([ede0ce8](https://github.com/prijs/pri/commit/ede0ce8))
 * update lock ([692edae](https://github.com/prijs/pri/commit/692edae))
+* update lock ([4efdb17](https://github.com/prijs/pri/commit/4efdb17))
 * update type check ([16353e1](https://github.com/prijs/pri/commit/16353e1))
 * upgrade eslint-plugin-react-hooks ([5f5ae96](https://github.com/prijs/pri/commit/5f5ae96))
 * upgrade ts 3.8 ([261bf1d](https://github.com/prijs/pri/commit/261bf1d))

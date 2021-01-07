@@ -137,10 +137,7 @@ const mvResources = (
         );
 
   return new Promise((resolve, reject) => {
-    getGulpByWatch(watch, targetPath)
-      .on('error', reject)
-      .pipe(gulp.dest(outdir))
-      .on('end', resolve);
+    getGulpByWatch(watch, targetPath).on('error', reject).pipe(gulp.dest(outdir)).on('end', resolve);
   });
 };
 
