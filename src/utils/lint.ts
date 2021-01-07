@@ -66,11 +66,7 @@ export async function lint(options?: Partial<DefaultOptions>) {
       lintFilesPattern = `"${lintFilesPattern}"`;
     }
   } else {
-    lintFiles = _.compact(
-      execSync('git diff --cached --name-only --diff-filter=ACM')
-        .toString()
-        .split('\n'),
-    )
+    lintFiles = _.compact(execSync('git diff --cached --name-only --diff-filter=ACM').toString().split('\n'))
       .filter(file => {
         return file.match(/^(src|packages).+(ts|tsx)$/);
       })
