@@ -146,7 +146,14 @@ async function debugProject() {
     autoOpenBrowser: true,
     hot: pri.sourceConfig.hotReload,
     publicPath: globalState.sourceConfig.publicPath,
-    entryPath: path.join(globalState.projectRootPath, path.format(tempJsEntryPath)),
+    entryPath: {
+      [path.basename(pri.sourceConfig.outFileName, '.js')]: path.join(
+        globalState.projectRootPath,
+        path.format(tempJsEntryPath),
+      ),
+      ...pri.sourceConfig.entries,
+    },
+    outFileName: '[name].js',
     devServerPort: freePort,
     htmlTemplatePath: path.join(__dirname, '../../../../template-project.ejs'),
     htmlTemplateArgs: {

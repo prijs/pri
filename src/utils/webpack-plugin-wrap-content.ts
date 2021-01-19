@@ -1,5 +1,7 @@
 import * as webpack from 'webpack';
 import * as ConcatSource from 'webpack-sources';
+import * as _ from 'lodash';
+import { pri } from '../node';
 
 export class WrapContent {
   private header = '';
@@ -21,8 +23,7 @@ export class WrapContent {
               return;
             }
 
-            if (chunk.name === 'main') {
-              // eslint-disable-next-line no-param-reassign
+            if (chunk.name === 'main' || _.has(pri.sourceConfig.entries, chunk.name)) {
               compilation.assets[fileName] = new ConcatSource.ConcatSource(
                 this.header,
                 compilation.assets[fileName],

@@ -286,6 +286,11 @@ export class ProjectConfig {
    * extra vendors defined in priConfig, which you dont want to rebundle during project rebuid
    */
   public extraVendors: string[] = [];
+
+  /*
+   * project extra entries
+   */
+  public entries: IEntryPath;
 }
 
 export type SetPipe = (pipeName: string, callback: PipeCallback) => void;
