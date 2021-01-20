@@ -32,7 +32,11 @@ export const buildProject = async (opts: IOpts = {}) => {
   // Build project
   const stats = await runWebpack({
     mode: 'production',
-    entryPath: result.entryPath,
+    entryPath: {
+      [path.basename(pri.sourceConfig.outFileName, '.js')]: result.entryPath,
+      ...pri.sourceConfig.entries,
+    },
+    outFileName: '[name].js',
     publicPath: opts.publicPath, // If unset, use config value.
     pipeConfig: async config => {
       staticHtmlPaths.forEach(staticHtmlPath => {
