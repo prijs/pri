@@ -10,13 +10,15 @@ import * as gulpIf from 'gulp-if';
 import * as gulpSourcemaps from 'gulp-sourcemaps';
 import * as mergeStream from 'merge-stream';
 import * as path from 'path';
+import * as _ from 'lodash';
+import * as webpack from 'webpack';
 import { pri, srcPath } from '../node';
 import { plugin } from './plugins';
 import { getBabelOptions } from './babel-options';
 import { globalState } from './global-state';
 import { babelPluginTransformImport } from './babel-plugin-transfer-import';
 import { PackageInfo } from './define';
-import { runWebpack } from './webpack';
+import { runWebpack, bundleDlls } from './webpack';
 
 function getGulpByWatch(watch: boolean, filesPath: string) {
   if (watch) {
@@ -95,24 +97,57 @@ const buildSassAndLess = (watch: boolean, outdir: string, wholeProject: boolean,
 };
 
 const buildCssWithWebpack = (outDir: string, copyDir: string) => {
-  const cssFileNames = Object.keys(pri.sourceConfig.componentEntries).map(file => `${file}.css`);
+  const entryNames = Object.keys(pri.sourceConfig.componentEntries);
 
-  return runWebpack({
-    mode: 'production',
-    entryPath: pri.sourceConfig.componentEntries,
-    distDir: outDir,
-    outFileName: '[name].js',
-    outCssFileName: '[name].css',
-  }).then(() => {
-    const distFiles = fs.readdirSync(outDir);
-    distFiles.forEach(file => {
-      const basename = path.basename(file);
-      if (!cssFileNames.includes(basename)) {
-        fs.removeSync(path.join(outDir, file));
-      }
+  const dllOutPath = path.join(globalState.projectRootPath, '.temp/static/dlls');
+  const dllFileName = 'main.dll.js';
+  const dllMainfestName = 'manifest.json';
+
+  return bundleDlls({ dllOutPath, dllFileName, dllMainfestName })
+    .then(() => {
+      return entryNames.reduce((promise, name) => {
+        return promise.then(() =>
+          runWebpack({
+            mode: 'production',
+            entryPath: { [name]: pri.sourceConfig.componentEntries[name] },
+            distDir: outDir,
+            outFileName: '[name].js',
+            outCssFileName: '[name].css',
+            pipeConfig: async config => {
+              _.set(config, ['optimization', 'splitChunks', 'cacheGroups', `styles`], {
+                name: `${name}-styles`,
+                test: /\.css|scss|less$/,
+                chunks: 'all',
+                enforce: true,
+              });
+
+              config.plugins.push(
+                new webpack.DllReferencePlugin({
+                  context: '.',
+                  // eslint-disable-next-line import/no-dynamic-require,global-require
+                  manifest: require(path.join(dllOutPath, dllMainfestName)),
+                }),
+              );
+
+              return config;
+            },
+          }),
+        );
+      }, Promise.resolve());
+    })
+    .then(() => {
+      const distFiles = fs.readdirSync(outDir);
+      distFiles.forEach(file => {
+        const fileEntryName = entryNames.find(name => `${name}-styles.css` === path.basename(file));
+        if (fileEntryName) {
+          fs.renameSync(path.join(outDir, file), path.join(outDir, `${fileEntryName}.css`));
+        } else {
+          fs.removeSync(path.join(outDir, file));
+        }
+      });
+
+      fs.copySync(outDir, copyDir);
     });
-    fs.copySync(outDir, copyDir);
-  });
 };
 
 const mvResources = (
