@@ -96,6 +96,7 @@
     "eslint-plugin-react": "7.19.0",
     "eslint-plugin-react-hooks": "3.0.0",
     "file-loader": "5.0.2",
+    "fork-ts-checker-webpack-plugin": "5.2.0",
     "fs-extra": "8.1.0",
     "gulp": "^4.0.2",
     "gulp-babel": "^8.0.0",

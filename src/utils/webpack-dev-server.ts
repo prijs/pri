@@ -11,6 +11,7 @@ import * as CircularDependencyPlugin from 'circular-dependency-plugin';
 import * as _ from 'lodash';
 import * as WebpackDevServer from 'webpack-dev-server';
 import * as SpeedMeasurePlugin from 'speed-measure-webpack-plugin';
+import * as ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
 import { globalState } from './global-state';
 import { tempPath } from './structor-config';
 import { logInfo } from './log';
@@ -31,6 +32,7 @@ interface IExtraOptions {
 
 const stats = {
   warnings: true,
+  assets: false,
   version: false,
   modules: false,
   entrypoints: false,
@@ -50,12 +52,24 @@ export const runWebpackDevServer = async (opts: IOptions<IExtraOptions>) => {
 
   webpackConfig.plugins.push(new WebpackBar());
 
-  webpackConfig.plugins.push(
-    new CircularDependencyPlugin({
-      exclude: /node_modules/,
-      cwd: process.cwd(),
-    }),
-  );
+  if (yargs.argv.checkCircular) {
+    webpackConfig.plugins.push(
+      new CircularDependencyPlugin({
+        exclude: /node_modules/,
+        cwd: process.cwd(),
+      }),
+    );
+  }
+
+  if (!yargs.argv.skipTypeCheck) {
+    webpackConfig.plugins.push(
+      new ForkTsCheckerWebpackPlugin({
+        typescript: {
+          mode: 'write-references',
+        },
+      }),
+    );
+  }
 
   const webpackDevServerConfig: WebpackDevServer.Configuration = {
     host: 'localhost',
