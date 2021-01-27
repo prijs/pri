@@ -118,9 +118,13 @@ export const getWebpackConfig = async (opts: IOptions) => {
 
   const sassLoader = {
     loader: 'sass-loader',
-    options: plugin.buildConfigSassLoaderOptionsPipes.reduce((options, fn) => {
-      return fn(options);
-    }, {}),
+    options: plugin.buildConfigSassLoaderOptionsPipes.reduce(
+      (options, fn) => {
+        return fn(options);
+      },
+      // eslint-disable-next-line global-require
+      { implementation: require('sass') },
+    ),
   };
 
   const lessLoader = {
