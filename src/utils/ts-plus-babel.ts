@@ -1,7 +1,7 @@
 import * as gulp from 'gulp';
 import * as fs from 'fs-extra';
 import * as gulpBabel from 'gulp-babel';
-import * as gulpSass from 'gulp-sass';
+import * as gulpSass from 'gulp-dart-sass';
 import * as gulpLess from 'gulp-less';
 import * as gulpWatch from 'gulp-watch';
 import * as gulpStripCssComments from 'gulp-strip-css-comments';
