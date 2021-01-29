@@ -52,7 +52,7 @@ export async function createCli(opts?: { pluginIncludeRoots: string[] }) {
 
   registerYargs(yargs, commandRegisterMap);
 
-  // eslint-disable-next-line no-unused-expressions
+  // eslint-disable-next-line babel/no-unused-expressions
   yargs.alias('help', 'h').alias('version', 'v').argv;
 
   /**

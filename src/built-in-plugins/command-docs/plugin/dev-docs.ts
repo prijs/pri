@@ -10,14 +10,6 @@ import { prettierConfig } from '../../../utils/prettier-config';
 import { tempPath, docsPath } from '../../../utils/structor-config';
 import { runWebpackDevServer } from '../../../utils/webpack-dev-server';
 
-interface IResult {
-  projectAnalyseDocs: {
-    docs: {
-      file: path.ParsedPath;
-    }[];
-  };
-}
-
 export async function devDocs() {
   const docsEntryPath = path.join(pri.projectRootPath, tempPath.dir, 'docs-entry.tsx');
   prepare(docsEntryPath);

@@ -65,6 +65,7 @@
     "no-underscore-dangle": 2,
     "eol-last": 2,
     "no-useless-rename": 2,
+    "no-undef": 0,
     "class-methods-use-this": 0,
     "prefer-destructuring": 0,
     "no-unused-vars": 0,
@@ -91,15 +92,16 @@
     "import/prefer-default-export": 0,
     "import/no-dynamic-require": 2,
     "@typescript-eslint/no-var-requires": 2,
-    "no-use-before-define": [
+    "no-use-before-define": 0,
+    "@typescript-eslint/no-use-before-define": [
       "error",
       {
         "functions": false
       }
     ],
-    "@typescript-eslint/no-use-before-define": 0,
     "@typescript-eslint/explicit-function-return-type": 0,
     "@typescript-eslint/interface-name-prefix": 0,
+    "@typescript-eslint/explicit-module-boundary-types": 0,
     "no-invalid-this": 0,
     "babel/no-invalid-this": 2,
     "no-await-in-loop": "off",

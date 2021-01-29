@@ -32,7 +32,7 @@ export function logSuccess(message: string) {
   signale.success(message);
 }
 
-export async function spinner<T>(message: string, fn: (error: (message?: string) => void) => T): Promise<T> {
+export async function spinner<T>(message: string, fn: (error: (msg?: string) => void) => T): Promise<T> {
   const oraSpinner = ora(colors.green(message)).start();
 
   let errorMessage: string = null;

@@ -1,6 +1,5 @@
 import { execSync } from 'child_process';
 import * as process from 'process';
-import { pri } from '../node';
 import { logFatal, logInfo, logSuccess } from './log';
 
 export function typeChecker() {

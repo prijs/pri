@@ -11,13 +11,6 @@ import { typeChecker } from './type-checker';
 
 export const eslintParam = "'./?(src|packages|docs|tests)/**/*.?(ts|tsx)'";
 
-interface Options {
-  lintAll?: boolean;
-  needFix?: boolean;
-  showBreakError?: boolean;
-  typeCheck?: boolean;
-}
-
 class DefaultOptions {
   lintAll = false;
 
@@ -33,7 +26,9 @@ export async function lint(options?: Partial<DefaultOptions>) {
   // 通过 child_process 运行 pri，stdio 设置 pipe 模式时, 标准输出是异步的, 导致输出被截断,
   // 此处判断在 pipe 模式设置成同步输出
   if (!process.stdout.isTTY) {
+    // eslint-disable-next-line no-underscore-dangle
     (process.stdout as any)?._handle?.setBlocking(true);
+    // eslint-disable-next-line no-underscore-dangle
     (process.stderr as any)?._handle?.setBlocking(true);
   }
   const { CLIEngine } = await import('eslint');
@@ -61,6 +56,7 @@ export async function lint(options?: Partial<DefaultOptions>) {
       lintFiles = glob.sync(lintFilesPattern);
       lintFilesPattern = `"${lintFilesPattern}"`;
     } else {
+      // eslint-disable-next-line max-len
       lintFilesPattern = `${globalState.projectRootPath}/${packagesPath.dir}/${globalState.selectedSourceType}/**/*.{ts,tsx}`;
       lintFiles = glob.sync(lintFilesPattern);
       lintFilesPattern = `"${lintFilesPattern}"`;
