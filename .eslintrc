@@ -102,6 +102,8 @@
     "@typescript-eslint/explicit-function-return-type": 0,
     "@typescript-eslint/interface-name-prefix": 0,
     "@typescript-eslint/explicit-module-boundary-types": 0,
+    "no-shadow": 0,
+    "@typescript-eslint/no-shadow": 2,
     "no-invalid-this": 0,
     "babel/no-invalid-this": 2,
     "no-await-in-loop": "off",
