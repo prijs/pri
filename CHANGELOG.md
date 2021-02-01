@@ -1,3 +1,35 @@
+<a name="4.3.0-beta.0"></a>
+# [4.3.0-beta.0](https://github.com/prijs/pri/compare/4.2.11...4.3.0-beta.0) (2021-01-29)
+
+
+### Bug Fixes
+
+* type ([f67ca43](https://github.com/prijs/pri/commit/f67ca43))
+
+
+### Features
+
+* update typescript and eslint ([39a49ee](https://github.com/prijs/pri/commit/39a49ee))
+
+
+
+<a name="4.2.11"></a>
+## [4.2.11](https://github.com/prijs/pri/compare/4.2.10...4.2.11) (2021-01-27)
+
+
+### Bug Fixes
+
+* chunk css extract ([55e47c8](https://github.com/prijs/pri/commit/55e47c8))
+
+
+### Features
+
+* optional check type and circular dependency ([4964fd0](https://github.com/prijs/pri/commit/4964fd0))
+* project support multiple entry ([a57e664](https://github.com/prijs/pri/commit/a57e664))
+* remove node-sass ([fba2433](https://github.com/prijs/pri/commit/fba2433))
+
+
+
 <a name="4.2.9"></a>
 ## [4.2.9](https://github.com/prijs/pri/compare/4.2.8...4.2.9) (2021-01-07)
 
