@@ -1,3 +1,38 @@
+<a name="4.2.12"></a>
+## [4.2.12](https://github.com/prijs/pri/compare/4.2.11...4.2.12) (2021-02-03)
+
+
+### Bug Fixes
+
+* analyse entry ([1f6e3f5](https://github.com/prijs/pri/commit/1f6e3f5))
+* analyse output ([39c6c0c](https://github.com/prijs/pri/commit/39c6c0c))
+* WrapContent plugin ([7dffb13](https://github.com/prijs/pri/commit/7dffb13))
+
+
+### Features
+
+* increase ts checker memory limit ([3cbac4a](https://github.com/prijs/pri/commit/3cbac4a))
+* run test support testRegex ([3184685](https://github.com/prijs/pri/commit/3184685))
+
+
+
+<a name="4.2.11"></a>
+## [4.2.11](https://github.com/prijs/pri/compare/4.2.10...4.2.11) (2021-01-27)
+
+
+### Bug Fixes
+
+* chunk css extract ([55e47c8](https://github.com/prijs/pri/commit/55e47c8))
+
+
+### Features
+
+* optional check type and circular dependency ([4964fd0](https://github.com/prijs/pri/commit/4964fd0))
+* project support multiple entry ([a57e664](https://github.com/prijs/pri/commit/a57e664))
+* remove node-sass ([fba2433](https://github.com/prijs/pri/commit/fba2433))
+
+
+
 <a name="4.2.9"></a>
 ## [4.2.9](https://github.com/prijs/pri/compare/4.2.8...4.2.9) (2021-01-07)
 
