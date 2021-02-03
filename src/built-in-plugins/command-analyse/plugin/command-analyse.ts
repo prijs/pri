@@ -27,6 +27,7 @@ export const commandAnalyse = async () => {
   await runWebpack({
     mode: 'production',
     entryPath,
+    outFileName: '[name].js',
     pipeConfig: async config => {
       config.plugins.push(new webpackBundleAnalyzer.BundleAnalyzerPlugin());
       return config;
