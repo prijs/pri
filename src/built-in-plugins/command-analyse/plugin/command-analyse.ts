@@ -1,5 +1,6 @@
 import * as webpackBundleAnalyzer from 'webpack-bundle-analyzer';
 import * as path from 'path';
+import { pri } from '../../../node';
 import { analyseProject } from '../../../utils/analyse-project';
 import { createEntry } from '../../../utils/create-entry';
 import { spinner } from '../../../utils/log';
@@ -8,13 +9,16 @@ import { globalState } from '../../../utils/global-state';
 import { componentEntry } from '../../../utils/structor-config';
 
 export const commandAnalyse = async () => {
-  let entryPath: string = null;
+  let entryPath: string | { [key: string]: string } = null;
 
   if (globalState.sourceConfig.type === 'project') {
     const result = await spinner('Analyse project', async () => {
       return { analyseInfo: await analyseProject(), entryPath: await createEntry() };
     });
-    ({ entryPath } = result);
+    entryPath = {
+      [path.basename(pri.sourceConfig.outFileName, '.js')]: result.entryPath,
+      ...pri.sourceConfig.entries,
+    };
   } else if (globalState.sourceConfig.type === 'component') {
     entryPath = path.join(globalState.sourceRoot, path.format(componentEntry));
   }
