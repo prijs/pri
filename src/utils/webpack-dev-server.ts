@@ -65,6 +65,7 @@ export const runWebpackDevServer = async (opts: IOptions<IExtraOptions>) => {
     webpackConfig.plugins.push(
       new ForkTsCheckerWebpackPlugin({
         typescript: {
+          memoryLimit: 8192,
           mode: 'write-references',
         },
       }),
