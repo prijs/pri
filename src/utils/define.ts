@@ -79,11 +79,15 @@ export class ProjectInfo {
  */
 interface ICricleDependDetectedConfig {
   // is enable detected or not
-  enable: boolean;
+  enable?: boolean;
   // exlude path for detected: default /node_modules/
-  exclude: RegExp;
+  exclude?: RegExp;
   // include path for detected: default empty is all files
-  include: RegExp;
+  include?: RegExp;
+  // extend option
+  extend?: {
+    [key: string]: string;
+  };
 }
 
 /**
@@ -307,7 +311,7 @@ export class ProjectConfig {
   /**
    * circle dependence detected config
    */
-  circleDetected?: ICricleDependDetectedConfig;
+  public circleDetected?: ICricleDependDetectedConfig;
 }
 
 export type SetPipe = (pipeName: string, callback: PipeCallback) => void;
