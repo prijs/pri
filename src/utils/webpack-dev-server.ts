@@ -55,7 +55,9 @@ export const runWebpackDevServer = async (opts: IOptions<IExtraOptions>) => {
   if (yargs.argv.checkCircular) {
     webpackConfig.plugins.push(
       new CircularDependencyPlugin({
-        exclude: /node_modules/,
+        // 排除localEditors的循环依赖 目前无解 只能排除
+        // 排除pre的循环依赖 pre已经不用 暂时排除 @TODO: pre删除后这里也不必屏蔽了
+        exclude: /fbi\/src\/utils\/localEditors\.ts|fbi\/packages\/pre|node_modules/,
         cwd: process.cwd(),
       }),
     );
