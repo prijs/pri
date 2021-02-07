@@ -52,12 +52,16 @@ export const runWebpackDevServer = async (opts: IOptions<IExtraOptions>) => {
 
   webpackConfig.plugins.push(new WebpackBar());
 
-  if (yargs.argv.checkCircular) {
+  // 如果启动命令开启循环依赖检查 或者命令没有开 但是项目配置中设置了开启 则进行循环依赖检查
+  if (
+    yargs.argv.checkCircular ||
+    (yargs.argv.checkCircular !== false && globalState.projectConfig.circleDetected?.enable === true)
+  ) {
     webpackConfig.plugins.push(
+      // 添加循环依赖插件
       new CircularDependencyPlugin({
-        // 排除localEditors的循环依赖 目前无解 只能排除
-        // 排除pre的循环依赖 pre已经不用 暂时排除 @TODO: pre删除后这里也不必屏蔽了
-        exclude: /fbi\/src\/utils\/localEditors\.ts|fbi\/packages\/pre|node_modules/,
+        // 优先使用项目配置中的排除路径 如果没有配置则默认排除node_modules
+        exclude: globalState.projectConfig.circleDetected?.exclude ?? /node_modules/,
         cwd: process.cwd(),
       }),
     );
