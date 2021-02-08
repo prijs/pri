@@ -52,10 +52,13 @@ export const runWebpackDevServer = async (opts: IOptions<IExtraOptions>) => {
 
   webpackConfig.plugins.push(new WebpackBar());
 
-  if (yargs.argv.checkCircular) {
+  // If set open in project config, perform a circular dependency check
+  if (globalState.projectConfig.circleDetected?.enable === true) {
     webpackConfig.plugins.push(
+      // Add circular dependency plugin
       new CircularDependencyPlugin({
-        exclude: /node_modules/,
+        // Give priority to the exclude path in the project configuration. If there is no configuration, node_modules will be excluded by default
+        exclude: globalState.projectConfig.circleDetected?.exclude ?? /node_modules/,
         cwd: process.cwd(),
       }),
     );

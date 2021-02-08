@@ -75,6 +75,16 @@ export class ProjectInfo {
 }
 
 /**
+ * circle dependence detected config
+ */
+interface ICricleDependDetectedConfig {
+  // is enable detected or not
+  enable?: boolean;
+  // exlude path for detected: default /node_modules/
+  exclude?: RegExp;
+}
+
+/**
  * Types for globalState
  */
 export class GlobalState {
@@ -291,6 +301,11 @@ export class ProjectConfig {
    * project extra entries
    */
   public entries: IEntryPath;
+
+  /**
+   * circle dependence detected config
+   */
+  public circleDetected?: ICricleDependDetectedConfig;
 }
 
 export type SetPipe = (pipeName: string, callback: PipeCallback) => void;
