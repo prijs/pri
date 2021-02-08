@@ -53,12 +53,10 @@ export const runWebpackDevServer = async (opts: IOptions<IExtraOptions>) => {
   webpackConfig.plugins.push(new WebpackBar());
 
   // If set open in project config, perform a circular dependency check
-  if (globalState.projectConfig.circleDetected?.enable === true) {
+  if (globalState.projectConfig.circularDetect?.enable) {
     webpackConfig.plugins.push(
-      // Add circular dependency plugin
       new CircularDependencyPlugin({
-        // Give priority to the exclude path in the project configuration. If there is no configuration, node_modules will be excluded by default
-        exclude: globalState.projectConfig.circleDetected?.exclude ?? /node_modules/,
+        exclude: globalState.projectConfig.circularDetect?.exclude ?? /node_modules/,
         cwd: process.cwd(),
       }),
     );
