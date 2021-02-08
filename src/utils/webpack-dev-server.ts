@@ -52,11 +52,8 @@ export const runWebpackDevServer = async (opts: IOptions<IExtraOptions>) => {
 
   webpackConfig.plugins.push(new WebpackBar());
 
-  // 如果启动命令开启循环依赖检查 或者命令没有开 但是项目配置中设置了开启 则进行循环依赖检查
-  if (
-    yargs.argv.checkCircular ||
-    (yargs.argv.checkCircular !== false && globalState.projectConfig.circleDetected?.enable === true)
-  ) {
+  // 如果项目配置中设置了开启 则进行循环依赖检查
+  if (globalState.projectConfig.circleDetected?.enable === true) {
     webpackConfig.plugins.push(
       // 添加循环依赖插件
       new CircularDependencyPlugin({
