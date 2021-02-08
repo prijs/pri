@@ -52,12 +52,12 @@ export const runWebpackDevServer = async (opts: IOptions<IExtraOptions>) => {
 
   webpackConfig.plugins.push(new WebpackBar());
 
-  // 如果项目配置中设置了开启 则进行循环依赖检查
+  // If set open in project config, perform a circular dependency check
   if (globalState.projectConfig.circleDetected?.enable === true) {
     webpackConfig.plugins.push(
-      // 添加循环依赖插件
+      // Add circular dependency plugin
       new CircularDependencyPlugin({
-        // 优先使用项目配置中的排除路径 如果没有配置则默认排除node_modules
+        // Give priority to the exclude path in the project configuration. If there is no configuration, node_modules will be excluded by default
         exclude: globalState.projectConfig.circleDetected?.exclude ?? /node_modules/,
         cwd: process.cwd(),
       }),
