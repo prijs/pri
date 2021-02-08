@@ -1,15 +1,18 @@
-<a name="4.3.0-beta.0"></a>
-# [4.3.0-beta.0](https://github.com/prijs/pri/compare/4.2.11...4.3.0-beta.0) (2021-01-29)
+<a name="4.2.12"></a>
+## [4.2.12](https://github.com/prijs/pri/compare/4.2.11...4.2.12) (2021-02-03)
 
 
 ### Bug Fixes
 
-* type ([f67ca43](https://github.com/prijs/pri/commit/f67ca43))
+* analyse entry ([1f6e3f5](https://github.com/prijs/pri/commit/1f6e3f5))
+* analyse output ([39c6c0c](https://github.com/prijs/pri/commit/39c6c0c))
+* WrapContent plugin ([7dffb13](https://github.com/prijs/pri/commit/7dffb13))
 
 
 ### Features
 
-* update typescript and eslint ([39a49ee](https://github.com/prijs/pri/commit/39a49ee))
+* increase ts checker memory limit ([3cbac4a](https://github.com/prijs/pri/commit/3cbac4a))
+* run test support testRegex ([3184685](https://github.com/prijs/pri/commit/3184685))
 
 
 

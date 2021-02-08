@@ -10,7 +10,7 @@ import { IOpts } from './interface';
 export const runTest = async (options: IOpts) => {
   const jestConfig = {
     rootDir: pri.sourceRoot,
-    testRegex: `${path.join(pri.sourceRoot, testsPath.dir)}/.*\\.tsx?$`,
+    testRegex: options.testRegex ?? `${path.join(pri.sourceRoot, testsPath.dir)}/.*\\.tsx?$`,
     moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
     coverage: true,
     updateSnapshot: options.updateSnapshot,

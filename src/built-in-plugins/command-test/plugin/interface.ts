@@ -5,4 +5,5 @@ export type IOpts = Arguments<{
   updateSnapshot?: boolean;
   watch?: boolean;
   watchAll?: boolean;
+  testRegex?: string | string[];
 }>;
