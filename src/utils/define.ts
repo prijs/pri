@@ -82,12 +82,6 @@ interface ICricleDependDetectedConfig {
   enable?: boolean;
   // exlude path for detected: default /node_modules/
   exclude?: RegExp;
-  // include path for detected: default empty is all files
-  include?: RegExp;
-  // extend option
-  extend?: {
-    [key: string]: string;
-  };
 }
 
 /**
