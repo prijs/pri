@@ -75,12 +75,10 @@ export class ProjectInfo {
 }
 
 /**
- * circle dependence detected config
+ * circular dependency detect config
  */
-interface ICricleDependDetectedConfig {
-  // is enable detected or not
+interface ICircularDetectConfig {
   enable?: boolean;
-  // exlude path for detected: default /node_modules/
   exclude?: RegExp;
 }
 
@@ -303,9 +301,9 @@ export class ProjectConfig {
   public entries: IEntryPath;
 
   /**
-   * circle dependence detected config
+   * circular dependency detect config
    */
-  public circleDetected?: ICricleDependDetectedConfig;
+  public circularDetect?: ICircularDetectConfig;
 }
 
 export type SetPipe = (pipeName: string, callback: PipeCallback) => void;
