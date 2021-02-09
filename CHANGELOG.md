@@ -1,3 +1,22 @@
+<a name="4.3.0"></a>
+# [4.3.0](https://github.com/prijs/pri/compare/4.2.12...4.3.0) (2021-02-09)
+
+
+### Bug Fixes
+
+* circular detect exclude ([7995320](https://github.com/prijs/pri/commit/7995320))
+* eslint no-shadow ([4d0368c](https://github.com/prijs/pri/commit/4d0368c))
+* type ([f67ca43](https://github.com/prijs/pri/commit/f67ca43))
+
+
+### Features
+
+* increase ts checker memory limit ([4922c52](https://github.com/prijs/pri/commit/4922c52))
+* support mode in webpack-dev-server ([ab8d718](https://github.com/prijs/pri/commit/ab8d718))
+* update typescript and eslint ([39a49ee](https://github.com/prijs/pri/commit/39a49ee))
+
+
+
 <a name="4.2.12"></a>
 ## [4.2.12](https://github.com/prijs/pri/compare/4.2.11...4.2.12) (2021-02-03)
 
