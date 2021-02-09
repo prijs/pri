@@ -54,9 +54,10 @@ export const runWebpackDevServer = async (opts: IOptions<IExtraOptions>) => {
 
   // If set open in project config, perform a circular dependency check
   if (globalState.projectConfig.circularDetect?.enable) {
+    const exclude = globalState.projectConfig.circularDetect?.exclude;
     webpackConfig.plugins.push(
       new CircularDependencyPlugin({
-        exclude: globalState.projectConfig.circularDetect?.exclude ?? /node_modules/,
+        exclude: exclude ? new RegExp(exclude) : /node_modules/,
         cwd: process.cwd(),
       }),
     );

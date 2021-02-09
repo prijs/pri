@@ -41,7 +41,7 @@ export const commandBundle = async (opts: IOpts = {}) => {
     await bundleDlls({ dllOutPath, dllFileName, dllMainfestName });
 
     runWebpackDevServer({
-      mode: 'development',
+      mode: opts.mode ?? 'development',
       outFileName: pri.sourceConfig.bundleFileName,
       devServerPort: freePort,
       publicPath: `https://localhost:${freePort}`,

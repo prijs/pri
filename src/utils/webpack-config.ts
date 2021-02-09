@@ -17,7 +17,7 @@ export interface IHtmlTemplateArgs {
   appendBody?: string;
 }
 
-export type IOptions<T = {}> = {
+export type IOptions<T = unknown> = {
   mode: 'development' | 'production';
   entryPath: string | string[] | IEntryPath;
   htmlTemplatePath?: string;

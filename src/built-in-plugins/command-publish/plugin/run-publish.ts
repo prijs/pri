@@ -15,7 +15,7 @@ import { commandBundle } from '../../command-bundle/plugin/command-bundle';
 import { isWorkingTreeClean, getCurrentBranchName } from '../../../utils/git-operate';
 import { logFatal, logInfo, spinner, logText } from '../../../utils/log';
 import { getMonoAndNpmDepsOnce, DepMap } from '../../../utils/packages';
-import { ProjectConfig, PackageInfo } from '../../../utils/define';
+import { ProjectConfig } from '../../../utils/define';
 import { isOwner } from '../../../utils/npm';
 import { README_FILE } from '../../../utils/constants';
 
@@ -63,7 +63,7 @@ export const publish = async (options: PublishOption) => {
             ]);
           }
 
-          // eslint-disable-next-line no-unused-expressions
+          // eslint-disable-next-line babel/no-unused-expressions
           !options.commitOnly && (await buildDeclaration());
 
           if (includeAllPrompt.includeAll) {
@@ -74,7 +74,7 @@ export const publish = async (options: PublishOption) => {
             }
           }
         } else {
-          // eslint-disable-next-line no-unused-expressions
+          // eslint-disable-next-line babel/no-unused-expressions
           !options.commitOnly && (await buildDeclaration());
         }
         if (selectedPkgJson?.name) {
@@ -83,7 +83,7 @@ export const publish = async (options: PublishOption) => {
         await publishByPackageName(currentSelectedSourceType, options, depMap, isDevelopBranch, currentBranchName);
 
         await fs.remove(path.join(pri.projectRootPath, tempPath.dir, declarationPath.dir));
-        // eslint-disable-next-line no-unused-expressions
+        // eslint-disable-next-line babel/no-unused-expressions
         !options.publishOnly && (await exec(`git push origin ${currentBranchName}`));
       }
       break;
@@ -92,7 +92,7 @@ export const publish = async (options: PublishOption) => {
     default:
     // Not sure what to do, so keep empty.
   }
-  // eslint-disable-next-line no-unused-expressions
+  // eslint-disable-next-line babel/no-unused-expressions
   options.exitAfterPublish && process.exit(0);
 };
 

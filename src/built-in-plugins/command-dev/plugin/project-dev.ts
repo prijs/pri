@@ -26,7 +26,7 @@ export const projectDev = async (options: any) => {
   if (options && options.debugDashboard) {
     await debugDashboard();
   } else {
-    await debugProject();
+    await debugProject(options);
   }
 };
 
@@ -62,7 +62,7 @@ async function debugDashboard() {
   });
 }
 
-async function debugProject() {
+async function debugProject(options?: any) {
   const freePort = pri.sourceConfig.devPort || (await portfinder.getPortPromise());
   const dashboardServerPort = await portfinder.getPortPromise({ port: freePort + 1 });
   const dashboardClientPort = await portfinder.getPortPromise({ port: freePort + 2 });
@@ -142,7 +142,7 @@ async function debugProject() {
 
   // Serve project
   await runWebpackDevServer({
-    mode: 'development',
+    mode: options?.mode ?? 'development',
     autoOpenBrowser: true,
     hot: pri.sourceConfig.hotReload,
     publicPath: globalState.sourceConfig.publicPath,

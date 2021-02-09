@@ -4,10 +4,6 @@ import { LayoutComponent } from './pages/layout';
 import { ApplicationContext, ApplicationReducer } from './stores';
 import { IPlugin } from './define';
 
-export default (plugins?: IPlugin[]) => {
-  ReactDOM.render(<Root plugins={plugins} />, document.getElementById('root'));
-};
-
 const Root = React.memo((props: { plugins: IPlugin[] }) => {
   const [state, dispatch] = React.useReducer(ApplicationReducer, {
     plugins: [],
@@ -28,3 +24,7 @@ const Root = React.memo((props: { plugins: IPlugin[] }) => {
     </ApplicationContext.Provider>
   );
 });
+
+export default (plugins?: IPlugin[]) => {
+  ReactDOM.render(<Root plugins={plugins} />, document.getElementById('root'));
+};
