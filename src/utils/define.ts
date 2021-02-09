@@ -79,7 +79,7 @@ export class ProjectInfo {
  */
 interface ICircularDetectConfig {
   enable?: boolean;
-  exclude?: RegExp;
+  exclude?: string;
 }
 
 /**
