@@ -1,3 +1,13 @@
+<a name="4.3.1"></a>
+## [4.3.1](https://github.com/prijs/pri/compare/4.3.0...4.3.1) (2021-02-20)
+
+
+### Bug Fixes
+
+* publish maxbuffer length exceeded error ([54e7197](https://github.com/prijs/pri/commit/54e7197))
+
+
+
 <a name="4.3.0"></a>
 # [4.3.0](https://github.com/prijs/pri/compare/4.2.12...4.3.0) (2021-02-09)
 

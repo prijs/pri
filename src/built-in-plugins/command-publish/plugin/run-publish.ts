@@ -399,7 +399,7 @@ async function moveSourceFilesToTempFolderAndPublish(
     finalTag = 'beta';
   }
 
-  await exec(`${targetConfig.npmClient} publish ${tempRoot} --ignore-scripts --tag ${finalTag}`, {
+  await exec(`${targetConfig.npmClient} publish ${tempRoot} --ignore-scripts --silent --tag ${finalTag}`, {
     cwd: tempRoot,
   });
 
