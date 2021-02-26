@@ -1,3 +1,13 @@
+<a name="4.3.2"></a>
+## [4.3.2](https://github.com/prijs/pri/compare/4.3.1...4.3.2) (2021-02-26)
+
+
+### Bug Fixes
+
+* lock babel-runtime version ([09b7794](https://github.com/prijs/pri/commit/09b7794))
+
+
+
 <a name="4.3.1"></a>
 ## [4.3.1](https://github.com/prijs/pri/compare/4.3.0...4.3.1) (2021-02-20)
 
