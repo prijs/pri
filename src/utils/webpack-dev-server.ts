@@ -22,7 +22,6 @@ const smp = new SpeedMeasurePlugin();
 
 interface IExtraOptions {
   pipeConfig?: (config?: webpack.Configuration) => Promise<webpack.Configuration>;
-  pipeDevServerConfig?: (config?: WebpackDevServer.Configuration) => Promise<webpack.Configuration>;
   devServerPort: number;
   publicPath: string;
   jsOnly?: boolean;
@@ -77,7 +76,7 @@ export const runWebpackDevServer = async (opts: IOptions<IExtraOptions>) => {
   }
 
   let webpackDevServerConfig: WebpackDevServer.Configuration = {
-    host: pri.sourceConfig.devHost || 'localhost',
+    host: pri.sourceConfig.host,
     hot: opts.hot,
     hotOnly: opts.hot,
     publicPath: opts.publicPath,
@@ -115,10 +114,6 @@ export const runWebpackDevServer = async (opts: IOptions<IExtraOptions>) => {
     port: opts.devServerPort,
   } as any;
 
-  if (opts.pipeDevServerConfig) {
-    webpackDevServerConfig = await opts.pipeDevServerConfig(webpackDevServerConfig);
-  }
-
   WebpackDevServer.addDevServerEntrypoints(webpackConfig as any, webpackDevServerConfig);
 
   if (yargs.argv.measureSpeed) {
@@ -129,16 +124,16 @@ export const runWebpackDevServer = async (opts: IOptions<IExtraOptions>) => {
 
   const devServer = new WebpackDevServer(compiler as any, webpackDevServerConfig);
 
-  const host = pri.sourceConfig.devHost || webpackDevServerConfig.host || 'localhost';
-
-  devServer.listen(opts.devServerPort, host, () => {
+  devServer.listen(opts.devServerPort, pri.sourceConfig.host, () => {
     let devUrl: string = null;
     const localSuggestUrl = urlJoin(
-      `${opts.https || globalState.sourceConfig.useHttps ? 'https' : 'http'}://${host}:${opts.devServerPort}`,
+      `${opts.https || globalState.sourceConfig.useHttps ? 'https' : 'http'}://${pri.sourceConfig.host}:${
+        opts.devServerPort
+      }`,
       globalState.sourceConfig.baseHref,
     );
 
-    if (opts.devUrl === host) {
+    if (opts.devUrl === pri.sourceConfig.host) {
       devUrl = localSuggestUrl;
     } else if (opts.devUrl !== undefined) {
       ({ devUrl } = opts);

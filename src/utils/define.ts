@@ -288,7 +288,7 @@ export class ProjectConfig {
   /**
    * entries for component build
    */
-  componentEntries: IEntryPath;
+  public componentEntries: IEntryPath;
 
   /*
    * extra vendors defined in priConfig, which you dont want to rebundle during project rebuid
@@ -304,6 +304,11 @@ export class ProjectConfig {
    * circular dependency detect config
    */
   public circularDetect?: ICircularDetectConfig;
+
+  /**
+   * custom host
+   */
+  public host: string = 'localhost';
 }
 
 export type SetPipe = (pipeName: string, callback: PipeCallback) => void;
