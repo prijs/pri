@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as io from 'socket.io-client';
-import { pri } from '../../../../../../node';
 import { IProjectStatus } from '../../server/project-status-interface';
 import { MainComponent } from './main/main';
 import { MenuComponent } from './menu/menu';
@@ -24,7 +23,7 @@ export const LayoutComponent = React.memo(() => {
   const socket = React.useRef<SocketIOClient.Socket>(null);
 
   React.useEffect(() => {
-    socket.current = io(`//${pri.sourceConfig.host}:${(window as any).serverPort}`);
+    socket.current = io(`//${window.location.hostname}:${(window as any).serverPort}`);
 
     // Get init project status
     socket.current.emit('getProjectStatus');
