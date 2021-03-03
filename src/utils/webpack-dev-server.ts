@@ -75,7 +75,7 @@ export const runWebpackDevServer = async (opts: IOptions<IExtraOptions>) => {
     );
   }
 
-  let webpackDevServerConfig: WebpackDevServer.Configuration = {
+  const webpackDevServerConfig: WebpackDevServer.Configuration = {
     host: pri.sourceConfig.host,
     hot: opts.hot,
     hotOnly: opts.hot,

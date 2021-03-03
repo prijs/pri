@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { pri } from '../../../../../../node';
 import * as io from 'socket.io-client';
+import { pri } from '../../../../../../node';
 import { IProjectStatus } from '../../server/project-status-interface';
 import { MainComponent } from './main/main';
 import { MenuComponent } from './menu/menu';
