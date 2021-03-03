@@ -57,7 +57,10 @@ export const CommandPreview = async () => {
   } else {
     open(
       ensureEndWithSlash(
-        urlJoin(`${pri.sourceConfig.useHttps ? 'https' : 'http'}://localhost:${freePort}`, pri.sourceConfig.baseHref),
+        urlJoin(
+          `${pri.sourceConfig.useHttps ? 'https' : 'http'}://${pri.sourceConfig.host}:${freePort}`,
+          pri.sourceConfig.baseHref,
+        ),
       ),
     );
   }

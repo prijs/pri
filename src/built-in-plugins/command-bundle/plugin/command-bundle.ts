@@ -44,7 +44,7 @@ export const commandBundle = async (opts: IOpts = {}) => {
       mode: opts.mode ?? 'development',
       outFileName: pri.sourceConfig.bundleFileName,
       devServerPort: freePort,
-      publicPath: `https://localhost:${freePort}`,
+      publicPath: `https://${pri.sourceConfig.host}:${freePort}`,
       jsOnly: true,
       entryPath: path.join(pri.sourceRoot, path.format(componentEntry)),
       pipeConfig: async config => {
@@ -66,7 +66,7 @@ export const commandBundle = async (opts: IOpts = {}) => {
         );
 
         const dllHttpPath = urlJoin(
-          `${globalState.sourceConfig.useHttps ? 'https' : 'http'}://localhost:${freePort}`,
+          `${globalState.sourceConfig.useHttps ? 'https' : 'http'}://${pri.sourceConfig.host}:${freePort}`,
           libraryStaticPath,
         );
 

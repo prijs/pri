@@ -16,6 +16,7 @@ import { globalState } from './global-state';
 import { tempPath } from './structor-config';
 import { logInfo } from './log';
 import { getWebpackConfig, IOptions } from './webpack-config';
+import { pri } from '../node';
 
 const smp = new SpeedMeasurePlugin();
 
@@ -74,8 +75,8 @@ export const runWebpackDevServer = async (opts: IOptions<IExtraOptions>) => {
     );
   }
 
-  const webpackDevServerConfig: WebpackDevServer.Configuration = {
-    host: 'localhost',
+  let webpackDevServerConfig: WebpackDevServer.Configuration = {
+    host: pri.sourceConfig.host,
     hot: opts.hot,
     hotOnly: opts.hot,
     publicPath: opts.publicPath,
@@ -123,14 +124,16 @@ export const runWebpackDevServer = async (opts: IOptions<IExtraOptions>) => {
 
   const devServer = new WebpackDevServer(compiler as any, webpackDevServerConfig);
 
-  devServer.listen(opts.devServerPort, 'localhost', () => {
+  devServer.listen(opts.devServerPort, pri.sourceConfig.host, () => {
     let devUrl: string = null;
     const localSuggestUrl = urlJoin(
-      `${opts.https || globalState.sourceConfig.useHttps ? 'https' : 'http'}://localhost:${opts.devServerPort}`,
+      `${opts.https || globalState.sourceConfig.useHttps ? 'https' : 'http'}://${pri.sourceConfig.host}:${
+        opts.devServerPort
+      }`,
       globalState.sourceConfig.baseHref,
     );
 
-    if (opts.devUrl === 'localhost') {
+    if (opts.devUrl === pri.sourceConfig.host) {
       devUrl = localSuggestUrl;
     } else if (opts.devUrl !== undefined) {
       ({ devUrl } = opts);

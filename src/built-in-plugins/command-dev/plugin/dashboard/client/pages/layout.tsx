@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { pri } from '../../../../../../node';
 import * as io from 'socket.io-client';
 import { IProjectStatus } from '../../server/project-status-interface';
 import { MainComponent } from './main/main';
@@ -23,7 +24,7 @@ export const LayoutComponent = React.memo(() => {
   const socket = React.useRef<SocketIOClient.Socket>(null);
 
   React.useEffect(() => {
-    socket.current = io(`//localhost:${(window as any).serverPort}`);
+    socket.current = io(`//${pri.sourceConfig.host}:${(window as any).serverPort}`);
 
     // Get init project status
     socket.current.emit('getProjectStatus');
