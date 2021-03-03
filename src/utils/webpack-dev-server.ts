@@ -13,10 +13,9 @@ import * as WebpackDevServer from 'webpack-dev-server';
 import * as SpeedMeasurePlugin from 'speed-measure-webpack-plugin';
 import * as ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
 import { globalState } from './global-state';
-import { tempPath } from './structor-config';
+import { tempPath, srcPath, packagesPath } from './structor-config';
 import { logInfo } from './log';
 import { getWebpackConfig, IOptions } from './webpack-config';
-import { pri } from '../node';
 
 const smp = new SpeedMeasurePlugin();
 
@@ -71,12 +70,20 @@ export const runWebpackDevServer = async (opts: IOptions<IExtraOptions>) => {
           memoryLimit: 8192,
           mode: 'write-references',
         },
+        eslint: {
+          memoryLimit: 8192,
+          enabled: globalState.sourceConfig.eslintChecker?.enabled ?? false,
+          files: globalState.sourceConfig.eslintChecker?.files ?? [
+            `./${srcPath.dir}/**/*.{ts,tsx}`,
+            `./${packagesPath.dir}/**/*.{ts,tsx}`,
+          ],
+        },
       }),
     );
   }
 
   const webpackDevServerConfig: WebpackDevServer.Configuration = {
-    host: pri.sourceConfig.host,
+    host: globalState.sourceConfig.host,
     hot: opts.hot,
     hotOnly: opts.hot,
     publicPath: opts.publicPath,
@@ -124,16 +131,16 @@ export const runWebpackDevServer = async (opts: IOptions<IExtraOptions>) => {
 
   const devServer = new WebpackDevServer(compiler as any, webpackDevServerConfig);
 
-  devServer.listen(opts.devServerPort, pri.sourceConfig.host, () => {
+  devServer.listen(opts.devServerPort, globalState.sourceConfig.host, () => {
     let devUrl: string = null;
     const localSuggestUrl = urlJoin(
-      `${opts.https || globalState.sourceConfig.useHttps ? 'https' : 'http'}://${pri.sourceConfig.host}:${
+      `${opts.https || globalState.sourceConfig.useHttps ? 'https' : 'http'}://${globalState.sourceConfig.host}:${
         opts.devServerPort
       }`,
       globalState.sourceConfig.baseHref,
     );
 
-    if (opts.devUrl === pri.sourceConfig.host) {
+    if (opts.devUrl === globalState.sourceConfig.host) {
       devUrl = localSuggestUrl;
     } else if (opts.devUrl !== undefined) {
       ({ devUrl } = opts);

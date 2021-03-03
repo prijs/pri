@@ -143,6 +143,11 @@ export class ProjectConfig {
   public title?: string = null;
 
   /**
+   * custom host
+   */
+  public host? = 'localhost';
+
+  /**
    * Dev server port, when execute npm start.
    */
   public devPort?: number = null;
@@ -306,9 +311,12 @@ export class ProjectConfig {
   public circularDetect?: ICircularDetectConfig;
 
   /**
-   * custom host
+   * eslint linting in dev mode
    */
-  public host? = 'localhost';
+  public eslintChecker?: {
+    enabled: boolean;
+    files: string | string[];
+  };
 }
 
 export type SetPipe = (pipeName: string, callback: PipeCallback) => void;
