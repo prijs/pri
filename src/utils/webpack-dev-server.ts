@@ -16,11 +16,13 @@ import { globalState } from './global-state';
 import { tempPath } from './structor-config';
 import { logInfo } from './log';
 import { getWebpackConfig, IOptions } from './webpack-config';
+import { pri } from '../node';
 
 const smp = new SpeedMeasurePlugin();
 
 interface IExtraOptions {
   pipeConfig?: (config?: webpack.Configuration) => Promise<webpack.Configuration>;
+  pipeDevServerConfig?: (config?: WebpackDevServer.Configuration) => Promise<webpack.Configuration>;
   devServerPort: number;
   publicPath: string;
   jsOnly?: boolean;
@@ -74,8 +76,8 @@ export const runWebpackDevServer = async (opts: IOptions<IExtraOptions>) => {
     );
   }
 
-  const webpackDevServerConfig: WebpackDevServer.Configuration = {
-    host: 'localhost',
+  let webpackDevServerConfig: WebpackDevServer.Configuration = {
+    host: pri.sourceConfig.devHost || 'localhost',
     hot: opts.hot,
     hotOnly: opts.hot,
     publicPath: opts.publicPath,
@@ -113,6 +115,10 @@ export const runWebpackDevServer = async (opts: IOptions<IExtraOptions>) => {
     port: opts.devServerPort,
   } as any;
 
+  if (opts.pipeDevServerConfig) {
+    webpackDevServerConfig = await opts.pipeDevServerConfig(webpackDevServerConfig);
+  }
+
   WebpackDevServer.addDevServerEntrypoints(webpackConfig as any, webpackDevServerConfig);
 
   if (yargs.argv.measureSpeed) {
@@ -123,14 +129,16 @@ export const runWebpackDevServer = async (opts: IOptions<IExtraOptions>) => {
 
   const devServer = new WebpackDevServer(compiler as any, webpackDevServerConfig);
 
-  devServer.listen(opts.devServerPort, 'localhost', () => {
+  const host = pri.sourceConfig.devHost || webpackDevServerConfig.host || 'localhost';
+
+  devServer.listen(opts.devServerPort, host, () => {
     let devUrl: string = null;
     const localSuggestUrl = urlJoin(
-      `${opts.https || globalState.sourceConfig.useHttps ? 'https' : 'http'}://localhost:${opts.devServerPort}`,
+      `${opts.https || globalState.sourceConfig.useHttps ? 'https' : 'http'}://${host}:${opts.devServerPort}`,
       globalState.sourceConfig.baseHref,
     );
 
-    if (opts.devUrl === 'localhost') {
+    if (opts.devUrl === host) {
       devUrl = localSuggestUrl;
     } else if (opts.devUrl !== undefined) {
       ({ devUrl } = opts);

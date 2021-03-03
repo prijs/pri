@@ -69,7 +69,9 @@ async function debugProject(options?: any) {
 
   const pipeConfig = async (config: webpack.Configuration) => {
     const dllHttpPath = urlJoin(
-      `${globalState.sourceConfig.useHttps ? 'https' : 'http'}://localhost:${freePort}`,
+      `${globalState.sourceConfig.useHttps ? 'https' : 'http'}://${
+        pri.sourceConfig.devHost || 'localhost'
+      }:${freePort}`,
       libraryStaticPath,
     );
 
@@ -280,7 +282,7 @@ function debugProjectPrepare(dashboardClientPort: number) {
         // Add dashboard iframe
         const dashboardIframe = document.createElement("iframe")
         dashboardIframe.id = "pri-help-iframe"
-        dashboardIframe.src = "//localhost:${dashboardClientPort}"
+        dashboardIframe.src = "//${pri.sourceConfig.devHost || 'localhost'}:${dashboardClientPort}"
         document.body.appendChild(dashboardIframe)
 
         // Add dashboard button

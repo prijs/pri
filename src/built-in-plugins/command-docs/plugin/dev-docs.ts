@@ -42,10 +42,12 @@ export async function devDocs() {
 
   await runWebpackDevServer({
     mode: 'development',
-    publicPath: `${pri.sourceConfig.useHttps ? 'https' : 'http'}://localhost:${freePort}`,
+    publicPath: `${pri.sourceConfig.useHttps ? 'https' : 'http'}://${
+      pri.sourceConfig.devHost || 'localhost'
+    }:${freePort}`,
     autoOpenBrowser: true,
     hot: pri.sourceConfig.hotReload,
-    devUrl: 'localhost',
+    devUrl: pri.sourceConfig.devHost || 'localhost',
     entryPath: docsEntryPath,
     devServerPort: freePort,
     htmlTemplatePath: path.join(__dirname, '../../../../template-project.ejs'),
