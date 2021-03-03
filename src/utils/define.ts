@@ -308,7 +308,7 @@ export class ProjectConfig {
   /**
    * custom host
    */
-  public host: string = 'localhost';
+  public host? = 'localhost';
 }
 
 export type SetPipe = (pipeName: string, callback: PipeCallback) => void;
