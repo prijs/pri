@@ -317,6 +317,11 @@ export class ProjectConfig {
     enabled: boolean;
     files: string | string[];
   };
+
+  /**
+   * Unnecessarily published packages
+   */
+  public unPublishList?: string[] = [];
 }
 
 export type SetPipe = (pipeName: string, callback: PipeCallback) => void;
