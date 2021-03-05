@@ -67,9 +67,13 @@ export const publish = async (options: PublishOption) => {
           !options.commitOnly && (await buildDeclaration());
 
           if (includeAllPrompt.includeAll) {
-            const authList = [selectedPkgJson?.name, ...depMonoPackages.map(v => v.packageJson.name)].filter(n => !!n);
+            const unPublishList = pri.sourceConfig?.unPublishList || [];
+            const authList = [selectedPkgJson?.name, ...depMonoPackages.map(v => v.packageJson.name)]
+              .filter(n => !!n)
+              .filter(item => unPublishList.indexOf(item) === -1);
             await authPublish(authList);
             for (const eachPackage of depMonoPackages) {
+              if (unPublishList.indexOf(eachPackage.name) !== -1) return;
               await publishByPackageName(eachPackage.name, options, depMap, isDevelopBranch, currentBranchName);
             }
           }
