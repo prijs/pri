@@ -73,8 +73,9 @@ export const publish = async (options: PublishOption) => {
               .filter(item => unPublishList.indexOf(item) === -1);
             await authPublish(authList);
             for (const eachPackage of depMonoPackages) {
-              if (unPublishList.indexOf(eachPackage.name) !== -1) return;
-              await publishByPackageName(eachPackage.name, options, depMap, isDevelopBranch, currentBranchName);
+              if (unPublishList.indexOf(eachPackage.name) === -1) {
+                await publishByPackageName(eachPackage.name, options, depMap, isDevelopBranch, currentBranchName);
+              }
             }
           }
         } else {
