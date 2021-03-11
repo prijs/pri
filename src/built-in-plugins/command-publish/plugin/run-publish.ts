@@ -73,7 +73,7 @@ export const publish = async (options: PublishOption) => {
               .filter(item => unPublishList.indexOf(item) === -1);
             await authPublish(authList);
             for (const eachPackage of depMonoPackages) {
-              if (unPublishList.indexOf(eachPackage.name) === -1) {
+              if (unPublishList.indexOf(eachPackage.packageJson.name) === -1) {
                 await publishByPackageName(eachPackage.name, options, depMap, isDevelopBranch, currentBranchName);
               }
             }
