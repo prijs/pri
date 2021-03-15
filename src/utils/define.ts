@@ -311,16 +311,28 @@ export class ProjectConfig {
   public circularDetect?: ICircularDetectConfig;
 
   /**
-   * eslint linting in dev mode
+   * code checker in dev mode, see fork-ts-checker-webpack-plugin.
    */
-  public eslintChecker?: {
-    enabled: boolean;
-    files: string | string[];
+  public devChecker?: {
+    typescript?: {
+      enabled: boolean;
+      memoryLimit?: number;
+    };
+
+    eslint?: {
+      enabled: boolean;
+      memoryLimit?: number;
+      files?: string | string[];
+    };
+
+    issue?: {
+      include?: any;
+      exclude?: any;
+    };
   };
 
   /**
-   * Unnecessarily published packages,
-   * Only take effect when includeAll is true
+   * Unnecessarily published packages, only take effect when includeAll is true.
    */
   public unPublishList?: string[] = [];
 }

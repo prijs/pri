@@ -67,17 +67,18 @@ export const runWebpackDevServer = async (opts: IOptions<IExtraOptions>) => {
     webpackConfig.plugins.push(
       new ForkTsCheckerWebpackPlugin({
         typescript: {
+          enabled: true,
           memoryLimit: 8192,
           mode: 'write-references',
+          ...globalState.sourceConfig.devChecker?.typescript,
         },
         eslint: {
+          enabled: false,
           memoryLimit: 8192,
-          enabled: globalState.sourceConfig.eslintChecker?.enabled ?? false,
-          files: globalState.sourceConfig.eslintChecker?.files ?? [
-            `./${srcPath.dir}/**/*.{ts,tsx}`,
-            `./${packagesPath.dir}/**/*.{ts,tsx}`,
-          ],
+          files: [`./${srcPath.dir}/**/*.{ts,tsx}`, `./${packagesPath.dir}/**/*.{ts,tsx}`],
+          ...globalState.sourceConfig.devChecker?.eslint,
         },
+        issue: globalState.sourceConfig.devChecker?.issue,
       }),
     );
   }
