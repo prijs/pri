@@ -63,7 +63,10 @@ export const runWebpackDevServer = async (opts: IOptions<IExtraOptions>) => {
     );
   }
 
-  if (!yargs.argv.skipTypeCheck) {
+  if (
+    globalState.sourceConfig.devChecker?.typescript?.enabled !== false ||
+    globalState.sourceConfig.devChecker?.eslint?.enabled
+  ) {
     webpackConfig.plugins.push(
       new ForkTsCheckerWebpackPlugin({
         typescript: {
