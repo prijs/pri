@@ -365,6 +365,12 @@ export const getWebpackConfig = async (opts: IOptions) => {
       config.performance = {};
     }
     config.performance.hints = false;
+
+    // Improve dev performance https://v4.webpack.js.org/guides/build-performance/#development
+    config.optimization.removeAvailableModules = false;
+    config.optimization.removeEmptyChunks = false;
+    config.optimization.splitChunks = false;
+    config.output.pathinfo = false;
   }
 
   return plugin.buildConfigPipes.reduce(async (newConfig, fn) => {

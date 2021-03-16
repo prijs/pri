@@ -97,7 +97,6 @@ function ensureTsconfig() {
             emitDecoratorMetadata: true,
             preserveConstEnums: true,
             isolatedModules: true,
-            noEmit: true,
             paths: {
               [`${PRI_PACKAGE_NAME}/*`]: [PRI_PACKAGE_NAME, path.join(tempTypesPath.dir, '*')],
               ...(pri.sourceConfig.type === 'project' && { 'src/*': ['src/*'] }),
