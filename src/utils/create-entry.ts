@@ -203,6 +203,8 @@ export class Entry {
       } else {
         (window as any)[tag] = priStore;
       }
+
+      export {};
     `,
     );
   }
