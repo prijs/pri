@@ -1,8 +1,10 @@
 import * as fs from 'fs-extra';
 import * as _ from 'lodash';
 import * as path from 'path';
+import * as gulp from 'gulp';
+import * as gulpBabel from 'gulp-babel';
 import { globalState } from './global-state';
-import { logFatal } from './log';
+import { logFatal, spinner } from './log';
 import {
   IAfterProdBuild,
   IAnalyseProject,
@@ -20,7 +22,8 @@ import {
   IDevDllList,
   IJestConfigPipe,
 } from './define';
-
+import { getBabelOptions } from './babel-options';
+import { tempPath, srcPath } from '../node';
 import * as pluginClientSsr from '../built-in-plugins/client-ssr';
 import * as pluginCommandAnalyse from '../built-in-plugins/command-analyse';
 import * as pluginCommandBuild from '../built-in-plugins/command-build';
@@ -100,6 +103,19 @@ export const plugin: IPluginConfig = new IPluginConfig();
 
 let hasInitPlugins = false;
 
+const buildPluginSource = (packagePath: string, outdir: string) => {
+  const targetPath = path.join(packagePath, srcPath.dir, '**/*.{ts,tsx}');
+
+  return new Promise((resolve, reject) => {
+    gulp
+      .src(targetPath)
+      .pipe(gulpBabel(getBabelOptions()))
+      .on('error', reject)
+      .pipe(gulp.dest(outdir))
+      .on('end', resolve);
+  });
+};
+
 export const loadPlugins = async (pluginIncludeRoots: string[] = []) => {
   if (hasInitPlugins) {
     return;
@@ -132,7 +148,7 @@ export const loadPlugins = async (pluginIncludeRoots: string[] = []) => {
   });
 
   if (globalState.sourceConfig.type !== 'plugin') {
-    getPriPlugins(
+    await getPriPlugins(
       globalState.projectRootPath,
       pluginIncludeRoots.concat(globalState.projectRootPath).map(pluginIncludeRoot => {
         return path.join(pluginIncludeRoot, 'package.json');
@@ -151,11 +167,22 @@ export const loadPlugins = async (pluginIncludeRoots: string[] = []) => {
   }
 };
 
-function getPriPlugins(pluginRootPath: string, packageJsonPaths: string[]) {
+async function getPriPlugins(pluginRootPath: string, packageJsonPaths: string[]) {
   // Do not load plugins when type is 'plugin'.
   // Load plugin even when type is undefined.
   if (globalState.sourceConfig.type === 'plugin') {
     return;
+  }
+
+  for (const eachPackage of globalState.packages) {
+    if (eachPackage.config?.type === 'plugin') {
+      const distPath = path.join(globalState.projectRootPath, tempPath.dir, 'plugins', eachPackage.name);
+      await spinner(`Build plugin ${eachPackage.name}`, async () => {
+        await fs.remove(distPath);
+        await buildPluginSource(eachPackage.rootPath, distPath);
+      });
+      addPluginFromEntry(distPath);
+    }
   }
 
   const deps = packageJsonPaths.map(packageJsonPath => {
@@ -193,22 +220,7 @@ function getPriPlugins(pluginRootPath: string, packageJsonPaths: string[]) {
         ? getPackageJsonPathByPathOrNpmName(subPackageName, pluginRootPath)
         : path.resolve(pluginRootPath, subPackageVersion.replace(/^file:/g, ''), 'package.json');
 
-      // eslint-disable-next-line global-require,@typescript-eslint/no-var-requires,import/no-dynamic-require
-      const instance: IPluginModule = require(subPackageRealEntryFilePath);
-
-      if (!instance.getConfig) {
-        logFatal('Plugin must impletement getConfig method!');
-      }
-
-      if (!instance.getPlugin) {
-        logFatal('Plugin must impletement getPlugin method!');
-      }
-
-      if (!instance.getConfig().name) {
-        logFatal('Plugin must have name!');
-      }
-
-      loadedPlugins.add(instance);
+      addPluginFromEntry(subPackageRealEntryFilePath);
 
       if (subPackageAbsolutePath) {
         getPriPlugins(path.resolve(subPackageAbsolutePath, '..'), [subPackageAbsolutePath]);
@@ -308,4 +320,23 @@ function getDependencesByPackageJsonPath(packageJsonPath: string) {
     ..._.get(packageJson, 'dependencies', {}),
     ..._.get(packageJson, 'devDependencies', {}),
   };
+}
+
+function addPluginFromEntry(entryPath: string) {
+  // eslint-disable-next-line import/no-dynamic-require,@typescript-eslint/no-var-requires,global-require
+  const instance: IPluginModule = require(entryPath);
+
+  if (!instance.getConfig) {
+    logFatal('Plugin must impletement getConfig method!');
+  }
+
+  if (!instance.getPlugin) {
+    logFatal('Plugin must impletement getPlugin method!');
+  }
+
+  if (!instance.getConfig().name) {
+    logFatal('Plugin must have name!');
+  }
+
+  loadedPlugins.add(instance);
 }

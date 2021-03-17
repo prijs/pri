@@ -102,7 +102,7 @@ function ensureTsconfig() {
               ...(pri.sourceConfig.type === 'project' && { 'src/*': ['src/*'] }),
               // Packages alias names
               ...globalState.packages.reduce((obj, eachPackage) => {
-                if (eachPackage.packageJson && eachPackage.packageJson.name) {
+                if (eachPackage.packageJson?.name && eachPackage.config?.type !== 'plugin') {
                   return {
                     ...obj,
                     [eachPackage.packageJson.name]: [
