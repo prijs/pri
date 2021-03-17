@@ -174,13 +174,15 @@ async function getPriPlugins(pluginRootPath: string, packageJsonPaths: string[])
     return;
   }
 
-  for (const eachPackage of globalState.plugins) {
-    const distPath = path.join(globalState.projectRootPath, tempPath.dir, 'plugins', eachPackage.name);
-    await spinner(`Build plugin ${eachPackage.name}`, async () => {
-      await fs.remove(distPath);
-      await buildPluginSource(eachPackage.rootPath, distPath);
-    });
-    addPluginFromEntry(distPath);
+  if (pluginRootPath === globalState.projectRootPath) {
+    for (const eachPackage of globalState.plugins) {
+      const distPath = path.join(globalState.projectRootPath, tempPath.dir, 'plugins', eachPackage.name);
+      await spinner(`Build plugin ${eachPackage.name}`, async () => {
+        await fs.remove(distPath);
+        await buildPluginSource(eachPackage.rootPath, distPath);
+      });
+      addPluginFromEntry(distPath);
+    }
   }
 
   const deps = packageJsonPaths.map(packageJsonPath => {
