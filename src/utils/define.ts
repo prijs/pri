@@ -126,6 +126,11 @@ export class GlobalState {
    * packages info
    */
   public packages: PackageInfo[] = [];
+
+  /**
+   * plugins info
+   */
+  public plugins: PackageInfo[] = [];
 }
 
 /**

@@ -21,6 +21,8 @@ export const assetsPath = { dir: 'assets' };
 
 export const packagesPath = { dir: 'packages' };
 
+export const pluginsPath = { dir: 'plugins' };
+
 export const declarationPath = { dir: 'declaration' };
 
 /**
