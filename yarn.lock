@@ -3657,9 +3657,9 @@ caniuse-api@^3.0.0:
     lodash.uniq "^4.5.0"
 
 caniuse-lite@^1.0.0, caniuse-lite@^1.0.30001030:
-  version "1.0.30001032"
-  resolved "https://registry.npm.alibaba-inc.com/caniuse-lite/download/caniuse-lite-1.0.30001032.tgz#b8d224914e2cd7f507085583d4e38144c652bce4"
-  integrity sha1-uNIkkU4s1/UHCFWD1OOBRMZSvOQ=
+  version "1.0.30001202"
+  resolved "https://registry.npm.alibaba-inc.com/caniuse-lite/download/caniuse-lite-1.0.30001202.tgz#4cb3bd5e8a808e8cd89e4e66c549989bc8137201"
+  integrity sha1-TLO9XoqAjozYnk5mxUmYm8gTcgE=
 
 capture-exit@^2.0.0:
   version "2.0.0"
