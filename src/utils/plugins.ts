@@ -103,7 +103,7 @@ export const plugin: IPluginConfig = new IPluginConfig();
 
 let hasInitPlugins = false;
 
-const buildPluginSource = (packagePath: string, outdir: string) => {
+const buildLocalPlugin = (packagePath: string, outdir: string) => {
   const targetPath = path.join(packagePath, srcPath.dir, '**/*.{ts,tsx}');
 
   return new Promise((resolve, reject) => {
@@ -179,7 +179,7 @@ async function getPriPlugins(pluginRootPath: string, packageJsonPaths: string[])
       const distPath = path.join(globalState.projectRootPath, tempPath.dir, 'plugins', eachPackage.name);
       await spinner(`Build plugin ${eachPackage.name}`, async () => {
         await fs.remove(distPath);
-        await buildPluginSource(eachPackage.rootPath, distPath);
+        await buildLocalPlugin(eachPackage.rootPath, distPath);
       });
       addPluginFromEntry(distPath);
     }
