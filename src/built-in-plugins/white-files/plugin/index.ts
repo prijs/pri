@@ -12,6 +12,7 @@ import {
   srcPath,
   utilPath,
   packagesPath,
+  pluginsPath,
   expandPath,
   typingsPath,
 } from '../../../utils/structor-config';
@@ -52,6 +53,7 @@ pri.project.whiteFileRules.add(file => {
     .concat(transferToAllAbsolutePaths(expandPath.dir))
     .concat(transferToAllAbsolutePaths(`src${path.sep}layouts`))
     .concat(path.join(pri.projectRootPath, packagesPath.dir))
+    .concat(path.join(pri.projectRootPath, pluginsPath.dir))
     .some(absoluteFilePath => {
       return path.format(file).startsWith(absoluteFilePath);
     });

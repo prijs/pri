@@ -27,7 +27,7 @@ export function typeChecker() {
 
   logInfo('Checking TypeScript type, please wait');
   try {
-    execSync(`npx tsc -p . || exit 1`, {
+    execSync(`npx tsc -p . --isolatedModules false || exit 1`, {
       stdio: [0, 1, 2],
     });
   } catch (e) {

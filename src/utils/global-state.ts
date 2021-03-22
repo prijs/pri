@@ -9,7 +9,7 @@ import * as path from 'path';
 import * as yargs from 'yargs';
 import * as inquirer from 'inquirer';
 import * as pkg from '../../package.json';
-import { CONFIG_FILE, PACKAGES_NAME } from './constants';
+import { CONFIG_FILE, PACKAGES_NAME, PLUGINS_NAME } from './constants';
 import { logFatal } from './log';
 import { PackageJson, GlobalState, ProjectConfig } from './define';
 
@@ -72,13 +72,13 @@ function getPriConfig(rootPath: string) {
   return fs.readJsonSync(configFilePath, { throws: false }) || {};
 }
 
-function collectPackages(packageRootPath: string, deep = 0) {
+function collectPackages(packageRootPath: string, packageDir = PACKAGES_NAME, deep = 0) {
   // Only support two level packages
   if (deep >= 2) {
     return;
   }
 
-  const currentPackagesPath = path.join(packageRootPath, PACKAGES_NAME);
+  const currentPackagesPath = path.join(packageRootPath, packageDir);
 
   if (fs.existsSync(currentPackagesPath)) {
     fs.readdirSync(currentPackagesPath)
@@ -90,7 +90,7 @@ function collectPackages(packageRootPath: string, deep = 0) {
         return true;
       })
       .forEach(folderName => {
-        const packagePath = path.join(packageRootPath, PACKAGES_NAME, folderName);
+        const packagePath = path.join(packageRootPath, packageDir, folderName);
         const packageJson: PackageJson = fs.readJSONSync(path.join(packagePath, 'package.json'), { throws: false });
 
         const config = fs.readJsonSync(path.join(packagePath, CONFIG_FILE), { throws: false }) || {};
@@ -102,16 +102,23 @@ function collectPackages(packageRootPath: string, deep = 0) {
           config,
         };
 
-        globalState.packages.push(eachPackage);
+        if (packageDir === PLUGINS_NAME) {
+          globalState.plugins.push(eachPackage);
+        } else {
+          globalState.packages.push(eachPackage);
+        }
 
         // find nested packages
-        collectPackages(eachPackage.rootPath, deep + 1);
+        if (packageDir !== PLUGINS_NAME) {
+          collectPackages(eachPackage.rootPath, packageDir, deep + 1);
+        }
       });
   }
 }
 
 async function initPackages(projectRootPath: string, preSelectPackage: string) {
   collectPackages(projectRootPath);
+  collectPackages(projectRootPath, PLUGINS_NAME);
 
   if (globalState.packages.length > 0) {
     if (!preSelectPackage) {
