@@ -286,6 +286,11 @@ export class ProjectConfig {
   public projectRootId = 'root';
 
   /**
+   * Use default html template
+   */
+  public useHtmlTemplate = true;
+
+  /**
    * Enable ensure files
    */
   public ensureFiles = true;

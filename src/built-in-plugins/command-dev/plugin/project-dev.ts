@@ -155,10 +155,12 @@ async function debugProject(options?: any) {
     },
     outFileName: '[name].js',
     devServerPort: freePort,
-    htmlTemplatePath: path.join(__dirname, '../../../../template-project.ejs'),
-    htmlTemplateArgs: {
-      dashboardServerPort,
-    },
+    ...(pri.sourceConfig.useHtmlTemplate && {
+      htmlTemplatePath: path.join(__dirname, '../../../../template-project.ejs'),
+      htmlTemplateArgs: {
+        dashboardServerPort,
+      },
+    }),
     pipeConfig,
   });
 }
