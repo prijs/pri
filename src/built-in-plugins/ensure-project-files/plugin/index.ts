@@ -121,7 +121,7 @@ function ensureTsconfig() {
               return `${path.relative(pri.projectRootPath, filePath)}/**/*`;
             }),
           ],
-          exclude: ['node_modules', globalState.projectConfig.distDir],
+          exclude: ['node_modules', globalState.projectConfig.distDir, `${tempPath.dir}/dashboard/**/*`],
         },
         null,
         2,
