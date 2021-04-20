@@ -49,8 +49,8 @@ export const publish = async (options: PublishOption) => {
         if (depMonoPackages.length > 0) {
           let includeAllPrompt = { includeAll: false };
 
-          if (options.includeAll) {
-            includeAllPrompt = { includeAll: true };
+          if (_.has(options, 'includeAll')) {
+            includeAllPrompt = { includeAll: options.includeAll };
           } else {
             includeAllPrompt = await inquirer.prompt([
               {
