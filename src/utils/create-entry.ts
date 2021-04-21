@@ -95,7 +95,7 @@ export class Entry {
     return pipe.get(
       'appBody',
       `
-      export const pageLoadableMap = new Map<string, any>()
+      // export const pageLoadableMap = new Map<string, any>()
       const PageLazyFallback = () => <div />;
     `,
     );

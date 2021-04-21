@@ -26,24 +26,24 @@ pri.project.onCreateEntry((analyseInfo, entry) => {
         if (event.data.type === "getServerRenderContent") {
           const baseHrefRegex = new RegExp(escapeRegExp("${pri.sourceConfig.baseHref}"), "g")
           const matchRouterPath = event.data.pathname.replace(baseHrefRegex, "")
-          const loadableMap = pageLoadableMap.get(matchRouterPath === "/" ? "/" : trimEnd(matchRouterPath, "/"))
-          if (loadableMap) {
-            loadableMap.preload().then(() => {
-              const ssrResult = renderToString(
-                <StaticRouter location={event.data.pathname} context={{}}>
-                  <App />
-                </StaticRouter>
-              );
+          // const loadableMap = pageLoadableMap.get(matchRouterPath === "/" ? "/" : trimEnd(matchRouterPath, "/"))
+          // if (loadableMap) {
+          //   loadableMap.preload().then(() => {
+          //     const ssrResult = renderToString(
+          //       <StaticRouter location={event.data.pathname} context={{}}>
+          //         <App />
+          //       </StaticRouter>
+          //     );
 
-              if (navigator.serviceWorker.controller) {
-                navigator.serviceWorker.controller.postMessage({
-                  type: 'serverRenderContent',
-                  pathname: event.data.pathname,
-                  content: ssrResult
-                });
-              }
-            })
-          }
+          //     if (navigator.serviceWorker.controller) {
+          //       navigator.serviceWorker.controller.postMessage({
+          //         type: 'serverRenderContent',
+          //         pathname: event.data.pathname,
+          //         content: ssrResult
+          //       });
+          //     }
+          //   })
+          // }
         }
       })
     }
