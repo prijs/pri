@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { HashRouter, Switch, Route, Link, withRouter, RouteComponentProps, Redirect } from 'react-router-dom';
-import { withErrorBoundary } from './Error';
+import { withErrorBoundary } from './error';
 
 export class Props {
   public docs?: { name: string; element: any; text: string }[] = [];

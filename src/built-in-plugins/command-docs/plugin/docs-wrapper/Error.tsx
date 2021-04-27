@@ -1,5 +1,4 @@
 /**
- * @author 紫益
  * @description 组件异常 Catch
  */
 
