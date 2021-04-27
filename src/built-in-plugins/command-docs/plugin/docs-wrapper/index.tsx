@@ -1,70 +1,19 @@
 import * as React from 'react';
-
-const urlSearchParams = new URLSearchParams(window.location.search);
+import { HashRouter, Switch, Route, Link, withRouter, RouteComponentProps, Redirect } from 'react-router-dom';
+import { withErrorBoundary } from './Error';
 
 export class Props {
   public docs?: { name: string; element: any; text: string }[] = [];
 }
 
-const Docs = React.memo((props: Props) => {
-  const [docName, setDocName] = React.useState(null);
+const NotFound: React.FC = () => <div>Not found</div>;
 
-  React.useEffect(() => {
-    const name = urlSearchParams.get('name');
-    if (docName !== name) {
-      setDocName(name);
-    }
-  }, [docName]);
-
-  const selectDoc = React.useCallback((name: string) => {
-    urlSearchParams.set('name', name);
-
-    const newurl = `${window.location.protocol}//${window.location.host}${
-      window.location.pathname
-    }?${urlSearchParams.toString()}`;
-
-    window.history.pushState({ path: newurl }, '', newurl);
-
-    setDocName(name);
-  }, []);
-
-  function renderLeftMenus() {
-    return props.docs.map((doc, index) => {
-      return (
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            minHeight: 30,
-            cursor: 'pointer',
-            paddingLeft: 10,
-            boxSizing: 'border-box',
-            backgroundColor: docName === doc.name ? 'white' : null,
-            fontSize: 14,
-            color: '#333',
-            borderBottom: '1px solid #eee',
-          }}
-          onClick={() => {
-            selectDoc(doc.name);
-          }}
-          key={index}
-        >
-          {doc.name}
-        </div>
-      );
-    });
-  }
-
-  if (props.docs.length === 0) {
+const Docs: React.FC<Props & RouteComponentProps> = React.memo(({ docs = [], location }) => {
+  const pathname = location.pathname;
+  if (docs.length === 0) {
     return null;
   }
-
-  const currentDoc = !docName
-    ? props.docs[0]
-    : props.docs.find(eachDoc => {
-        return eachDoc.name === docName;
-      });
-  const DocInstance = currentDoc.element.default;
+  const [firstDoc] = docs;
 
   return (
     <div
@@ -76,7 +25,7 @@ const Docs = React.memo((props: Props) => {
         boxSizing: 'border-box',
       }}
     >
-      {props.docs.length > 1 && (
+      {docs.length > 1 && (
         <div
           style={{
             display: 'flex',
@@ -88,7 +37,26 @@ const Docs = React.memo((props: Props) => {
             overflowY: 'auto',
           }}
         >
-          {renderLeftMenus()}
+          {docs.map(doc => (
+            <Link
+              to={`/${doc.name}`}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                minHeight: 30,
+                cursor: 'pointer',
+                paddingLeft: 10,
+                boxSizing: 'border-box',
+                backgroundColor: pathname === `/${doc.name}` ? 'white' : null,
+                fontSize: 14,
+                color: '#333',
+                borderBottom: '1px solid #eee',
+              }}
+              key={doc.name}
+            >
+              {doc.name}
+            </Link>
+          ))}
         </div>
       )}
 
@@ -111,11 +79,29 @@ const Docs = React.memo((props: Props) => {
             boxSizing: 'border-box',
           }}
         >
-          <DocInstance key={docName} />
+          <Switch>
+            <Route exact path="/">
+              <Redirect to={`/${firstDoc.name}`} />
+            </Route>
+            {docs.map(doc => (
+              <Route path={`/${doc.name}`} key={doc.name} component={withErrorBoundary(doc.element.default)} />
+            ))}
+            <Route component={NotFound} />
+          </Switch>
         </div>
       </div>
     </div>
   );
 });
 
-export default Docs;
+const DocsWithRouter = withRouter(Docs);
+
+const App: React.FC = props => {
+  return (
+    <HashRouter>
+      <DocsWithRouter {...props} />
+    </HashRouter>
+  );
+};
+
+export default App;
