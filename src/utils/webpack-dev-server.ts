@@ -41,7 +41,10 @@ const stats = {
   children: false,
 };
 
-export const runWebpackDevServer = async (opts: IOptions<IExtraOptions>) => {
+export const runWebpackDevServer = async (
+  opts: IOptions<IExtraOptions>,
+  configWrapper?: (webpackConfig: webpack.Configuration) => webpack.Configuration,
+) => {
   let webpackConfig = await getWebpackConfig(opts);
 
   if (opts.pipeConfig) {
@@ -129,6 +132,10 @@ export const runWebpackDevServer = async (opts: IOptions<IExtraOptions>) => {
 
   if (yargs.argv.measureSpeed) {
     webpackConfig = smp.wrap(webpackConfig);
+  }
+
+  if (configWrapper) {
+    webpackConfig = configWrapper(webpackConfig);
   }
 
   const compiler = webpack(webpackConfig);
