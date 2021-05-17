@@ -10,9 +10,9 @@ export const watch = async (opts: any) => {
   await watchWebpack(opts);
 };
 
-export const devServer = async (opts: any) => {
+export const devServer = async (opts: any, configWrapper?: (webpackConfig: any) => any) => {
   const { runWebpackDevServer } = await import('../utils/webpack-dev-server');
-  await runWebpackDevServer(opts);
+  await runWebpackDevServer(opts, configWrapper);
 };
 
 export const dll = async (opts: any) => {
