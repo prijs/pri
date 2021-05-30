@@ -28,6 +28,7 @@ interface IExtraOptions {
   devUrl?: string;
   autoOpenBrowser?: boolean;
   https?: boolean;
+  contentBase?: string;
 }
 
 const stats = {
@@ -127,6 +128,7 @@ export const runWebpackDevServer = async (
     clientLogLevel: 'warn',
     disableHostCheck: true,
     port: opts.devServerPort,
+    contentBase: opts.contentBase,
   } as any;
 
   WebpackDevServer.addDevServerEntrypoints(webpackConfig as any, webpackDevServerConfig);
