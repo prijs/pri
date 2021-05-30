@@ -72,6 +72,7 @@ export const runWebpackDevServer = async (
   ) {
     webpackConfig.plugins.push(
       new ForkTsCheckerWebpackPlugin({
+        async: globalState.sourceConfig.devChecker?.async,
         typescript: {
           enabled: true,
           memoryLimit: 8192,
