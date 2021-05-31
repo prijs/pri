@@ -324,6 +324,8 @@ export class ProjectConfig {
    * code checker in dev mode, see fork-ts-checker-webpack-plugin.
    */
   public devChecker?: {
+    async?: boolean;
+
     typescript?: {
       enabled: boolean;
       memoryLimit?: number;
