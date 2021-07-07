@@ -183,7 +183,7 @@ pri.project.onCreateEntry((analyseInfo: IResult, entry) => {
       ${analyseInfo.projectAnalysePages.pages
         .map(page => {
           return `
-            pageLoadableMap.set("${page.routerPath}", ${page.componentName})
+            // pageLoadableMap.set("${page.routerPath}", ${page.componentName})
           `;
         })
         .join('\n')}

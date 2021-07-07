@@ -4,6 +4,8 @@ import { lint, lintFilter } from './lint';
 import * as whiteFileRules from './white-file-rules';
 import { IAnalyseProject, ICreateEntry } from '../../utils/define';
 
+export { analyseProject } from '../../utils/analyse-project';
+export { createEntry } from '../../utils/create-entry';
 export { ensureProjectFiles, addProjectFiles } from './on-ensure-project-files';
 
 /**
