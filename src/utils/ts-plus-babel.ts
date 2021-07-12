@@ -32,7 +32,6 @@ const buildTs = (watch: boolean, outdir: string, babelOptions: any, wholeProject
   const targetPath = wholeProject
     ? path.join(pri.projectRootPath, '{src,packages}/**/*.{ts,tsx}')
     : path.join(sourcePath || pri.sourceRoot, srcPath.dir, '**/*.{ts,tsx}');
-
   return new Promise((resolve, reject) => {
     if (globalState.isDevelopment) {
       getGulpByWatch(watch, targetPath)
@@ -62,18 +61,28 @@ function getStyleFilePath(suffix: string, wholeProject: boolean, sourcePath: str
 const buildSass = (wholeProject: boolean, sourcePath: string) => {
   const targetScssPath = getStyleFilePath('scss', wholeProject, sourcePath);
   return gulp.src(targetScssPath).pipe(
-    gulpSass({
-      includePaths: path.join(pri.projectRootPath, 'node_modules'),
-    }),
+    gulpSass(
+      plugin.buildConfigSassLoaderOptionsPipes.reduce(
+        (options, fn) => {
+          return fn(options);
+        },
+        {includePaths: path.join(pri.projectRootPath, 'node_modules')},
+      ),
+    ),
   );
 };
 
 const buildLess = (wholeProject: boolean, sourcePath: string) => {
   const targetLessPath = getStyleFilePath('less', wholeProject, sourcePath);
   return gulp.src(targetLessPath).pipe(
-    gulpLess({
-      paths: [path.join(pri.projectRootPath, 'node_modules', 'includes')],
-    }),
+    gulpLess(
+      plugin.buildConfigLessLoaderOptionsPipes.reduce(
+        (options, fn) => {
+          return fn(options);
+        },
+        {paths: [path.join(pri.projectRootPath, 'node_modules', 'includes')]},
+      ),
+    ),
   );
 };
 
@@ -190,6 +199,13 @@ function importRename(packageAbsoluteToRelative = false) {
           return text.replace(scssReplacePattern, '$1.css');
         }
 
+        const lessRegex = '^(.+?)\\.less$';
+        const lessPattern = new RegExp(`^(${lessRegex}|${lessRegex}/.*)$`);
+
+        if (lessPattern.test(text)) {
+          const lessReplacePattern = new RegExp(lessRegex);
+          return text.replace(lessReplacePattern, '$1.css');
+        }
         if (packageAbsoluteToRelative) {
           // resolve absolute packages to relative path
           for (const eachPackage of globalState.packages) {
