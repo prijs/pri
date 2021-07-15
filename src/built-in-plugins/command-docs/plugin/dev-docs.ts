@@ -45,7 +45,7 @@ export async function devDocs() {
     publicPath: `${pri.sourceConfig.useHttps ? 'https' : 'http'}://${pri.sourceConfig.host}:${freePort}`,
     autoOpenBrowser: true,
     hot: pri.sourceConfig.hotReload,
-    devUrl: pri.sourceConfig.host,
+    devUrl: pri.sourceConfig.devUrl || pri.sourceConfig.host,
     entryPath: docsEntryPath,
     devServerPort: freePort,
     htmlTemplatePath: path.join(__dirname, '../../../../template-project.ejs'),
