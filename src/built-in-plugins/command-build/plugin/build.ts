@@ -39,15 +39,17 @@ export const buildProject = async (opts: IOpts = {}) => {
     outFileName: '[name].js',
     publicPath: opts.publicPath, // If unset, use config value.
     pipeConfig: async config => {
-      staticHtmlPaths.forEach(staticHtmlPath => {
-        config.plugins.push(
-          new HtmlWebpackPlugin({
-            title: pri.sourceConfig.title || globalState.projectRootPath.split(path.sep).pop(),
-            filename: staticHtmlPath,
-            template: path.join(__dirname, '../../../../template-project.ejs'),
-          }),
-        );
-      });
+      if (pri.sourceConfig.useHtmlTemplate) {
+        staticHtmlPaths.forEach(staticHtmlPath => {
+          config.plugins.push(
+            new HtmlWebpackPlugin({
+              title: pri.sourceConfig.title || globalState.projectRootPath.split(path.sep).pop(),
+              filename: staticHtmlPath,
+              template: path.join(__dirname, '../../../../template-project.ejs'),
+            }),
+          );
+        });
+      }
       return config;
     },
   });
