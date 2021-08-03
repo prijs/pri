@@ -66,7 +66,7 @@ const buildSass = (wholeProject: boolean, sourcePath: string) => {
         (options, fn) => {
           return fn(options);
         },
-        {includePaths: path.join(pri.projectRootPath, 'node_modules')},
+        { includePaths: path.join(pri.projectRootPath, 'node_modules') },
       ),
     ),
   );
@@ -80,7 +80,7 @@ const buildLess = (wholeProject: boolean, sourcePath: string) => {
         (options, fn) => {
           return fn(options);
         },
-        {paths: [path.join(pri.projectRootPath, 'node_modules', 'includes')]},
+        { paths: [path.join(pri.projectRootPath, 'node_modules', 'includes')] },
       ),
     ),
   );
