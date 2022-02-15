@@ -33,7 +33,7 @@ export const runTest = async (options: IOpts) => {
         if (eachPackage.packageJson && eachPackage.packageJson.name) {
           return {
             ...obj,
-            [eachPackage.packageJson.name]: path.join(eachPackage.rootPath, 'src'),
+            [`^${eachPackage.packageJson.name}$`]: path.join(eachPackage.rootPath, 'src'),
           };
         }
         return obj;
