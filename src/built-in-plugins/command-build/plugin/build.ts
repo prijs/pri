@@ -11,29 +11,32 @@ import { globalState } from '../../../utils/global-state';
 import { logInfo, spinner } from '../../../utils/log';
 import { findNearestNodemodulesFile } from '../../../utils/npm-finder';
 import { plugin } from '../../../utils/plugins';
-import { assetsPath } from '../../../utils/structor-config';
+import { assetsPath, tempJsEntryPath } from '../../../utils/structor-config';
 import { runWebpack } from '../../../utils/webpack';
 import { getStaticHtmlPaths } from './generate-static-html';
 import { IOpts } from './interface';
 import { tsPlusBabel } from '../../../utils/ts-plus-babel';
 
 export const buildProject = async (opts: IOpts = {}) => {
-  const result = await spinner('Analyse project', async () => {
-    const analyseInfo = await analyseProject();
-    const entryPath = await createEntry();
-    return {
-      analyseInfo,
-      entryPath,
-    };
-  });
+  const result =
+    !opts.skipEnsureFiles &&
+    (await spinner('Analyse project', async () => {
+      const analyseInfo = await analyseProject();
+      const entryPath = await createEntry();
+      return {
+        analyseInfo,
+        entryPath,
+      };
+    }));
 
-  const staticHtmlPaths = getStaticHtmlPaths(result.analyseInfo);
+  const staticHtmlPaths = getStaticHtmlPaths(result?.analyseInfo);
 
   // Build project
   const stats = await runWebpack({
     mode: 'production',
     entryPath: {
-      [path.basename(pri.sourceConfig.outFileName, '.js')]: result.entryPath,
+      [path.basename(pri.sourceConfig.outFileName, '.js')]:
+        result.entryPath || path.join(globalState.projectRootPath, path.format(tempJsEntryPath)),
       ...pri.sourceConfig.entries,
     },
     outFileName: '[name].js',
@@ -149,20 +152,22 @@ async function copyAssets() {
 }
 
 export async function prepareBuild(opts: IOpts = {}) {
-  await spinner('Clean project.', async () => {
-    // Clean .temp dir
-    await exec(`${findNearestNodemodulesFile('.bin/rimraf')} ${pri.projectRootPath}/${tempPath.dir}`);
+  if (!opts.skipEnsureFiles) {
+    await spinner('Clean project.', async () => {
+      // Clean .temp dir
+      await exec(`${findNearestNodemodulesFile('.bin/rimraf')} ${pri.projectRootPath}/${tempPath.dir}`);
 
-    await pri.project.ensureProjectFiles();
+      await pri.project.ensureProjectFiles();
 
-    if (!opts.skipLint) {
-      await pri.project.lint({
-        lintAll: true,
-        needFix: false,
-        showBreakError: true,
-      });
-    }
+      if (!opts.skipLint) {
+        await pri.project.lint({
+          lintAll: true,
+          needFix: false,
+          showBreakError: true,
+        });
+      }
 
-    await pri.project.checkProjectFiles();
-  });
+      await pri.project.checkProjectFiles();
+    });
+  }
 }
