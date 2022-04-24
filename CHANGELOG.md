@@ -1,5 +1,5 @@
-<a name="4.3.13"></a>
-## [4.3.13](https://github.com/prijs/pri/compare/3.3.28-beta.5...4.3.13) (2022-04-24)
+<a name="4.3.14-beta.0"></a>
+## [4.3.14-beta.0](https://github.com/prijs/pri/compare/3.3.28-beta.5...4.3.14-beta.0) (2022-04-24)
 
 
 ### Bug Fixes
@@ -11,6 +11,7 @@
 * add comment ([dbc311d](https://github.com/prijs/pri/commit/dbc311d))
 * add developBranch ([b66fc36](https://github.com/prijs/pri/commit/b66fc36))
 * add prettier format to lint ([d6f8261](https://github.com/prijs/pri/commit/d6f8261))
+* add publish config ([8d05cee](https://github.com/prijs/pri/commit/8d05cee))
 * add temp folder to exclude ([2a38004](https://github.com/prijs/pri/commit/2a38004))
 * analyse entry ([1f6e3f5](https://github.com/prijs/pri/commit/1f6e3f5))
 * analyse output ([39c6c0c](https://github.com/prijs/pri/commit/39c6c0c))
@@ -52,6 +53,7 @@
 * modify error msg ([13b05e0](https://github.com/prijs/pri/commit/13b05e0))
 * move json file ([414fb61](https://github.com/prijs/pri/commit/414fb61))
 * nested node_modules ([8e79cce](https://github.com/prijs/pri/commit/8e79cce))
+* npm ([e7595d2](https://github.com/prijs/pri/commit/e7595d2))
 * npm test support packages alias name ([7bacda9](https://github.com/prijs/pri/commit/7bacda9))
 * npmClient for publish ([7fcb940](https://github.com/prijs/pri/commit/7fcb940))
 * npx ([18e799c](https://github.com/prijs/pri/commit/18e799c))
