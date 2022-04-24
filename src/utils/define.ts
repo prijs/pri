@@ -347,6 +347,11 @@ export class ProjectConfig {
    * Unnecessarily published packages, only take effect when includeAll is true.
    */
   public unPublishList?: string[] = [];
+
+  /**
+   * Publish config for npm publish
+   */
+  public publishConfig?: IPublishConfig;
 }
 
 export type SetPipe = (pipeName: string, callback: PipeCallback) => void;
@@ -389,3 +394,8 @@ export interface IPluginModule {
 export type IDevDllList = (list: string[]) => string[];
 
 export type IJestConfigPipe = (options: any) => any;
+
+export interface IPublishConfig {
+  // Allow publish branch
+  publishBranch?: string;
+}

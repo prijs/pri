@@ -21,8 +21,10 @@ import { README_FILE } from '../../../utils/constants';
 
 export const publish = async (options: PublishOption) => {
   const currentBranchName = options.branch ? options.branch : await getCurrentBranchName();
-  const developBranchConfig = _.get(pri.projectConfig, 'customEnv.developBranchConfig', []);
-  const isDevelopBranch = ['master', 'develop', ...developBranchConfig].includes(currentBranchName);
+  const configPublishBranch = pri.projectConfig?.publishConfig?.publishBranch;
+  const isDevelopBranch = (configPublishBranch ? [configPublishBranch] : ['master', 'develop']).includes(
+    currentBranchName,
+  );
 
   switch (pri.sourceConfig.type) {
     case 'component':
