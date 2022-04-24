@@ -21,7 +21,8 @@ import { README_FILE } from '../../../utils/constants';
 
 export const publish = async (options: PublishOption) => {
   const currentBranchName = options.branch ? options.branch : await getCurrentBranchName();
-  const isDevelopBranch = ['master', 'develop'].includes(currentBranchName);
+  const developBranchConfig = _.get(pri.projectConfig, 'customEnv.developBranchConfig', []);
+  const isDevelopBranch = ['master', 'develop', ...developBranchConfig].includes(currentBranchName);
 
   switch (pri.sourceConfig.type) {
     case 'component':
@@ -404,7 +405,7 @@ async function moveSourceFilesToTempFolderAndPublish(
     finalTag = 'beta';
   }
 
-  await exec(`${targetConfig.npmClient} publish ${tempRoot} --ignore-scripts --silent --tag ${finalTag}`, {
+  await exec(`${targetConfig.npmClient} publish ${tempRoot} --ignore-scripts --tag ${finalTag}`, {
     cwd: tempRoot,
   });
 
