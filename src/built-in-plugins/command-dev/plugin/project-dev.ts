@@ -101,44 +101,45 @@ async function debugProject(options?: any) {
 
   await bundleDlls({ dllOutPath, dllFileName, dllMainfestName });
 
-  // Bundle dashboard if plugins changed or dashboard bundle not exist.
-  const dashboardDistDir = path.join(pri.projectRootPath, tempPath.dir, 'static/dashboard-bundle');
-  if (!fs.existsSync(path.join(dashboardDistDir, `${dashboardBundleFileName}.js`))) {
-    const dashboardEntryFilePath = createDashboardEntry();
-
-    const status = await runWebpack({
-      mode: 'production',
-      publicPath: '/bundle/',
-      entryPath: dashboardEntryFilePath,
-      distDir: dashboardDistDir,
-      outFileName: 'main.[hash].js', // dashboard has no css file
-      pipeConfig,
-    });
-    projectState.set('dashboardHash', status.hash);
-  }
-  const stdoutOfAnyType = process.stdout as any;
-  try {
-    stdoutOfAnyType.clearLine(0);
-  } catch {
-    //
-  }
-
-  logInfo('\nStart dev server.\n');
-
-  // Start dashboard server
-  dashboardServer({ serverPort: dashboardServerPort, analyseInfo });
-
   if (globalState.sourceConfig.useHttps) {
     logInfo('you should set chrome://flags/#allow-insecure-localhost, to trust local certificate.');
   }
 
-  // Start dashboard client production server
-  dashboardClientServer({
-    serverPort: dashboardServerPort,
-    clientPort: dashboardClientPort,
-    staticRootPath: path.join(pri.projectRootPath, tempPath.dir, 'static'),
-    hash: projectState.get('dashboardHash'),
-  });
+  if (!pri.sourceConfig.disableDashboard) {
+    // Bundle dashboard if plugins changed or dashboard bundle not exist.
+    const dashboardDistDir = path.join(pri.projectRootPath, tempPath.dir, 'static/dashboard-bundle');
+    if (!fs.existsSync(path.join(dashboardDistDir, `${dashboardBundleFileName}.js`))) {
+      const dashboardEntryFilePath = createDashboardEntry();
+
+      const status = await runWebpack({
+        mode: 'production',
+        publicPath: '/bundle/',
+        entryPath: dashboardEntryFilePath,
+        distDir: dashboardDistDir,
+        outFileName: 'main.[hash].js', // dashboard has no css file
+        pipeConfig,
+      });
+      projectState.set('dashboardHash', status.hash);
+    }
+    const stdoutOfAnyType = process.stdout as any;
+    try {
+      stdoutOfAnyType.clearLine(0);
+    } catch {
+      //
+    }
+
+    logInfo('\nStart dev server.\n');
+
+    // Start dashboard server
+    dashboardServer({ serverPort: dashboardServerPort, analyseInfo });
+    // Start dashboard client production server
+    dashboardClientServer({
+      serverPort: dashboardServerPort,
+      clientPort: dashboardClientPort,
+      staticRootPath: path.join(pri.projectRootPath, tempPath.dir, 'static'),
+      hash: projectState.get('dashboardHash'),
+    });
+  }
 
   // Serve project
   await runWebpackDevServer({
@@ -215,95 +216,97 @@ function debugProjectPrepare(dashboardClientPort: number) {
       });
 
       // Load webui iframe
-      entry.pipeEntryRender(str => {
-        return `
-        ${str}
-        const webUICss = \`
-          #pri-help-button {
-            position: fixed;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 140px;
-            height: 30px;
-            transform: rotate(90deg);
-            font-size: 14px;
-            right: -55px;
-            top: calc(50% - 15px);
-            border: 1px solid #ddd;
-            border-top: none;
-            border-bottom-left-radius: 5px;
-            border-bottom-right-radius: 5px;
-            color: #666;
-            z-index: 10001;
-            cursor: pointer;
-            transition: all .2s;
-            background-color: white;
-            user-select: none;
-          }
+      if (!pri.sourceConfig.disableDashboard) {
+        entry.pipeEntryRender(str => {
+          return `
+          ${str}
+          const webUICss = \`
+            #pri-help-button {
+              position: fixed;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              width: 140px;
+              height: 30px;
+              transform: rotate(90deg);
+              font-size: 14px;
+              right: -55px;
+              top: calc(50% - 15px);
+              border: 1px solid #ddd;
+              border-top: none;
+              border-bottom-left-radius: 5px;
+              border-bottom-right-radius: 5px;
+              color: #666;
+              z-index: 10001;
+              cursor: pointer;
+              transition: all .2s;
+              background-color: white;
+              user-select: none;
+            }
 
-          #pri-help-button.active {
-            right: 744px !important;
-          }
+            #pri-help-button.active {
+              right: 744px !important;
+            }
 
-          #pri-help-button:hover {
-            color: black;
-          }
+            #pri-help-button:hover {
+              color: black;
+            }
 
-          #pri-help-iframe {
-            position: fixed;
-            right: -810px;
-            z-index: 10000;
-            background-color: white;
-            width: 800px;
-            top: 0;
-            height: 100%;
-            border: 0;
-            outline: 0;
-            box-shadow: -1px 0 1px #d4d4d4;
-            transition: right .2s;
-          }
+            #pri-help-iframe {
+              position: fixed;
+              right: -810px;
+              z-index: 10000;
+              background-color: white;
+              width: 800px;
+              top: 0;
+              height: 100%;
+              border: 0;
+              outline: 0;
+              box-shadow: -1px 0 1px #d4d4d4;
+              transition: right .2s;
+            }
 
-          #pri-help-iframe.active {
-            right: 0 !important;
-          }
-        \`
-        const webUIStyle = document.createElement('style')
+            #pri-help-iframe.active {
+              right: 0 !important;
+            }
+          \`
+          const webUIStyle = document.createElement('style')
 
-        webUIStyle.type = "text/css"
-        if ((webUIStyle as any).styleSheet){
-          (webUIStyle as any).styleSheet.cssText = webUICss
-        } else {
-          webUIStyle.appendChild(document.createTextNode(webUICss))
-        }
-
-        document.head.appendChild(webUIStyle)
-
-        // Add dashboard iframe
-        const dashboardIframe = document.createElement("iframe")
-        dashboardIframe.id = "pri-help-iframe"
-        dashboardIframe.src = "//${pri.sourceConfig.host}:${dashboardClientPort}"
-        document.body.appendChild(dashboardIframe)
-
-        // Add dashboard button
-        const dashboardButton = document.createElement("div")
-        dashboardButton.id = "pri-help-button"
-        dashboardButton.innerText = "Toggle dashboard"
-        dashboardButton.onclick = () => {
-          const activeClassName = "active"
-          const isShow = dashboardIframe.classList.contains(activeClassName)
-
-          if (isShow) {
-            dashboardIframe.classList.remove(activeClassName)
-            dashboardButton.classList.remove(activeClassName)
+          webUIStyle.type = "text/css"
+          if ((webUIStyle as any).styleSheet){
+            (webUIStyle as any).styleSheet.cssText = webUICss
           } else {
-            dashboardIframe.classList.add(activeClassName)
-            dashboardButton.classList.add(activeClassName)
+            webUIStyle.appendChild(document.createTextNode(webUICss))
           }
-        }
-        document.body.appendChild(dashboardButton)
-      `;
-      });
+
+          document.head.appendChild(webUIStyle)
+
+          // Add dashboard iframe
+          const dashboardIframe = document.createElement("iframe")
+          dashboardIframe.id = "pri-help-iframe"
+          dashboardIframe.src = "//${pri.sourceConfig.host}:${dashboardClientPort}"
+          document.body.appendChild(dashboardIframe)
+
+          // Add dashboard button
+          const dashboardButton = document.createElement("div")
+          dashboardButton.id = "pri-help-button"
+          dashboardButton.innerText = "Toggle dashboard"
+          dashboardButton.onclick = () => {
+            const activeClassName = "active"
+            const isShow = dashboardIframe.classList.contains(activeClassName)
+
+            if (isShow) {
+              dashboardIframe.classList.remove(activeClassName)
+              dashboardButton.classList.remove(activeClassName)
+            } else {
+              dashboardIframe.classList.add(activeClassName)
+              dashboardButton.classList.add(activeClassName)
+            }
+          }
+          document.body.appendChild(dashboardButton)
+        `;
+        });
+      }
     }
   });
 

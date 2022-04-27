@@ -347,6 +347,11 @@ export class ProjectConfig {
    * Unnecessarily published packages, only take effect when includeAll is true.
    */
   public unPublishList?: string[] = [];
+
+  /**
+   * Disable dashboard ui
+   */
+  public disableDashboard: boolean;
 }
 
 export type SetPipe = (pipeName: string, callback: PipeCallback) => void;
