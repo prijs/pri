@@ -2,7 +2,7 @@ import * as path from 'path';
 import { globalState } from '../../../utils/global-state';
 
 export function getStaticHtmlPaths(analyseInfo: any) {
-  const pages = analyseInfo.projectAnalysePages ? analyseInfo.projectAnalysePages.pages : [];
+  const pages = analyseInfo?.projectAnalysePages ? analyseInfo?.projectAnalysePages.pages : [];
 
   const allPages = [...pages];
 
