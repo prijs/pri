@@ -55,6 +55,4 @@ export const runTest = async (options: IOpts) => {
   });
 
   logText(`Open this url to see code coverage: file://${path.join(pri.sourceRoot, 'coverage/lcov-report/index.html')}`);
-
-  process.exit(0);
 };
