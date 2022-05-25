@@ -41,7 +41,7 @@ export const runTest = async (options: IOpts) => {
     ),
   };
 
-  await jest.runCLI(
+  const result = await jest.runCLI(
     {
       _: options._,
       $0: options.$0,
@@ -50,9 +50,11 @@ export const runTest = async (options: IOpts) => {
     [pri.projectRootPath],
   );
 
-  logText(
-    `Open this url to see code coverage: file://${path.join(pri.projectRootPath, 'coverage/lcov-report/index.html')}`,
-  );
+  plugin.afterTestRunCallbacks.forEach(callback => {
+    return callback(result);
+  });
+
+  logText(`Open this url to see code coverage: file://${path.join(pri.sourceRoot, 'coverage/lcov-report/index.html')}`);
 
   process.exit(0);
 };
