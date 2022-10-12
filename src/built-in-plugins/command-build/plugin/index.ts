@@ -29,7 +29,7 @@ pri.commands.registerCommand({
       description: 'Skip lint',
     },
     skipEnsureFiles: {
-      description: 'Skip skipEnsureFiles',
+      description: 'Skip ensureFiles',
     },
   },
   description: text.commander.build.description,
