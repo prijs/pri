@@ -352,6 +352,11 @@ export class ProjectConfig {
    * Disable dashboard ui
    */
   public disableDashboard: boolean;
+
+  /**
+   * Publish config for npm publish
+   */
+  public publishConfig?: IPublishConfig;
 }
 
 export type SetPipe = (pipeName: string, callback: PipeCallback) => void;
@@ -396,3 +401,8 @@ export type IDevDllList = (list: string[]) => string[];
 export type IJestConfigPipe = (options: any) => any;
 
 export type IAfterTestRun = (result?: any) => any;
+
+export interface IPublishConfig {
+  // Allow publish branch
+  publishBranch?: string;
+}
