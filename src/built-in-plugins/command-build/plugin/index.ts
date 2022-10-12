@@ -28,6 +28,9 @@ pri.commands.registerCommand({
     skipLint: {
       description: 'Skip lint',
     },
+    skipEnsureFiles: {
+      description: 'Skip skipEnsureFiles',
+    },
   },
   description: text.commander.build.description,
   action: async (options: IOpts) => {
