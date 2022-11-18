@@ -429,7 +429,7 @@ async function addMissingDeps(
 
   // Exclude root dep list
   const excludeRootDepList = pri.projectConfig.publishConfig?.excludeRootDepList || ['react', 'react-dom', 'antd'];
-  
+
   if (depMap) {
     const { depMonoPackages, depNpmPackages } = depMap.get(sourceType);
 
