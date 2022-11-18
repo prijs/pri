@@ -427,6 +427,9 @@ async function addMissingDeps(
     };
   }
 
+  // Exclude root dep list
+  const excludeRootDepList = pri.projectConfig.publishConfig?.excludeRootDepList || ['react', 'react-dom', 'antd'];
+  
   if (depMap) {
     const { depMonoPackages, depNpmPackages } = depMap.get(sourceType);
 
@@ -474,7 +477,7 @@ async function addMissingDeps(
       newPackageJson.dependencies = {
         ...newPackageJson.dependencies,
         ...depNpmPackages
-          .filter(npmName => !['react', 'react-dom', 'antd'].includes(npmName))
+          .filter(npmName => !excludeRootDepList.includes(npmName))
           .reduce((root, next) => {
             if (!sourceDeps[next]) {
               logFatal(
