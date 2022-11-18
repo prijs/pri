@@ -1,160 +1,66 @@
-<a name="4.3.2"></a>
-## [4.3.2](https://github.com/prijs/pri/compare/4.3.1...4.3.2) (2021-02-26)
+<a name="4.3.18"></a>
+## [4.3.18](https://github.com/prijs/pri/compare/3.3.28-beta.5...4.3.18) (2022-11-18)
 
 
 ### Bug Fixes
 
-* lock babel-runtime version ([09b7794](https://github.com/prijs/pri/commit/09b7794))
-
-
-
-<a name="4.3.1"></a>
-## [4.3.1](https://github.com/prijs/pri/compare/4.3.0...4.3.1) (2021-02-20)
-
-
-### Bug Fixes
-
-* publish maxbuffer length exceeded error ([54e7197](https://github.com/prijs/pri/commit/54e7197))
-
-
-
-<a name="4.3.0"></a>
-# [4.3.0](https://github.com/prijs/pri/compare/4.2.12...4.3.0) (2021-02-09)
-
-
-### Bug Fixes
-
-* circular detect exclude ([7995320](https://github.com/prijs/pri/commit/7995320))
-* eslint no-shadow ([4d0368c](https://github.com/prijs/pri/commit/4d0368c))
-* type ([f67ca43](https://github.com/prijs/pri/commit/f67ca43))
-
-
-### Features
-
-* increase ts checker memory limit ([4922c52](https://github.com/prijs/pri/commit/4922c52))
-* support mode in webpack-dev-server ([ab8d718](https://github.com/prijs/pri/commit/ab8d718))
-* update typescript and eslint ([39a49ee](https://github.com/prijs/pri/commit/39a49ee))
-
-
-
-<a name="4.2.12"></a>
-## [4.2.12](https://github.com/prijs/pri/compare/4.2.11...4.2.12) (2021-02-03)
-
-
-### Bug Fixes
-
-* analyse entry ([1f6e3f5](https://github.com/prijs/pri/commit/1f6e3f5))
-* analyse output ([39c6c0c](https://github.com/prijs/pri/commit/39c6c0c))
-* WrapContent plugin ([7dffb13](https://github.com/prijs/pri/commit/7dffb13))
-
-
-### Features
-
-* increase ts checker memory limit ([3cbac4a](https://github.com/prijs/pri/commit/3cbac4a))
-* run test support testRegex ([3184685](https://github.com/prijs/pri/commit/3184685))
-
-
-
-<a name="4.2.11"></a>
-## [4.2.11](https://github.com/prijs/pri/compare/4.2.10...4.2.11) (2021-01-27)
-
-
-### Bug Fixes
-
-* chunk css extract ([55e47c8](https://github.com/prijs/pri/commit/55e47c8))
-
-
-### Features
-
-* optional check type and circular dependency ([4964fd0](https://github.com/prijs/pri/commit/4964fd0))
-* project support multiple entry ([a57e664](https://github.com/prijs/pri/commit/a57e664))
-* remove node-sass ([fba2433](https://github.com/prijs/pri/commit/fba2433))
-
-
-
-<a name="4.2.9"></a>
-## [4.2.9](https://github.com/prijs/pri/compare/4.2.8...4.2.9) (2021-01-07)
-
-
-### Bug Fixes
-
-* format ([a52444e](https://github.com/prijs/pri/commit/a52444e))
-
-
-### Features
-
-* upgrade prettier ([3331d3d](https://github.com/prijs/pri/commit/3331d3d))
-
-
-
-<a name="4.2.8"></a>
-## [4.2.8](https://github.com/prijs/pri/compare/4.2.7...4.2.8) (2021-01-03)
-
-
-### Bug Fixes
-
+* 判断包名都用package.json中的name ([29e33df](https://github.com/prijs/pri/commit/29e33df))
+* 修复子package互相引用的时候，测试报错的问题 ([55570a9](https://github.com/prijs/pri/commit/55570a9))
+* 修复组件编译模式无差别产生 sourcemap ([06a444f](https://github.com/prijs/pri/commit/06a444f))
 * 子包路由解析问题 ([37da1be](https://github.com/prijs/pri/commit/37da1be))
-
-
-### Features
-
-* 合并scss和less编译 ([75b3d53](https://github.com/prijs/pri/commit/75b3d53))
-* **pri:** component构建添加less编译 ([1901397](https://github.com/prijs/pri/commit/1901397))
-* **pri:** fix ([5ef7134](https://github.com/prijs/pri/commit/5ef7134))
-* **pri:** 优化函数 ([299f196](https://github.com/prijs/pri/commit/299f196))
-* **pri:** 修改编译scss和less代码 ([1e587a1](https://github.com/prijs/pri/commit/1e587a1))
-
-
-
-<a name="4.2.7"></a>
-## [4.2.7](https://github.com/prijs/pri/compare/4.2.6...4.2.7) (2020-12-03)
-
-
-### Bug Fixes
-
-* babel-loader options ([01ec7be](https://github.com/prijs/pri/commit/01ec7be))
-* move json file ([414fb61](https://github.com/prijs/pri/commit/414fb61))
-* npmClient for publish ([7fcb940](https://github.com/prijs/pri/commit/7fcb940))
-
-
-### Features
-
-* add feat/speedMeasure ([940e817](https://github.com/prijs/pri/commit/940e817))
-
-
-
-<a name="4.2.6"></a>
-## [4.2.6](https://github.com/prijs/pri/compare/3.3.28-beta.5...4.2.6) (2020-12-01)
-
-
-### Bug Fixes
-
 * add comment ([dbc311d](https://github.com/prijs/pri/commit/dbc311d))
 * add prettier format to lint ([d6f8261](https://github.com/prijs/pri/commit/d6f8261))
+* add temp folder to exclude ([2a38004](https://github.com/prijs/pri/commit/2a38004))
+* analyse entry ([1f6e3f5](https://github.com/prijs/pri/commit/1f6e3f5))
+* analyse output ([39c6c0c](https://github.com/prijs/pri/commit/39c6c0c))
 * auth selected package ([6987871](https://github.com/prijs/pri/commit/6987871))
 * autofix package.version while betaBranch ([596b803](https://github.com/prijs/pri/commit/596b803))
+* babel-loader options ([01ec7be](https://github.com/prijs/pri/commit/01ec7be))
 * bug ([c37b05b](https://github.com/prijs/pri/commit/c37b05b))
 * bug ([b65ab71](https://github.com/prijs/pri/commit/b65ab71))
 * bug ([3510f52](https://github.com/prijs/pri/commit/3510f52))
+* change file name ([531c37e](https://github.com/prijs/pri/commit/531c37e))
+* change file name ([c22ebb4](https://github.com/prijs/pri/commit/c22ebb4))
+* chunk css extract ([55e47c8](https://github.com/prijs/pri/commit/55e47c8))
+* circular detect exclude ([7995320](https://github.com/prijs/pri/commit/7995320))
+* comment react-loadable code ([7264b29](https://github.com/prijs/pri/commit/7264b29))
 * correct module type ([a088f61](https://github.com/prijs/pri/commit/a088f61))
 * correct module type ([027bd79](https://github.com/prijs/pri/commit/027bd79))
+* dashboard client ([8e99e98](https://github.com/prijs/pri/commit/8e99e98))
+* dashboard type error ([ee54ebc](https://github.com/prijs/pri/commit/ee54ebc))
 * debug ([1f3eee1](https://github.com/prijs/pri/commit/1f3eee1))
+* define ([9244124](https://github.com/prijs/pri/commit/9244124))
 * deps analysis add react-router-dom ([0148632](https://github.com/prijs/pri/commit/0148632))
+* devServerConfig, localhost ([f20bb53](https://github.com/prijs/pri/commit/f20bb53))
+* devServerConfig, localhost ([66c8dc8](https://github.com/prijs/pri/commit/66c8dc8))
+* doc devUrl ([4c2ec7c](https://github.com/prijs/pri/commit/4c2ec7c))
 * eslint ([e592b8e](https://github.com/prijs/pri/commit/e592b8e))
+* eslint no-shadow ([4d0368c](https://github.com/prijs/pri/commit/4d0368c))
+* excludeRootDepList ([bc2eb53](https://github.com/prijs/pri/commit/bc2eb53))
 * execSync with reasonable args length ([22342bb](https://github.com/prijs/pri/commit/22342bb))
+* file name to lower case ([c97bded](https://github.com/prijs/pri/commit/c97bded))
 * fix publish error situation ([03ff947](https://github.com/prijs/pri/commit/03ff947))
 * fix typescript compile error when import modules from src/ to run test case ([7bef279](https://github.com/prijs/pri/commit/7bef279))
 * fix webpack server header for crosssite ([1e090a4](https://github.com/prijs/pri/commit/1e090a4))
 * force exit after publish ([4ba8b4a](https://github.com/prijs/pri/commit/4ba8b4a))
+* format ([daceb3e](https://github.com/prijs/pri/commit/daceb3e))
+* format ([a52444e](https://github.com/prijs/pri/commit/a52444e))
+* get plugins ([e86b825](https://github.com/prijs/pri/commit/e86b825))
+* jest moduleNameMapper ([6afbdc3](https://github.com/prijs/pri/commit/6afbdc3))
 * lint abnormal exit ([e5601bf](https://github.com/prijs/pri/commit/e5601bf))
+* lock babel-runtime version ([09b7794](https://github.com/prijs/pri/commit/09b7794))
 * modify error msg ([13b05e0](https://github.com/prijs/pri/commit/13b05e0))
+* move json file ([414fb61](https://github.com/prijs/pri/commit/414fb61))
 * nested node_modules ([8e79cce](https://github.com/prijs/pri/commit/8e79cce))
+* npm publish ([9815353](https://github.com/prijs/pri/commit/9815353))
 * npm test support packages alias name ([7bacda9](https://github.com/prijs/pri/commit/7bacda9))
+* npmClient for publish ([7fcb940](https://github.com/prijs/pri/commit/7fcb940))
 * npx ([18e799c](https://github.com/prijs/pri/commit/18e799c))
 * publish error ([594cec5](https://github.com/prijs/pri/commit/594cec5))
 * publish error ([d06c26e](https://github.com/prijs/pri/commit/d06c26e))
 * publish error ([c813439](https://github.com/prijs/pri/commit/c813439))
 * publish error ([f215748](https://github.com/prijs/pri/commit/f215748))
+* publish maxbuffer length exceeded error ([54e7197](https://github.com/prijs/pri/commit/54e7197))
 * rebase error ([2fc0d6f](https://github.com/prijs/pri/commit/2fc0d6f))
 * rebuild dll when extraVendors changed or project changed ([45f2f36](https://github.com/prijs/pri/commit/45f2f36))
 * rebuild dll when extraVendors changed or project changed ([40a3c21](https://github.com/prijs/pri/commit/40a3c21))
@@ -163,28 +69,77 @@
 * remove unused prettier from eslintrc ([dcc71c6](https://github.com/prijs/pri/commit/dcc71c6))
 * replace with node-compatible fetch, fix lint glob pattern ([044838b](https://github.com/prijs/pri/commit/044838b))
 * rm global no-console ([bc216db](https://github.com/prijs/pri/commit/bc216db))
+* temp file type error ([b39284b](https://github.com/prijs/pri/commit/b39284b))
+* test ([967f0e6](https://github.com/prijs/pri/commit/967f0e6))
+* type ([f67ca43](https://github.com/prijs/pri/commit/f67ca43))
 * update ([722c764](https://github.com/prijs/pri/commit/722c764))
+* update fork-ts-checker-webpack-plugin ([0caed8e](https://github.com/prijs/pri/commit/0caed8e))
 * use sync mode when process.stdio is connected to pipe ([9eb7a50](https://github.com/prijs/pri/commit/9eb7a50))
-* 修复子package互相引用的时候，测试报错的问题 ([55570a9](https://github.com/prijs/pri/commit/55570a9))
-* 修复组件编译模式无差别产生 sourcemap ([06a444f](https://github.com/prijs/pri/commit/06a444f))
+* version ([fe2136b](https://github.com/prijs/pri/commit/fe2136b))
+* WrapContent plugin ([7dffb13](https://github.com/prijs/pri/commit/7dffb13))
 
 
 ### Features
 
+* 合并scss和less编译 ([75b3d53](https://github.com/prijs/pri/commit/75b3d53))
+* 增加pri配置项，去除某些不必要发布的包配置 ([adc2ea6](https://github.com/prijs/pri/commit/adc2ea6))
+* 增加pri配置项，去除某些不必要发布的包配置 ([516279f](https://github.com/prijs/pri/commit/516279f))
+* add disableDashboard config ([6df480d](https://github.com/prijs/pri/commit/6df480d))
+* add esm5 field ([8e20b94](https://github.com/prijs/pri/commit/8e20b94))
+* add feat/speedMeasure ([940e817](https://github.com/prijs/pri/commit/940e817))
+* add path ([7cc1705](https://github.com/prijs/pri/commit/7cc1705))
+* add readme copy logic ([f25a27c](https://github.com/prijs/pri/commit/f25a27c))
+* add readme copy logic ([597da6a](https://github.com/prijs/pri/commit/597da6a))
+* after test run ([18aee53](https://github.com/prijs/pri/commit/18aee53))
+* deploy 4.2.5 ([16a2024](https://github.com/prijs/pri/commit/16a2024))
+* devServer 支持ForkTsCheckerWebpackPlugin async 配置 ([b7b2cd9](https://github.com/prijs/pri/commit/b7b2cd9))
+* devserver support config wrapper ([d879bc4](https://github.com/prijs/pri/commit/d879bc4))
+* export create-entry ([6aecc8a](https://github.com/prijs/pri/commit/6aecc8a))
+* extradll ([4535505](https://github.com/prijs/pri/commit/4535505))
+* extradll ([8c9ed2d](https://github.com/prijs/pri/commit/8c9ed2d))
+* improve dev performance ([82cfad0](https://github.com/prijs/pri/commit/82cfad0))
+* increase ts checker memory limit ([3cbac4a](https://github.com/prijs/pri/commit/3cbac4a))
+* increase ts checker memory limit ([4922c52](https://github.com/prijs/pri/commit/4922c52))
+* optional check type and circular dependency ([4964fd0](https://github.com/prijs/pri/commit/4964fd0))
+* production mode useHtmlTemplate ([ef6c951](https://github.com/prijs/pri/commit/ef6c951))
+* project support multiple entry ([a57e664](https://github.com/prijs/pri/commit/a57e664))
+* publish .9 ([88f3d60](https://github.com/prijs/pri/commit/88f3d60))
+* remove  ensure root package.json for extend type ([0ad22e6](https://github.com/prijs/pri/commit/0ad22e6))
+* remove node-sass ([fba2433](https://github.com/prijs/pri/commit/fba2433))
+* run test support testRegex ([3184685](https://github.com/prijs/pri/commit/3184685))
+* support bundle dev dll ([e533954](https://github.com/prijs/pri/commit/e533954))
+* support customize jest config ([fd1fd15](https://github.com/prijs/pri/commit/fd1fd15))
+* support devServer contentBase ([63efe84](https://github.com/prijs/pri/commit/63efe84))
+* support disable html-webpack-plugin ([fdd79a5](https://github.com/prijs/pri/commit/fdd79a5))
+* support docs custom index.ejs index.tsx ([653038b](https://github.com/prijs/pri/commit/653038b))
+* support eslint in dev mode ([45e3f0d](https://github.com/prijs/pri/commit/45e3f0d))
+* support material component ([caf27b3](https://github.com/prijs/pri/commit/caf27b3))
+* support max two level packages ([19e89c1](https://github.com/prijs/pri/commit/19e89c1))
+* support mode in webpack-dev-server ([ab8d718](https://github.com/prijs/pri/commit/ab8d718))
+* support no includeAll ([5cd557e](https://github.com/prijs/pri/commit/5cd557e))
+* support plugins folder ([6a2e439](https://github.com/prijs/pri/commit/6a2e439))
+* support remote version ([8712f28](https://github.com/prijs/pri/commit/8712f28))
+* support use plugin source ([a95b49f](https://github.com/prijs/pri/commit/a95b49f))
+* support webpack for component build ([ff78bfe](https://github.com/prijs/pri/commit/ff78bfe))
+* update typescript and eslint ([39a49ee](https://github.com/prijs/pri/commit/39a49ee))
+* upgrade fork-ts-checker-webpack-plugin ([f4d82d0](https://github.com/prijs/pri/commit/f4d82d0))
+* upgrade prettier ([3331d3d](https://github.com/prijs/pri/commit/3331d3d))
+* **pri:** 修改编译scss和less代码 ([1e587a1](https://github.com/prijs/pri/commit/1e587a1))
+* **pri:** 优化函数 ([299f196](https://github.com/prijs/pri/commit/299f196))
+* **pri:** component构建添加less编译 ([1901397](https://github.com/prijs/pri/commit/1901397))
+* **pri:** fix ([5ef7134](https://github.com/prijs/pri/commit/5ef7134))
+* 分离 git 和 publish 流程 ([872dbf4](https://github.com/prijs/pri/commit/872dbf4))
+* 校验 tnpm 包发布权限 ([3ca427b](https://github.com/prijs/pri/commit/3ca427b))
 * add [@babel](https://github.com/babel)/plugin-transform-react-display-name ([20a9c51](https://github.com/prijs/pri/commit/20a9c51))
 * add babelPluginReactWrappedDisplayName ([6dd820e](https://github.com/prijs/pri/commit/6dd820e))
 * add changeLog to publish script ([66526f7](https://github.com/prijs/pri/commit/66526f7))
 * add ensure files config ([2e78cc5](https://github.com/prijs/pri/commit/2e78cc5))
-* add esm5 field ([8e20b94](https://github.com/prijs/pri/commit/8e20b94))
 * add hotLoader option ([52c8bdb](https://github.com/prijs/pri/commit/52c8bdb))
 * add hotLoader option ([ceb6f48](https://github.com/prijs/pri/commit/ceb6f48))
 * add jest react babel support ([949d38f](https://github.com/prijs/pri/commit/949d38f))
-* add path ([7cc1705](https://github.com/prijs/pri/commit/7cc1705))
 * add project root id to pri config ([ae38a55](https://github.com/prijs/pri/commit/ae38a55))
 * add pub options ([c357306](https://github.com/prijs/pri/commit/c357306))
 * add publish error tip when package reference project content ([20c13be](https://github.com/prijs/pri/commit/20c13be))
-* add readme copy logic ([f25a27c](https://github.com/prijs/pri/commit/f25a27c))
-* add readme copy logic ([597da6a](https://github.com/prijs/pri/commit/597da6a))
 * add sourceMap to pri docs css loader ([e17add5](https://github.com/prijs/pri/commit/e17add5))
 * deploy 16 ([c035022](https://github.com/prijs/pri/commit/c035022))
 * deploy 3.3.28 ([469fa9e](https://github.com/prijs/pri/commit/469fa9e))
@@ -194,25 +149,14 @@
 * deploy 4.0.10 ([93970bb](https://github.com/prijs/pri/commit/93970bb))
 * deploy 4.0.3 ([2c38dd8](https://github.com/prijs/pri/commit/2c38dd8))
 * deploy 4.0.8 ([a97852a](https://github.com/prijs/pri/commit/a97852a))
-* deploy 4.2.5 ([16a2024](https://github.com/prijs/pri/commit/16a2024))
-* extradll ([4535505](https://github.com/prijs/pri/commit/4535505))
-* extradll ([8c9ed2d](https://github.com/prijs/pri/commit/8c9ed2d))
 * fix bug ([5c6e107](https://github.com/prijs/pri/commit/5c6e107))
 * fix bug ([ecbe690](https://github.com/prijs/pri/commit/ecbe690))
 * fix memo name ([a5ea73d](https://github.com/prijs/pri/commit/a5ea73d))
-* publish .9 ([88f3d60](https://github.com/prijs/pri/commit/88f3d60))
-* remove  ensure root package.json for extend type ([0ad22e6](https://github.com/prijs/pri/commit/0ad22e6))
 * remove react-loadable instead of react.lazy ([be8bcbd](https://github.com/prijs/pri/commit/be8bcbd))
 * rename rootId to projectRootId ([f03aa40](https://github.com/prijs/pri/commit/f03aa40))
 * revert webpack version ([a022d94](https://github.com/prijs/pri/commit/a022d94))
-* support bundle dev dll ([e533954](https://github.com/prijs/pri/commit/e533954))
-* support customize jest config ([fd1fd15](https://github.com/prijs/pri/commit/fd1fd15))
-* support material component ([caf27b3](https://github.com/prijs/pri/commit/caf27b3))
-* support max two level packages ([19e89c1](https://github.com/prijs/pri/commit/19e89c1))
 * support nested packages ([d1029b9](https://github.com/prijs/pri/commit/d1029b9))
-* support remote version ([8712f28](https://github.com/prijs/pri/commit/8712f28))
 * support skiplint for test command ([f251b22](https://github.com/prijs/pri/commit/f251b22))
-* support webpack for component build ([ff78bfe](https://github.com/prijs/pri/commit/ff78bfe))
 * update ([e959701](https://github.com/prijs/pri/commit/e959701))
 * update ([bb4ea0b](https://github.com/prijs/pri/commit/bb4ea0b))
 * update ([b0c585b](https://github.com/prijs/pri/commit/b0c585b))
@@ -230,8 +174,6 @@
 * upgrade ts 3.8 ([261bf1d](https://github.com/prijs/pri/commit/261bf1d))
 * upgrade typescript 3.7.2 ([200aff4](https://github.com/prijs/pri/commit/200aff4))
 * upgrade webpack ([a9325a9](https://github.com/prijs/pri/commit/a9325a9))
-* 分离 git 和 publish 流程 ([872dbf4](https://github.com/prijs/pri/commit/872dbf4))
-* 校验 tnpm 包发布权限 ([3ca427b](https://github.com/prijs/pri/commit/3ca427b))
 
 
 
@@ -241,10 +183,10 @@
 
 ### Bug Fixes
 
+* 开启 format.enable ([e04d2e4](https://github.com/prijs/pri/commit/e04d2e4))
 * react-loadable import error ([975aa23](https://github.com/prijs/pri/commit/975aa23))
 * react-loadable type error ([e1baeab](https://github.com/prijs/pri/commit/e1baeab))
 * replaced editor default formatter with prettier ([9128db6](https://github.com/prijs/pri/commit/9128db6))
-* 开启 format.enable ([e04d2e4](https://github.com/prijs/pri/commit/e04d2e4))
 
 
 ### Features
@@ -259,9 +201,9 @@
 
 ### Bug Fixes
 
+* 修复 prettierrc 被删除的问题 ([21c7a9f](https://github.com/prijs/pri/commit/21c7a9f))
 * packages 引用忽略 .DS_Store ([079e682](https://github.com/prijs/pri/commit/079e682))
 * remove prettierrc file from cleanUncessaryFields ([eb93a64](https://github.com/prijs/pri/commit/eb93a64))
-* 修复 prettierrc 被删除的问题 ([21c7a9f](https://github.com/prijs/pri/commit/21c7a9f))
 
 
 
