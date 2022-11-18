@@ -21,6 +21,8 @@
 * bug ([3510f52](https://github.com/prijs/pri/commit/3510f52))
 * change file name ([531c37e](https://github.com/prijs/pri/commit/531c37e))
 * change file name ([c22ebb4](https://github.com/prijs/pri/commit/c22ebb4))
+* changelog ([9410a85](https://github.com/prijs/pri/commit/9410a85))
+* changelog ([6de42f1](https://github.com/prijs/pri/commit/6de42f1))
 * chunk css extract ([55e47c8](https://github.com/prijs/pri/commit/55e47c8))
 * circular detect exclude ([7995320](https://github.com/prijs/pri/commit/7995320))
 * comment react-loadable code ([7264b29](https://github.com/prijs/pri/commit/7264b29))
