@@ -354,6 +354,16 @@ export class ProjectConfig {
   public disableDashboard: boolean;
 
   /**
+   * Disable dll in dev mode
+   */
+  public disableDllWhenDev: boolean;
+
+  /**
+   * If disable, pri will not wrap dllScript to entry js in dev mode, your should wrap dllScript to html by yourself
+   */
+  public disableDllWrapWhenDev: boolean;
+
+  /**
    * Publish config for npm publish
    */
   public publishConfig?: IPublishConfig;
