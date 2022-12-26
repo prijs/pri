@@ -1,5 +1,6 @@
 import * as path from 'path';
 import { Configuration } from 'webpack';
+import * as WebpackDevServer from 'webpack-dev-server';
 import { Entry } from './create-entry';
 
 export interface PackageJson {
@@ -397,6 +398,10 @@ export interface IPluginModule {
 }
 
 export type IDevDllList = (list: string[]) => string[];
+
+export type IDevServerConfigPipe = (
+  config: WebpackDevServer.Configuration,
+) => WebpackDevServer.Configuration | Promise<WebpackDevServer.Configuration>;
 
 export type IJestConfigPipe = (options: any) => any;
 

@@ -13,6 +13,7 @@ import * as WebpackDevServer from 'webpack-dev-server';
 import * as SpeedMeasurePlugin from 'speed-measure-webpack-plugin';
 import * as ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
 import { globalState } from './global-state';
+import { plugin } from './plugins';
 import { tempPath, srcPath, packagesPath } from './structor-config';
 import { logInfo } from './log';
 import { getWebpackConfig, IOptions } from './webpack-config';
@@ -91,7 +92,7 @@ export const runWebpackDevServer = async (
     );
   }
 
-  const webpackDevServerConfig: WebpackDevServer.Configuration = {
+  const defaultWebpackDevServerConfig: WebpackDevServer.Configuration = {
     host: globalState.sourceConfig.host,
     hot: opts.hot,
     hotOnly: opts.hot,
@@ -130,6 +131,9 @@ export const runWebpackDevServer = async (
     port: opts.devServerPort,
     contentBase: opts.contentBase,
   } as any;
+  const webpackDevServerConfig = (await plugin.devServerConfigPipes.reduce(async (newConfig, fn) => {
+    return fn(await newConfig);
+  }, Promise.resolve(defaultWebpackDevServerConfig))) as any;
 
   WebpackDevServer.addDevServerEntrypoints(webpackConfig as any, webpackDevServerConfig);
 
@@ -144,17 +148,13 @@ export const runWebpackDevServer = async (
   const compiler = webpack(webpackConfig);
 
   const devServer = new WebpackDevServer(compiler as any, webpackDevServerConfig);
+  const { port, host, https } = webpackDevServerConfig;
 
-  devServer.listen(opts.devServerPort, globalState.sourceConfig.host, () => {
+  devServer.listen(port, host, () => {
     let devUrl: string = null;
-    const localSuggestUrl = urlJoin(
-      `${opts.https || globalState.sourceConfig.useHttps ? 'https' : 'http'}://${globalState.sourceConfig.host}:${
-        opts.devServerPort
-      }`,
-      globalState.sourceConfig.baseHref,
-    );
+    const localSuggestUrl = urlJoin(`${https ? 'https' : 'http'}://${host}:${port}`, globalState.sourceConfig.baseHref);
 
-    if (opts.devUrl === globalState.sourceConfig.host) {
+    if (opts.devUrl === host) {
       devUrl = localSuggestUrl;
     } else if (opts.devUrl !== undefined) {
       ({ devUrl } = opts);
