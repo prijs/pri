@@ -73,8 +73,8 @@ function getPriConfig(rootPath: string) {
 }
 
 function collectPackages(packageRootPath: string, packageDir = PACKAGES_NAME, deep = 0) {
-  // Only support two level packages
-  if (deep >= 2) {
+  // Only support three level packages
+  if (deep >= 3) {
     return;
   }
 
