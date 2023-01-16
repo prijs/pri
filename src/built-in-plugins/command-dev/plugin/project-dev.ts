@@ -68,7 +68,7 @@ async function debugProject(options?: any) {
   const dashboardClientPort = await portfinder.getPortPromise({ port: freePort + 2 });
 
   const pipeConfig = async (config: webpack.Configuration) => {
-    if (pri.sourceConfig.disableDllWhenDev || pri.sourceConfig.disableDllWrapWhenDev) {
+    if (pri.sourceConfig.devProjectConfig?.disableDll || pri.sourceConfig.devProjectConfig?.disableDllWrap) {
       return config;
     }
     const dllHttpPath = urlJoin(
@@ -97,12 +97,17 @@ async function debugProject(options?: any) {
   await pri.project.checkProjectFiles();
 
   const analyseInfo = await spinner('Analyse project', async () => {
-    const scopeAnalyseInfo = await analyseProject();
-    await createEntry();
+    let scopeAnalyseInfo;
+    if (!pri.sourceConfig.devProjectConfig?.disableAnalyseProject) {
+      scopeAnalyseInfo = await analyseProject();
+    }
+    if (!pri.sourceConfig.devProjectConfig?.disableCreateEntry) {
+      await createEntry();
+    }
     return scopeAnalyseInfo;
   });
 
-  if (!pri.sourceConfig.disableDllWhenDev) {
+  if (!pri.sourceConfig.devProjectConfig?.disableDll) {
     await bundleDlls({ dllOutPath, dllFileName, dllMainfestName });
   }
 
@@ -320,7 +325,7 @@ function debugProjectPrepare(dashboardClientPort: number) {
       if (!pri.isDevelopment) {
         return config;
       }
-      if (pri.sourceConfig.disableDllWhenDev) {
+      if (pri.sourceConfig.devProjectConfig?.disableDll) {
         return config;
       }
 

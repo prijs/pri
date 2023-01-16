@@ -25,7 +25,7 @@ import {
   IAfterTestRun,
 } from './define';
 import { getBabelOptions } from './babel-options';
-import { tempPath, srcPath } from '../node';
+import { tempPath, srcPath, pri } from '../node';
 import * as pluginClientSsr from '../built-in-plugins/client-ssr';
 import * as pluginCommandAnalyse from '../built-in-plugins/command-analyse';
 import * as pluginCommandBuild from '../built-in-plugins/command-build';
@@ -340,8 +340,15 @@ function addPluginFromEntry(entryPath: string) {
     logFatal('Plugin must impletement getPlugin method!');
   }
 
-  if (!instance.getConfig().name) {
+  const name = instance.getConfig().name;
+  if (!name) {
     logFatal('Plugin must have name!');
+  }
+
+  if (pri.majorCommand === 'dev' && pri.sourceConfig.type === 'project') {
+    if (pri.sourceConfig.devProjectConfig?.disablePluginNames?.includes(name)) {
+      return;
+    }
   }
 
   loadedPlugins.add(instance);

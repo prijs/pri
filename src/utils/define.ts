@@ -355,14 +355,34 @@ export class ProjectConfig {
   public disableDashboard: boolean;
 
   /**
-   * Disable dll in dev mode
+   * Dev config for project
    */
-  public disableDllWhenDev: boolean;
+  public devProjectConfig?: {
+    /**
+     * Disable dll
+     */
+    disableDll: boolean;
 
-  /**
-   * If disable, pri will not wrap dllScript to entry js in dev mode, your should wrap dllScript to html by yourself
-   */
-  public disableDllWrapWhenDev: boolean;
+    /**
+     * If disable, pri will not wrap dllScript to entry js, your should wrap dllScript to html by yourself
+     */
+    disableDllWrap: boolean;
+
+    /**
+     * Disable analyse Project
+     */
+    disableAnalyseProject: boolean;
+
+    /**
+     * If disable, pri will not create entry js, you should handle route and ReactDom.render by yourself
+     */
+    disableCreateEntry: boolean;
+
+    /**
+     * The pri plugin that need be disabled,
+     */
+    disablePluginNames: string[];
+  };
 
   /**
    * Publish config for npm publish
@@ -397,7 +417,7 @@ export interface IEnsureProjectFilesQueue {
 export type ILintFilter = (filePath?: string) => boolean;
 
 export interface IPluginModule {
-  getConfig?: () => {
+  getConfig: () => {
     // Plugin name
     name: string;
     // Dependent plugin names
