@@ -4,7 +4,7 @@ import * as semver from 'semver';
 
 import { initGlobalState } from '../utils/global-state';
 import { TransferedRegisterCommand } from '../utils/define';
-import { logFatal } from '../utils/log';
+import { logFatal, spinner } from '../utils/log';
 
 // Check git repo
 // let isGitRepo = false;
@@ -46,7 +46,9 @@ export async function createCli(opts?: { pluginIncludeRoots: string[] }) {
 
   await cleanUncessaryFields();
 
-  await loadPlugins(opts && opts.pluginIncludeRoots);
+  await spinner('Load plugins', async () => {
+    await loadPlugins(opts && opts.pluginIncludeRoots);
+  });
 
   const commandRegisterMap = transferCommandsArrayToMap(plugin.commands);
 
