@@ -1,5 +1,5 @@
-<a name="4.3.19"></a>
-## [4.3.19](https://github.com/prijs/pri/compare/3.3.28-beta.5...4.3.19) (2023-01-09)
+<a name="4.3.20-beta.1"></a>
+## [4.3.20-beta.1](https://github.com/prijs/pri/compare/3.3.28-beta.5...4.3.20-beta.1) (2023-02-02)
 
 
 ### Bug Fixes
@@ -94,6 +94,7 @@
 * add pri.devService.pipeConfig, all modify webpackDevServerConfig ([7c607da](https://github.com/prijs/pri/commit/7c607da))
 * add readme copy logic ([f25a27c](https://github.com/prijs/pri/commit/f25a27c))
 * add readme copy logic ([597da6a](https://github.com/prijs/pri/commit/597da6a))
+* addIgnoreDll ([e8a673b](https://github.com/prijs/pri/commit/e8a673b))
 * after test run ([18aee53](https://github.com/prijs/pri/commit/18aee53))
 * deploy 4.2.5 ([16a2024](https://github.com/prijs/pri/commit/16a2024))
 * devServer 支持ForkTsCheckerWebpackPlugin async 配置 ([b7b2cd9](https://github.com/prijs/pri/commit/b7b2cd9))
@@ -104,6 +105,7 @@
 * improve dev performance ([82cfad0](https://github.com/prijs/pri/commit/82cfad0))
 * increase ts checker memory limit ([3cbac4a](https://github.com/prijs/pri/commit/3cbac4a))
 * increase ts checker memory limit ([4922c52](https://github.com/prijs/pri/commit/4922c52))
+* load plugins may take several seconds, so display a loading ([7db3679](https://github.com/prijs/pri/commit/7db3679))
 * optional check type and circular dependency ([4964fd0](https://github.com/prijs/pri/commit/4964fd0))
 * production mode useHtmlTemplate ([ef6c951](https://github.com/prijs/pri/commit/ef6c951))
 * project support multiple entry ([a57e664](https://github.com/prijs/pri/commit/a57e664))
@@ -117,12 +119,11 @@
 * support disableDllWhenDev and disableDllWrapWhenDev configuration ([cd31df7](https://github.com/prijs/pri/commit/cd31df7))
 * support docs custom index.ejs index.tsx ([653038b](https://github.com/prijs/pri/commit/653038b))
 * support eslint in dev mode ([45e3f0d](https://github.com/prijs/pri/commit/45e3f0d))
-* support material component ([caf27b3](https://github.com/prijs/pri/commit/caf27b3))
 * support max two level packages ([19e89c1](https://github.com/prijs/pri/commit/19e89c1))
 * support mode in webpack-dev-server ([ab8d718](https://github.com/prijs/pri/commit/ab8d718))
 * support no includeAll ([5cd557e](https://github.com/prijs/pri/commit/5cd557e))
 * support plugins folder ([6a2e439](https://github.com/prijs/pri/commit/6a2e439))
-* support remote version ([8712f28](https://github.com/prijs/pri/commit/8712f28))
+* support three level packages ([514fcee](https://github.com/prijs/pri/commit/514fcee))
 * support use plugin source ([a95b49f](https://github.com/prijs/pri/commit/a95b49f))
 * support webpack for component build ([ff78bfe](https://github.com/prijs/pri/commit/ff78bfe))
 * update typescript and eslint ([39a49ee](https://github.com/prijs/pri/commit/39a49ee))
@@ -160,7 +161,9 @@
 * remove react-loadable instead of react.lazy ([be8bcbd](https://github.com/prijs/pri/commit/be8bcbd))
 * rename rootId to projectRootId ([f03aa40](https://github.com/prijs/pri/commit/f03aa40))
 * revert webpack version ([a022d94](https://github.com/prijs/pri/commit/a022d94))
+* support material component ([caf27b3](https://github.com/prijs/pri/commit/caf27b3))
 * support nested packages ([d1029b9](https://github.com/prijs/pri/commit/d1029b9))
+* support remote version ([8712f28](https://github.com/prijs/pri/commit/8712f28))
 * support skiplint for test command ([f251b22](https://github.com/prijs/pri/commit/f251b22))
 * update ([e959701](https://github.com/prijs/pri/commit/e959701))
 * update ([bb4ea0b](https://github.com/prijs/pri/commit/bb4ea0b))
