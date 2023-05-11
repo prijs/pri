@@ -5,7 +5,7 @@
     "strict": true,
     "strictNullChecks": false,
     "jsx": "react",
-    "target": "es5",
+    "target": "es6",
     "rootDir": "./src",
     "experimentalDecorators": true,
     "skipLibCheck": true,
