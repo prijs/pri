@@ -91,16 +91,16 @@ export const bundleDlls = async (opts: IDllOptions): Promise<any> => {
 };
 
 function runCompiler(compiler: webpack.Compiler) {
-  return new Promise(resolve => {
+  return new Promise((resolve, reject) => {
     compiler.run((err, status) => {
       if (!err && !status.hasErrors()) {
         process.stdout.write(`${status.toString(stats)}\n\n`);
 
         resolve(status.toJson());
       } else if (err && err.message) {
-        throw Error(err.message);
+        reject(err.message);
       } else {
-        throw Error(status.toString());
+        reject(status.toString());
       }
     });
   });
