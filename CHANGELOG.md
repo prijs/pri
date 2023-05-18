@@ -1,10 +1,11 @@
-<a name="4.3.20-beta.1"></a>
-## [4.3.20-beta.1](https://github.com/prijs/pri/compare/3.3.28-beta.5...4.3.20-beta.1) (2023-02-02)
+<a name="4.4.1-beta.0"></a>
+## [4.4.1-beta.0](https://github.com/prijs/pri/compare/3.3.28-beta.5...4.4.1-beta.0) (2023-05-18)
 
 
 ### Bug Fixes
 
 * 判断包名都用package.json中的name ([29e33df](https://github.com/prijs/pri/commit/29e33df))
+* 使用reject替代throw，使得child_process子进程可以以异常状态退出 ([ed9d17d](https://github.com/prijs/pri/commit/ed9d17d))
 * 修复子package互相引用的时候，测试报错的问题 ([55570a9](https://github.com/prijs/pri/commit/55570a9))
 * 修复组件编译模式无差别产生 sourcemap ([06a444f](https://github.com/prijs/pri/commit/06a444f))
 * 子包路由解析问题 ([37da1be](https://github.com/prijs/pri/commit/37da1be))
@@ -15,6 +16,8 @@
 * analyse output ([39c6c0c](https://github.com/prijs/pri/commit/39c6c0c))
 * auth selected package ([6987871](https://github.com/prijs/pri/commit/6987871))
 * autofix package.version while betaBranch ([596b803](https://github.com/prijs/pri/commit/596b803))
+* babel ([015ae00](https://github.com/prijs/pri/commit/015ae00))
+* babel ([54790e6](https://github.com/prijs/pri/commit/54790e6))
 * babel-loader options ([01ec7be](https://github.com/prijs/pri/commit/01ec7be))
 * bug ([c37b05b](https://github.com/prijs/pri/commit/c37b05b))
 * bug ([b65ab71](https://github.com/prijs/pri/commit/b65ab71))
@@ -77,6 +80,7 @@
 * type ([f67ca43](https://github.com/prijs/pri/commit/f67ca43))
 * update ([722c764](https://github.com/prijs/pri/commit/722c764))
 * update fork-ts-checker-webpack-plugin ([0caed8e](https://github.com/prijs/pri/commit/0caed8e))
+* upgrade babel ([1f8aa7d](https://github.com/prijs/pri/commit/1f8aa7d))
 * use sync mode when process.stdio is connected to pipe ([9eb7a50](https://github.com/prijs/pri/commit/9eb7a50))
 * version ([fe2136b](https://github.com/prijs/pri/commit/fe2136b))
 * WrapContent plugin ([7dffb13](https://github.com/prijs/pri/commit/7dffb13))
