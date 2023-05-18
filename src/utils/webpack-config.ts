@@ -317,7 +317,7 @@ export const getWebpackConfig = async (opts: IOptions) => {
         'eot',
         'ttf',
         'svg',
-        '.json'
+        '.json',
       ],
     },
     resolveLoader: {

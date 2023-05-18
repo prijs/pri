@@ -71,7 +71,7 @@ export const getWebpackDllConfig = (opts: IDllOptions) => {
         // Self node_modules
         path.join(__dirname, '../../../node_modules'),
       ],
-      extensions: ['.js', '.jsx', '.tsx', '.ts', '.scss', '.less', '.css',  '.json'],
+      extensions: ['.js', '.jsx', '.tsx', '.ts', '.scss', '.less', '.css', '.json'],
     },
 
     resolveLoader: {
